@@ -1,0 +1,28 @@
+{
+  "name": "ancplua-claude-plugins",
+  "owner": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "description": "Alexander's lifetime Claude Code ecosystem (plugins, skills, and agents).",
+  "plugins": [
+    {
+      "name": "autonomous-ci",
+      "description": "Utilities and skills to verify CI locally and monitor GitHub Actions runs.",
+      "version": "0.1.0",
+      "source": "./plugins/autonomous-ci"
+    },
+    {
+      "name": "wip-plugin-2",
+      "description": "Work-in-progress plugin placeholder.",
+      "version": "0.0.1",
+      "source": "./plugins/wip-plugin-2"
+    },
+    {
+      "name": "wip-plugin-3",
+      "description": "Work-in-progress plugin placeholder.",
+      "version": "0.0.1",
+      "source": "./plugins/wip-plugin-3"
+    }
+  ]
+}

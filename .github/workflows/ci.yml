@@ -1,0 +1,153 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: "0 5 * * 1"
+
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: read
+  actions: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  paths:
+    name: Detect relevant changes
+    runs-on: ubuntu-latest
+    outputs:
+      plugins: ${{ steps.filter.outputs.plugins }}
+      docs: ${{ steps.filter.outputs.docs }}
+      workflows: ${{ steps.filter.outputs.workflows }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: filter
+        name: Filter paths
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            plugins:
+              - 'plugins/**'
+              - '.claude-plugin/**'
+              - 'skills/**'
+            docs:
+              - 'docs/**'
+              - 'README.md'
+              - 'CLAUDE.md'
+              - 'CHANGELOG.md'
+            workflows:
+              - '.github/workflows/**'
+              - 'tooling/**'
+
+  lint-and-validate:
+    name: Lint & validate (local script)
+    needs: paths
+    if: ${{ needs.paths.outputs.plugins == 'true' || needs.paths.outputs.docs == 'true' || needs.paths.outputs.workflows == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (for markdownlint)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '25'
+
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Install markdownlint-cli
+        run: |
+          npm install -g markdownlint-cli
+
+      - name: Install actionlint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash | bash
+          sudo mv actionlint /usr/local/bin/actionlint
+
+      - name: Run local validation script
+        run: |
+          bash tooling/scripts/local-validate.sh
+
+  dependency-review:
+    name: Dependency review
+    needs: paths
+    if: ${{ github.event_name == 'pull_request' && needs.paths.outputs.plugins == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: true
+
+  codeql:
+    name: CodeQL security scan (JS/TS)
+    needs: paths
+    runs-on: ubuntu-latest
+    if: ${{ needs.paths.outputs.plugins == 'true' || needs.paths.outputs.workflows == 'true' || github.event_name == 'schedule' }}
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v3
+
+  megalinter:
+    name: MegaLinter (javascript flavor)
+    needs: paths
+    runs-on: ubuntu-latest
+    if: ${{ needs.paths.outputs.plugins == 'true' || needs.paths.outputs.docs == 'true' || needs.paths.outputs.workflows == 'true' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run MegaLinter (javascript flavor)
+        uses: oxsecurity/megalinter/flavors/javascript@v9.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false
+          MARKDOWN_SUMMARY_REPORTER: true
+
+      - name: Upload MegaLinter reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: megalinter-reports
+          path: report
+          if-no-files-found: ignore

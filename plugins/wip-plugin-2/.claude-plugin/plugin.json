@@ -1,0 +1,14 @@
+{
+  "name": "wip-plugin-2",
+  "version": "0.0.1",
+  "description": "Work-in-progress plugin placeholder.",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/AncpLua"
+  },
+  "repository": "https://github.com/ancplua/ancplua-claude-plugins",
+  "license": "MIT",
+  "skills": [],
+  "commands": [],
+  "hooks": []
+}

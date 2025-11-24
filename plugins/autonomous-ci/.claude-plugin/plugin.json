@@ -1,0 +1,19 @@
+{
+  "name": "autonomous-ci",
+  "description": "Ensures Claude verifies local tests AND CI before claiming completion.",
+  "version": "0.1.0",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "skills": [
+    {
+      "name": "autonomous-ci",
+      "path": "skills/autonomous-ci/SKILL.md"
+    }
+  ],
+  "commands": [],
+  "hooks": []
+}

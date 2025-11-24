@@ -1,0 +1,11 @@
+{
+  "name": "example-plugin",
+  "version": "0.1.0",
+  "description": "Describe what this plugin does.",
+  "author": "your-name",
+  "repository": "https://github.com/your/repo",
+  "license": "MIT",
+  "skills": [],
+  "commands": [],
+  "hooks": []
+}
