@@ -15,14 +15,21 @@
    ls ~/.claude/plugins/cache/ 2>/dev/null | grep -i super
    ```
 
-2. **If Superpowers is installed, IMMEDIATELY read:**
+2. **Read CHANGELOG.md:**
+   ```
+   Read the file: CHANGELOG.md
+   ```
+   This tells you what has been done recently. Check the `[Unreleased]` section for pending work.
+   This prevents duplicate work and enables intelligent task sequencing.
+
+3. **If Superpowers is installed, IMMEDIATELY read:**
    ```
    ~/.claude/plugins/cache/Superpowers/skills/getting-started/SKILL.md
    ```
 
-3. **Then read this file completely.**
+4. **Then read this file completely.**
 
-4. **For ANY task, check if a skill exists BEFORE starting work:**
+5. **For ANY task, check if a skill exists BEFORE starting work:**
    ```bash
    find ~/.claude -name "SKILL.md" 2>/dev/null | xargs grep -l "relevant-keyword"
    ```
@@ -144,7 +151,6 @@ ancplua-claude-plugins/
 │   ├── PLUGINS.md
 │   ├── AGENTS.md
 │   ├── WORKFLOWS.md
-│   ├── FUTURE.md
 │   ├── specs/
 │   │   ├── spec-template.md
 │   │   └── spec-XXXX-*.md
@@ -254,15 +260,69 @@ Use the `requesting-code-review` skill if available, OR:
 
 1. Dispatch a review subagent:
    ```
-   "Please dispatch two subagents to review my changes. 
-   Tell them they're competing with another agent. 
-   Make sure they look at both architecture and implementation. 
+   "Please dispatch two subagents to review my changes.
+   Tell them they're competing with another agent.
+   Make sure they look at both architecture and implementation.
    Whomever finds more issues gets promoted."
    ```
 
 2. Fix all Critical issues immediately
 3. Fix High issues before proceeding
 4. Document Medium/Low issues for future
+
+### 4.5.1 PR Review (Claude as Permanent Second Reviewer)
+
+<EXTREMELY_IMPORTANT>
+
+**Claude is a PERMANENT SECOND REVIEWER alongside Jules for ALL pull requests.**
+
+When reviewing PRs, Claude MUST:
+
+1. **Review every PR** - Use `gh pr view <number>` and `gh pr diff <number>`
+2. **Check CI status** - Use `gh pr checks <number>`
+3. **Verify Jules involvement** - Check if Jules session was created or Jules commented
+4. **Provide merge verdict** - APPROVE, REQUEST_CHANGES, or COMMENT
+
+**Review Checklist:**
+
+| Check | Command | Pass Criteria |
+|-------|---------|---------------|
+| CI passes | `gh pr checks <n>` | All checks green |
+| CodeRabbit reviewed | PR comments | CodeRabbit approval present |
+| Jules consulted | PR comments/workflow | Jules session created OR not required |
+| No secrets exposed | `gh pr diff <n>` | No API keys, tokens, credentials |
+| CHANGELOG updated | `gh pr diff <n>` | Entry under [Unreleased] if needed |
+
+**Merge Verdict Format:**
+
+```markdown
+## Claude Code Review
+
+**PR:** #<number> - <title>
+**Verdict:** ✅ APPROVE / ❌ REQUEST_CHANGES / 💬 COMMENT
+
+### Checks
+- [ ] CI: <status>
+- [ ] CodeRabbit: <status>
+- [ ] Jules: <status>
+- [ ] Security: <status>
+- [ ] CHANGELOG: <status>
+
+### Issues Found
+<list or "None">
+
+### Recommendation
+<merge / request changes / needs discussion>
+```
+
+**Auto-merge tiers (from `.github/workflows/auto-merge.yml`):**
+
+1. **Tier 1:** Dependabot patch/minor → auto-approve + auto-merge
+2. **Tier 2:** CodeRabbit approved → auto-merge when CI passes
+3. **Tier 3:** Jules approved → auto-merge when CI passes
+4. **Tier 4:** Claude approved → human decides merge
+
+</EXTREMELY_IMPORTANT>
 
 ### 4.6 Validation (MANDATORY)
 
@@ -282,6 +342,35 @@ For EVERY non-trivial change:
 2. **Specs** - Create/update `docs/specs/spec-XXXX-*.md` for features
 3. **ADRs** - Create/update `docs/decisions/ADR-XXXX-*.md` for architectural decisions
 4. **Docs** - Update ARCHITECTURE.md, PLUGINS.md, AGENTS.md as needed
+
+<EXTREMELY_IMPORTANT>
+
+### ⚠️ CHANGELOG REMINDER - DO NOT SKIP
+
+**BEFORE claiming ANY task is complete, you MUST update CHANGELOG.md:**
+
+1. Open `CHANGELOG.md`
+2. Add your entry under `## [Unreleased]`
+3. Use the correct category: Added, Changed, Fixed, Removed, Security
+4. Be specific: what changed and why
+
+**Format:**
+```markdown
+## [Unreleased]
+
+### Added
+- New feature X for doing Y
+
+### Changed
+- Updated Z to improve performance
+
+### Fixed
+- Resolved bug in W that caused Q
+```
+
+**NO EXCEPTIONS.** Forgetting to update CHANGELOG = incomplete task.
+
+</EXTREMELY_IMPORTANT>
 
 ### 4.8 Final Report (MANDATORY)
 

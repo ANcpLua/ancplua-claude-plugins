@@ -85,7 +85,6 @@ ancplua-claude-plugins/
 │   ├── PLUGINS.md
 │   ├── AGENTS.md
 │   ├── WORKFLOWS.md
-│   ├── FUTURE.md
 │   ├── RequirementsForAI.md
 │   └── RequirementsForHumans.md
 │
@@ -438,7 +437,6 @@ Key docs live under `docs/`:
 - `docs/PLUGINS.md` – how to create and evolve plugins
 - `docs/AGENTS.md` – Agent SDK usage and agents
 - `docs/WORKFLOWS.md` – CI and local workflows
-- `docs/FUTURE.md` – roadmap and experiments
 - `docs/specs/` – feature and framework specifications
   - `docs/specs/spec-template.md` – canonical spec template
 - `docs/decisions/` – Architecture Decision Records

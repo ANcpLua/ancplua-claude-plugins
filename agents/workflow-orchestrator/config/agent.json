@@ -10,19 +10,11 @@
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
   "license": "MIT",
   "plugins": {
-    "required": [
-      "autonomous-ci",
-      "code-review",
-      "smart-commit"
-    ],
-    "optional": [
-      "jules-integration"
-    ]
+    "required": ["autonomous-ci", "code-review", "smart-commit"],
+    "optional": ["jules-integration"]
   },
   "skills": {
-    "provided": [
-      "workflow-orchestration"
-    ],
+    "provided": ["workflow-orchestration"],
     "consumed": [
       "autonomous-ci",
       "code-review",
@@ -32,20 +24,6 @@
       "test-driven-development",
       "verification-before-completion"
     ]
-  },
-  "triggers": {
-    "pre-commit": {
-      "enabled": true,
-      "pipeline": "pre-commit"
-    },
-    "ci-failure": {
-      "enabled": true,
-      "pipeline": "ci-recover"
-    },
-    "manual": {
-      "enabled": true,
-      "pipelines": ["pre-commit", "pr-create", "ci-recover"]
-    }
   },
   "pipelines": {
     "pre-commit": {
@@ -84,7 +62,6 @@
           "name": "delegate-pr",
           "action": "skill",
           "skill": "jules-integration",
-          "requires_plugin": "jules-integration",
           "on_failure": "report"
         }
       ]
@@ -118,17 +95,6 @@
     "max_retries": 3,
     "retry_delays_seconds": [5, 15, 30],
     "changelog_awareness": true,
-    "require_human_approval": [
-      "git commit",
-      "git push",
-      "pr-merge"
-    ]
-  },
-  "environment": {
-    "required": [],
-    "optional": [
-      "JULES_API_KEY",
-      "GITHUB_TOKEN"
-    ]
+    "require_human_approval": ["git commit", "git push", "pr-merge"]
   }
 }

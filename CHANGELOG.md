@@ -8,6 +8,24 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **Claude as Permanent PR Reviewer (2025-11-25):**
+  - Added section 4.5.1 to CLAUDE.md: "PR Review (Claude as Permanent Second Reviewer)"
+  - Claude now reviews ALL pull requests alongside Jules
+  - Defined review checklist: CI, CodeRabbit, Jules, Security, CHANGELOG
+  - Standardized merge verdict format with explicit recommendation
+  - Documented auto-merge tiers (Dependabot → CodeRabbit → Jules → Claude)
+
+- **Workflow Orchestrator Agent (2025-11-25):**
+  - `agents/workflow-orchestrator/` - New agent for pipeline coordination
+    - `README.md` - Agent documentation and capabilities
+    - `config/agent.json` - Agent configuration with pipeline definitions
+    - `skills/workflow-orchestration/SKILL.md` - Orchestration skill
+    - `scripts/orchestrate.sh` - CLI for pipeline execution
+  - `docs/specs/spec-0005-workflow-orchestrator.md` - Feature specification
+  - Pipelines: pre-commit, pr-create, ci-recover
+  - Integrates: autonomous-ci, code-review, smart-commit, jules-integration
+  - State awareness via CHANGELOG.md parsing
+
 - **Jules AI integration (2025-11-25):**
   - `AGENTS.md` (repo root) - Context file for Jules and external agents
   - `plugins/jules-integration/` - New plugin for Google Jules AI delegation
