@@ -30,6 +30,55 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - Documented known violations in ancplua-mcp requiring remediation
   - Type A (Application) vs Type T (Technology) boundary definitions
 
+- **Auto-merge system (2025-11-25):**
+  - `.github/workflows/auto-merge.yml` - Tiered auto-merge workflow:
+    - Tier 1: Dependabot PRs auto-approve + auto-merge (patch/minor only)
+    - Tier 2: CodeRabbit approved PRs auto-merge
+    - Tier 3: Placeholder for Jules agent integration
+  - `.coderabbit.yaml` - CodeRabbit configuration with path-based review rules
+  - Updated `.github/dependabot.yml`:
+    - Added grouping (all GitHub Actions in single PR)
+    - Added labels and commit prefixes
+    - Scheduled for Monday 06:00 Europe/Vienna
+    - Major npm versions require manual review
+  - Enabled repo setting: `allow_auto_merge`
+  - Branch protection on main: requires "Detect relevant changes" check
+
+### Changed
+
+- **GitHub Actions version updates (2025-11-25):**
+  - `actions/checkout`: v4 → v6
+  - `actions/setup-node`: v4 → v6
+  - `actions/upload-artifact`: v4 → v5
+  - `github/codeql-action`: v3 → v4 (commented-out section)
+  - Closed 4 stale Dependabot PRs (#1-#4) that were based on outdated ci.yml
+
+- **CLAUDE.md mandatory CHANGELOG reading (2025-11-25):**
+  - Added "Read CHANGELOG.md" as step 2 in MANDATORY FIRST ACTIONS (section 0)
+  - Establishes temporal context early - prevents duplicate work, enables intelligent task sequencing
+  - Renumbered subsequent steps (3-5)
+
+- **CLAUDE.md CHANGELOG reminder (2025-11-25):**
+  - Added prominent `EXTREMELY_IMPORTANT` callout in section 4.7 Documentation
+  - Includes step-by-step CHANGELOG update instructions with format example
+  - Emphasizes "NO EXCEPTIONS" - forgetting CHANGELOG = incomplete task
+
+- **CI workflow optimization (2025-11-25):**
+  - Disabled CodeQL job (no JavaScript/TypeScript code in repo)
+  - Changed MegaLinter from `javascript` flavor to `documentation` flavor
+  - Fixes CodeQL error: "no source code seen during build"
+
+- **Plugin template improvements (2025-11-25):**
+  - Rewrote `tooling/templates/plugin-template/README.md` for AI accessibility
+  - Added complete file format examples (plugin.json, SKILL.md, commands, hooks)
+  - Added validation checklist and links to existing plugins as patterns
+
+### Removed
+
+- **docs/FUTURE.md (2025-11-25):**
+  - Removed roadmap document (superseded by specs, ADRs, and structured docs)
+  - Updated references in README.md and CLAUDE.md
+
 ### Fixed
 
 - **Duplicate template files removed (2025-11-25):**

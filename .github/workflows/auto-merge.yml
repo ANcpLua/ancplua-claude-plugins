@@ -1,0 +1,105 @@
+# Auto-merge workflow for trusted PRs
+#
+# Tiers:
+# 1. Dependabot PRs: Auto-approve + auto-merge when CI passes
+# 2. CodeRabbit approved PRs: Auto-merge when CI passes + CodeRabbit approves
+# 3. Future: Jules agent reviews (see jules-review.yml)
+#
+# Requirements:
+# - Repo setting "Allow auto-merge" must be enabled
+# - Branch protection with required status checks recommended
+
+name: Auto-merge
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  pull_request_review:
+    types: [submitted]
+  check_suite:
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  # Tier 1: Auto-approve and auto-merge Dependabot PRs
+  dependabot-auto-merge:
+    name: Dependabot auto-merge
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto-approve patch and minor updates
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge for patch and minor
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment on major updates
+        if: steps.metadata.outputs.update-type == 'version-update:semver-major'
+        run: |
+          gh pr comment "$PR_URL" --body "## Major Version Update
+
+          This is a **major version update** that may contain breaking changes.
+
+          **Manual review required.** Please:
+          1. Check the changelog for breaking changes
+          2. Test locally if needed
+          3. Approve and merge manually
+
+          Dependency: \`${{ steps.metadata.outputs.dependency-names }}\`
+          Update: \`${{ steps.metadata.outputs.previous-version }}\` -> \`${{ steps.metadata.outputs.new-version }}\`"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Tier 2: Auto-merge PRs approved by CodeRabbit
+  coderabbit-auto-merge:
+    name: CodeRabbit auto-merge
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request_review' &&
+      github.event.review.state == 'approved' &&
+      github.event.review.user.login == 'coderabbitai[bot]'
+
+    steps:
+      - name: Enable auto-merge for CodeRabbit approved PRs
+        run: |
+          echo "CodeRabbit approved PR #${{ github.event.pull_request.number }}"
+          gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Tier 3: Future - Jules agent integration
+  # When Jules approves via API callback, trigger auto-merge
+  # See jules-review.yml for the review workflow
+  # This job is a placeholder for future implementation
+  #
+  # jules-auto-merge:
+  #   name: Jules auto-merge
+  #   runs-on: ubuntu-latest
+  #   if: |
+  #     github.event_name == 'repository_dispatch' &&
+  #     github.event.action == 'jules-approved'
+  #   steps:
+  #     - name: Enable auto-merge for Jules approved PRs
+  #       run: gh pr merge --auto --squash "${{ github.event.client_payload.pr_url }}"
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

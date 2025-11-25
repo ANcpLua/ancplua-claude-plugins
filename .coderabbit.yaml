@@ -1,0 +1,64 @@
+# CodeRabbit Configuration
+# https://docs.coderabbit.ai/guides/configure-coderabbit
+
+language: en-US
+
+# Review settings
+reviews:
+  # Enable automatic reviews
+  auto_review:
+    enabled: true
+    # Review Dependabot PRs (for visibility, auto-merge handles approval)
+    ignore_title_keywords: []
+    drafts: false
+
+  # Request changes on issues, approve when clean
+  request_changes_workflow: true
+
+  # High-level summary at the top
+  high_level_summary: true
+  high_level_summary_placeholder: "@coderabbitai summary"
+
+  # Review status in PR (helps track review state)
+  review_status: true
+
+  # Poem disabled (keep reviews professional)
+  poem: false
+
+  # Path-based review instructions
+  path_instructions:
+    - path: "plugins/**"
+      instructions: |
+        Review for:
+        - Plugin structure compliance (plugin.json, skills/, commands/)
+        - SKILL.md has proper YAML frontmatter
+        - Security: no hardcoded secrets
+        - Shell scripts are shellcheck-compliant
+
+    - path: ".github/workflows/**"
+      instructions: |
+        Review for:
+        - Security: no secret exposure, proper permissions
+        - Efficiency: caching, concurrency settings
+        - Correctness: proper action versions, valid YAML
+
+    - path: "docs/**"
+      instructions: |
+        Review for:
+        - Clarity and accuracy
+        - Proper markdown formatting
+        - Links are valid
+        - Specs/ADRs follow templates
+
+# Chat settings
+chat:
+  auto_reply: true
+
+# Knowledge base (learns from codebase)
+knowledge_base:
+  opt_out: false
+  learnings:
+    scope: auto
+
+# Early access features
+early_access: true
