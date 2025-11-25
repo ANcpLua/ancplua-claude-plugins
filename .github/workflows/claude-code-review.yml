@@ -3,21 +3,9 @@ name: Claude Code Review
 on:
   pull_request:
     types: [opened, synchronize]
-    # Optional: Only run on specific file changes
-    # paths:
-    #   - "src/**/*.ts"
-    #   - "src/**/*.tsx"
-    #   - "src/**/*.js"
-    #   - "src/**/*.jsx"
 
 jobs:
   claude-review:
-    # Optional: Filter by PR author
-    # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -29,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Run Claude Code Review
         id: claude-review
@@ -40,18 +28,45 @@ jobs:
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
 
-            Please review this pull request and provide feedback on:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Performance considerations
-            - Security concerns
-            - Test coverage
+            You are reviewing a Claude Code plugin marketplace repository.
 
-            Use the repository's CLAUDE.md for guidance on style and conventions. Be constructive and helpful in your feedback.
+            ## Project Context
+            This is Alexander's Claude Code plugin marketplace and agent lab:
+            - `.claude-plugin/marketplace.json` - plugin catalog
+            - `plugins/` - individual plugins (autonomous-ci, smart-commit, code-review)
+            - `skills/` - reusable Skills (SKILL.md files)
+            - `agents/` - Agent SDK-based agents
+            - `docs/` - specs, ADRs, architecture docs
 
-            Use `gh pr comment` with your Bash tool to leave your review as a comment on the PR.
+            ## Review Focus
 
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://docs.claude.com/en/docs/claude-code/cli-reference for available options
-          claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*)"'
+            **Plugin Schema Compliance**
+            - `.claude-plugin/plugin.json` has required fields (name, version, description, author, repository, license)
+            - Correct directory structure per Anthropic spec
+            - `marketplace.json` validity and consistency
 
+            **Skills & Commands**
+            - `SKILL.md` files have clear trigger phrases
+            - Command markdown files are well-structured
+            - Skills follow activation patterns from docs
+
+            **Documentation Sync**
+            - Changes reflected in CHANGELOG.md
+            - ADRs updated for architectural changes
+            - README.md accuracy
+
+            **Shell Scripts**
+            - shellcheck compliance for `scripts/*.sh`
+            - `local-validate.sh` coverage
+
+            **Workflow Files**
+            - actionlint compliance
+            - Proper permissions and triggers
+
+            **MCP Integration (if applicable)**
+            - `.mcp.json` validity
+            - Example configs in `docs/examples/` updated
+
+            Use CLAUDE.md for project conventions. Post review via `gh pr comment`.
+
+          claude_args: '--model claude-opus-4-5-20251101 --allowed-tools "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*)"'

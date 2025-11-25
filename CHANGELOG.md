@@ -8,6 +8,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **GitHub Actions Workflows (2025-11-25):**
+  - `.github/workflows/claude.yml` - Main Claude Code interaction workflow
+    - Configured for `claude-opus-4-5-20251101` model
+    - Triggers on issue/PR comments mentioning `@claude`
+  - `.github/workflows/claude-code-review.yml` - Automated PR review workflow
+    - Customized prompt for Plugin Marketplace context
+    - Grants read permissions for PRs and Checks
+    - Uses `fetch-depth: 0` for full diff context
+
 - **Claude GitHub Actions Opus model (2025-11-25):**
   - Updated `claude.yml` with `--model claude-opus-4-5-20251101`
   - Updated `claude-code-review.yml` with `--model claude-opus-4-5-20251101`
