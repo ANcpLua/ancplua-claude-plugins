@@ -33,6 +33,7 @@ You share this repository with Claude. While `CLAUDE.md` defines the *project ru
   - Look for `.test.ts` or `.spec.ts`.
   - Check `package.json` for test scripts (likely `npm test`).
 
+> **Note:** While this repository is not a C#/.NET project, it may integrate with external MCP servers that are implemented in C#/.NET. The prohibition below refers to assuming this *repository* is C#/.NET-based. Integration with external C#/.NET services (e.g., via `.mcp.json` or `dotnet` commands) is permitted and expected where documented.
 **FORBIDDEN HALLUCINATIONS:**
 - ❌ DO NOT assume C# / .NET (.sln, .csproj).
 - ❌ DO NOT assume `nuke` build system.
