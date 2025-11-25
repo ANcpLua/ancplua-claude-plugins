@@ -8,6 +8,11 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **MCP server integration config (2025-11-25):**
+  - `.mcp.json` - Root config for ancplua-mcp server auto-discovery
+  - Enables cross-repo consumption of MCP servers from `ancplua-mcp`
+  - Servers: ancplua-workstation, ancplua-ai-services, ancplua-roslyn-metrics, ancplua-github-apps
+
 - **Claude GitHub Actions Opus model (2025-11-25):**
   - Updated `claude.yml` with `--model claude-opus-4-5-20251101`
   - Updated `claude-code-review.yml` with `--model claude-opus-4-5-20251101`
