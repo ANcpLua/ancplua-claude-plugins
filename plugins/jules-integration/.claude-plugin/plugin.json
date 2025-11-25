@@ -1,0 +1,12 @@
+{
+  "name": "jules-integration",
+  "version": "0.1.0",
+  "description": "Integration with Google Jules AI coding agent - delegate async tasks via API",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": ["jules", "google", "ai", "agent", "async", "coding"]
+}

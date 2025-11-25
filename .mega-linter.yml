@@ -1,5 +1,3 @@
-# MegaLinter config for ancplua-claude-plugins
-# Keep this minimal; tune later if needed.
 DEFAULT_BRANCH: main
 APPLY_FIXES: none
 VALIDATE_ALL_CODEBASE: false

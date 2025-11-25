@@ -7,13 +7,12 @@
     "url": "https://github.com/ANcpLua"
   },
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
-  "license": "MIT",
-  "skills": [
-    {
-      "name": "autonomous-ci",
-      "path": "skills/autonomous-ci/SKILL.md"
-    }
+  "keywords": [
+    "ci",
+    "verification",
+    "testing",
+    "github-actions",
+    "quality"
   ],
-  "commands": [],
-  "hooks": []
+  "license": "MIT"
 }

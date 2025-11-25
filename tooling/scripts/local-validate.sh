@@ -7,20 +7,31 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT_DIR"
 
 # Marketplace + plugin validation
+# Find claude CLI: check PATH first, then common install locations
+CLAUDE_CMD=""
 if command -v claude >/dev/null 2>&1; then
-  echo "▶ claude plugin validate ."
-  claude plugin validate .
+  CLAUDE_CMD="claude"
+elif [ -x "$HOME/.claude/local/node_modules/.bin/claude" ]; then
+  CLAUDE_CMD="$HOME/.claude/local/node_modules/.bin/claude"
+elif [ -x "$HOME/.claude/bin/claude" ]; then
+  CLAUDE_CMD="$HOME/.claude/bin/claude"
+fi
+
+if [ -n "$CLAUDE_CMD" ]; then
+  echo "▶ claude plugin validate . (using: $CLAUDE_CMD)"
+  "$CLAUDE_CMD" plugin validate .
 
   if [ -d "plugins" ]; then
     for d in plugins/*; do
       if [ -d "$d" ]; then
         echo "▶ claude plugin validate \"$d\""
-        claude plugin validate "$d" || true
+        "$CLAUDE_CMD" plugin validate "$d" || true
       fi
     done
   fi
 else
   echo "⚠️ 'claude' CLI not found. Skipping plugin validation."
+  echo "   Checked: PATH, ~/.claude/local/node_modules/.bin/, ~/.claude/bin/"
 fi
 
 # Shell scripts

@@ -1,0 +1,60 @@
+{
+  "name": "repo-reviewer-agent",
+  "version": "0.1.0",
+  "description": "Autonomous repository health reviewer",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "plugins": [
+    "code-review@ancplua-claude-plugins",
+    "autonomous-ci@ancplua-claude-plugins"
+  ],
+  "checks": {
+    "structure": {
+      "enabled": true,
+      "rules": {
+        "requiredFiles": ["README.md", "LICENSE"],
+        "requiredDirs": ["src", "tests"],
+        "forbiddenPatterns": ["node_modules", ".env"]
+      }
+    },
+    "documentation": {
+      "enabled": true,
+      "rules": {
+        "readmeMinSections": 3,
+        "requireChangelog": true,
+        "requireContributing": false
+      }
+    },
+    "codeQuality": {
+      "enabled": true,
+      "rules": {
+        "minTestCoverage": 80,
+        "maxFunctionLength": 50,
+        "maxFileLength": 500
+      }
+    },
+    "dependencies": {
+      "enabled": true,
+      "rules": {
+        "allowMajorUpdates": false,
+        "checkVulnerabilities": true,
+        "checkLicenses": true
+      }
+    },
+    "security": {
+      "enabled": true,
+      "rules": {
+        "scanSecrets": true,
+        "checkAuth": true,
+        "requireSecurityPolicy": false
+      }
+    }
+  },
+  "output": {
+    "format": "markdown",
+    "destination": "stdout",
+    "verbose": false
+  }
+}

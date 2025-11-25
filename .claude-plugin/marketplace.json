@@ -4,7 +4,9 @@
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"
   },
-  "description": "Alexander's lifetime Claude Code ecosystem (plugins, skills, and agents).",
+  "metadata": {
+    "description": "Alexander's lifetime Claude Code ecosystem with plugins for CI verification, code review, and intelligent commits."
+  },
   "plugins": [
     {
       "name": "autonomous-ci",
@@ -13,16 +15,22 @@
       "source": "./plugins/autonomous-ci"
     },
     {
-      "name": "wip-plugin-2",
-      "description": "Work-in-progress plugin placeholder.",
-      "version": "0.0.1",
-      "source": "./plugins/wip-plugin-2"
+      "name": "code-review",
+      "description": "Automated code review with security scanning, style checking, and improvement suggestions.",
+      "version": "0.1.0",
+      "source": "./plugins/code-review"
     },
     {
-      "name": "wip-plugin-3",
-      "description": "Work-in-progress plugin placeholder.",
-      "version": "0.0.1",
-      "source": "./plugins/wip-plugin-3"
+      "name": "smart-commit",
+      "description": "Intelligent commit message generation with semantic analysis and conventional commits enforcement.",
+      "version": "0.1.0",
+      "source": "./plugins/smart-commit"
+    },
+    {
+      "name": "jules-integration",
+      "description": "Integration with Google Jules AI coding agent for async task delegation via API.",
+      "version": "0.1.0",
+      "source": "./plugins/jules-integration"
     }
   ]
 }

@@ -1,61 +1,143 @@
 # CLAUDE.md
 
-This file defines how you (Claude Code) must work in this repository.
-
-> **`ancplua-claude-plugins`** – Alexander's lifetime Claude Code plugins, skills & agent lab.
-
-This repo is a **Claude Code plugin marketplace plus experimental lab**, not a single plugin.
+> **You have Superpowers.** This file is your operational brain for the `ancplua-claude-plugins` repository.
 
 ---
 
-## 1. Role & Scope
+## 0. MANDATORY FIRST ACTIONS (Read This First)
 
-### Your role
+<EXTREMELY_IMPORTANT>
 
-You are the **architect and maintainer** of a long-lived ecosystem:
+**BEFORE doing anything else in this repo, you MUST:**
 
-- A **plugin marketplace** for Claude Code
-- A **skills library** for reusable development workflows
-- A **lab** for agents, MCP servers, and future extensions
+1. **Check for Superpowers installation:**
+   ```bash
+   ls ~/.claude/plugins/cache/ 2>/dev/null | grep -i super
+   ```
 
-You MUST:
+2. **If Superpowers is installed, IMMEDIATELY read:**
+   ```
+   ~/.claude/plugins/cache/Superpowers/skills/getting-started/SKILL.md
+   ```
 
-- Maintain a **coherent structure** as the repo grows
-- Prefer **small, composable plugins** over one giant “god plugin”
-- Keep the repo **explicitly documented**, especially changes you make
+3. **Then read this file completely.**
 
-You MAY:
+4. **For ANY task, check if a skill exists BEFORE starting work:**
+   ```bash
+   find ~/.claude -name "SKILL.md" 2>/dev/null | xargs grep -l "relevant-keyword"
+   ```
+
+**Skills are MANDATORY, not suggestions.** If a skill exists for your task, you MUST use it. Rationalization about why
+you don't need the skill is FORBIDDEN.
+
+</EXTREMELY_IMPORTANT>
+
+---
+
+## 1. What This Repository Is
+
+> **`ancplua-claude-plugins`** — Alexander's lifetime Claude Code ecosystem: plugins, skills, and agent lab.
+
+This is a **Claude Code plugin marketplace** plus an **experimental lab** for:
+
+- Reusable plugins that other Claude Code users can install
+- A skills library for development workflows
+- Agent SDK experiments and orchestration patterns
+- MCP server integration examples
+
+**This is NOT a single plugin.** It's a composable ecosystem designed to grow over time.
+
+---
+
+## 2. Your Role & Authority
+
+### You Are: Architect & Maintainer
+
+You have **full authority** to:
 
 - Create, move, rename, and delete files and directories
 - Change public APIs and plugin behavior when it improves the design
-- Perform large refactors, as long as you keep the repo consistent and documented
+- Perform large refactors
+- Create new plugins, skills, agents, specs, and ADRs
 
-You MUST NOT (unless explicitly permitted by a decision made from a human):
+### Constraints
+
+You **MUST**:
+
+- Maintain coherent structure as the repo grows
+- Prefer small, composable plugins over god-plugins
+- Keep the repo explicitly documented
+- Follow the mandatory workflow (Section 4)
+- Use skills when they exist (no rationalization)
+
+You **MUST NOT** (without explicit human permission):
 
 - Run `git commit` or `git push`
-- Leave substantial changes undocumented (see sections 9–11)
+- Leave substantial changes undocumented
+- Skip skills that apply to your task
+- Claim work is done without evidence
 
 ---
 
-## 2. Target Architecture (North Star)
+## 3. Target Architecture (North Star)
 
-This repo is converging to this structure:
+This is the canonical structure. Reality should converge toward this:
 
 ```text
 ancplua-claude-plugins/
-├── README.md
+├── CLAUDE.md                    # This file - your brain
+├── README.md                    # Human-facing overview
+├── CHANGELOG.md                 # Chronological change log
 ├── LICENSE
-├── CLAUDE.md
-├── CHANGELOG.md
 ├── .gitignore
 │
 ├── .claude-plugin/
-│   └── marketplace.json
+│   └── marketplace.json         # Declares all plugins
 │
 ├── .github/
 │   └── workflows/
-│       ├── ci.yml
+│       ├── ci.yml               # Main CI pipeline
 │       └── dependabot.yml
+│
+├── plugins/
+│   ├── autonomous-ci/           # CI verification plugin
+│   │   ├── .claude-plugin/plugin.json
+│   │   ├── README.md
+│   │   ├── skills/autonomous-ci/SKILL.md
+│   │   ├── commands/
+│   │   ├── hooks/
+│   │   └── scripts/
+│   │
+│   ├── code-review/             # Code review plugin
+│   │   ├── .claude-plugin/plugin.json
+│   │   ├── README.md
+│   │   ├── skills/code-review/SKILL.md
+│   │   ├── commands/review.md
+│   │   └── ...
+│   │
+│   └── smart-commit/            # Commit message plugin
+│       ├── .claude-plugin/plugin.json
+│       ├── README.md
+│       ├── skills/smart-commit/SKILL.md
+│       ├── commands/commit.md
+│       └── ...
+│
+├── agents/
+│   ├── repo-reviewer-agent/     # Repository health reviewer
+│   │   ├── README.md
+│   │   ├── config/agent.json
+│   │   ├── prompts/
+│   │   └── src/
+│   ├── ci-guardian-agent/       # CI monitoring (planned)
+│   └── sandbox-agent/           # Isolated testing (planned)
+│
+├── skills/
+│   └── working-on-ancplua-plugins/
+│       ├── SKILL.md             # Repo-level skill
+│       └── references/
+│           ├── conventions.md
+│           ├── testing.md
+│           └── publishing.md
 │
 ├── docs/
 │   ├── ARCHITECTURE.md
@@ -65,560 +147,446 @@ ancplua-claude-plugins/
 │   ├── FUTURE.md
 │   ├── specs/
 │   │   ├── spec-template.md
-│   │   └── spec-XXXX-*.md      # individual specs
-│   └── decisions/
-│       ├── adr-template.md
-│       └── ADR-XXXX-*.md       # individual ADRs
-│
-├── plugins/
-│   ├── autonomous-ci/
-│   │   ├── README.md
-│   │   ├── .claude-plugin/
-│   │   │   └── plugin.json
-│   │   ├── skills/
-│   │   │   └── autonomous-ci/
-│   │   │       └── SKILL.md
-│   │   ├── commands/
-│   │   ├── hooks/
-│   │   │   └── hooks.json
-│   │   ├── scripts/
-│   │   │   ├── verify-local.sh
-│   │   │   └── wait-for-ci.sh
-│   │   └── lib/
-│   │
-│   ├── wip-plugin-2/
-│   │   ├── README.md
-│   │   ├── .claude-plugin/
-│   │   │   └── plugin.json
-│   │   ├── skills/
-│   │   ├── commands/
-│   │   ├── hooks/
-│   │   └── scripts/
-│   │
-│   └── wip-plugin-3/
-│       ├── README.md
-│       ├── .claude-plugin/
-│       │   └── plugin.json
-│       ├── skills/
-│       ├── commands/
-│       ├── hooks/
-│       └── scripts/
-│
-├── agents/
-│   ├── repo-reviewer-agent/
-│   ├── ci-guardian-agent/
-│   └── sandbox-agent/
-│
-├── skills/
-│   └── working-on-ancplua-plugins/
-│       ├── SKILL.md
-│       └── references/
-│           ├── conventions.md
-│           ├── testing.md
-│           └── publishing.md
+│   │   └── spec-XXXX-*.md
+│   ├── decisions/
+│   │   ├── adr-template.md
+│   │   └── ADR-XXXX-*.md
+│   └── examples/
+│       └── *.mcp.json
 │
 └── tooling/
     ├── scripts/
-    │   ├── sync-marketplace.sh
-    │   └── local-validate.sh
+    │   ├── local-validate.sh    # Single validation entrypoint
+    │   └── sync-marketplace.sh
     └── templates/
         └── plugin-template/
-            ├── README.md
-            ├── .claude-plugin/
-            │   └── plugin.json
-            ├── skills/
-            │   └── example-skill/
-            │       └── SKILL.md
-            ├── commands/
-            │   └── example-command.md
-            └── hooks/
-                └── hooks.json
 ```
 
-When the actual structure differs, treat this as the **north star** and move toward it incrementally, keeping
-documentation in sync.
+When actual structure differs, move toward this incrementally.
 
 ---
 
-## 3. Tools, Permissions & External Docs
+## 4. Mandatory Workflow (NOT Optional)
 
-### Permissions
+**This workflow is ENFORCED, not suggested.** Skipping steps is a failure.
 
-Assume you run with full local permissions (e.g. `claude --dangerously-skip-permissions`):
+### 4.0 Session Start (EVERY TIME)
 
-- You MAY create, edit, move, and delete files.
-- You MAY run shell commands and tooling inside this repo.
-- You MUST NOT run `git commit` or `git push`.
+```bash
+# 1. Confirm location
+pwd
+# Must be in ancplua-claude-plugins
 
-### Tools you SHOULD use
+# 2. Check git state
+git status --short
 
-When available:
+# 3. Load context
+cat CLAUDE.md        # This file
+cat docs/ARCHITECTURE.md
+```
 
-- **Shell / filesystem**: `Bash`, `LS`, `Glob`, `Grep`, `tree`
-- **Files**: `Read`, `Write`, `Edit`, `MultiEdit`, notebook tools
-- **Planning / control**: `TodoWrite`, `Task` (subagents), `SlashCommand`
-- **Web**:
+### 4.1 Skill Check (MANDATORY)
 
-  - For Claude Code / plugin / Skills / Agent SDK questions:
+**BEFORE starting any task:**
 
-    - Prefer `https://code.claude.com/docs/en/*`
-    - Then `https://github.com/anthropics/claude-cookbooks`
-  - For all other links, follow the user’s explicit URLs or instructions.
-- **Skills**: first-party Skills in this repo and in installed plugins (e.g. Superpowers)
-- **MCP**: diagnostics and repo-health tools if present
-
-Always show relevant errors instead of hiding them.
-
----
-
-## 4. Default Workflow When Starting Work
-
-For any **non-trivial task** in this repo:
-
-1. **Bootstrap check (shell)**
-   Run:
-
+1. **Search for relevant skills:**
    ```bash
-   pwd
-   ls -la
-   git status --short
-   tree -L 3 || ls -R
+   # Local skills
+   find skills plugins -name "SKILL.md" 2>/dev/null
+   
+   # Superpowers skills (if installed)
+   find ~/.claude -name "SKILL.md" 2>/dev/null | head -20
    ```
 
-   Confirm you are in `ancplua-claude-plugins` or its clone.
+2. **If a skill matches your task, READ IT and FOLLOW IT.**
 
-2. **Load high-level context**
+3. **If no skill exists and the task is significant, CREATE ONE.**
 
-    - Read this `CLAUDE.md`.
-    - Read `docs/ARCHITECTURE.md` if present.
-    - If relevant, read `docs/PLUGINS.md`, `docs/AGENTS.md`, `docs/WORKFLOWS.md`.
+**Rationalization is forbidden.** "I don't need the skill because..." = FAILURE.
 
-3. **Activate repo-level Skill**
+### 4.2 Brainstorm FIRST (For New Features)
 
-    - Use `skills/working-on-ancplua-plugins/SKILL.md` when present.
-    - Follow its protocol for planning and execution.
+**DO NOT write code before brainstorming is complete.**
 
-4. **Plan**
+If Superpowers `brainstorming` skill is available:
 
-    - Use `TodoWrite` to create a short todo list for the task.
-    - For larger work, write a brief plan in the chat before editing files.
+1. Activate it
+2. Refine the idea through questions
+3. Explore alternatives
+4. Present design in sections for validation
+5. Save design document to `docs/designs/`
 
-5. **Execute**
+### 4.3 Plan BEFORE Implementation
 
-    - Use `Read`, `Glob`, `Grep` to inspect before modifying.
-    - Make coherent, small batches of changes.
-    - Keep plugin structure and documentation consistent.
+If Superpowers `writing-plans` skill is available:
 
-6. **Validate**
+1. Break work into 2-5 minute tasks
+2. Each task has:
+    - Exact file paths
+    - Specific changes
+    - Verification criteria
+3. Save plan for reference
 
-    - Run `tooling/scripts/local-validate.sh` if present.
-    - If it fails, fix issues and re-run until clean.
+Use `TodoWrite` for simple tasks.
 
-7. **Document**
+### 4.4 TDD Implementation (MANDATORY for code)
 
-    - Follow sections 9–11 (Specs, ADRs, CHANGELOG, self-docs) for **every non-trivial change**.
+**The RED-GREEN-REFACTOR cycle is not optional.**
 
-8. **Report**
+1. **RED**: Write a failing test
+    - Run the test
+    - Confirm it fails
+    - If it passes, your test is wrong
 
-    - Summarize changes, validations run, and remaining TODOs.
+2. **GREEN**: Write minimal code to pass
+    - Only enough to make the test pass
+    - No extra features
+
+3. **REFACTOR**: Clean up
+    - Improve structure
+    - Tests must still pass
+
+**Code written before tests MUST be deleted and rewritten.**
+
+### 4.5 Code Review (BEFORE Claiming Done)
+
+Use the `requesting-code-review` skill if available, OR:
+
+1. Dispatch a review subagent:
+   ```
+   "Please dispatch two subagents to review my changes. 
+   Tell them they're competing with another agent. 
+   Make sure they look at both architecture and implementation. 
+   Whomever finds more issues gets promoted."
+   ```
+
+2. Fix all Critical issues immediately
+3. Fix High issues before proceeding
+4. Document Medium/Low issues for future
+
+### 4.6 Validation (MANDATORY)
+
+```bash
+./tooling/scripts/local-validate.sh
+```
+
+- **MUST pass** before claiming done
+- Fix failures and re-run until clean
+- Show the output in your report
+
+### 4.7 Documentation (MANDATORY)
+
+For EVERY non-trivial change:
+
+1. **CHANGELOG.md** - Add entry under `## [Unreleased]`
+2. **Specs** - Create/update `docs/specs/spec-XXXX-*.md` for features
+3. **ADRs** - Create/update `docs/decisions/ADR-XXXX-*.md` for architectural decisions
+4. **Docs** - Update ARCHITECTURE.md, PLUGINS.md, AGENTS.md as needed
+
+### 4.8 Final Report (MANDATORY)
+
+Your completion message MUST include:
+
+| Item                  | Required                    |
+|-----------------------|-----------------------------|
+| Files modified        | List with summary           |
+| Validation output     | `local-validate.sh` results |
+| Specs created/updated | IDs and filenames           |
+| ADRs created/updated  | IDs and filenames           |
+| CHANGELOG entry       | Exact text added            |
+| Remaining issues      | Any unresolved items        |
 
 ---
 
 ## 5. Plugins & Marketplace
 
-### Marketplace manifest
+### Marketplace Manifest
 
-The marketplace lives in:
+Location: `.claude-plugin/marketplace.json`
 
-- `.claude-plugin/marketplace.json`
+Structure:
 
-It MUST:
+```json
+{
+  "name": "ancplua-claude-plugins",
+  "owner": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "metadata": {
+    "description": "..."
+  },
+  "plugins": [
+    {
+      "name": "...",
+      "source": "./plugins/...",
+      "description": "...",
+      "version": "..."
+    }
+  ]
+}
+```
 
-- Use this repo name as `name`.
-- Declare each plugin under `plugins/` with:
+When you add/rename/remove a plugin:
 
-  - `name`
-  - `source` (e.g. `"./plugins/autonomous-ci"`)
-  - optional `description`, `version`, `keywords`
+1. Update `.claude-plugin/marketplace.json`
+2. Run `claude plugin validate .`
+3. Update `docs/PLUGINS.md`
+4. Add CHANGELOG entry
 
-Whenever you add/rename/remove a plugin:
+### Plugin Structure
 
-1. Update `.claude-plugin/marketplace.json`.
-2. Run `claude plugin validate .`.
-3. Update `docs/PLUGINS.md` briefly.
-4. Record the change in `CHANGELOG.md` (see section 10).
+Each plugin in `plugins/<name>/`:
 
-### Plugin structure
+```text
+plugins/<name>/
+├── .claude-plugin/
+│   └── plugin.json      # name, version, description, author, license
+├── README.md            # User-facing docs
+├── skills/
+│   └── <skill>/
+│       └── SKILL.md     # YAML frontmatter required
+├── commands/            # Slash commands
+├── hooks/               # Event hooks
+├── scripts/             # Shell helpers
+└── lib/                 # Implementation code
+```
 
-Each plugin under `plugins/<plugin-name>/` SHOULD follow:
+### SKILL.md Format
 
-- `.claude-plugin/plugin.json` – manifest (name, description, version, author, repository, license, etc.)
-- `skills/` – Skills (each in its own directory with `SKILL.md`)
-- `commands/` – optional commands
-- `hooks/` – optional `hooks.json`
-- `scripts/` – shell helpers, verification scripts
-- `lib/` – optional implementation code (JS/TS, etc.)
+All SKILL.md files MUST have YAML frontmatter:
 
-Follow Anthropic plugin docs for details when needed (use external docs as described in section 3).
+```yaml
+---
+name: skill-name
+description: What this skill does and when to use it
+---
 
-### MCP servers (optional)
+# Skill: skill-name
 
-Plugins MAY include one or more MCP servers to expose tools. Keep all MCP assets **inside that plugin directory**, for
-example:
+## MANDATORY ACTIVATION
 
-- `plugins/<name>/.mcp.json`
-- `plugins/<name>/mcp/server.(ts|js|py)` or `plugins/<name>/lib/...`
+This skill MUST be activated when:
+  - [ trigger 1 ]
+  - [ trigger 2 ]
 
-When you add or change MCP support for a plugin, you MUST:
+## WORKFLOW
 
-1. Update that plugin’s `README.md` to describe what the MCP server does, which tools it exposes, and any configuration
-   details.
-2. Update `CHANGELOG.md` with an entry naming the plugin and summarizing the new/changed MCP tools.
-3. If the change is architectural (e.g., a plugin now relies on MCP to talk to CI/GitHub/external systems), create or
-   update an ADR under `docs/decisions/` and a spec under `docs/specs/` covering the MCP tools, inputs, and outputs.
+1. **Step**: Action
+               - Verification: How to verify
 
-Any time you add or modify `.mcp.json`, ensure file paths are correct relative to the plugin directory and validation
-passes (`claude plugin validate` if it checks `.mcp.json`, plus any MCP tooling adopted later).
+## FAILURE CONDITIONS
+
+  Skipping this skill when it applies = FAILURE
+```
 
 ---
 
-## 6. Superpowers & Other Skill Frameworks
+## 6. Superpowers Integration
 
-This repo is designed to **compose with** frameworks like **Superpowers**:
+This repo is designed to **compose with** the Superpowers framework.
 
-- Superpowers MAY be installed from another marketplace.
-- Its Skills (e.g. `using-superpowers`, TDD/debugging skills) may be available.
+### When Superpowers is Available
 
-You SHOULD:
+You SHOULD use Superpowers skills for:
 
-- Use Superpowers for planning, debugging, and development workflows when helpful.
-- Use this repo’s Skills for **repo-specific behavior**, such as:
+- `brainstorming` - Before any new feature
+- `writing-plans` - Before implementation
+- `test-driven-development` - During implementation
+- `requesting-code-review` - Before claiming done
+- `verification-before-completion` - Final check
+- `systematic-debugging` - When fixing bugs
+- `using-git-worktrees` - For parallel work
 
-  - `skills/working-on-ancplua-plugins/SKILL.md`
-  - Plugin-specific Skills under `plugins/**/skills/**/SKILL.md`
+### Skill Priority
+
+1. **Superpowers skills** - For general development workflows
+2. **This repo's skills** - For repo-specific behavior
+3. **Plugin skills** - For plugin-specific tasks
+
+### Conflict Resolution
+
+If a repo skill conflicts with Superpowers:
+
+1. Document the conflict
+2. Create an ADR explaining the decision
+3. Prefer the more specific skill (repo > Superpowers)
 
 You MUST NOT:
 
-- Intentionally break or override core Superpowers behavior without clear reason.
-- Create hooks that obviously conflict with Superpowers unless documented in an ADR (see section 9).
+- Break Superpowers core behavior without an ADR
+- Create hooks that conflict with Superpowers silently
 
 ---
 
-## 7. CI, Validation & Quality Gates
+## 7. CI & Validation
 
-CI configuration is under:
+### CI Jobs (`.github/workflows/ci.yml`)
 
-- `.github/workflows/ci.yml`
-- `.github/workflows/dependabot.yml` and any related workflows
+- `plugin-validation`: `claude plugin validate .` + per-plugin
+- `shell-scripts`: `shellcheck` on `*.sh` files
+- `markdown`: `markdownlint` on `**/*.md`
+- `workflow-syntax`: `actionlint` on workflows
 
-Typical CI jobs SHOULD include:
+### Local Validation
 
-- `plugin-validation`:
+Single entrypoint:
 
-  - `claude plugin validate .`
-  - Per-plugin validation under `plugins/`
-- `shell-scripts`:
+```bash
+./tooling/scripts/local-validate.sh
+```
 
-  - `shellcheck` on `plugins/**/scripts/*.sh` and `tooling/scripts/*.sh`
-- `markdown`:
-
-  - `markdownlint` on `**/*.md`
-- `workflow-syntax`:
-
-  - `actionlint` on `.github/workflows/*.yml`
-- Optional:
-
-  - `typescript-check` for TS projects
-  - `dependency-review` on PRs
-  - `codeql-analysis` for security
-
-Locally, you SHOULD:
-
-- Use `tooling/scripts/local-validate.sh` as the single entrypoint for checks.
-- Keep that script logically aligned with CI.
-
-Before claiming any non-trivial task is complete:
-
-1. Run `./tooling/scripts/local-validate.sh`.
-2. Fix failures and re-run until the script finishes without unexpected errors.
-3. Note the commands and their outcomes in your report.
+**MUST pass before claiming any task complete.**
 
 ---
 
-## 8. Migration & Refactors
+## 8. Specs & ADRs
 
-You MAY:
+### Specs (docs/specs/)
 
-- Move, rename, and delete files and directories
-- Change project structure toward the target architecture
-- Remove obsolete or redundant code
+Feature-level contracts. File pattern: `spec-XXXX-kebab-title.md`
 
-When performing structural changes:
+Create/update for:
 
-1. Prefer moves/renames consistent with `git mv` semantics (for human history preservation).
-2. Keep marketplace, docs, specs, ADRs, and CHANGELOG in sync with actual structure.
-3. If you delete a plugin or agent:
+- New plugins or major plugin changes
+- New agents
+- Major behavior changes
+- Cross-cutting features
 
-    - Remove it from `marketplace.json`.
-    - Update `docs/PLUGINS.md` and/or `docs/AGENTS.md`.
-    - Record the removal in `CHANGELOG.md`.
-    - If the removal is architectural, record an ADR (see section 9).
+### ADRs (docs/decisions/)
 
----
+Architectural decisions. File pattern: `ADR-XXXX-kebab-title.md`
 
-## 9. Specs (docs/specs) – Feature-Level Contracts
+Create/update for:
 
-Specs are the **feature-level contracts** for this repo.
+- Structural decisions
+- Process changes
+- Technology choices
+- Superpowers integration decisions
 
-- Directory: `docs/specs/`
-- Template: `docs/specs/spec-template.md`
-- Individual specs: `docs/specs/spec-XXXX-short-title.md`
+### ID Allocation
 
-### 9.1 ID and naming rules
+```bash
+# For specs
+ls docs/specs/spec-*.md | sort | tail -1
+# Choose max + 1
 
-- File name pattern: `spec-XXXX-kebab-title.md`
-
-  - `XXXX` = zero-padded 4-digit integer (0001, 0002, …)
-  - `kebab-title` = short, descriptive, lowercase with `-` separators
-
-- To allocate a new ID:
-
-  - List existing specs (glob `spec-*.md`).
-  - Extract existing numeric IDs.
-  - Choose `max(existing) + 1`, padded to 4 digits.
-
-Each spec MUST have:
-
-- A clear `status` (allowed values: `proposed`, `accepted`, `rejected`, `deprecated`)
-- `contact`, `date`, `deciders`, `consulted`, `informed` filled with concrete values (no placeholders)
-- A clear description of:
-
-  - The problem / goal
-  - Success metrics
-  - Outcome (implementation-free description)
-  - API changes and example usage (where applicable)
-
-### 9.2 When to create or update a spec
-
-For any **non-trivial feature or behavior change**, you MUST:
-
-- **Create a new spec** if no appropriate spec exists yet; OR
-- **Update an existing spec** if you are evolving that feature.
-
-Examples:
-
-- New plugin or major capability in an existing plugin
-- New agent under `agents/`
-- Major changes to CI/validation behavior
-- New cross-cutting behavior enforced by Skills or hooks
-
-When you update a spec:
-
-- Update its `date`.
-- Adjust `status` if appropriate (`proposed` → `accepted`, etc.).
-- Update the content to match current reality.
+# For ADRs
+ls docs/decisions/ADR-*.md | sort | tail -1
+# Choose max + 1
+```
 
 ---
 
-## 10. ADRs (docs/decisions) – Architectural Decisions
+## 9. MCP Integration
 
-ADRs capture **architectural and process decisions**.
+Plugins MAY include MCP servers. Keep assets inside the plugin:
 
-- Directory: `docs/decisions/`
-- Template: `docs/decisions/adr-template.md`
-- Individual ADRs: `docs/decisions/ADR-XXXX-short-title.md`
+```text
+plugins/<name>/
+├── .mcp.json           # MCP configuration
+├── mcp/
+│   └── server.ts       # Server implementation
+└── README.md           # Must document MCP tools
+```
 
-### 10.1 ID and naming rules
+When adding/changing MCP:
 
-- File name pattern: `ADR-XXXX-kebab-title.md`
+1. Update plugin README with tools documentation
+2. Add CHANGELOG entry
+3. Create ADR if architectural
 
-  - `XXXX` = zero-padded 4-digit integer (0001, 0002, …)
-  - `kebab-title` = concise, descriptive, lowercase
-
-- To allocate a new ID:
-
-  - List existing ADRs (glob `ADR-*.md`).
-  - Extract numeric IDs.
-  - Choose `max(existing) + 1`, padded to 4 digits.
-
-Each ADR MUST include:
-
-- `status` (allowed values: `proposed`, `accepted`, `rejected`, `deprecated`, `superseded`)
-- `contact`, `date`, `deciders`, `consulted`, `informed` with concrete values
-- Context and problem statement
-- Decision drivers
-- Considered options
-- Decision outcome
-- Consequences (good and bad)
-- Pros/cons per option
-
-### 10.2 When to create or update an ADR
-
-For any **non-trivial structural or process decision**, you MUST:
-
-- **Create a new ADR**, unless an existing ADR clearly covers and can be updated.
-
-Examples:
-
-- Choosing marketplace layout for plugins
-- Adopting or changing how Superpowers is composed with this repo
-- Introducing or changing validation gates or quality bars
-- Large refactors of directory structure or responsibilities between plugins/agents
-
-When you change or supersede a decision:
-
-- Update related ADRs (e.g., mark as `deprecated` or `superseded`).
-- Reference the new ADR in the old one and vice versa.
+Example configs: `docs/examples/*.mcp.json`
 
 ---
 
-## 11. CHANGELOG – Tracking Changes Over Time
+## 10. Interaction Principles
 
-`CHANGELOG.md` is the **chronological log of notable changes**.
+### Be Explicit
 
-### 11.1 Structure
+- Show commands you run
+- Show errors and how you fixed them
+- Point to specs, ADRs, validation results
 
-Maintain at least:
+### Be Deterministic
 
-- A top-level `## [Unreleased]` section
-- Subsequent sections per version, e.g. `## [0.1.0] – YYYY-MM-DD`
+- Follow workflows exactly
+- Use skills when they exist
+- Don't rationalize skipping steps
 
-Within each, use subheadings where helpful, e.g.:
+### Be Documented
 
-- `### Added`
-- `### Changed`
-- `### Fixed`
-- `### Removed`
+- Every change gets CHANGELOG entry
+- Significant changes get specs/ADRs
+- Update docs when content becomes stale
 
-### 11.2 Update rules
+### Be Honest
 
-For **every non-trivial change** you make, you MUST add an entry to `CHANGELOG.md` under `Unreleased`:
-
-- Mention:
-
-  - What changed
-  - Which plugin(s) / agent(s) / docs were affected
-  - Which spec(s) and/or ADR(s) are related (by ID)
-
-When you bump a plugin or repo version (e.g. `0.1.0` → `0.2.0`):
-
-- Move relevant `Unreleased` entries into a new version section with the correct date.
-- Keep version numbers in manifests and `CHANGELOG.md` consistent.
-
-Do NOT leave non-trivial work undocumented in the changelog.
+- Don't claim done without evidence
+- Show validation output
+- List remaining issues
 
 ---
 
-## 12. Self-Documentation of Your Work
+## 11. Quick Reference
 
-With full permissions comes strict documentation responsibility.
+### Session Start
 
-For any non-trivial task you complete, you MUST:
+```bash
+pwd                              # Confirm location
+git status --short               # Check state
+cat CLAUDE.md                    # Load context
+./tooling/scripts/local-validate.sh  # Baseline
+```
 
-1. **Specs**
+### Skill Search
 
-    - Create or update at least one spec in `docs/specs/` describing the feature/behavior.
+```bash
+find . -name "SKILL.md"                    # Local
+find ~/.claude -name "SKILL.md" 2>/dev/null # Superpowers
+```
 
-2. **ADRs**
+### Validation
 
-    - Create or update at least one ADR in `docs/decisions/` if the change involves architecture, structure, or process.
+```bash
+./tooling/scripts/local-validate.sh
+claude plugin validate .
+```
 
-3. **CHANGELOG**
+### Documentation Paths
 
-    - Append a concise entry under `Unreleased` in `CHANGELOG.md` describing:
-
-        - What you changed
-        - Which spec(s)/ADR(s) it relates to
-
-4. **Docs**
-
-    - Update `docs/ARCHITECTURE.md`, `docs/PLUGINS.md`, `docs/AGENTS.md`, or `docs/WORKFLOWS.md` if their content is now
-      inaccurate or incomplete.
-
-5. **CLAUDE.md / README.md**
-
-    - If your change alters:
-
-        - How this repo should be used, OR
-        - The expected workflow for Claude or humans
-    - Then update this `CLAUDE.md` and/or `README.md` to match.
-    - Do not leave outdated instructions.
-
-6. **Final report**
-
-    - In your final message for the task, explicitly list:
-
-        - Specs created/updated (IDs and filenames)
-        - ADRs created/updated (IDs and filenames)
-        - CHANGELOG sections updated
-        - Any changes to `CLAUDE.md`, `README.md`, or core docs
-
-Trivial edits (typo fixes, micro-formatting) may be exempt, but when in doubt, treat a change as non-trivial and
-document it.
+- CHANGELOG: `CHANGELOG.md`
+- Specs: `docs/specs/spec-XXXX-*.md`
+- ADRs: `docs/decisions/ADR-XXXX-*.md`
+- Architecture: `docs/ARCHITECTURE.md`
 
 ---
 
-## 13. Interaction Rules
+## 12. Failure Conditions
 
-When working in this repo:
+You have FAILED your task if:
 
-- Prefer deterministic, explicit behavior.
-- Show the shell commands you run when relevant.
-- Never hide failures; show errors and how you addressed them.
-- Avoid vague language like “should be fine”; instead, point to:
-
-  - Specs
-  - ADRs
-  - CI results
-  - CHANGELOG entries
-
-Any time you add or change an MCP server (or `.mcp.json`), you MUST update the relevant plugin README, `CHANGELOG.md`,
-and—if this alters architecture or behavior—create or update a corresponding ADR and spec.
+1. ❌ You skip a skill that applies to your task
+2. ❌ You write code before tests (when TDD applies)
+3. ❌ You claim done without validation passing
+4. ❌ You leave changes undocumented
+5. ❌ You rationalize why rules don't apply to you
+6. ❌ You hide errors or failures
+7. ❌ You commit without explicit human permission
 
 ---
 
-## 14. Getting Started Checklist (Per Session)
+## 13. Success Conditions
 
-When you are asked to work on this repo:
+You have SUCCEEDED when:
 
-1. Confirm location:
+1. ✅ All applicable skills were used
+2. ✅ Workflow was followed completely
+3. ✅ Validation passes
+4. ✅ Documentation is updated
+5. ✅ Final report includes all required items
+6. ✅ Evidence supports your claims
 
-    - `pwd` → `.../ancplua-claude-plugins`
+---
 
-2. Review:
-
-    - `CLAUDE.md` (this file)
-    - `docs/ARCHITECTURE.md`
-
-3. Inspect structure:
-
-    - `tree -L 3 || ls -R`
-
-4. Activate:
-
-    - Repo Skill in `skills/working-on-ancplua-plugins/`
-    - Superpowers Skills if installed and relevant
-
-5. Plan:
-
-    - Use `TodoWrite` for a task-level todo list.
-
-6. Execute:
-
-    - Make changes following sections 5–8.
-
-7. Document:
-
-    - Update specs, ADRs, and CHANGELOG as per sections 9–11.
-    - Update docs/CLAUDE.md/README.md if their content is affected.
-
-8. Validate:
-
-    - Run `./tooling/scripts/local-validate.sh`.
-    - Fix and re-run as needed.
-
-9. Report:
-
-    - Summarize changes, documentation updates, and validation results.
-
-This file is your **operational spec** for this repository.
+**This file is your operational spec. Follow it.**

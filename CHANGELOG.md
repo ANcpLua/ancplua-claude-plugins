@@ -8,13 +8,118 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **Jules AI integration (2025-11-25):**
+  - `AGENTS.md` (repo root) - Context file for Jules and external agents
+  - `plugins/jules-integration/` - New plugin for Google Jules AI delegation
+    - `.claude-plugin/plugin.json` - Plugin manifest v0.1.0
+    - `skills/jules-integration/SKILL.md` - When/how to delegate to Jules
+    - `commands/jules.md` - `/jules` command for task creation
+    - `scripts/jules-session.sh` - Shell script for API calls
+    - `README.md` - Installation and usage documentation
+  - `.github/workflows/jules-review.yml` - GitHub Actions workflow for Jules API
+  - `agents/AGENTS_BASE.md` - Shared foundation prompt for all agents
+  - `docs/specs/spec-0004-jules-integration.md` - Jules integration spec
+  - `docs/decisions/ADR-0003-jules-agent-delegation.md` - Decision record
+  - Updated `.claude-plugin/marketplace.json` with jules-integration plugin
+  - **Key finding:** `jules.yml` does NOT exist; Jules reads `AGENTS.md`
+
+- **Cross-repo contract specification (2025-11-25):**
+  - `docs/specs/spec-0003-cross-repo-contracts.md` - Defines "THE LAW" for coordination with `ancplua-mcp`
+  - Spec ID range allocation: 0001-0099 for plugins, 0100-0199 for mcp, 0200+ for cross-repo
+  - ADR ID range allocation follows same pattern
+  - Documented known violations in ancplua-mcp requiring remediation
+  - Type A (Application) vs Type T (Technology) boundary definitions
+
+### Fixed
+
+- **Duplicate template files removed (2025-11-25):**
+  - Removed `docs/specs/spec-0001-marketplace-framework.md` (was template with duplicate ID)
+  - Cleaned up orphaned template files disguised as specs/ADRs
+
+- **ADR consolidation (2025-11-25):**
+  - Merged duplicate `ADR-0001-marketplace-layout.md` and `ADR-0001-repository-as-marketplace.md`
+  - Created canonical `ADR-0001-marketplace-architecture.md`
+
+- **SKILL.md frontmatter compliance (2025-11-25):**
+  - Added YAML frontmatter to `skills/working-on-ancplua-plugins/SKILL.md`
+  - Added frontmatter to `tooling/templates/plugin-template/skills/example-skill/SKILL.md`
+
+- **Markdown lint fixes (2025-11-25):**
+  - Fixed duplicate `### Fixed` headings in CHANGELOG.md (MD024)
+
+### Added (previously)
+
+- **New plugins with full implementations (2025-11-24):**
+  - `smart-commit` plugin (transformed from `wip-plugin-2`):
+    - `plugins/smart-commit/.claude-plugin/plugin.json` - Plugin manifest v0.1.0
+    - `plugins/smart-commit/skills/smart-commit/SKILL.md` - Semantic commit message Skill
+    - `plugins/smart-commit/commands/commit.md` - `/commit` slash command
+    - `plugins/smart-commit/README.md` - Full documentation
+  - `code-review` plugin (transformed from `wip-plugin-3`):
+    - `plugins/code-review/.claude-plugin/plugin.json` - Plugin manifest v0.1.0
+    - `plugins/code-review/skills/code-review/SKILL.md` - Code review Skill
+    - `plugins/code-review/commands/review.md` - `/review` slash command
+    - `plugins/code-review/README.md` - Full documentation
+- **First agent stub (2025-11-24):**
+  - `agents/repo-reviewer-agent/` - Autonomous repository health reviewer
+    - `README.md` - Agent design, capabilities, and architecture
+    - `config/agent.json` - Agent SDK configuration
+- **New specifications (2025-11-24):**
+  - `docs/specs/spec-0002-autonomous-ci-plugin.md` - Autonomous CI plugin spec
+  - Reorganized `spec-0001-framework-architecture.md` from template
+- **New ADRs (2025-11-24):**
+  - `docs/decisions/ADR-0002-superpowers-composition.md` - Framework composition
+  - Reorganized `ADR-0001-marketplace-layout.md` from template
+
+### Changed
+
+- Transformed WIP plugins into production-ready plugins (relates to spec-0002, ADR-0002):
+  - `wip-plugin-2` → `smart-commit` with conventional commits support
+  - `wip-plugin-3` → `code-review` with security, style, performance analysis
+- Updated `marketplace.json` with new plugin names and descriptions
+
+### Fixed (2025-11-24)
+
+- **SKILL.md frontmatter compliance:**
+  - Added required YAML frontmatter (`name`, `description`) to all SKILL.md files per official docs
+  - `plugins/autonomous-ci/skills/autonomous-ci/SKILL.md`
+  - `plugins/smart-commit/skills/smart-commit/SKILL.md`
+  - `plugins/code-review/skills/code-review/SKILL.md`
+  - Reference: https://code.claude.com/docs/en/skills.md
+
+### Previously Added
+
+- Expanded skill reference documentation:
+  - `skills/working-on-ancplua-plugins/references/conventions.md` - Full naming and layout conventions
+  - `skills/working-on-ancplua-plugins/references/testing.md` - Complete testing guide with prerequisites
+  - `skills/working-on-ancplua-plugins/references/publishing.md` - Full plugin publishing workflow
+- Added keywords to `plugins/autonomous-ci/.claude-plugin/plugin.json`
+
+### Previously Changed
+
 - MegaLinter integration in CI:
   - Added `megalinter` job to `.github/workflows/ci.yml` using javascript flavor v9.1.0
   - Created `.mega-linter.yml` configuration file with minimal baseline settings
   - Uploads MegaLinter reports as workflow artifacts
+- Documentation files (completing the target architecture):
+  - `docs/AGENTS.md` - Agent SDK documentation and planned agents
+  - `docs/WORKFLOWS.md` - CI/CD and development workflows
+  - `docs/FUTURE.md` - Roadmap and planned features
+- Tooling scripts:
+  - `tooling/scripts/sync-marketplace.sh` - Validates marketplace.json sync with plugins directory
+- Enhanced plugin template with example files:
+  - `tooling/templates/plugin-template/skills/example-skill/SKILL.md`
+  - `tooling/templates/plugin-template/commands/example-command.md`
+  - `tooling/templates/plugin-template/hooks/hooks.json`
+  - `tooling/templates/plugin-template/scripts/example-script.sh`
+- Proper spec and ADR files:
+  - Renamed `spec-template.md` to `spec-0001-marketplace-framework.md` (actual spec)
+  - Renamed `adr-template.md` to `ADR-0001-repository-as-marketplace.md` (actual ADR)
+  - Created new empty `spec-template.md` and `adr-template.md` templates
 
-### Changed
+### Previously Changed (Markdown/CI Optimization)
 
+- Verified complete marketplace architecture alignment (Phase 0-12 execution 2025-11-24)
 - Optimize Markdown for AI readability across docs:
   - docs/specs/spec-template.md and docs/decisions/adr-template.md: wrap metadata in YAML front matter fences for tool
       compatibility.
@@ -22,7 +127,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - CLAUDE.md: minor punctuation fix in a MUST NOT rule.
 - Documented optional MCP server integration for plugins (README, CLAUDE.md, docs/PLUGINS.md, ADR/SPEC templates).
 
-### Fixed
+### Fixed (previous validations)
 
 - Validation script issues:
   - Fixed shellcheck SC2038 warning in `tooling/scripts/local-validate.sh` by using find with -print0 and xargs -0
@@ -36,6 +141,9 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Plugin structure: Renamed skill directory from `autonomous-ci-verification` to `autonomous-ci` to match conventions
   - Updated `plugins/autonomous-ci/README.md` to reference new skill name
 - Moved misplaced plugin READMEs from `tooling/scripts/plugins/` to correct `plugins/` locations
+- WIP plugin structure:
+  - Removed nested empty directories (`wip-plugin-2/wip-plugin-2/`, `wip-plugin-3/wip-plugin-3/`)
+  - Added proper plugin directories (`skills/`, `commands/`, `hooks/`, `scripts/`) to wip-plugin-2 and wip-plugin-3
 
 ---
 

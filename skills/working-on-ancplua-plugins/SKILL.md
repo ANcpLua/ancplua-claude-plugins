@@ -1,40 +1,41 @@
+---
+name: working-on-ancplua-plugins
+description: Primary instruction manual for working within the ancplua-claude-plugins monorepo. Use when creating, modifying, or debugging plugins in this repository.
+---
+
 # Skill: working-on-ancplua-plugins
 
-Purpose: Provide conventions and quick references when working inside the ancplua-claude-plugins monorepo.
+## Purpose
+This is the **primary instruction manual** for an agent working within the `ancplua-claude-plugins` monorepo. It defines the mandatory conventions, architectural patterns, and workflows required to contribute safely and effectively.
 
-What this Skill provides:
+## When to Use
+Use this skill when:
+- **Creating a new plugin**: Follow the `publishing.md` guide to scaffold correctly.
+- **Modifying existing plugins**: Check `conventions.md` to ensure you don't break architecture.
+- **Debugging issues**: Use `testing.md` to verify JSON syntax, permissions, and paths.
+- **Preparing a PR**: Run the validation commands listed in `testing.md`.
 
-- Repository layout overview
-- Links to conventions, testing, and publishing guides
-- Quick commands to validate plugins locally
+## Reference Library
 
-## Repository layout
+| Resource | Description |
+| :--- | :--- |
+| [Conventions](./references/conventions.md) | **Critical Rules**, Naming, Directory Layout, Git flow. |
+| [Publishing](./references/publishing.md) | Step-by-step guide to create, version, and release plugins. |
+| [Testing](./references/testing.md) | Validation commands and **Debugging Steps** (permissions, JSON). |
 
-See docs/ARCHITECTURE.md for the canonical overview. At a glance:
+## Quick Actions
 
-- .claude-plugin/marketplace.json – declares all plugins in this repo
-- plugins/ – individual Claude Code plugins (each has .claude-plugin/plugin.json)
-- skills/ – repo-level skills (this Skill lives here)
-- tooling/ – scripts and templates
-- docs/ – architecture, ADRs, and specs
-- .github/workflows – CI and bots
+**Validate Everything:**
+```bash
+./tooling/scripts/local-validate.sh
+```
 
-## Conventions and guides
-
-- Conventions: skills/working-on-ancplua-plugins/references/conventions.md
-- Testing: skills/working-on-ancplua-plugins/references/testing.md
-- Publishing: skills/working-on-ancplua-plugins/references/publishing.md
-
-## Useful commands
-
-Local plugin validation (from repo root):
-
+**Validate Plugin JSON:**
 ```bash
 claude plugin validate .
 ```
 
-Local checks (Markdown, Shell, Workflows):
-
-```bash
-./tooling/scripts/local-validate.sh
-```
+**Repo Layout:**
+- `plugins/` - The code lives here.
+- `.claude-plugin/` - The repo-level marketplace manifest.
+- `tooling/` - Shared scripts.

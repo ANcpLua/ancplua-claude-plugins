@@ -53,7 +53,7 @@ This repository has three primary roles:
 3. **Agent / SDK lab**
 
     - `agents/` is reserved for Agent SDK–based agents that consume plugins and Skills.
-    - This area can grow over time without restructuring the rest of the repository.
+    - Example: `repo-reviewer-agent` autonomously analyzes repository health.
 
 ---
 
@@ -105,18 +105,24 @@ ancplua-claude-plugins/
 │   │   │   └── wait-for-ci.sh
 │   │   └── lib/
 │   │
-│   ├── wip-plugin-2/
+│   ├── smart-commit/
 │   │   ├── README.md
-│   │   └── .claude-plugin/
-│   │       └── plugin.json
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json
+│   │   ├── skills/smart-commit/SKILL.md
+│   │   └── commands/commit.md
 │   │
-│   └── wip-plugin-3/
+│   └── code-review/
 │       ├── README.md
-│       └── .claude-plugin/
-│           └── plugin.json
+│       ├── .claude-plugin/
+│       │   └── plugin.json
+│       ├── skills/code-review/SKILL.md
+│       └── commands/review.md
 │
 ├── agents/
-│   └── (reserved for Agent SDK projects)
+│   └── repo-reviewer-agent/
+│       ├── README.md
+│       └── config/agent.json
 │
 ├── skills/
 │   └── working-on-ancplua-plugins/
@@ -142,11 +148,10 @@ ancplua-claude-plugins/
             │   └── example-command.md
             └── hooks/
                 └── hooks.json
-````
+```
 
 If the filesystem differs from this, `CLAUDE.md`, `docs/specs/spec-template.md`, and `docs/decisions/adr-template.md`
-define how Claude must migrate towards this
-structure.
+define how Claude must migrate towards this structure.
 
 ### MCP servers (optional)
 
@@ -277,16 +282,21 @@ This section describes the intended responsibilities of the initial plugins. The
   - Light-touch hooks that encourage or trigger CI-related checks.
   - Must not conflict with other plugin hooks such as Superpowers, if installed.
 
-### 4.2 `wip-plugin-2` and `wip-plugin-3`
+### 4.2 `smart-commit`
 
-These directories are **reserved containers** for future plugins:
+**Goal:** Generate semantic, conventional commit messages automatically.
 
-- Each has:
+**Components:**
+- `skills/smart-commit/SKILL.md`: Skill for analyzing diffs and drafting messages.
+- `commands/commit.md`: Slash command `/commit` to trigger the workflow.
 
-  - `.claude-plugin/plugin.json` with a unique `name`, current `version`, and minimal metadata.
-  - `README.md` describing the intended future role.
+### 4.3 `code-review`
 
-- Code and Skills can be added incrementally without restructuring the marketplace.
+**Goal:** Provide autonomous code review focusing on security, performance, and style.
+
+**Components:**
+- `skills/code-review/SKILL.md`: Skill for systematic code analysis.
+- `commands/review.md`: Slash command `/review` to audit specific files or PRs.
 
 ---
 
@@ -300,7 +310,7 @@ This repo has an explicit internal framework layer:
   - Overall goals, success metrics, and “API” of the marketplace structure.
   - Rules Claude must follow when evolving the repo.
 
-- `docs/decisions/adr-template.md` – Architectural Decision Record(s)
+- `docs/decisions/adr-template.md` – Architectural Decision Records(s)
 
   - ADR-0001: repository-as-marketplace architecture (and future ADRs).
   - Status per ADR: `proposed`, `accepted`, `rejected`, `deprecated`, or `superseded`.
