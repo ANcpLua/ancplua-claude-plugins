@@ -8,6 +8,10 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **Claude GitHub Actions Opus model (2025-11-25):**
+  - Updated `claude.yml` with `--model claude-opus-4-5-20251101`
+  - Updated `claude-code-review.yml` with `--model claude-opus-4-5-20251101`
+
 - **Claude as Permanent PR Reviewer (2025-11-25):**
   - Added section 4.5.1 to CLAUDE.md: "PR Review (Claude as Permanent Second Reviewer)"
   - Claude now reviews ALL pull requests alongside Jules
@@ -99,6 +103,16 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **Full markdown/workflow compliance cleanup (2025-11-25):**
+  - Fixed SC2086 shellcheck warnings in `jules-review.yml` (proper variable quoting)
+  - Fixed MD013 line length issues in 6 files (wrapped to 120 chars)
+  - Fixed MD036 emphasis-as-heading in `ADR-0003-jules-agent-delegation.md`
+  - Fixed MD040 code block language specifiers (~20 files)
+  - Fixed MD024 duplicate heading in CHANGELOG (renamed to include dates)
+  - Configured MD060 table style as "padded" for consistency
+  - Auto-fixed MD022, MD030, MD047 via `markdownlint --fix`
+  - Validation now passes with **zero warnings**
+
 - **Duplicate template files removed (2025-11-25):**
   - Removed `docs/specs/spec-0001-marketplace-framework.md` (was template with duplicate ID)
   - Cleaned up orphaned template files disguised as specs/ADRs
@@ -138,7 +152,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - `docs/decisions/ADR-0002-superpowers-composition.md` - Framework composition
   - Reorganized `ADR-0001-marketplace-layout.md` from template
 
-### Changed
+### Changed (2025-11-24)
 
 - Transformed WIP plugins into production-ready plugins (relates to spec-0002, ADR-0002):
   - `wip-plugin-2` → `smart-commit` with conventional commits support
@@ -152,7 +166,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - `plugins/autonomous-ci/skills/autonomous-ci/SKILL.md`
   - `plugins/smart-commit/skills/smart-commit/SKILL.md`
   - `plugins/code-review/skills/code-review/SKILL.md`
-  - Reference: https://code.claude.com/docs/en/skills.md
+  - Reference: <https://code.claude.com/docs/en/skills.md>
 
 ### Previously Added
 

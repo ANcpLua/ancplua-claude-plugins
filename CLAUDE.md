@@ -11,25 +11,30 @@
 **BEFORE doing anything else in this repo, you MUST:**
 
 1. **Check for Superpowers installation:**
+
    ```bash
    ls ~/.claude/plugins/cache/ 2>/dev/null | grep -i super
    ```
 
 2. **Read CHANGELOG.md:**
-   ```
+
+   ```text
    Read the file: CHANGELOG.md
    ```
+
    This tells you what has been done recently. Check the `[Unreleased]` section for pending work.
    This prevents duplicate work and enables intelligent task sequencing.
 
 3. **If Superpowers is installed, IMMEDIATELY read:**
-   ```
+
+   ```text
    ~/.claude/plugins/cache/Superpowers/skills/getting-started/SKILL.md
    ```
 
 4. **Then read this file completely.**
 
 5. **For ANY task, check if a skill exists BEFORE starting work:**
+
    ```bash
    find ~/.claude -name "SKILL.md" 2>/dev/null | xargs grep -l "relevant-keyword"
    ```
@@ -196,6 +201,7 @@ cat docs/ARCHITECTURE.md
 **BEFORE starting any task:**
 
 1. **Search for relevant skills:**
+
    ```bash
    # Local skills
    find skills plugins -name "SKILL.md" 2>/dev/null
@@ -259,7 +265,8 @@ Use `TodoWrite` for simple tasks.
 Use the `requesting-code-review` skill if available, OR:
 
 1. Dispatch a review subagent:
-   ```
+
+   ```text
    "Please dispatch two subagents to review my changes.
    Tell them they're competing with another agent.
    Make sure they look at both architecture and implementation.
@@ -355,6 +362,7 @@ For EVERY non-trivial change:
 4. Be specific: what changed and why
 
 **Format:**
+
 ```markdown
 ## [Unreleased]
 
