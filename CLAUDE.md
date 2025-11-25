@@ -50,12 +50,16 @@ you don't need the skill is FORBIDDEN.
 
 > **`ancplua-claude-plugins`** — Alexander's lifetime Claude Code ecosystem: plugins, skills, and agent lab.
 
-This is a **Claude Code plugin marketplace** plus an **experimental lab** for:
+**Architectural Role: Type A (Application)**
+This repository provides the **"Brain"** (Skills, Orchestration) that drives the **"Hands"** (MCP Tools) provided by
+`ancplua-mcp` (Type T).
 
-- Reusable plugins that other Claude Code users can install
+It is a **Claude Code plugin marketplace** plus an **experimental lab** for:
+
+- Reusable plugins (Type A components)
 - A skills library for development workflows
 - Agent SDK experiments and orchestration patterns
-- MCP server integration examples
+- MCP configuration examples (consuming Type T servers)
 
 **This is NOT a single plugin.** It's a composable ecosystem designed to grow over time.
 
@@ -89,6 +93,11 @@ You **MUST NOT** (without explicit human permission):
 - Skip skills that apply to your task
 - Claim work is done without evidence
 
+### Co-Agents
+
+- **Jules:** Code Reviewer & CI Guardian.
+- **Gemini:** Senior Dev & Implementation Specialist (See `GEMINI.md` for operational specifics).
+
 ---
 
 ## 3. Target Architecture (North Star)
@@ -121,35 +130,17 @@ ancplua-claude-plugins/
 │   │   └── scripts/
 │   │
 │   ├── code-review/             # Code review plugin
-│   │   ├── .claude-plugin/plugin.json
-│   │   ├── README.md
-│   │   ├── skills/code-review/SKILL.md
-│   │   ├── commands/review.md
-│   │   └── ...
-│   │
-│   └── smart-commit/            # Commit message plugin
-│       ├── .claude-plugin/plugin.json
-│       ├── README.md
-│       ├── skills/smart-commit/SKILL.md
-│       ├── commands/commit.md
-│       └── ...
+│   ├── smart-commit/            # Commit message plugin
+│   └── jules-integration/       # Jules AI delegation
 │
 ├── agents/
 │   ├── repo-reviewer-agent/     # Repository health reviewer
-│   │   ├── README.md
-│   │   ├── config/agent.json
-│   │   ├── prompts/
-│   │   └── src/
-│   ├── ci-guardian-agent/       # CI monitoring (planned)
-│   └── sandbox-agent/           # Isolated testing (planned)
+│   └── workflow-orchestrator/   # Pipeline coordination
 │
 ├── skills/
 │   └── working-on-ancplua-plugins/
 │       ├── SKILL.md             # Repo-level skill
 │       └── references/
-│           ├── conventions.md
-│           ├── testing.md
-│           └── publishing.md
 │
 ├── docs/
 │   ├── ARCHITECTURE.md
@@ -163,7 +154,7 @@ ancplua-claude-plugins/
 │   │   ├── adr-template.md
 │   │   └── ADR-XXXX-*.md
 │   └── examples/
-│       └── *.mcp.json
+│       └── *.mcp.json           # Example MCP configs (Type T consumption)
 │
 └── tooling/
     ├── scripts/
@@ -438,14 +429,14 @@ Each plugin in `plugins/<name>/`:
 ```text
 plugins/<name>/
 ├── .claude-plugin/
-│   └── plugin.json      # name, version, description, author, license
-├── README.md            # User-facing docs
+│   └── plugin.json      # REQUIRED: name, version, description, author, license
+├── README.md            # REQUIRED: User-facing docs
 ├── skills/
 │   └── <skill>/
 │       └── SKILL.md     # YAML frontmatter required
-├── commands/            # Slash commands
-├── hooks/               # Event hooks
-├── scripts/             # Shell helpers
+├── commands/            # Slash commands (.md)
+├── hooks/               # Event hooks (hooks.json)
+├── scripts/             # Shell helpers (.sh)
 └── lib/                 # Implementation code
 ```
 
@@ -575,25 +566,17 @@ ls docs/decisions/ADR-*.md | sort | tail -1
 
 ---
 
-## 9. MCP Integration
+## 9. MCP Integration (Type T Consumption)
 
-Plugins MAY include MCP servers. Keep assets inside the plugin:
+This repo creates **Type A** artifacts (Skills/Plugins) that consume **Type T** tools (from `ancplua-mcp`).
 
-```text
-plugins/<name>/
-├── .mcp.json           # MCP configuration
-├── mcp/
-│   └── server.ts       # Server implementation
-└── README.md           # Must document MCP tools
-```
+**Do NOT implement MCP Servers in this repo.**
 
-When adding/changing MCP:
+Instead:
 
-1. Update plugin README with tools documentation
-2. Add CHANGELOG entry
-3. Create ADR if architectural
-
-Example configs: `docs/examples/*.mcp.json`
+1. Define the MCP usage in `docs/examples/*.mcp.json` (Type T consumption config).
+2. Create a Skill in `plugins/<name>/skills/` that **calls** the MCP tools.
+3. Document the dependency in the plugin's `README.md`.
 
 ---
 

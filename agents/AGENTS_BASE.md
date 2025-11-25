@@ -11,6 +11,7 @@
 You are an **autonomous agent** operating within the `ancplua-claude-plugins` ecosystem.
 
 You have access to:
+
 - **Full solution state** - All plugins, skills, docs, and configuration
 - **MCP tools** - External integrations via Model Context Protocol
 - **Superpowers skills** - Systematic debugging, TDD, brainstorming, verification
@@ -21,6 +22,7 @@ You have access to:
 ## Permissions
 
 **GRANTED (Full Local Permissions):**
+
 - Create, edit, move, delete files
 - Run shell commands and scripts
 - Execute validation tools
@@ -29,6 +31,7 @@ You have access to:
 - Create branches and PRs
 
 **RESTRICTED (Require Human Approval):**
+
 - `git commit` / `git push` - Document changes, human commits
 - Modifying `CLAUDE.md` or `AGENTS.md` - Structural changes
 - Auto-merge PRs - Always require human review
@@ -40,7 +43,7 @@ You have access to:
 
 ### Repository Structure
 
-```
+```text
 ancplua-claude-plugins/
 ├── CLAUDE.md              # Claude Code operational spec
 ├── AGENTS.md              # Jules/agent context (this is for external agents)
@@ -78,6 +81,7 @@ ancplua-claude-plugins/
 ### Available Skills
 
 **From Superpowers:**
+
 - `brainstorming` - Refine ideas before coding
 - `systematic-debugging` - Four-phase debugging
 - `test-driven-development` - Red-green-refactor
@@ -85,6 +89,7 @@ ancplua-claude-plugins/
 - `writing-plans` - Detailed implementation plans
 
 **From This Repo:**
+
 - `working-on-ancplua-plugins` - Repo conventions
 - `autonomous-ci` - CI workflows
 - `code-review` - Review patterns
@@ -97,7 +102,7 @@ ancplua-claude-plugins/
 
 ### 1. Starting Any Task
 
-```
+```text
 1. Read CLAUDE.md (operational spec)
 2. Check available skills for relevance
 3. Use TodoWrite to plan steps
@@ -111,6 +116,7 @@ ancplua-claude-plugins/
 **MUST use brainstorming skill** for non-trivial features.
 
 Questions before implementation:
+
 - What problem does this solve?
 - What are the constraints?
 - What are 2-3 alternative approaches?
@@ -119,6 +125,7 @@ Questions before implementation:
 ### 3. During Implementation
 
 **MUST follow TDD** when writing code:
+
 1. Write failing test first
 2. Write minimal code to pass
 3. Refactor while tests pass
@@ -126,11 +133,13 @@ Questions before implementation:
 ### 4. Before Claiming Complete
 
 **MUST verify** with evidence:
+
 ```bash
 ./tooling/scripts/local-validate.sh
 ```
 
 Never claim "done" without:
+
 - Validation passing
 - Tests passing
 - Documentation updated
@@ -138,6 +147,7 @@ Never claim "done" without:
 ### 5. Delegating to Jules
 
 Use Jules for async background tasks:
+
 ```bash
 # Via script
 ./plugins/jules-integration/scripts/jules-session.sh "Task description"
@@ -148,6 +158,7 @@ curl 'https://jules.googleapis.com/v1alpha/sessions' ...
 ```
 
 **Always set:**
+
 - `requirePlanApproval: true`
 - `automationMode: "AUTO_CREATE_PR"`
 
@@ -162,6 +173,7 @@ MCP servers extend agent capabilities. When MCP tools are available:
 3. **Context**: MCP tools inherit agent permissions
 
 Common MCP use cases:
+
 - GitHub API operations
 - Database queries
 - External service calls
@@ -235,23 +247,27 @@ Individual agents extend this base with:
 ## Quick Reference
 
 ### Validation
+
 ```bash
 ./tooling/scripts/local-validate.sh
 ```
 
 ### Jules Session
+
 ```bash
 ./plugins/jules-integration/scripts/jules-session.sh "Task"
 ```
 
 ### Plugin Validation
+
 ```bash
 claude plugin validate .
 claude plugin validate plugins/<name>
 ```
 
 ### Skill Activation
-```
+
+```text
 Use Skill tool with skill name
 ```
 
@@ -259,7 +275,7 @@ Use Skill tool with skill name
 
 ## Resources
 
-- **Claude Code Docs**: https://code.claude.com/docs
-- **Jules Docs**: https://jules.google/docs/
-- **Jules API**: https://developers.google.com/jules/api
-- **This Repo**: https://github.com/ANcpLua/ancplua-claude-plugins
+- **Claude Code Docs**: <https://code.claude.com/docs>
+- **Jules Docs**: <https://jules.google/docs/>
+- **Jules API**: <https://developers.google.com/jules/api>
+- **This Repo**: <https://github.com/ANcpLua/ancplua-claude-plugins>

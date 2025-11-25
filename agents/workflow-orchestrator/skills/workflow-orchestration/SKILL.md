@@ -7,7 +7,8 @@ description: Coordinates multi-step CI/CD pipelines by chaining autonomous-ci, c
 
 ## Overview
 
-This skill orchestrates complex workflows by chaining existing plugins into pipelines. It maintains state awareness through CHANGELOG.md and coordinates cross-plugin operations.
+This skill orchestrates complex workflows by chaining existing plugins into pipelines.
+It maintains state awareness through CHANGELOG.md and coordinates cross-plugin operations.
 
 ## When to Use
 
@@ -66,7 +67,7 @@ Choose the appropriate pipeline based on the task:
 
 #### Pre-Commit Pipeline
 
-```
+```text
 Step 1: Validate
 ├── Run: ./tooling/scripts/local-validate.sh
 ├── On success: Continue
@@ -87,7 +88,7 @@ Step 3: Commit Message
 
 #### PR-Create Pipeline
 
-```
+```text
 Step 1: Pre-Commit Pipeline
 ├── Execute full pre-commit pipeline
 └── On failure: STOP
@@ -106,7 +107,7 @@ Step 3: Delegate to Jules
 
 #### CI-Recover Pipeline
 
-```
+```text
 Step 1: Diagnose
 ├── Invoke: systematic-debugging skill
 ├── Analyze: CI failure logs
@@ -239,7 +240,7 @@ git diff --stat           # Changes summary
 
 **Trigger:** Developer requests validation before commit
 
-```
+```text
 1. Read CHANGELOG.md → Understand context
 2. Run local-validate.sh → All checks pass
 3. Invoke code-review → No critical issues
@@ -252,7 +253,7 @@ git diff --stat           # Changes summary
 
 **Trigger:** CI fails on shellcheck
 
-```
+```text
 1. Detect failure via autonomous-ci monitoring
 2. Invoke systematic-debugging:
    - Phase 1: Gather evidence (CI logs)
@@ -268,7 +269,7 @@ git diff --stat           # Changes summary
 
 **Trigger:** Feature complete, ready for review
 
-```
+```text
 1. Execute pre-commit pipeline → All green
 2. Present diff for human review
 3. Human approves commit

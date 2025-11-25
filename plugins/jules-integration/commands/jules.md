@@ -13,7 +13,7 @@ Create a Jules AI session to delegate an async coding task.
 
 ## Usage
 
-```
+```text
 /jules "Add unit tests for the authentication module"
 ```
 
@@ -36,7 +36,7 @@ Create a Jules AI session to delegate an async coding task.
 
 ## Example Tasks
 
-```
+```text
 /jules "Fix the N+1 query in UserRepository.GetAll()"
 /jules "Add JSDoc comments to all public functions in src/utils/"
 /jules "Write integration tests for the checkout flow"

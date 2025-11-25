@@ -286,6 +286,7 @@ This section describes the intended responsibilities of the initial plugins. The
 **Goal:** Generate semantic, conventional commit messages automatically.
 
 **Components:**
+
 - `skills/smart-commit/SKILL.md`: Skill for analyzing diffs and drafting messages.
 - `commands/commit.md`: Slash command `/commit` to trigger the workflow.
 
@@ -294,6 +295,7 @@ This section describes the intended responsibilities of the initial plugins. The
 **Goal:** Provide autonomous code review focusing on security, performance, and style.
 
 **Components:**
+
 - `skills/code-review/SKILL.md`: Skill for systematic code analysis.
 - `commands/review.md`: Slash command `/review` to audit specific files or PRs.
 

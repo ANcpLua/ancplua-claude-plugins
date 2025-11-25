@@ -16,6 +16,7 @@
 ## Context and Problem Statement
 
 Claude Code agents can handle real-time coding tasks effectively. However, some tasks benefit from asynchronous processing:
+
 - Long-running refactors
 - Multi-file documentation updates
 - Comprehensive test additions
@@ -42,10 +43,12 @@ Google's Jules AI provides asynchronous coding capabilities via API. We need to 
 Provide documentation for manual API usage.
 
 **Pros:**
+
 - No code to maintain
 - Maximum flexibility
 
 **Cons:**
+
 - Poor developer experience
 - Easy to make mistakes (wrong params, security issues)
 - No skill/command integration
@@ -55,10 +58,12 @@ Provide documentation for manual API usage.
 Use a GitHub Action (like `BeksOmega/jules-action`).
 
 **Pros:**
+
 - Familiar GitHub Actions workflow
 - CI/CD integration
 
 **Cons:**
+
 - `BeksOmega/jules-action@v1` returns 404 (doesn't exist)
 - No official Jules GitHub Action available
 - Dependency on third-party action
@@ -68,6 +73,7 @@ Use a GitHub Action (like `BeksOmega/jules-action`).
 Create a Claude Code plugin that wraps the Jules API with skill, command, and script.
 
 **Pros:**
+
 - Integrated into plugin ecosystem
 - Skill provides guidance on when/how to use Jules
 - Command provides quick invocation
@@ -75,6 +81,7 @@ Create a Claude Code plugin that wraps the Jules API with skill, command, and sc
 - Safety settings enforced by default
 
 **Cons:**
+
 - Code to maintain
 - API changes require updates
 
@@ -82,15 +89,17 @@ Create a Claude Code plugin that wraps the Jules API with skill, command, and sc
 
 ## Decision Outcome
 
-**Selected: Option C - Plugin with skill, command, and API wrapper**
+### Selected: Option C - Plugin with skill, command, and API wrapper
 
 The `jules-integration` plugin provides:
+
 1. **Skill** - Guides when to delegate to Jules
 2. **Command** - `/jules "task"` for quick invocation
 3. **Script** - `jules-session.sh` for automation
 4. **Workflow** - GitHub Actions for CI-triggered tasks
 
 Safety enforced via:
+
 - `requirePlanApproval: true` (always)
 - `automationMode: "AUTO_CREATE_PR"` (no auto-merge)
 - API key via environment/secrets only
@@ -124,6 +133,7 @@ Safety enforced via:
 ### AGENTS.md Discovery
 
 Jules automatically reads `AGENTS.md` from repo root. This file provides:
+
 - Repository overview
 - Coding conventions
 - Constraints for Jules tasks
@@ -137,6 +147,7 @@ export JULES_API_KEY="key-from-jules.google-settings"
 ```
 
 For GitHub Actions:
+
 ```yaml
 env:
   JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
@@ -158,6 +169,6 @@ As of 2025-11-25, there is no official Jules GitHub Action. The workflow uses di
 
 ## References
 
-- https://jules.google
-- https://developers.google.com/jules/api
-- https://blog.google/technology/google-labs/jules/
+- <https://jules.google>
+- <https://developers.google.com/jules/api>
+- <https://blog.google/technology/google-labs/jules/>

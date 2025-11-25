@@ -17,6 +17,18 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
     - Grants read permissions for PRs and Checks
     - Uses `fetch-depth: 0` for full diff context
 
+- **Architecture & Compliance Overhaul (2025-11-25):**
+  - **Defined Type A vs Type T Architecture:**
+    - `ancplua-claude-plugins` (Type A): "The Brain" (Skills, Plugins, Orchestration)
+    - `ancplua-mcp` (Type T): "The Hands" (MCP Servers, Tools)
+    - Explicitly documented separation in `CLAUDE.md`, `GEMINI.md`, and `docs/ARCHITECTURE.md`
+  - **Tooling & Templates:**
+    - Updated `tooling/scripts/local-validate.sh` with JSON validation (jq) and better tool detection
+    - Standardized `tooling/templates/plugin-template/` with correct JSON schema and documentation
+  - **Operational Constitutions:**
+    - Updated `CLAUDE.md` and `GEMINI.md` to enforce the new architecture and ban cross-repo hallucinations
+    - Added "Co-Agents" definition (Jules & Gemini)
+
 - **Claude GitHub Actions Opus model (2025-11-25):**
   - Updated `claude.yml` with `--model claude-opus-4-5-20251101`
   - Updated `claude-code-review.yml` with `--model claude-opus-4-5-20251101`

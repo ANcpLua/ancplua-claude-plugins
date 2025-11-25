@@ -6,10 +6,15 @@ description: Primary instruction manual for working within the ancplua-claude-pl
 # Skill: working-on-ancplua-plugins
 
 ## Purpose
-This is the **primary instruction manual** for an agent working within the `ancplua-claude-plugins` monorepo. It defines the mandatory conventions, architectural patterns, and workflows required to contribute safely and effectively.
+
+This is the **primary instruction manual** for an agent working within the
+`ancplua-claude-plugins` monorepo. It defines the mandatory conventions, architectural patterns,
+and workflows required to contribute safely and effectively.
 
 ## When to Use
+
 Use this skill when:
+
 - **Creating a new plugin**: Follow the `publishing.md` guide to scaffold correctly.
 - **Modifying existing plugins**: Check `conventions.md` to ensure you don't break architecture.
 - **Debugging issues**: Use `testing.md` to verify JSON syntax, permissions, and paths.
@@ -26,16 +31,19 @@ Use this skill when:
 ## Quick Actions
 
 **Validate Everything:**
+
 ```bash
 ./tooling/scripts/local-validate.sh
 ```
 
 **Validate Plugin JSON:**
+
 ```bash
 claude plugin validate .
 ```
 
 **Repo Layout:**
+
 - `plugins/` - The code lives here.
 - `.claude-plugin/` - The repo-level marketplace manifest.
 - `tooling/` - Shared scripts.

@@ -17,7 +17,8 @@ The workflow-orchestrator agent combines the capabilities of:
 | `smart-commit` | Semantic commit message generation |
 | `jules-integration` | Async task delegation for PRs |
 
-It reads `CHANGELOG.md [Unreleased]` to understand pending work and orchestrates multi-step workflows without human intervention for routine tasks.
+It reads `CHANGELOG.md [Unreleased]` to understand pending work and orchestrates multi-step
+workflows without human intervention for routine tasks.
 
 ---
 
@@ -45,7 +46,7 @@ It reads `CHANGELOG.md [Unreleased]` to understand pending work and orchestrates
 
 Triggered before any commit to ensure quality:
 
-```
+```text
 local-validate.sh → code-review → smart-commit
 ```
 
@@ -60,7 +61,7 @@ local-validate.sh → code-review → smart-commit
 
 Triggered when changes are ready for review:
 
-```
+```text
 validation → review → commit → jules-delegation
 ```
 
@@ -75,7 +76,7 @@ validation → review → commit → jules-delegation
 
 Triggered when CI fails:
 
-```
+```text
 ci-failure → systematic-debugging → fix → re-validate
 ```
 
@@ -146,13 +147,13 @@ ci-failure → systematic-debugging → fix → re-validate
 
 ### Via Skill
 
-```
+```text
 Use the workflow-orchestration skill to run the pre-commit pipeline
 ```
 
 ### Via Command (Future)
 
-```
+```text
 /orchestrate pre-commit
 /orchestrate pr-create
 ```
@@ -194,7 +195,7 @@ git log --oneline -5
 
 ### Retry Logic
 
-```
+```text
 attempt 1 → wait 5s → attempt 2 → wait 15s → attempt 3 → escalate
 ```
 

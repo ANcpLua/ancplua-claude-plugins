@@ -13,6 +13,7 @@ Jules is Google's experimental coding agent powered by Gemini 2.5 Pro. It works 
 - Handles complex, multi-file changes with speed and precision
 
 **Use Jules for:**
+
 - Bug fixes and debugging
 - Adding documentation
 - Writing tests
@@ -43,11 +44,13 @@ Jules is Google's experimental coding agent powered by Gemini 2.5 Pro. It works 
 ### 3. Configure API Key
 
 **For local use:**
+
 ```bash
 export JULES_API_KEY="your-key-here"
 ```
 
 **For GitHub Actions:**
+
 - Go to repo Settings > Secrets > Actions
 - Add `JULES_API_KEY` secret
 
@@ -100,7 +103,7 @@ Trigger the `jules-review.yml` workflow manually with your prompt.
 
 If you have an MCP server with Jules tools (like `ancplua-mcp`), Claude can call Jules autonomously:
 
-```
+```text
 # Claude can invoke Jules via MCP tools
 mcp__jules__InvokeJules(owner, repo, prNumber, request)
 mcp__jules__CheckJulesConfig(owner, repo)
@@ -140,18 +143,22 @@ Keep `AGENTS.md` up to date for better results.
 ## Example Prompts
 
 **Bug Fixes:**
+
 - `"Fix the N+1 query in UserRepository.GetAll()"`
 - `"Debug why the login form fails on mobile"`
 
 **Documentation:**
+
 - `"Add JSDoc comments to all exported functions in src/utils/"`
 - `"Write a README for the authentication module"`
 
 **Testing:**
+
 - `"Write integration tests for the checkout flow"`
 - `"Add unit tests for parseQueryString function in utils.js"`
 
 **Refactoring:**
+
 - `"Refactor legacy auth code to async/await"`
 - `"Convert CommonJS modules to ES modules"`
 
@@ -173,6 +180,7 @@ Keep `AGENTS.md` up to date for better results.
 ## Notifications
 
 Enable browser notifications in Jules to stay informed:
+
 - Task completion alerts
 - When Jules needs your input
 - Plan ready for review

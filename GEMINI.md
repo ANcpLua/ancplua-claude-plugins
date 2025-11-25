@@ -12,6 +12,7 @@ You share this repository with Claude. While `CLAUDE.md` defines the *project ru
 definitions), `GEMINI.md` defines your *operational strategy* to adhere to those rules effectively.
 
 **Conflict Resolution:**
+
 1. User Instruction (Highest)
 2. `CLAUDE.md` (Project Truth)
 3. `GEMINI.md` (Your Operational Strategy)
@@ -25,7 +26,9 @@ definitions), `GEMINI.md` defines your *operational strategy* to adhere to those
 
 - **Language:** TypeScript (primary), Bash (scripts), JSON/YAML (config).
 - **Framework:** Node.js environment (implied by `package.json` presence).
-- **Architecture:** "Plugin Marketplace" ecosystem. Composable plugins, not a monolithic app.
+- **Architecture:** "Plugin Marketplace" (Type A).
+  - **Type A (Application):** `ancplua-claude-plugins` (This Repo). Contains Skills, Prompts, Orchestration.
+  - **Type T (Technology):** `ancplua-mcp` (External Repo). Contains C# MCP Servers & Tools.
 - **Build System:** `npm` / `yarn` (Verify which lockfile exists).
 - **Validation:**
   - **Script:** `./tooling/scripts/local-validate.sh` (THE canonical check).
@@ -37,9 +40,10 @@ definitions), `GEMINI.md` defines your *operational strategy* to adhere to those
 > **Note:** While this repository is not a C#/.NET project, it may integrate with external MCP servers that are implemented in C#/.NET. The prohibition below refers to assuming this *repository* is C#/.NET-based. Integration with external C#/.NET services (e.g., via `.mcp.json` or `dotnet` commands) is permitted and expected where documented.
 **FORBIDDEN HALLUCINATIONS:**
 
-- ❌ DO NOT assume C# / .NET (.sln, .csproj).
+- ❌ DO NOT assume C# / .NET (.sln, .csproj) *in this repo*.
 - ❌ DO NOT assume `nuke` build system.
 - ❌ DO NOT look for `temp/gemini.md` (unless you create it yourself).
+- ❌ DO NOT attempt to modify MCP server code (it lives in `ancplua-mcp`).
 
 ---
 
@@ -101,6 +105,7 @@ You have **FAILED** if:
 - You skip validation (`local-validate.sh`).
 - You break the build and don't fix it.
 - You ignore a `SKILL.md` relevant to your task.
+- You confuse Type A (Plugins) and Type T (MCP) responsibilities.
 
 ---
 

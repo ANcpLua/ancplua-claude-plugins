@@ -39,12 +39,14 @@ Claude Code agents are defined in `agents/` and use the Claude Agent SDK.
 Jules (Google Labs) can work on this repository via the API.
 
 **Supported tasks for Jules:**
+
 - Bug fixes in plugin code
 - Documentation improvements
 - Test additions
 - Code cleanup and refactoring
 
 **Constraints for Jules:**
+
 - Do NOT modify `.claude-plugin/` manifests without explicit instruction
 - Do NOT change `CLAUDE.md` or `AGENTS.md` without explicit instruction
 - Do NOT auto-merge PRs (require human approval)
@@ -58,7 +60,7 @@ Jules (Google Labs) can work on this repository via the API.
 
 Each plugin under `plugins/<name>/` follows:
 
-```
+```text
 plugins/<name>/
 ├── .claude-plugin/
 │   └── plugin.json          # Manifest (required)
@@ -155,13 +157,13 @@ curl 'https://jules.googleapis.com/v1alpha/sessions' \
 
 ## Getting Help
 
-- **Claude Code docs:** https://code.claude.com/docs
-- **Jules docs:** https://jules.google/docs/
-- **Jules API:** https://developers.google.com/jules/api
+- **Claude Code docs:** <https://code.claude.com/docs>
+- **Jules docs:** <https://jules.google/docs/>
+- **Jules API:** <https://developers.google.com/jules/api>
 
 ---
 
 ## Contact
 
 - **Owner:** AncpLua
-- **Repository:** https://github.com/ANcpLua/ancplua-claude-plugins
+- **Repository:** <https://github.com/ANcpLua/ancplua-claude-plugins>

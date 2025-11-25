@@ -6,12 +6,35 @@ The goals are:
 
 - One repo, many **plugins**, **Skills**, and (later) **agents**
 - Explicit, inspectable **architecture**
-- Clear integration points with **MCP servers** (for example from `ancplua-mcp`)
+- Clear integration points with **MCP servers** (from `ancplua-mcp`)
 - Deterministic behavior backed by **validation** and **docs**
 
 ---
 
-## 1. Top-level layout
+## 1. Architectural Separation (Type A vs Type T)
+
+This ecosystem follows a strict separation of concerns:
+
+### Type A: Application (This Repo)
+
+- **Role:** The "Brain"
+- **Components:** Plugins, Skills, Agents, Prompts, Orchestration
+- **Language:** TypeScript, Bash, Markdown/YAML
+- **Responsibility:** Consumes tools to execute workflows.
+
+### Type T: Technology (External Repo: `ancplua-mcp`)
+
+- **Role:** The "Hands"
+- **Components:** MCP Servers, Low-level Tools, Sensors
+- **Language:** C# / .NET
+- **Responsibility:** Exposes raw capabilities (file system, CI control, etc.).
+
+**Rule:** This repo (`ancplua-claude-plugins`) NEVER contains MCP server implementations. It only contains the
+**configuration** to connect to them.
+
+---
+
+## 2. Top-level layout
 
 ```text
 ancplua-claude-plugins/
@@ -21,64 +44,36 @@ ancplua-claude-plugins/
 ├── .gitignore
 │
 ├── .claude-plugin/
-│   └── marketplace.json
+│   └── marketplace.json         # The Catalog
 │
 ├── .github/
-│   └── workflows/
-│       ├── ci.yml
-│       └── dependabot.yml
+│   └── workflows/               # CI Pipelines
 │
 ├── plugins/
 │   ├── autonomous-ci/
-│   │   ├── .claude-plugin/
-│   │   │   └── plugin.json
-│   │   ├── README.md
-│   │   ├── skills/
-│   │   ├── commands/
-│   │   ├── hooks/
-│   │   └── scripts/
-│   ├── wip-plugin-2/
-│   └── wip-plugin-3/
+│   ├── code-review/
+│   └── smart-commit/
 │
-├── agents/
-│   └── (future Agent SDK projects)
+├── agents/                      # Agent SDK projects
 │
-├── skills/
-│   └── working-on-ancplua-plugins/
-│       ├── SKILL.md
-│       └── references/
-│           ├── conventions.md
-│           ├── testing.md
-│           └── publishing.md
+├── skills/                      # Repo-level skills
 │
 ├── docs/
 │   ├── ARCHITECTURE.md
-│   ├── PLUGINS.md
-│   ├── specs/
-│   │   ├── spec-template.md
-│   │   └── spec-*.md
-│   └── decisions/
-│       ├── adr-template.md
-│       └── adr-*.md
+│   ├── examples/                # MCP Connection Configs (Type T consumption)
+│   └── specs/
 │
 └── tooling/
-    ├── scripts/
-    │   └── local-validate.sh
-    └── templates/
-        └── plugin-template/
-            ├── .claude-plugin/plugin.json
-            ├── README.md
-            ├── skills/
-            ├── commands/
-            └── hooks/
-````
+    ├── scripts/                 # Validation & Sync scripts
+    └── templates/               # Plugin generators
+```
 
 This layout is the **target state**. If the filesystem differs, `CLAUDE.md` defines how Claude Code must migrate toward
 it.
 
 ---
 
-## 2. Marketplace model
+## 3. Marketplace model
 
 This repo is a **Claude Code marketplace**:
 
@@ -91,37 +86,30 @@ This repo is a **Claude Code marketplace**:
 
   - `.claude-plugin/plugin.json`
   - `README.md`
-  - Optional `skills/`, `commands/`, `hooks/`, `scripts/`, `lib/`, `mcp/`
-
-Claude Code (or other clients) can:
-
-- `/plugin marketplace add ANcpLua/ancplua-claude-plugins`
-- `/plugin install <plugin>@ancplua-claude-plugins`
+  - Optional `skills/`, `commands/`, `hooks/`, `scripts/`
 
 The marketplace manifest is the **single source of truth** for what this repo exposes as plugins.
 
 ---
 
-## 3. Plugin structure
+## 4. Plugin structure (Type A)
 
 Each plugin under `plugins/<plugin-name>/` follows this pattern:
 
 ```text
 plugins/<plugin-name>/
 ├── .claude-plugin/
-│   └── plugin.json
-├── README.md
+│   └── plugin.json      # Manifest
+├── README.md            # Documentation
 ├── skills/
 │   └── <skill-name>/
-│       └── SKILL.md
+│       └── SKILL.md     # The Intelligence
 ├── commands/
-│   └── <command>.md
+│   └── <command>.md     # Slash Commands
 ├── hooks/
-│   └── hooks.json
-├── scripts/
-│   └── *.sh
-└── mcp/           # optional MCP server implementation
-    └── (see ancplua-mcp for actual servers)
+│   └── hooks.json       # Event Hooks
+└── scripts/
+    └── *.sh             # Helper Scripts
 ```
 
 **Minimum requirement:**
@@ -135,25 +123,13 @@ plugins/<plugin-name>/
   - `repository`
   - `license`
 
-Optional capabilities:
-
-- `skills/` – repo-specific Skills the agent can call
-- `commands/` – slash commands
-- `hooks/` – event hooks
-- `scripts/` – shell helpers
-- `mcp/` – plugin-local MCP server code (if you decide to bundle one here rather than in `ancplua-mcp`)
-
 Detailed rules live in `docs/PLUGINS.md`.
 
 ---
 
-## 4. MCP integration
+## 5. MCP integration (Type T Consumption)
 
-This repo is the **Claude-side** of your ecosystem. Actual MCP servers typically live in a separate repo, for example:
-
-- `ancplua-mcp/` – C# MCP servers (`Ancplua.Mcp.WorkstationServer`, `Ancplua.Mcp.HttpServer`, …)
-
-To connect Claude to those servers, this repo can provide **example configuration files** under:
+To connect Claude to the Type T servers (in `ancplua-mcp`), this repo provides **example configuration files** under:
 
 ```text
 docs/examples/
@@ -162,86 +138,64 @@ docs/examples/
 
 These files are **examples only**:
 
-- They show how to configure MCP clients (Claude Code, IDEs, inspector tools) to connect to your C# servers.
-- They do **not** run by themselves; users copy/paste/adapt them to their own MCP client config.
+- They show how to configure MCP clients (Claude Code, IDEs) to connect to the C# servers.
+- They do **not** run by themselves.
 
 Typical examples:
 
 - `docs/examples/ancplua-mcp-stdio.mcp.json` – connect to the workstation server via stdio.
 - `docs/examples/ancplua-mcp-http.mcp.json` – connect to the HTTP server.
 
-The contract:
-
-- Plugins in this repo **may** assume that MCP servers exist (for example, filesystem tools, CI tools), but:
-
-  - The actual server implementation lives in `ancplua-mcp/`.
-  - This repo only ships **documentation and examples**, not full MCP servers.
-
-Any time a plugin adds or changes MCP usage (for example, it calls tools from `ancplua-mcp`):
+Any time a plugin adds or changes MCP usage:
 
 1. Update the plugin’s `README.md` with the MCP dependency and configuration hints.
 2. Add or update an example under `docs/examples/*.mcp.json`.
-3. Update `CHANGELOG.md` and, if the change is architectural, add an ADR/spec in `docs/decisions/` and `docs/specs/`.
+3. Update `CHANGELOG.md`.
 
 ---
 
-## 5. Validation and quality gates
+## 6. Validation and quality gates
 
 Local and CI validation are aligned:
 
 - `tooling/scripts/local-validate.sh` is the **single entry point** for local checks.
-- CI uses `.github/workflows/ci.yml` to run the same checks (or stricter variants).
+- CI uses `.github/workflows/ci.yml` to run the same checks.
 
 At minimum, `local-validate.sh` should:
 
 - Run `claude plugin validate`:
-
   - On the marketplace root (`.claude-plugin/marketplace.json`)
   - On each plugin under `plugins/`
-- Run `shellcheck` on:
-
-  - `tooling/scripts/*.sh`
-  - `plugins/**/scripts/*.sh`
+- Run `shellcheck` on `*.sh` files
 - Run `markdownlint` on `**/*.md`
 - Run `actionlint` on `.github/workflows/*.yml`
 
 Rules:
 
 - Before claiming a non-trivial change is “done”, developers (human or Claude) must:
-
   - Run `./tooling/scripts/local-validate.sh`
   - Fix failures
   - Re-run until clean
-- Any change that affects:
-
-  - Marketplace manifest
-  - Plugin manifests
-  - MCP examples
-  - CLAUDE.md / README.md
-  - Architecture or behavior
-      must update **CHANGELOG.md** and, when appropriate, **ADR/spec** files.
 
 ---
 
-## 6. Relationship to ancplua-mcp
+## 7. Relationship to ancplua-mcp
 
 The two repos are intentionally decoupled:
 
-- **ancplua-claude-plugins**
+- **ancplua-claude-plugins (Type A)**
+  - "The Brain"
+  - Plugins, Skills, Agents
+  - Orchestrates workflows
 
-  - Claude Code marketplace and Skills
-  - Repo-specific behavior and workflows
-  - Example configs for talking to MCP servers
-
-- **ancplua-mcp**
-
+- **ancplua-mcp (Type T)**
+  - "The Hands"
   - C# MCP server implementations
-  - Tools that expose workstation / CI / infra capabilities
-  - .NET solution, tests, and server-specific docs
+  - Exposes raw tools
 
 Integration happens via:
 
-- MCP configuration (for example, `docs/examples/ancplua-mcp-stdio.mcp.json`)
-- Plugin Skills that **call tools** exposed by MCP servers
+1. **Configuration:** `docs/examples/*.mcp.json`
+2. **Orchestration:** Skills in this repo calling tools from that repo.
 
-No business logic is duplicated between the repos: **plugins orchestrate**, **MCP servers execute**.
+No business logic is duplicated between the repos: **plugins orchestrate, MCP servers execute.**
