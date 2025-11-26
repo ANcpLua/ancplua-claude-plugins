@@ -2,17 +2,23 @@ name: Claude Code Review
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [ opened, synchronize, ready_for_review ]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to review'
+        required: true
+        type: number
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
 
 jobs:
-  claude-review:
+  review:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
-      issues: read
-      id-token: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,49 +30,76 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: '--model claude-opus-4-5-20251101'
           prompt: |
-            REPO: ${{ github.repository }}
-            PR NUMBER: ${{ github.event.pull_request.number }}
+            You are performing a comprehensive code review for ancplua-claude-plugins.
 
-            You are reviewing a Claude Code plugin marketplace repository.
+            ## Repository Context
+            - **Type A Repository**: Brain/orchestration - plugin definitions, skills, workflows
+            - **Contents**: Markdown, JSON, Shell scripts, YAML workflows, .mcp.json configs
+            - **FORBIDDEN**: C#/.NET code, absolute paths, secrets in files
 
-            ## Project Context
-            This is Alexander's Claude Code plugin marketplace and agent lab:
-            - `.claude-plugin/marketplace.json` - plugin catalog
-            - `plugins/` - individual plugins (autonomous-ci, smart-commit, code-review)
-            - `skills/` - reusable Skills (SKILL.md files)
-            - `agents/` - Agent SDK-based agents
-            - `docs/` - specs, ADRs, architecture docs
+            ## Review ALL of These Areas
 
-            ## Review Focus
+            ### 1. Plugin Schema Compliance
+            - Valid plugin.json structure
+            - Required fields present (name, version, description)
+            - Proper capability declarations
 
-            **Plugin Schema Compliance**
-            - `.claude-plugin/plugin.json` has required fields (name, version, description, author, repository, license)
-            - Correct directory structure per Anthropic spec
-            - `marketplace.json` validity and consistency
+            ### 2. SKILL.md Quality
+            - Clear workflow instructions
+            - Proper step-by-step format
+            - No phantom tool references
 
-            **Skills & Commands**
-            - `SKILL.md` files have clear trigger phrases
-            - Command markdown files are well-structured
-            - Skills follow activation patterns from docs
+            ### 3. Shell Script Safety
+            - shellcheck compliance
+            - Proper quoting and error handling
+            - No hardcoded paths or secrets
 
-            **Documentation Sync**
-            - Changes reflected in CHANGELOG.md
-            - ADRs updated for architectural changes
-            - README.md accuracy
-
-            **Shell Scripts**
-            - shellcheck compliance for `scripts/*.sh`
-            - `local-validate.sh` coverage
-
-            **Workflow Files**
+            ### 4. YAML Workflow Correctness
             - actionlint compliance
-            - Proper permissions and triggers
+            - Proper permissions declared
+            - Correct trigger configurations
 
-            **MCP Integration (if applicable)**
-            - `.mcp.json` validity
-            - Example configs in `docs/examples/` updated
+            ### 5. Security
+            - No secrets in files
+            - No absolute paths
+            - Input validation in scripts
 
-            Use CLAUDE.md for project conventions. Post review via `gh pr comment`.
+            ### 6. Documentation
+            - CHANGELOG updated for changes
+            - README accurate
+            - Clear usage instructions
 
-          claude_args: '--model claude-opus-4-5-20251101 --allowed-tools "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*)"'
+            ## Your Task
+
+            After analyzing the PR:
+
+            1. Determine your verdict: APPROVE, REQUEST_CHANGES, or COMMENT
+            2. Submit a formal GitHub review using:
+
+            ```bash
+            gh pr review ${{ github.event.pull_request.number }} \
+              --approve|--request-changes|--comment \
+              --body "## 🤖 Claude Code Review (Opus 4.5)
+
+            ### Summary
+            [Brief description of what this PR does]
+
+            ### Issues Found
+            [List each issue with Location, Severity, Category, Description, and Fix]
+
+            ### What's Good
+            [Positive aspects of the PR]
+
+            ---
+            *Review performed per [CLAUDE.md](../blob/main/CLAUDE.md) guidelines*"
+            ```
+
+            Use --approve if changes look good, --request-changes if blocking issues found, --comment for suggestions.
+
+      - name: Verify review was submitted
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Claude review completed for PR #${{ github.event.pull_request.number }}"

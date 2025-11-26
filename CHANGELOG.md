@@ -6,6 +6,20 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **Quad-AI Review System Documentation (2025-11-26):**
+  - Upgraded from Triple-AI to Quad-AI (Claude, Jules, Gemini, CodeRabbit)
+  - Added AI capability matrix to `CLAUDE.md`, `GEMINI.md`, `README.md`, `AGENTS.md`
+  - Documented workflow triggers (claude.yml vs claude-code-review.yml vs jules-auto-review.yml)
+  - Added "Shared Brain Coordination Pattern" to `AGENTS.md` with ASCII diagram
+  - Documented Jules as only AI that creates fix PRs (with human approval)
+  - All documentation now emphasizes:
+    - Each AI does COMPREHENSIVE reviews (same scope, not specialized)
+    - Coordination via shared files (CHANGELOG.md, CLAUDE.md), NOT real-time
+    - FORBIDDEN: speculation about what other AIs "might find"
+    - Focus on Type A repo: plugins, SKILL.md, shell scripts, YAML workflows
+
 ### Added
 
 - **GitHub Actions Workflows (2025-11-25):**
@@ -87,8 +101,6 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - Enabled repo setting: `allow_auto_merge`
   - Branch protection on main: requires "Detect relevant changes" check
 
-### Changed
-
 - **GitHub Actions version updates (2025-11-25):**
   - `actions/checkout`: v4 → v6
   - `actions/setup-node`: v4 → v6
@@ -123,6 +135,20 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - Updated references in README.md and CLAUDE.md
 
 ### Fixed
+
+- **jules-auto-review.yml shellcheck/security fixes (2025-11-26):**
+  - Fixed SC2086: Added double quotes around `$GITHUB_OUTPUT` variable expansions
+  - Fixed script injection risk: Moved `github.event.pull_request.title` to env var
+  - Added quotes around PR_NUMBER variable assignment
+
+- **Repository cleanup (2025-11-26):**
+  - Deleted stale `.mega-linter.yml` (MegaLinter removed from CI)
+  - Deleted orphaned `.aiexclude` (undocumented)
+  - Added `.idea/` and `.claude/settings.local.json` to .gitignore
+  - Untracked `.idea/workspace.xml` from git
+  - Updated `docs/specs/spec-template.md` to match actual spec structure
+  - Updated `docs/decisions/adr-template.md` to match actual ADR structure
+  - Expanded `tooling/templates/plugin-template/README.md` with comprehensive guidance
 
 - **Full markdown/workflow compliance cleanup (2025-11-25):**
   - Fixed SC2086 shellcheck warnings in `jules-review.yml` (proper variable quoting)

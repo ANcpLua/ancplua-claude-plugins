@@ -268,57 +268,94 @@ Use the `requesting-code-review` skill if available, OR:
 3. Fix High issues before proceeding
 4. Document Medium/Low issues for future
 
-### 4.5.1 PR Review (Claude as Permanent Second Reviewer)
+### 4.5.1 Quad-AI Review System
 
 <EXTREMELY_IMPORTANT>
 
-**Claude is a PERMANENT SECOND REVIEWER alongside Jules for ALL pull requests.**
+**This repository uses quad-AI review: Claude, Jules, Gemini, and CodeRabbit.**
 
-When reviewing PRs, Claude MUST:
+### AI Capability Matrix
 
-1. **Review every PR** - Use `gh pr view <number>` and `gh pr diff <number>`
-2. **Check CI status** - Use `gh pr checks <number>`
-3. **Verify Jules involvement** - Check if Jules session was created or Jules commented
-4. **Provide merge verdict** - APPROVE, REQUEST_CHANGES, or COMMENT
+| Tool | Reviews | Comments | Creates Fix PRs | Auto-Fix |
+|------|---------|----------|-----------------|----------|
+| Claude | ✅ | ✅ | ❌ | ❌ |
+| Jules | ✅ | ✅ | ✅ (needs approval) | ❌ |
+| Gemini | ✅ | ✅ | ❌ | ❌ |
+| CodeRabbit | ✅ | ✅ | ❌ | ❌ |
 
-**Review Checklist:**
+**The gap:** No AI currently does `detect failure → understand fix → push fix → re-run CI` autonomously.
 
-| Check | Command | Pass Criteria |
-|-------|---------|---------------|
-| CI passes | `gh pr checks <n>` | All checks green |
-| CodeRabbit reviewed | PR comments | CodeRabbit approval present |
-| Jules consulted | PR comments/workflow | Jules session created OR not required |
-| No secrets exposed | `gh pr diff <n>` | No API keys, tokens, credentials |
-| CHANGELOG updated | `gh pr diff <n>` | Entry under [Unreleased] if needed |
+### Workflow Triggers
 
-**Merge Verdict Format:**
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| `claude.yml` | `@claude` mention | Interactive responses |
+| `claude-code-review.yml` | PR opened/sync | Formal code review |
+| `jules-auto-review.yml` | PR opened/sync | Review + fix PRs |
 
-```markdown
-## Claude Code Review
+### What All AIs Review (Type A Focus)
 
-**PR:** #<number> - <title>
-**Verdict:** ✅ APPROVE / ❌ REQUEST_CHANGES / 💬 COMMENT
+Each AI performs **comprehensive, independent reviews** - same scope:
 
-### Checks
-- [ ] CI: <status>
-- [ ] CodeRabbit: <status>
-- [ ] Jules: <status>
-- [ ] Security: <status>
-- [ ] CHANGELOG: <status>
+1. **Plugin Schema** - Valid structure, required fields, capability declarations
+2. **SKILL.md Quality** - Clear workflows, proper format, no phantom tools
+3. **Shell Scripts** - shellcheck compliance, quoting, error handling
+4. **YAML Workflows** - actionlint compliance, permissions, triggers
+5. **Security** - No secrets in files, no absolute paths, input validation
+6. **Documentation** - CHANGELOG, README, usage instructions
 
-### Issues Found
-<list or "None">
+### Shared Brain Coordination
 
-### Recommendation
-<merge / request changes / needs discussion>
+AIs coordinate through **shared files**, NOT real-time communication:
+
+```text
+┌─────────────────────────────────────────────────────────┐
+│                    SHARED FILES                         │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌──────────┐   │
+│  │CLAUDE.md│  │GEMINI.md│  │AGENTS.md│  │CHANGELOG │   │
+│  └────┬────┘  └────┬────┘  └────┬────┘  └────┬─────┘   │
+└───────┼────────────┼────────────┼─────────────┼─────────┘
+        │            │            │             │
+   ┌────▼────┐  ┌────▼────┐  ┌────▼────┐       │
+   │ Claude  │  │ Gemini  │  │  Jules  │       │
+   └─────────┘  └─────────┘  └─────────┘       │
+        │            │            │             │
+        └────────────┴────────────┴─────────────┘
+                     │
+              All agents write to
+              CHANGELOG.md to signal
+              what they've done
 ```
 
-**Auto-merge tiers (from `.github/workflows/auto-merge.yml`):**
+### Review Checklist (same for all AIs)
+
+| Check | Pass Criteria |
+|-------|---------------|
+| CI passes | All checks green |
+| No secrets exposed | No API keys, tokens, credentials |
+| CHANGELOG updated | Entry under [Unreleased] if needed |
+| Type A focus | No C#/.NET code, no absolute paths |
+
+### Auto-merge Tiers
 
 1. **Tier 1:** Dependabot patch/minor → auto-approve + auto-merge
 2. **Tier 2:** CodeRabbit approved → auto-merge when CI passes
 3. **Tier 3:** Jules approved → auto-merge when CI passes
-4. **Tier 4:** Claude approved → human decides merge
+4. **Tier 4:** Claude/Gemini approved → human decides merge
+
+### Jules Unique Capability
+
+Jules is the ONLY AI that can create fix PRs. However:
+
+- `requirePlanApproval: true` means human must approve the plan first
+- Even then, Jules needs to understand the fix (complex issues may fail)
+- PRs still require human merge approval
+
+### FORBIDDEN
+
+- Do NOT speculate about what other AIs "might find"
+- Do NOT add "triangulation notes" guessing other perspectives
+- Do NOT claim to know what another AI is thinking
 
 </EXTREMELY_IMPORTANT>
 
@@ -666,6 +703,178 @@ You have SUCCEEDED when:
 4. ✅ Documentation is updated
 5. ✅ Final report includes all required items
 6. ✅ Evidence supports your claims
+
+---
+
+## 14. SOLID Principles for Plugins
+
+Apply these principles when designing or modifying plugins:
+
+### Single Responsibility
+
+Each plugin should do ONE thing well:
+
+- `autonomous-ci` → CI verification only
+- `smart-commit` → Commit messages only
+- `code-review` → Code analysis only
+
+**Anti-pattern:** A plugin that handles CI, commits, AND reviews.
+
+### Open/Closed
+
+Plugins should be extensible without modification:
+
+- Add new skills to extend behavior
+- Use hooks for customization points
+- Don't modify core plugin logic for edge cases
+
+### Liskov Substitution
+
+Skills must be interchangeable within their category:
+
+- Any code-review skill should accept the same inputs
+- Any commit skill should produce compatible outputs
+
+### Interface Segregation
+
+Don't force plugins to implement unused features:
+
+- `hooks/` directory is optional
+- `commands/` directory is optional
+- Only require what's actually used
+
+### Dependency Inversion
+
+Plugins depend on abstractions (Skills), not concrete implementations:
+
+- Skills define the contract
+- MCP servers provide the implementation
+- Plugins orchestrate, never implement low-level operations
+
+---
+
+## 15. Thought Transparency (Agent Behavior)
+
+### Observable Decision Making
+
+When executing complex tasks, maintain visibility:
+
+```markdown
+## Processing Log
+
+**Task:** [Description]
+**Status:** In Progress
+
+### Steps
+- [x] Step 1: Gathered context
+- [x] Step 2: Identified files
+- [ ] Step 3: Implementing changes
+- [ ] Step 4: Validation
+```
+
+### Granular Task Decomposition
+
+Break work into atomic units:
+
+- Each step should be independently verifiable
+- Steps execute sequentially, not in parallel batches
+- Complete one phase before starting the next
+
+### Mental State Bookkeeping
+
+Track internal state explicitly:
+
+- Use `TodoWrite` for task tracking
+- Mark completed items immediately
+- Never claim completion without evidence
+
+### Silent Processing with Tracked Updates
+
+- Work silently on implementation
+- Update progress via `TodoWrite`
+- Report results only when complete or blocked
+
+---
+
+## 16. DevOps Excellence (CALMS Framework)
+
+### Culture
+
+- **Blameless post-mortems:** When things fail, focus on systemic improvements
+- **Shared ownership:** All agents (Claude, Jules, Gemini) share responsibility
+- **Fast feedback:** Validate early and often
+
+### Automation
+
+- **CI/CD:** All changes go through `.github/workflows/ci.yml`
+- **Validation:** `local-validate.sh` is the single source of truth
+- **No manual steps:** If it can be automated, it must be
+
+### Lean
+
+- **Small batches:** Prefer multiple small PRs over one large PR
+- **Minimize waste:** Don't over-document, don't over-engineer
+- **Build quality in:** Validate during development, not after
+
+### Measurement
+
+Track these DORA-inspired metrics:
+
+| Metric | Target | How to Measure |
+|--------|--------|----------------|
+| Validation Pass Rate | >95% | CI green on first push |
+| Lead Time | <1 hour | Commit to merge time |
+| Change Failure Rate | <15% | PRs requiring fixes |
+| Recovery Time | <30 min | Time to fix broken build |
+
+### Sharing
+
+- **Document decisions:** ADRs for architecture, specs for features
+- **Cross-agent communication:** AGENTS.md, CLAUDE.md, GEMINI.md
+- **Knowledge transfer:** Skills encode reusable workflows
+
+---
+
+## 17. Error Handling Conventions
+
+### Standardized Error Responses
+
+When reporting errors, use this format:
+
+```markdown
+## Error Report
+
+**Type:** [Validation|Runtime|Configuration]
+**Severity:** [Critical|High|Medium|Low]
+**Location:** [File:Line or Command]
+
+### Description
+[What went wrong]
+
+### Evidence
+[Error output, logs, or screenshots]
+
+### Attempted Fixes
+1. [What you tried]
+2. [What you tried]
+
+### Recommendation
+[Next steps or escalation path]
+```
+
+### Validation Failures
+
+1. Parse error output completely
+2. Identify root cause (not just symptoms)
+3. Attempt automatic fix if deterministic
+4. Retry with backoff if transient
+5. Escalate with full context if persistent
+
+### Never Hide Failures
+
+- Show error output in reports
+- Explain why something failed
+- Propose solutions, don't just report problems
 
 ---
 

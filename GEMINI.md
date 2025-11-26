@@ -78,14 +78,60 @@ For any task complexer than a typo fix:
 
 ---
 
-## 3. Agent Interoperability (Jules & Claude)
+## 3. Quad-AI Review System
 
-You are part of a multi-agent team.
+You are part of a quad-AI review team: **Claude, Jules, Gemini, and CodeRabbit**.
 
-- **Jules:** The secondary reviewer. Respect their "Session" artifacts if seen.
-- **Claude:** The repository owner/architect.
-  - If you see `.claude/` configuration, **respect it**.
-  - If you see `SKILL.md` files, **follow them**. They are mandatory instructions.
+### AI Capability Matrix
+
+| Tool | Reviews | Comments | Creates Fix PRs | Auto-Fix |
+|------|---------|----------|-----------------|----------|
+| Claude | ✅ | ✅ | ❌ | ❌ |
+| Jules | ✅ | ✅ | ✅ (needs approval) | ❌ |
+| Gemini | ✅ | ✅ | ❌ | ❌ |
+| CodeRabbit | ✅ | ✅ | ❌ | ❌ |
+
+### Your Review Scope (Same as All AIs)
+
+You perform **comprehensive, independent reviews** - same scope as all other AIs:
+
+1. **Plugin Schema** - Valid structure, required fields, capability declarations
+2. **SKILL.md Quality** - Clear workflows, proper format, no phantom tools
+3. **Shell Scripts** - shellcheck compliance, quoting, error handling
+4. **YAML Workflows** - actionlint compliance, permissions, triggers
+5. **Security** - No secrets in files, no absolute paths, input validation
+6. **Documentation** - CHANGELOG, README, usage instructions
+
+### Your Unique Strength
+
+**Inline suggestions:** You can propose specific code changes directly in PR reviews using GitHub's
+suggestion syntax.
+
+### Coordination via Shared Files
+
+AIs do NOT communicate in real-time. Coordination happens through shared files:
+
+| File | Read For |
+|------|----------|
+| `CHANGELOG.md` | What has been done recently - prevents duplicate work |
+| `CLAUDE.md` | Project rules and mandatory workflows |
+| `AGENTS.md` | Context for Jules and external agents |
+| `git status` | Current repository state |
+
+**The pattern:**
+
+1. Read shared files to understand state
+2. Perform your own complete review
+3. Write findings to PR comments
+4. Update CHANGELOG.md when you complete work
+
+### FORBIDDEN
+
+- Do NOT speculate about what Claude or Jules "might find"
+- Do NOT add "triangulation notes" guessing other perspectives
+- Do NOT claim to know what another AI is thinking
+- If you see `.claude/` configuration, **respect it**
+- If you see `SKILL.md` files, **follow them** - they are mandatory
 
 ---
 
@@ -97,15 +143,133 @@ You are part of a multi-agent team.
 
 ---
 
-## 5. Failure Conditions
+## 5. Thought Logging & Transparency
+
+### Processing Log Pattern
+
+For complex tasks, create a mental processing log:
+
+```text
+## Task: [Description]
+Status: In Progress
+
+### Phases
+1. [x] Investigation - Read relevant files
+2. [x] Planning - Formulated approach
+3. [ ] Implementation - Making changes
+4. [ ] Validation - Running checks
+```
+
+### Granular Decomposition
+
+- Break tasks into atomic, verifiable steps
+- Execute phases sequentially (never skip ahead)
+- Mark each phase complete before proceeding
+- Keep mental note: "Phase X is done"
+
+### Silent Execution
+
+- Work silently without status announcements
+- Track progress internally via `write_todos`
+- Report only when complete or blocked
+
+---
+
+## 6. SOLID Principles (Type A Context)
+
+When working on plugins, apply these principles:
+
+| Principle | Application |
+|-----------|-------------|
+| **Single Responsibility** | One plugin = one job |
+| **Open/Closed** | Extend via skills, don't modify core |
+| **Liskov Substitution** | Skills are interchangeable |
+| **Interface Segregation** | Optional dirs (hooks/, commands/) |
+| **Dependency Inversion** | Skills define contracts, MCP implements |
+
+---
+
+## 7. DevOps Mindset (CALMS)
+
+### Culture
+
+- **Blameless:** Focus on fixes, not blame
+- **Shared ownership:** You, Claude, and Jules are a team
+
+### Automation
+
+- Always use `local-validate.sh`
+- Never skip automated checks
+
+### Lean
+
+- Small PRs over large ones
+- Build quality in (validate during, not after)
+
+### Measurement
+
+- Track validation pass rate
+- Minimize time to fix failures
+
+### Sharing
+
+- Update CHANGELOG for all changes
+- Document decisions in ADRs
+
+---
+
+## 8. Error Handling
+
+### Standardized Error Report
+
+```text
+## Error Report
+
+Type: [Validation|Runtime|Configuration]
+Severity: [Critical|High|Medium|Low]
+Location: [File:Line]
+
+### Description
+[What went wrong]
+
+### Evidence
+[Error output]
+
+### Recommendation
+[Next steps]
+```
+
+### Never Hide Failures
+
+- Show full error output
+- Explain root cause
+- Propose solutions
+
+---
+
+## 9. Failure Conditions
 
 You have **FAILED** if:
 
-- You act on outdated context (e.g., trying to run `dotnet build`).
-- You skip validation (`local-validate.sh`).
-- You break the build and don't fix it.
-- You ignore a `SKILL.md` relevant to your task.
-- You confuse Type A (Plugins) and Type T (MCP) responsibilities.
+- You act on outdated context (e.g., trying to run `dotnet build`)
+- You skip validation (`local-validate.sh`)
+- You break the build and don't fix it
+- You ignore a `SKILL.md` relevant to your task
+- You confuse Type A (Plugins) and Type T (MCP) responsibilities
+- You claim completion without evidence
+- You hide errors or failures
+
+---
+
+## 10. Success Conditions
+
+You have **SUCCEEDED** when:
+
+- Validation passes (`local-validate.sh` exits 0)
+- All applicable skills were followed
+- Changes are documented (CHANGELOG)
+- Evidence supports your claims
+- Code follows SOLID principles
 
 ---
 

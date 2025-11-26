@@ -1,0 +1,148 @@
+# Jules Automatic PR Review
+#
+# Triggers Jules AI review automatically on every PR.
+# Works alongside Claude Code Review and Gemini for triple-AI validation.
+# Required secret: JULES_API_KEY
+#
+# Jules does BOTH:
+# 1. Posts comprehensive review comments (like Claude/Gemini)
+# 2. Creates fix PRs for actionable issues (unique capability)
+#
+# Human approval required for Jules plans before execution.
+
+name: Jules Auto Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  jules-review:
+    # Skip draft PRs and bot PRs
+    if: |
+      !github.event.pull_request.draft &&
+      github.event.pull_request.user.login != 'dependabot[bot]' &&
+      github.event.pull_request.user.login != 'renovate[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check API Key
+        id: check_key
+        run: |
+          if [ -z "${{ secrets.JULES_API_KEY }}" ]; then
+            echo "has_key=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::JULES_API_KEY not configured - skipping Jules review"
+          else
+            echo "has_key=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Jules Review Session
+        if: steps.check_key.outputs.has_key == 'true'
+        id: jules
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+
+          # Comprehensive review prompt for Jules (Type A repo)
+          PROMPT="You are performing a comprehensive code review for PR #${PR_NUMBER}: ${PR_TITLE}
+
+          ## Repository Context
+          - ancplua-claude-plugins: Plugin marketplace and orchestration (Type A)
+          - Contents: Markdown, JSON, Shell scripts, YAML workflows, .mcp.json configs
+          - FORBIDDEN: C#/.NET code, absolute paths, secrets in files
+
+          ## Review ALL Areas
+
+          1. **Plugin Schema**: Valid structure, required fields, capability declarations
+          2. **SKILL.md Quality**: Clear workflows, proper format, no phantom tools
+          3. **Shell Scripts**: shellcheck compliance, quoting, error handling
+          4. **YAML Workflows**: actionlint compliance, permissions, triggers
+          5. **Security**: No secrets in files, no absolute paths, input validation
+          6. **Documentation**: CHANGELOG, README, usage instructions
+
+          ## Your Output
+
+          Document ALL findings with:
+          - Location (file:line)
+          - Severity (CRITICAL/HIGH/MEDIUM/LOW)
+          - Category
+          - Description
+          - Suggested fix
+
+          For issues you CAN fix automatically:
+          - Create a fix PR with those changes
+          - Focus on CRITICAL and HIGH severity first"
+
+          PROMPT_JSON=$(echo "$PROMPT" | jq -Rsa .)
+          TITLE="Review PR #${PR_NUMBER}: $(echo "$PR_TITLE" | cut -c 1-50)"
+          TITLE_JSON=$(echo "$TITLE" | jq -Rsa .)
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            'https://jules.googleapis.com/v1alpha/sessions' \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -H "X-Goog-Api-Key: $JULES_API_KEY" \
+            -d "{
+              \"prompt\": $PROMPT_JSON,
+              \"sourceContext\": {
+                \"source\": \"sources/github/${{ github.repository }}\",
+                \"githubRepoContext\": {
+                  \"startingBranch\": \"$BASE_BRANCH\",
+                  \"pullRequestNumber\": $PR_NUMBER
+                }
+              },
+              \"automationMode\": \"AUTO_CREATE_PR\",
+              \"requirePlanApproval\": true,
+              \"title\": $TITLE_JSON
+            }")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::warning::Jules API returned HTTP $HTTP_CODE - review skipped"
+            echo "success=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          SESSION_ID=$(echo "$BODY" | jq -r '.id')
+          echo "session_id=$SESSION_ID" >> "$GITHUB_OUTPUT"
+          echo "success=true" >> "$GITHUB_OUTPUT"
+
+      - name: Post Jules Review Comment
+        if: steps.check_key.outputs.has_key == 'true' && steps.jules.outputs.success == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const sessionId = '${{ steps.jules.outputs.session_id }}';
+            const julesUrl = `https://jules.google/session/${sessionId}`;
+            const prNumber = ${{ github.event.pull_request.number }};
+
+            await github.rest.issues.createComment({
+              issue_number: prNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🔮 Jules AI Review
+
+            **Session:** [View Full Review & Plan](${julesUrl})
+
+            ### What Jules Does
+            1. **Full Code Review** - Plugin schemas, SKILL.md, shell scripts, YAML workflows
+            2. **Creates Fix PRs** - For CRITICAL/HIGH issues that can be auto-fixed
+
+            ### Next Steps
+            - Review Jules' findings at the link above
+            - **Approve the plan** if you want Jules to create a fix PR
+            - Plan approval required before any changes
+
+            ---
+            *Part of triple-AI review: Claude + Jules + Gemini*`
+            });

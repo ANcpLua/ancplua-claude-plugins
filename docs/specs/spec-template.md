@@ -9,70 +9,74 @@ informed: "People to inform"
 
 # spec-XXXX: Feature Name
 
-## Feature name
+## Metadata
 
-Short descriptive name for the feature.
+| Field | Value |
+|-------|-------|
+| **Status** | proposed |
+| **Date** | YYYY-MM-DD |
+| **Contact** | Your Name |
 
-## 1. Goal of this feature
+---
 
-Describe what this feature aims to achieve.
+## Problem / Goal
 
-### Success metric
+What problem does this solve? What is the goal?
 
-Define how success will be measured.
+---
 
-### Outcome (implementation-free description)
+## Success Metrics
 
-Describe the desired outcome without implementation details.
+1. Metric 1
+2. Metric 2
 
-## 2. Problem being solved
+---
 
-### Current difficulties without this feature
+## Outcome
 
-Describe the pain points this feature addresses.
+### Components Created
 
-### Pain points
+List the files/components this spec creates.
 
-List specific issues users face.
+### Integration Points
 
-### System complexity issues
+| Component | Integration |
+|-----------|-------------|
+| X | Y |
 
-Describe any architectural challenges.
+---
 
-## 3. API and structure changes
+## Implementation Details
 
-### 3.1 New APIs
+### Directory Structure
 
-Describe any new APIs being introduced.
-
-### 3.2 Changed APIs
-
-Describe changes to existing APIs.
-
-### 3.3 Breaking changes
-
-List any breaking changes.
-
-## 4. E2E code and usage samples
-
-Provide end-to-end examples showing how the feature is used.
-
-### Example 1
-
-```bash
-# Example usage
+```text
+path/to/feature/
+├── file1
+└── file2
 ```
 
-### Example 2
+### API / Interface
 
-```bash
-# Another example
-```
+Document any APIs or interfaces.
 
-## 5. Maintenance rules for Claude
+---
 
-How should Claude maintain this feature over time?
+## Security Considerations
 
-- Rule 1
-- Rule 2
-- Rule 3
+- Consideration 1
+- Consideration 2
+
+---
+
+## Related Documents
+
+- [ADR-XXXX](../decisions/ADR-XXXX.md)
+- [Other relevant doc]
+
+---
+
+## Maintenance Rules for Claude
+
+1. Rule 1
+2. Rule 2

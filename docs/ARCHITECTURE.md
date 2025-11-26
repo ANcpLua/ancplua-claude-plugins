@@ -199,3 +199,83 @@ Integration happens via:
 2. **Orchestration:** Skills in this repo calling tools from that repo.
 
 No business logic is duplicated between the repos: **plugins orchestrate, MCP servers execute.**
+
+---
+
+## 8. Design Principles (SOLID for Plugins)
+
+### Single Responsibility
+
+Each plugin handles ONE concern:
+
+| Plugin | Responsibility |
+|--------|----------------|
+| `autonomous-ci` | CI verification and monitoring |
+| `smart-commit` | Commit message generation |
+| `code-review` | Code quality analysis |
+| `jules-integration` | External agent delegation |
+
+**Anti-pattern:** A "super-plugin" that does everything.
+
+### Open/Closed
+
+- **Extend:** Add new skills to a plugin
+- **Don't modify:** Core plugin logic for edge cases
+- **Use hooks:** For customization points
+
+### Interface Segregation
+
+Not all plugins need all features:
+
+| Component | Required | Purpose |
+|-----------|----------|---------|
+| `.claude-plugin/plugin.json` | ✓ Always | Plugin manifest |
+| `README.md` | ✓ Always | Documentation |
+| `skills/` | Optional | Workflow guidance |
+| `commands/` | Optional | Slash commands |
+| `hooks/` | Optional | Event handling |
+| `scripts/` | Optional | Shell automation |
+
+### Dependency Inversion
+
+Plugins orchestrate via Skills. Skills define contracts. MCP servers implement.
+
+---
+
+## 9. DevOps Integration (CALMS)
+
+### Automation Touchpoints
+
+| Stage | Tool | Purpose |
+|-------|------|---------|
+| Local | `local-validate.sh` | Pre-commit checks |
+| CI | `ci.yml` | Automated validation |
+| Review | `claude-code-review.yml` | AI-assisted review |
+| Merge | `auto-merge.yml` | Tiered auto-merge |
+
+### Quality Gates
+
+1. **Plugin validation:** `claude plugin validate .`
+2. **Shell scripts:** `shellcheck`
+3. **Markdown:** `markdownlint`
+4. **Workflows:** `actionlint`
+5. **JSON:** `jq` syntax check
+
+### DORA Metrics Targets
+
+| Metric | Target |
+|--------|--------|
+| Deployment Frequency | Multiple per day |
+| Lead Time | < 1 hour |
+| Change Failure Rate | < 15% |
+| MTTR | < 30 minutes |
+
+---
+
+## 10. Compliance Status
+
+**Last Verified:** 2025-11-25
+**Score:** 96/100
+
+All components pass Anthropic Claude Code specification requirements.
+See Section 8 of CLAUDE.md for detailed compliance matrix.
