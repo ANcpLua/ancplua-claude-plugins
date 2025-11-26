@@ -26,7 +26,7 @@ This repository is the **Application Layer (Type A)** - the "Brain" containing:
 - Plugin definitions and configurations
 - Workflow logic and agent coordination
 
-**Sister Repository:** `ancplua-mcp` (Type T - Technology) contains actual tool implementations.
+**Sister Repository:** [`ancplua-mcp`](https://github.com/ANcpLua/ancplua-mcp) (Type T - Technology) contains actual tool implementations.
 
 **Key Rule:** This repository NEVER contains MCP server implementations or C#/.NET code.
 
@@ -127,7 +127,7 @@ This repository uses multiple AI assistants (Claude, Jules, Gemini, CodeRabbit, 
 
 1. Check `CHANGELOG.md` for recent work
 2. Understand the target architecture in `CLAUDE.md` section 3
-3. Search for relevant skills: `find . -name "SKILL.md"`
+3. Search for relevant skills: `find . -name 'SKILL.md'`
 
 ### During Implementation
 
