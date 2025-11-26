@@ -22,6 +22,13 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **Copilot Instructions (2025-11-26):**
+  - Created `.github/copilot-instructions.md` for GitHub Copilot coding agent
+  - Documents repository structure, architecture, and code conventions
+  - Includes validation commands and documentation requirements
+  - Adds multi-AI coordination guidelines consistent with existing AI agent docs
+  - Reference: [Best practices for Copilot coding agent](https://gh.io/copilot-coding-agent-tips)
+
 - **GitHub Actions Workflows (2025-11-25):**
   - `.github/workflows/claude.yml` - Main Claude Code interaction workflow
     - Configured for `claude-opus-4-5-20251101` model
