@@ -1,164 +1,93 @@
-# Plugin Template
+# Plugin Name
 
-Starter template for creating Claude Code plugins in `ancplua-claude-plugins`.
+Brief description of what this plugin does.
 
----
+## Features
 
-## Quick Start
+- Feature 1: Description
+- Feature 2: Description
+
+## Installation
+
+This plugin is part of the `ancplua-claude-plugins` marketplace.
 
 ```bash
-# 1. Copy template to plugins/
-cp -r tooling/templates/plugin-template plugins/my-plugin
-
-# 2. Edit manifest
-# Update plugins/my-plugin/.claude-plugin/plugin.json
-
-# 3. Register in marketplace
-# Add entry to .claude-plugin/marketplace.json
-
-# 4. Validate
-claude plugin validate plugins/my-plugin
+/plugin marketplace add ANcpLua/ancplua-claude-plugins
+/plugin install <plugin-name>@ancplua-claude-plugins
 ```
 
----
+## Skills
+
+| Skill | Description |
+|-------|-------------|
+| `skill-name` | What the skill enables Claude to do |
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `/command` | What the command does |
 
 ## Directory Structure
 
-```
-plugins/my-plugin/
+```text
+plugins/<plugin-name>/
 ├── .claude-plugin/
-│   └── plugin.json       # REQUIRED - Plugin manifest
+│   └── plugin.json          # Plugin manifest (required)
+├── README.md                 # This file
 ├── skills/
-│   └── my-skill/
-│       └── SKILL.md      # Skill definition with YAML frontmatter
+│   └── <skill-name>/
+│       └── SKILL.md         # Skill definition
 ├── commands/
-│   └── my-command.md     # Slash command definition
+│   └── <command>.md         # Slash commands
 ├── hooks/
-│   └── hooks.json        # Event hooks configuration
-├── scripts/
-│   └── *.sh              # Shell utilities (chmod +x)
-└── README.md             # Plugin documentation
+│   └── hooks.json           # Lifecycle hooks (optional)
+└── scripts/
+    └── <script>.sh          # Helper scripts (optional)
 ```
 
----
+## Configuration
 
-## File Formats
+### Environment Variables
 
-### plugin.json (Required)
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VAR_NAME` | Yes/No | What it's for |
 
-```json
-{
-  "name": "my-plugin",
-  "version": "0.1.0",
-  "description": "What this plugin does",
-  "author": {
-    "name": "Your Name",
-    "url": "https://github.com/username"
-  },
-  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
-  "license": "MIT",
-  "keywords": ["keyword1", "keyword2"]
-}
+### MCP Tools (if applicable)
+
+This plugin uses tools from `ancplua-mcp`:
+
+- `ToolName` - What it does
+
+## Usage Examples
+
+### Example 1: Basic Usage
+
+```text
+User: Use the <skill-name> skill to do X
+
+Claude: [Uses skill to accomplish X]
 ```
 
-### SKILL.md (Skills)
+### Example 2: With Command
 
-```markdown
----
-name: my-skill
-description: When to use this skill and what it does. Be specific.
----
+```text
+User: /<command> argument
 
-# Skill Title
-
-## Overview
-What this skill helps with.
-
-## When to Use
-- Trigger condition 1
-- Trigger condition 2
-
-## Process
-1. Step one
-2. Step two
-
-## Examples
-...
+Claude: [Executes command]
 ```
 
-### Command (commands/*.md)
+## Validation
 
-```markdown
----
-name: my-command
-description: What this command does
-arguments:
-  - name: arg1
-    description: First argument
-    required: true
----
+Run local validation before committing:
 
-# /my-command
-
-Usage and behavior description.
+```bash
+./tooling/scripts/local-validate.sh
 ```
 
-### hooks.json (Hooks)
+## Related
 
-```json
-{
-  "hooks": [
-    {
-      "event": "PreToolUse",
-      "matcher": { "tool_name": "Bash" },
-      "command": "./scripts/my-hook.sh"
-    }
-  ]
-}
-```
-
----
-
-## Registration
-
-Add to `.claude-plugin/marketplace.json`:
-
-```json
-{
-  "name": "my-plugin",
-  "description": "What this plugin does",
-  "version": "0.1.0",
-  "source": "./plugins/my-plugin"
-}
-```
-
----
-
-## Validation Checklist
-
-- [ ] `plugin.json` has `name`, `version`, `description`
-- [ ] Skills have YAML frontmatter with `name` and `description`
-- [ ] Scripts are executable (`chmod +x`)
-- [ ] Added to `marketplace.json`
-- [ ] `claude plugin validate plugins/my-plugin` passes
-
----
-
-## Examples
-
-See existing plugins for patterns:
-
-| Plugin | Features |
-|--------|----------|
-| `plugins/autonomous-ci/` | Skills, scripts, hooks |
-| `plugins/code-review/` | Skills, commands |
-| `plugins/smart-commit/` | Skills, commands |
-| `plugins/jules-integration/` | Skills, commands, scripts |
-
----
-
-## Resources
-
-- [Claude Code Plugin Docs](https://code.claude.com/docs/en/plugins.md)
-- [Skills Guide](https://code.claude.com/docs/en/skills.md)
-- [Hooks Reference](https://code.claude.com/docs/en/hooks.md)
+- [SKILL.md](skills/<skill-name>/SKILL.md) - Skill documentation
+- [Plugin Guidelines](../../docs/PLUGINS.md) - Plugin development guide
+- [spec-XXXX](../../docs/specs/spec-XXXX.md) - Feature specification (if applicable)

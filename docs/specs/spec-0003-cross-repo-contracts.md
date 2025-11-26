@@ -52,6 +52,7 @@ Establish and maintain stable contracts between:
 ### System complexity issues
 
 Two independent repos must behave as a coordinated system. Without explicit contracts:
+
 - Claude sessions can't know if cross-repo changes are safe
 - Refactors in one repo can break the other silently
 

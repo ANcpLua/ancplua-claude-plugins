@@ -15,7 +15,9 @@
 
 ## Problem / Goal
 
-Enable Claude Code agents and users to delegate asynchronous coding tasks to Google's Jules AI agent. Jules can run background tasks (bug fixes, documentation, tests) while users continue other work.
+Enable Claude Code agents and users to delegate asynchronous coding tasks to Google's Jules AI
+agent. Jules can run background tasks (bug fixes, documentation, tests) while users continue
+other work.
 
 ---
 

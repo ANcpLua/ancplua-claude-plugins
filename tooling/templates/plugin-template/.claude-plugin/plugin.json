@@ -1,11 +1,14 @@
 {
   "name": "example-plugin",
   "version": "0.1.0",
-  "description": "Describe what this plugin does.",
-  "author": "your-name",
-  "repository": "https://github.com/your/repo",
+  "description": "A template description for what this plugin does.",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
   "license": "MIT",
-  "skills": [],
-  "commands": [],
-  "hooks": []
+  "keywords": [
+    "claude-plugin"
+  ]
 }

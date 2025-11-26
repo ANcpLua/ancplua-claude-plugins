@@ -22,5 +22,8 @@
   "MD041": false,
   "MD046": {
     "style": "fenced"
+  },
+  "MD060": {
+    "style": "padded"
   }
 }

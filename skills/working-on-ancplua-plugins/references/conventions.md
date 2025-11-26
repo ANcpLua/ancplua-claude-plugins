@@ -3,24 +3,31 @@
 ## Critical Architecture Rules
 
 ### 1. Path Variables
-**ALWAYS** use `${CLAUDE_PLUGIN_ROOT}` for paths in configuration files (MCP, Hooks, etc.). This ensures portability across different users and systems.
+
+**ALWAYS** use `${CLAUDE_PLUGIN_ROOT}` for paths in configuration files (MCP, Hooks, etc.).
+This ensures portability across different users and systems.
 
 **✅ CORRECT:**
+
 ```json
 "args": ["${CLAUDE_PLUGIN_ROOT}/server/index.js"]
 ```
 
 **❌ WRONG:**
+
 ```json
 "args": ["/Users/ancplua/projects/plugins/server/index.js"]
 ```
 
 ### 2. Manifest Locations
+
 The `.claude-plugin/` directory is **ONLY** for manifests (`plugin.json`, `marketplace.json`).
+
 - **DO NOT** put `skills/`, `commands/`, or `hooks/` inside `.claude-plugin/`.
 - **DO** put them at the plugin root.
 
 ### 3. Relative Paths
+
 In `plugin.json`, all relative paths must start with `./` and be relative to the plugin root.
 
 ---

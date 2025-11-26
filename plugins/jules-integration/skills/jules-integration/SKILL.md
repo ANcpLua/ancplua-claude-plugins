@@ -7,9 +7,11 @@ description: Use when delegating async coding tasks to Jules AI. Helps create Ju
 
 ## Overview
 
-Jules is Google's asynchronous AI coding agent. It runs tasks in the background on a cloud VM, clones your repo, and creates PRs with changes.
+Jules is Google's asynchronous AI coding agent. It runs tasks in the background on a cloud VM,
+clones your repo, and creates PRs with changes.
 
 **When to use Jules:**
+
 - Bug fixes that need deep codebase analysis
 - Documentation improvements across many files
 - Test suite additions
@@ -17,13 +19,14 @@ Jules is Google's asynchronous AI coding agent. It runs tasks in the background 
 - Tasks you want to run while you focus elsewhere
 
 **When NOT to use Jules:**
+
 - Quick, simple changes (do them directly)
 - Tasks requiring real-time interaction
 - Changes to CI/CD workflows (handle manually)
 
 ## Prerequisites
 
-1. **Jules API Key** - Get from https://jules.google (Settings)
+1. **Jules API Key** - Get from <https://jules.google> (Settings)
 2. **GitHub connected** - Your repo must be connected to Jules
 3. **AGENTS.md** - Should exist in repo root (Jules reads it for context)
 
@@ -74,11 +77,13 @@ Trigger the `jules-review.yml` workflow manually with your prompt.
 ### Writing Good Prompts
 
 **Do:**
+
 - Be specific: "Add unit tests for `parseQueryString` in `utils.js`"
 - Set constraints: "Do not modify public APIs"
 - Define scope: "Focus on the `src/auth/` directory"
 
 **Don't:**
+
 - Be vague: "Make the code better"
 - Skip context: "Fix the bug" (which bug?)
 - Request unsafe operations: "Auto-merge when done"
@@ -86,6 +91,7 @@ Trigger the `jules-review.yml` workflow manually with your prompt.
 ### Safety Settings
 
 Always use:
+
 - `requirePlanApproval: true` - Review before Jules acts
 - `automationMode: "AUTO_CREATE_PR"` - Creates PR, doesn't merge
 - Check Jules' proposed changes before approving

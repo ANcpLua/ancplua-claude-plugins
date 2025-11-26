@@ -2,56 +2,104 @@ name: Claude Code Review
 
 on:
   pull_request:
-    types: [opened, synchronize]
-    # Optional: Only run on specific file changes
-    # paths:
-    #   - "src/**/*.ts"
-    #   - "src/**/*.tsx"
-    #   - "src/**/*.js"
-    #   - "src/**/*.jsx"
+    types: [ opened, synchronize, ready_for_review ]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to review'
+        required: true
+        type: number
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
 
 jobs:
-  claude-review:
-    # Optional: Filter by PR author
-    # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
-
+  review:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
-      issues: read
-      id-token: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Run Claude Code Review
         id: claude-review
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: '--model claude-opus-4-5-20251101'
           prompt: |
-            REPO: ${{ github.repository }}
-            PR NUMBER: ${{ github.event.pull_request.number }}
+            You are performing a comprehensive code review for ancplua-claude-plugins.
 
-            Please review this pull request and provide feedback on:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Performance considerations
-            - Security concerns
-            - Test coverage
+            ## Repository Context
+            - **Type A Repository**: Brain/orchestration - plugin definitions, skills, workflows
+            - **Contents**: Markdown, JSON, Shell scripts, YAML workflows, .mcp.json configs
+            - **FORBIDDEN**: C#/.NET code, absolute paths, secrets in files
 
-            Use the repository's CLAUDE.md for guidance on style and conventions. Be constructive and helpful in your feedback.
+            ## Review ALL of These Areas
 
-            Use `gh pr comment` with your Bash tool to leave your review as a comment on the PR.
+            ### 1. Plugin Schema Compliance
+            - Valid plugin.json structure
+            - Required fields present (name, version, description)
+            - Proper capability declarations
 
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://docs.claude.com/en/docs/claude-code/cli-reference for available options
-          claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*)"'
+            ### 2. SKILL.md Quality
+            - Clear workflow instructions
+            - Proper step-by-step format
+            - No phantom tool references
 
+            ### 3. Shell Script Safety
+            - shellcheck compliance
+            - Proper quoting and error handling
+            - No hardcoded paths or secrets
+
+            ### 4. YAML Workflow Correctness
+            - actionlint compliance
+            - Proper permissions declared
+            - Correct trigger configurations
+
+            ### 5. Security
+            - No secrets in files
+            - No absolute paths
+            - Input validation in scripts
+
+            ### 6. Documentation
+            - CHANGELOG updated for changes
+            - README accurate
+            - Clear usage instructions
+
+            ## Your Task
+
+            After analyzing the PR:
+
+            1. Determine your verdict: APPROVE, REQUEST_CHANGES, or COMMENT
+            2. Submit a formal GitHub review using:
+
+            ```bash
+            gh pr review ${{ github.event.pull_request.number }} \
+              --approve|--request-changes|--comment \
+              --body "## 🤖 Claude Code Review (Opus 4.5)
+
+            ### Summary
+            [Brief description of what this PR does]
+
+            ### Issues Found
+            [List each issue with Location, Severity, Category, Description, and Fix]
+
+            ### What's Good
+            [Positive aspects of the PR]
+
+            ---
+            *Review performed per [CLAUDE.md](../blob/main/CLAUDE.md) guidelines*"
+            ```
+
+            Use --approve if changes look good, --request-changes if blocking issues found, --comment for suggestions.
+
+      - name: Verify review was submitted
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Claude review completed for PR #${{ github.event.pull_request.number }}"

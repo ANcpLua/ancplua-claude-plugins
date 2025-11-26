@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/anthropic-cookbook/main/misc/mcp/.mcp.schema.json",
+  "mcpServers": {
+    "ancplua-workstation": {
+      "command": "dotnet",
+      "args": ["run", "--no-build", "--project", "../ancplua-mcp/src/Ancplua.Mcp.WorkstationServer/Ancplua.Mcp.WorkstationServer.csproj"],
+      "env": {}
+    },
+    "ancplua-ai-services": {
+      "command": "dotnet",
+      "args": ["run", "--no-build", "--project", "../ancplua-mcp/src/Ancplua.Mcp.AIServicesServer/Ancplua.Mcp.AIServicesServer.csproj"],
+      "env": {}
+    },
+    "ancplua-roslyn-metrics": {
+      "command": "dotnet",
+      "args": ["run", "--no-build", "--project", "../ancplua-mcp/src/Ancplua.Mcp.RoslynMetricsServer/Ancplua.Mcp.RoslynMetricsServer.csproj"],
+      "env": {}
+    },
+    "ancplua-github-apps": {
+      "command": "dotnet",
+      "args": ["run", "--no-build", "--project", "../ancplua-mcp/src/Ancplua.Mcp.GitHubAppsServer/Ancplua.Mcp.GitHubAppsServer.csproj"],
+      "env": {}
+    }
+  }
+}

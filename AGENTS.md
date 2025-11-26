@@ -20,6 +20,78 @@
 
 ---
 
+## The "Shared Brain" Coordination Pattern
+
+AIs (Claude, Jules, Gemini, CodeRabbit) cannot read each other's minds. They coordinate through **shared files**.
+
+### AI Capability Matrix
+
+| Tool | Reviews | Comments | Creates Fix PRs | Auto-Fix |
+|------|---------|----------|-----------------|----------|
+| Claude | ✅ | ✅ | ❌ | ❌ |
+| Jules | ✅ | ✅ | ✅ (needs approval) | ❌ |
+| Gemini | ✅ | ✅ | ❌ | ❌ |
+| CodeRabbit | ✅ | ✅ | ❌ | ❌ |
+
+**The gap:** No AI currently does `detect failure → understand fix → push fix → re-run CI` autonomously.
+
+### How It Works
+
+```text
+┌─────────────────────────────────────────────────────────┐
+│                    SHARED FILES                         │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │
+│  │ CHANGELOG   │ │ CLAUDE.md   │ │ AGENTS.md   │        │
+│  │ (what's     │ │ (project    │ │ (agent      │        │
+│  │  done)      │ │  rules)     │ │  context)   │        │
+│  └──────┬──────┘ └──────┬──────┘ └──────┬──────┘        │
+│         │               │               │               │
+└─────────┼───────────────┼───────────────┼───────────────┘
+          │               │               │
+    ┌─────▼─────┐   ┌─────▼─────┐   ┌─────▼─────┐
+    │  CLAUDE   │   │   JULES   │   │  GEMINI   │
+    │  (reads)  │   │  (reads)  │   │  (reads)  │
+    └─────┬─────┘   └─────┬─────┘   └─────┬─────┘
+          │               │               │
+          └───────────────┼───────────────┘
+                          ▼
+              ┌───────────────────────┐
+              │  Updates CHANGELOG    │
+              │  when work complete   │
+              └───────────────────────┘
+```
+
+### Shared Truth Files
+
+| File | AI Reads To | AI Writes When |
+|------|-------------|----------------|
+| `CHANGELOG.md` | Know what's already done | Completing work |
+| `CLAUDE.md` | Understand project rules | N/A (human-maintained) |
+| `GEMINI.md` | Gemini-specific rules | N/A (human-maintained) |
+| `AGENTS.md` | Agent context, constraints | N/A (human-maintained) |
+| `git status` | Current repo state | (via git operations) |
+
+### Communication Protocol
+
+1. **At session start:** Read `CHANGELOG.md` to see recent work
+2. **During work:** Follow rules in `CLAUDE.md` / `GEMINI.md`
+3. **On completion:** Add entry to `CHANGELOG.md`
+
+### Conflict Prevention
+
+- Each AI sees the SAME shared files
+- No direct AI-to-AI communication
+- Humans synthesize overlapping findings
+- CHANGELOG entries include AI attribution
+
+### FORBIDDEN
+
+- Guessing what another AI "might think"
+- Adding "triangulation notes" about other AIs
+- Claiming consensus without evidence
+
+---
+
 ## Agents in This Repository
 
 ### 1. Claude Code Agents
@@ -39,12 +111,14 @@ Claude Code agents are defined in `agents/` and use the Claude Agent SDK.
 Jules (Google Labs) can work on this repository via the API.
 
 **Supported tasks for Jules:**
+
 - Bug fixes in plugin code
 - Documentation improvements
 - Test additions
 - Code cleanup and refactoring
 
 **Constraints for Jules:**
+
 - Do NOT modify `.claude-plugin/` manifests without explicit instruction
 - Do NOT change `CLAUDE.md` or `AGENTS.md` without explicit instruction
 - Do NOT auto-merge PRs (require human approval)
@@ -58,7 +132,7 @@ Jules (Google Labs) can work on this repository via the API.
 
 Each plugin under `plugins/<name>/` follows:
 
-```
+```text
 plugins/<name>/
 ├── .claude-plugin/
 │   └── plugin.json          # Manifest (required)
@@ -155,13 +229,13 @@ curl 'https://jules.googleapis.com/v1alpha/sessions' \
 
 ## Getting Help
 
-- **Claude Code docs:** https://code.claude.com/docs
-- **Jules docs:** https://jules.google/docs/
-- **Jules API:** https://developers.google.com/jules/api
+- **Claude Code docs:** <https://code.claude.com/docs>
+- **Jules docs:** <https://jules.google/docs/>
+- **Jules API:** <https://developers.google.com/jules/api>
 
 ---
 
 ## Contact
 
 - **Owner:** AncpLua
-- **Repository:** https://github.com/ANcpLua/ancplua-claude-plugins
+- **Repository:** <https://github.com/ANcpLua/ancplua-claude-plugins>

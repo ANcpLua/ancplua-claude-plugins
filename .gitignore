@@ -4,8 +4,8 @@
 *.swp
 *.swo
 
-# Optional: uncomment if you want to ignore JetBrains IDE project files
-# .idea/
+# JetBrains IDE project files
+.idea/
 
 # --- Node / TypeScript ---
 node_modules/
@@ -37,6 +37,7 @@ obj/
 
 # --- Claude Code ---
 .claude-cache/
+.claude/settings.local.json
 
 # --- Existing .NET-specific entries (kept) ---
 [Dd]ebug/

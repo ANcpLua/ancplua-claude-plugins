@@ -9,27 +9,56 @@ informed: "People to inform"
 
 # ADR-XXXX: Decision Title
 
-## Context and problem statement
+## Metadata
+
+| Field | Value |
+|-------|-------|
+| **Status** | proposed / accepted / rejected / deprecated / superseded |
+| **Date** | YYYY-MM-DD |
+| **Contact** | Your Name |
+| **Deciders** | Decision makers |
+| **Consulted** | People consulted |
+| **Informed** | People to inform |
+
+---
+
+## Context and Problem Statement
 
 Describe the context and the problem that needs to be addressed.
 
-## Decision drivers
+---
 
-- Driver 1
-- Driver 2
-- Driver 3
+## Decision Drivers
 
-## Considered options
+1. Driver 1
+2. Driver 2
+3. Driver 3
 
-1. **Option A:** Description
-2. **Option B:** Description
-3. **Option C:** Description (chosen)
+---
 
-## Decision outcome
+## Considered Options
 
-### Chosen option: Option C
+### Option A: Name
+
+Description of option A.
+
+### Option B: Name
+
+Description of option B.
+
+### Option C: Name (Selected)
+
+Description of option C.
+
+---
+
+## Decision Outcome
+
+### Selected: Option C - Name
 
 Explain why this option was chosen.
+
+---
 
 ## Consequences
 
@@ -43,46 +72,26 @@ Explain why this option was chosen.
 - Negative consequence 1
 - Negative consequence 2
 
-## Pros and cons of the options
+### Neutral
 
-### Option A
+- Neutral consequence
 
-**Good:**
+---
 
-- Pro 1
-- Pro 2
+## Implementation Notes
 
-**Bad:**
+Any notes about implementation.
 
-- Con 1
-- Con 2
+---
 
-### Option B
+## Related Documents
 
-**Good:**
+- [spec-XXXX](../specs/spec-XXXX.md)
+- [Other ADRs]
 
-- Pro 1
-- Pro 2
+---
 
-**Bad:**
+## Maintenance Rules for Claude
 
-- Con 1
-- Con 2
-
-### Option C (chosen)
-
-**Good:**
-
-- Pro 1
-- Pro 2
-
-**Bad:**
-
-- Con 1
-- Con 2
-
-## Maintenance rules for Claude
-
-- Rule 1
-- Rule 2
-- Rule 3
+1. Rule 1
+2. Rule 2

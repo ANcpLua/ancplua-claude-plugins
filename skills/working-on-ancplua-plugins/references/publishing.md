@@ -11,6 +11,7 @@ mkdir -p plugins/<plugin-name>/{skills,commands,hooks,scripts}
 ## 2. Create Manifests
 
 ### `plugins/<plugin-name>/.claude-plugin/plugin.json`
+
 **Rule:** relative paths must start with `./`
 
 ```json
@@ -29,6 +30,7 @@ mkdir -p plugins/<plugin-name>/{skills,commands,hooks,scripts}
 ```
 
 ### `.claude-plugin/marketplace.json` (Repo Root)
+
 This registers the plugin in the monorepo marketplace.
 
 ```json
@@ -42,16 +44,16 @@ This registers the plugin in the monorepo marketplace.
 
 ## 3. Documentation & Release
 
-1.  **README.md**: Add `plugins/<plugin-name>/README.md` explaining usage.
-2.  **CHANGELOG.md**: Add entry under `[Unreleased]`.
-3.  **Validate**: Run `./tooling/scripts/local-validate.sh`.
+1. **README.md**: Add `plugins/<plugin-name>/README.md` explaining usage.
+2. **CHANGELOG.md**: Add entry under `[Unreleased]`.
+3. **Validate**: Run `./tooling/scripts/local-validate.sh`.
 
 ## Versioning & Release Checklist
 
-1.  **Consistency**: Ensure `version` in `plugin.json` matches `marketplace.json`.
-2.  **Changelog**: Document all changes.
-3.  **Validation**: `local-validate.sh` must pass.
-4.  **Restart**: **ALWAYS** restart Claude Code after installing/updating a plugin to load changes.
+1. **Consistency**: Ensure `version` in `plugin.json` matches `marketplace.json`.
+2. **Changelog**: Document all changes.
+3. **Validation**: `local-validate.sh` must pass.
+4. **Restart**: **ALWAYS** restart Claude Code after installing/updating a plugin to load changes.
 
 ## Common Pitfalls
 

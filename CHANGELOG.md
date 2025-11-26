@@ -6,7 +6,46 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **Quad-AI Review System Documentation (2025-11-26):**
+  - Upgraded from Triple-AI to Quad-AI (Claude, Jules, Gemini, CodeRabbit)
+  - Added AI capability matrix to `CLAUDE.md`, `GEMINI.md`, `README.md`, `AGENTS.md`
+  - Documented workflow triggers (claude.yml vs claude-code-review.yml vs jules-auto-review.yml)
+  - Added "Shared Brain Coordination Pattern" to `AGENTS.md` with ASCII diagram
+  - Documented Jules as only AI that creates fix PRs (with human approval)
+  - All documentation now emphasizes:
+    - Each AI does COMPREHENSIVE reviews (same scope, not specialized)
+    - Coordination via shared files (CHANGELOG.md, CLAUDE.md), NOT real-time
+    - FORBIDDEN: speculation about what other AIs "might find"
+    - Focus on Type A repo: plugins, SKILL.md, shell scripts, YAML workflows
+
 ### Added
+
+- **GitHub Actions Workflows (2025-11-25):**
+  - `.github/workflows/claude.yml` - Main Claude Code interaction workflow
+    - Configured for `claude-opus-4-5-20251101` model
+    - Triggers on issue/PR comments mentioning `@claude`
+  - `.github/workflows/claude-code-review.yml` - Automated PR review workflow
+    - Customized prompt for Plugin Marketplace context
+    - Grants read permissions for PRs and Checks
+    - Uses `fetch-depth: 0` for full diff context
+
+- **Architecture & Compliance Overhaul (2025-11-25):**
+  - **Defined Type A vs Type T Architecture:**
+    - `ancplua-claude-plugins` (Type A): "The Brain" (Skills, Plugins, Orchestration)
+    - `ancplua-mcp` (Type T): "The Hands" (MCP Servers, Tools)
+    - Explicitly documented separation in `CLAUDE.md`, `GEMINI.md`, and `docs/ARCHITECTURE.md`
+  - **Tooling & Templates:**
+    - Updated `tooling/scripts/local-validate.sh` with JSON validation (jq) and better tool detection
+    - Standardized `tooling/templates/plugin-template/` with correct JSON schema and documentation
+  - **Operational Constitutions:**
+    - Updated `CLAUDE.md` and `GEMINI.md` to enforce the new architecture and ban cross-repo hallucinations
+    - Added "Co-Agents" definition (Jules & Gemini)
+
+- **Claude GitHub Actions Opus model (2025-11-25):**
+  - Updated `claude.yml` with `--model claude-opus-4-5-20251101`
+  - Updated `claude-code-review.yml` with `--model claude-opus-4-5-20251101`
 
 - **Claude as Permanent PR Reviewer (2025-11-25):**
   - Added section 4.5.1 to CLAUDE.md: "PR Review (Claude as Permanent Second Reviewer)"
@@ -62,8 +101,6 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - Enabled repo setting: `allow_auto_merge`
   - Branch protection on main: requires "Detect relevant changes" check
 
-### Changed
-
 - **GitHub Actions version updates (2025-11-25):**
   - `actions/checkout`: v4 → v6
   - `actions/setup-node`: v4 → v6
@@ -98,6 +135,30 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - Updated references in README.md and CLAUDE.md
 
 ### Fixed
+
+- **jules-auto-review.yml shellcheck/security fixes (2025-11-26):**
+  - Fixed SC2086: Added double quotes around `$GITHUB_OUTPUT` variable expansions
+  - Fixed script injection risk: Moved `github.event.pull_request.title` to env var
+  - Added quotes around PR_NUMBER variable assignment
+
+- **Repository cleanup (2025-11-26):**
+  - Deleted stale `.mega-linter.yml` (MegaLinter removed from CI)
+  - Deleted orphaned `.aiexclude` (undocumented)
+  - Added `.idea/` and `.claude/settings.local.json` to .gitignore
+  - Untracked `.idea/workspace.xml` from git
+  - Updated `docs/specs/spec-template.md` to match actual spec structure
+  - Updated `docs/decisions/adr-template.md` to match actual ADR structure
+  - Expanded `tooling/templates/plugin-template/README.md` with comprehensive guidance
+
+- **Full markdown/workflow compliance cleanup (2025-11-25):**
+  - Fixed SC2086 shellcheck warnings in `jules-review.yml` (proper variable quoting)
+  - Fixed MD013 line length issues in 6 files (wrapped to 120 chars)
+  - Fixed MD036 emphasis-as-heading in `ADR-0003-jules-agent-delegation.md`
+  - Fixed MD040 code block language specifiers (~20 files)
+  - Fixed MD024 duplicate heading in CHANGELOG (renamed to include dates)
+  - Configured MD060 table style as "padded" for consistency
+  - Auto-fixed MD022, MD030, MD047 via `markdownlint --fix`
+  - Validation now passes with **zero warnings**
 
 - **Duplicate template files removed (2025-11-25):**
   - Removed `docs/specs/spec-0001-marketplace-framework.md` (was template with duplicate ID)
@@ -138,7 +199,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - `docs/decisions/ADR-0002-superpowers-composition.md` - Framework composition
   - Reorganized `ADR-0001-marketplace-layout.md` from template
 
-### Changed
+### Changed (2025-11-24)
 
 - Transformed WIP plugins into production-ready plugins (relates to spec-0002, ADR-0002):
   - `wip-plugin-2` → `smart-commit` with conventional commits support
@@ -152,7 +213,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - `plugins/autonomous-ci/skills/autonomous-ci/SKILL.md`
   - `plugins/smart-commit/skills/smart-commit/SKILL.md`
   - `plugins/code-review/skills/code-review/SKILL.md`
-  - Reference: https://code.claude.com/docs/en/skills.md
+  - Reference: <https://code.claude.com/docs/en/skills.md>
 
 ### Previously Added
 
