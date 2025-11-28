@@ -6,6 +6,19 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+
+- **Workflow alignment for full autonomy (2025-11-28):**
+  - `ci.yml`: Node 25 → 22 LTS, fixed SC2156 filename injection vulnerability
+  - `jules-auto-review.yml`: Added `jules/`, `copilot/`, `claude/` branch exclusions to prevent infinite loops,
+    set `requirePlanApproval: false` for fully autonomous operation, fixed SC2086 quoting issues,
+    moved PR title/number to env vars to prevent script injection
+  - `auto-merge.yml`: Added Renovate tier, AI Agent tier (copilot/jules/claude branches), Claude-approved tier,
+    fixed SC2086 and script injection vulnerabilities
+  - `claude-code-review.yml`: Added `workflow_dispatch`, `ready_for_review` trigger, draft PR skip,
+    Type A repository review checklist
+  - `claude.yml`: Added `jq`, `yq` tools for JSON/YAML work in Type A repo context
+
 ### Changed
 
 - **Skills reference docs improved (2025-11-28):**

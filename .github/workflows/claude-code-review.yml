@@ -2,7 +2,7 @@ name: Claude Code Review
 
 on:
   pull_request:
-    types: [ opened, synchronize, ready_for_review ]
+    types: [opened, synchronize, ready_for_review]
   workflow_dispatch:
     inputs:
       pr_number:
@@ -10,16 +10,25 @@ on:
         required: true
         type: number
 
-permissions:
-  contents: write        # Required for merge operations
-  pull-requests: write   # Required for merge and comments
-  issues: write
-  id-token: write        # Required for OIDC token
-
 jobs:
-  review:
-    if: github.event.pull_request.draft == false
+  claude-review:
+    # Skip draft PRs and bot PRs to prevent review loops
+    if: |
+      !github.event.pull_request.draft &&
+      github.event.pull_request.user.login != 'dependabot[bot]' &&
+      github.event.pull_request.user.login != 'renovate[bot]' &&
+      !startsWith(github.event.pull_request.head.ref, 'claude/') &&
+      !startsWith(github.event.pull_request.head.ref, 'copilot/') &&
+      !startsWith(github.event.pull_request.head.ref, 'jules/')
+
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: read
+      id-token: write
+      actions: read
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -31,76 +40,88 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          claude_args: '--model claude-opus-4-5-20251101 --allowed-tools "Bash(gh pr merge:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr comment:*),Bash(gh pr review:*)"'
+
+          additional_permissions: |
+            actions: read
+
           prompt: |
-            You are performing a comprehensive code review for ancplua-claude-plugins.
-
+            # Code Review Task (Type A Repository)
+            
+            **Repository:** ${{ github.repository }}
+            **PR Number:** ${{ github.event.pull_request.number || inputs.pr_number }}
+            **Author:** ${{ github.event.pull_request.user.login }}
+            **Branch:** ${{ github.event.pull_request.head.ref }}
+            
             ## Repository Context
-            - **Type A Repository**: Brain/orchestration - plugin definitions, skills, workflows
-            - **Contents**: Markdown, JSON, Shell scripts, YAML workflows, .mcp.json configs
-            - **FORBIDDEN**: C#/.NET code, absolute paths, secrets in files
-
-            ## Review ALL of These Areas
-
-            ### 1. Plugin Schema Compliance
-            - Valid plugin.json structure
-            - Required fields present (name, version, description)
-            - Proper capability declarations
-
-            ### 2. SKILL.md Quality
-            - Clear workflow instructions
-            - Proper step-by-step format
-            - No phantom tool references
-
-            ### 3. Shell Script Safety
-            - shellcheck compliance
-            - Proper quoting and error handling
-            - No hardcoded paths or secrets
-
-            ### 4. YAML Workflow Correctness
-            - actionlint compliance
-            - Proper permissions declared
-            - Correct trigger configurations
-
-            ### 5. Security
-            - No secrets in files
-            - No absolute paths
-            - Input validation in scripts
-
-            ### 6. Documentation
-            - CHANGELOG updated for changes
-            - README accurate
-            - Clear usage instructions
-
-            ## Your Task
-
-            After analyzing the PR:
-
-            1. Determine your verdict: APPROVE, REQUEST_CHANGES, or COMMENT
-            2. Submit a formal GitHub review using:
-
+            
+            This is a **Type A Repository** (brain/orchestration layer):
+            - Contains: SKILL.md files, plugin.json, .mcp.json configs, shell scripts, YAML workflows
+            - Consumes: MCP tools from ancplua-mcp (Type T)
+            - **FORBIDDEN:** C#/.NET code, tool implementations
+            
+            ## Review Checklist
+            
+            1. **SKILL.md Quality**
+               - Clear step-by-step workflows
+               - Proper MCP tool references (tools must exist in ancplua-mcp)
+               - No vague instructions like "do something"
+               - Actionable, specific guidance
+            
+            2. **Plugin Schema**
+               - Valid plugin.json syntax
+               - Required fields present (name, version, description)
+               - Correct capability declarations
+            
+            3. **Shell Scripts**
+               - Shellcheck compliance
+               - Proper quoting of variables
+               - No hardcoded paths or secrets
+               - Portable syntax (bash vs sh)
+            
+            4. **Configuration Files**
+               - Valid JSON/YAML syntax
+               - .mcp.json references correct server paths
+            
+            5. **CHANGELOG.md**
+               - Updated for any user-facing changes
+            
+            6. **Type T Violations (CRITICAL)**
+               - NO C# code (.cs files)
+               - NO .NET project files (.csproj)
+               - This repo is orchestration only!
+            
+            ## Steps
+            
+            1. Run `gh pr diff ${{ github.event.pull_request.number || inputs.pr_number }}` to see changes
+            2. Read CLAUDE.md or README.md for repository conventions
+            3. Analyze the changes against the checklist
+            4. Submit a formal review using `gh pr review`
+            
+            ## Submit Review
+            
             ```bash
-            gh pr review ${{ github.event.pull_request.number }} \
+            gh pr review ${{ github.event.pull_request.number || inputs.pr_number }} \
               --approve|--request-changes|--comment \
-              --body "## 🤖 Claude Code Review (Opus 4.5)
-
+              --body "## Claude Code Review (Opus 4.5)
+            
+            **Verdict:** ✅ APPROVED | ⚠️ CHANGES REQUESTED | 💬 COMMENT
+            
             ### Summary
             [Brief description of what this PR does]
-
-            ### Issues Found
-            [List each issue with Location, Severity, Category, Description, and Fix]
-
-            ### What's Good
-            [Positive aspects of the PR]
-
+            
+            ### Findings
+            [Issues found, categorized by severity]
+            
+            ### Strengths
+            [What was done well]
+            
             ---
-            *Review performed per [CLAUDE.md](../blob/main/CLAUDE.md) guidelines*"
+            *Autonomous review by Claude Opus 4.5 (Type A repo)*"
             ```
+            
+            **Decision Guide:**
+            - `--approve`: No blocking issues, plugin config is valid
+            - `--request-changes`: Invalid JSON, broken tool references, or Type T violations
+            - `--comment`: Suggestions only, nothing blocking
 
-            Use --approve if changes look good, --request-changes if blocking issues found, --comment for suggestions.
-
-      - name: Verify review was submitted
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "Claude review completed for PR #${{ github.event.pull_request.number }}"
+          claude_args: '--model claude-opus-4-5-20251101 --allowed-tools "Bash(gh pr merge:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr edit:*),Bash(gh pr ready:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh search:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(jq:*)"'

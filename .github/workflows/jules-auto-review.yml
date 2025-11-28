@@ -1,14 +1,11 @@
-# Jules Automatic PR Review
+# Jules Automatic PR Review - Fully Autonomous Mode
 #
 # Triggers Jules AI review automatically on every PR.
-# Works alongside Claude Code Review and Gemini for triple-AI validation.
+# Works alongside Claude Code Review for dual-AI validation.
 # Required secret: JULES_API_KEY
 #
-# Jules does BOTH:
-# 1. Posts comprehensive review comments (like Claude/Gemini)
-# 2. Creates fix PRs for actionable issues (unique capability)
-#
-# Human approval required for Jules plans before execution.
+# Jules creates PRs with fixes, NOT review comments.
+# requirePlanApproval: false for fully autonomous operation.
 
 name: Jules Auto Review
 
@@ -17,18 +14,21 @@ on:
     types: [opened, synchronize, ready_for_review]
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
   issues: write
-  id-token: write
+  id-token: write  # Added for OIDC token exchange
 
 jobs:
   jules-review:
-    # Skip draft PRs and bot PRs
+    # Skip draft PRs and bot PRs to prevent infinite loops
     if: |
       !github.event.pull_request.draft &&
       github.event.pull_request.user.login != 'dependabot[bot]' &&
-      github.event.pull_request.user.login != 'renovate[bot]'
+      github.event.pull_request.user.login != 'renovate[bot]' &&
+      !startsWith(github.event.pull_request.head.ref, 'jules/') &&
+      !startsWith(github.event.pull_request.head.ref, 'copilot/') &&
+      !startsWith(github.event.pull_request.head.ref, 'claude/')
     runs-on: ubuntu-latest
 
     steps:
@@ -47,45 +47,32 @@ jobs:
         id: jules
         env:
           JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
 
-          # Comprehensive review prompt for Jules (Type A repo)
-          PROMPT="You are performing a comprehensive code review for PR #${PR_NUMBER}: ${PR_TITLE}
+          # Review prompt for Jules - Type A repository (plugins, not code)
+          PROMPT="Review PR #${PR_NUMBER}: ${PR_TITLE}
 
-          ## Repository Context
-          - ancplua-claude-plugins: Plugin marketplace and orchestration (Type A)
-          - Contents: Markdown, JSON, Shell scripts, YAML workflows, .mcp.json configs
-          - FORBIDDEN: C#/.NET code, absolute paths, secrets in files
+          This is a Type A repository (Claude plugins/orchestration layer).
 
-          ## Review ALL Areas
+          Analyze the changes and check:
+          1. SKILL.md quality - Clear step-by-step workflows, proper MCP tool references
+          2. Plugin schema - Valid plugin.json, required fields present
+          3. Shell scripts - Shellcheck compliance, proper quoting, no hardcoded secrets
+          4. YAML/JSON syntax - Valid configuration files
+          5. CHANGELOG.md - Updated for any changes
+          6. No Type T violations - No C#/.NET code (this is orchestration only)
 
-          1. **Plugin Schema**: Valid structure, required fields, capability declarations
-          2. **SKILL.md Quality**: Clear workflows, proper format, no phantom tools
-          3. **Shell Scripts**: shellcheck compliance, quoting, error handling
-          4. **YAML Workflows**: actionlint compliance, permissions, triggers
-          5. **Security**: No secrets in files, no absolute paths, input validation
-          6. **Documentation**: CHANGELOG, README, usage instructions
-
-          ## Your Output
-
-          Document ALL findings with:
-          - Location (file:line)
-          - Severity (CRITICAL/HIGH/MEDIUM/LOW)
-          - Category
-          - Description
-          - Suggested fix
-
-          For issues you CAN fix automatically:
-          - Create a fix PR with those changes
-          - Focus on CRITICAL and HIGH severity first"
+          If you find issues that can be fixed, create a PR with the fixes.
+          Focus on high-impact improvements, not style nitpicks."
 
           PROMPT_JSON=$(echo "$PROMPT" | jq -Rsa .)
-          TITLE="Review PR #${PR_NUMBER}: $(echo "$PR_TITLE" | cut -c 1-50)"
+          TITLE="Auto-Review PR #${PR_NUMBER}: $(echo "$PR_TITLE" | cut -c 1-50)"
           TITLE_JSON=$(echo "$TITLE" | jq -Rsa .)
 
+          # Fully autonomous mode - no plan approval required
           RESPONSE=$(curl -s -w "\n%{http_code}" \
             'https://jules.googleapis.com/v1alpha/sessions' \
             -X POST \
@@ -101,7 +88,7 @@ jobs:
                 }
               },
               \"automationMode\": \"AUTO_CREATE_PR\",
-              \"requirePlanApproval\": true,
+              \"requirePlanApproval\": false,
               \"title\": $TITLE_JSON
             }")
 
@@ -118,7 +105,7 @@ jobs:
           echo "session_id=$SESSION_ID" >> "$GITHUB_OUTPUT"
           echo "success=true" >> "$GITHUB_OUTPUT"
 
-      - name: Post Jules Review Comment
+      - name: Post Jules Session Link
         if: steps.check_key.outputs.has_key == 'true' && steps.jules.outputs.success == 'true'
         uses: actions/github-script@v7
         with:
@@ -131,19 +118,22 @@ jobs:
               issue_number: prNumber,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## 🔮 Jules AI Review
+              body: `## Jules AI Review Started (Autonomous Mode)
 
-            **Session:** [View Full Review & Plan](${julesUrl})
+            **Session:** [View in Jules](${julesUrl})
 
-            ### What Jules Does
-            1. **Full Code Review** - Plugin schemas, SKILL.md, shell scripts, YAML workflows
-            2. **Creates Fix PRs** - For CRITICAL/HIGH issues that can be auto-fixed
+            Jules is analyzing this PR for plugin issues and improvements.
 
-            ### Next Steps
-            - Review Jules' findings at the link above
-            - **Approve the plan** if you want Jules to create a fix PR
-            - Plan approval required before any changes
+            **Review scope (Type A repo):**
+            - SKILL.md workflow quality
+            - Plugin schema validation
+            - Shell script compliance
+            - Configuration file syntax
+
+            - **Fully autonomous** - fixes will be created automatically
+            - If issues found, Jules will create a fix PR
+            - Monitor progress at the link above
 
             ---
-            *Part of triple-AI review: Claude + Jules + Gemini*`
+            *Dual-AI autonomous review: Jules + Claude*`
             });

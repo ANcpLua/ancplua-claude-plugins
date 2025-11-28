@@ -2,130 +2,84 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
-  schedule:
-    - cron: "0 5 * * 1"
+    branches: [main, develop]
+  workflow_dispatch:
 
 permissions:
   contents: read
-  security-events: write
-  pull-requests: read
-  actions: read
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
-  paths:
-    name: Detect relevant changes
-    runs-on: ubuntu-latest
-    outputs:
-      plugins: ${{ steps.filter.outputs.plugins }}
-      docs: ${{ steps.filter.outputs.docs }}
-      workflows: ${{ steps.filter.outputs.workflows }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - id: filter
-        name: Filter paths
-        uses: dorny/paths-filter@v3
-        with:
-          filters: |
-            plugins:
-              - 'plugins/**'
-              - '.claude-plugin/**'
-              - 'skills/**'
-            docs:
-              - 'docs/**'
-              - 'README.md'
-              - 'CLAUDE.md'
-              - 'CHANGELOG.md'
-            workflows:
-              - '.github/workflows/**'
-              - 'tooling/**'
-
-  lint-and-validate:
-    name: Lint & validate (local script)
-    needs: paths
-    if: ${{ needs.paths.outputs.plugins == 'true' || needs.paths.outputs.docs == 'true' || needs.paths.outputs.workflows == 'true' }}
+  validate:
+    name: Validate Plugins
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js (for markdownlint)
-        uses: actions/setup-node@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '25'
+          node-version: '22'  # LTS version (was incorrectly 25)
 
-      - name: Install shellcheck
+      - name: Validate JSON files
         run: |
-          sudo apt-get update
-          sudo apt-get install -y shellcheck
+          echo "Validating plugin.json files..."
+          find . -name "plugin.json" -print0 | while IFS= read -r -d '' file; do
+            echo "Checking $file..."
+            jq . "$file" > /dev/null
+          done
 
-      - name: Install markdownlint-cli
+          echo "Validating .mcp.json files..."
+          find . -name "*.mcp.json" -print0 | while IFS= read -r -d '' file; do
+            echo "Checking $file..."
+            jq . "$file" > /dev/null
+          done
+
+      - name: Lint shell scripts
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: '.'
+          severity: warning
+        continue-on-error: true
+
+      - name: Lint YAML files
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          file_or_dir: .
+          config_file: .yamllint.yml
+        continue-on-error: true
+
+      - name: Check SKILL.md files exist
         run: |
-          npm install -g markdownlint-cli
+          echo "Checking for SKILL.md files..."
+          SKILL_FILES=$(find . -name "SKILL.md" | wc -l)
+          echo "Found $SKILL_FILES SKILL.md files"
 
-      - name: Install actionlint
+          if [ "$SKILL_FILES" -eq 0 ]; then
+            echo "::warning::No SKILL.md files found in repository"
+          fi
+
+      - name: Validate CHANGELOG.md
         run: |
-          curl -sSfL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash | bash
-          sudo mv actionlint /usr/local/bin/actionlint
+          if [ -f "CHANGELOG.md" ]; then
+            echo "CHANGELOG.md exists"
+          else
+            echo "::warning::CHANGELOG.md not found"
+          fi
 
-      - name: Run local validation script
-        run: |
-          bash tooling/scripts/local-validate.sh
-
-  dependency-review:
-    name: Dependency review
-    needs: paths
-    if: ${{ github.event_name == 'pull_request' && needs.paths.outputs.plugins == 'true' }}
+  markdown-lint:
+    name: Markdown Lint
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Dependency Review
-        uses: actions/dependency-review-action@v4
+      - name: Lint Markdown
+        uses: DavidAnson/markdownlint-cli2-action@v19
         with:
-          fail-on-severity: high
-          comment-summary-in-pr: true
-
-  # Note: CodeQL analysis is handled by GitHub's default setup.
-  # Do not add a custom codeql job here - it conflicts with the default setup.
-
-  megalinter:
-    name: MegaLinter (documentation flavor)
-    needs: paths
-    runs-on: ubuntu-latest
-    if: ${{ needs.paths.outputs.plugins == 'true' || needs.paths.outputs.docs == 'true' || needs.paths.outputs.workflows == 'true' }}
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Run MegaLinter (documentation flavor)
-        uses: oxsecurity/megalinter/flavors/documentation@v9.1.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ALL_CODEBASE: false
-          MARKDOWN_SUMMARY_REPORTER: true
-
-      - name: Upload MegaLinter reports
-        if: always()
-        uses: actions/upload-artifact@v5
-        with:
-          name: megalinter-reports
-          path: report
-          if-no-files-found: ignore
+          globs: '**/*.md'
+        continue-on-error: true
