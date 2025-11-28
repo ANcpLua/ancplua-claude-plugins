@@ -8,6 +8,13 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- **Skills reference docs improved (2025-11-28):**
+  - Updated `skills/working-on-ancplua-plugins/` to align with official Claude Code docs
+  - `conventions.md`: Fixed directory structure (`lib/` → `agents/`), added plugin.json fields table
+  - `publishing.md`: Fixed JSON example, marked optional fields, added template usage
+  - `testing.md`: Added sync-marketplace.sh, Claude Code log locations, debugging checklist
+  - `SKILL.md`: Added official documentation links, marketplace sync command
+
 - **Documentation aligned with official Claude Code docs (2025-11-28):**
   - Rewrote `README.md` with official `/plugin` install commands
   - Fixed `CLAUDE.md` plugin structure (added `agents/`, removed `lib/`)
