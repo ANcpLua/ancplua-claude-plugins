@@ -124,4 +124,4 @@ jobs:
             - `--request-changes`: Invalid JSON, broken tool references, or Type T violations
             - `--comment`: Suggestions only, nothing blocking
 
-          claude_args: '--model claude-opus-4-5-20251101 --allowed-tools "Bash(gh pr merge:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr edit:*),Bash(gh pr ready:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh search:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(jq:*)"'
+          claude_args: '--model claude-opus-4-5-20251101 --allowed-tools "Bash(gh pr merge:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr edit:*),Bash(gh pr ready:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh search:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(jq:*),Bash(yq:*)"'
