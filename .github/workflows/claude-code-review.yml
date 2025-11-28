@@ -14,6 +14,7 @@ permissions:
   contents: write        # Required for merge operations
   pull-requests: write   # Required for merge and comments
   issues: write
+  id-token: write        # Required for OIDC token
 
 jobs:
   review:
