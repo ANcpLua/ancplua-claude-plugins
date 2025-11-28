@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+DUAL_MODE=false
+SIBLING_REPO="$HOME/ancplua-mcp"
+
+# Parse arguments
+for arg in "$@"; do
+  case $arg in
+    --dual)
+      DUAL_MODE=true
+      shift
+      ;;
+  esac
+done
+
 echo "🔍 Running ancplua-claude-plugins local validation..."
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -94,3 +107,18 @@ else
 fi
 
 echo "✅ ancplua-claude-plugins local validation finished (some checks may have been skipped if tools were missing)."
+
+# Dual-repo validation
+if [ "$DUAL_MODE" = true ]; then
+  echo ""
+  echo "═══════════════════════════════════════════════════════════"
+  echo "🔗 DUAL-REPO MODE: Validating sibling repository..."
+  echo "═══════════════════════════════════════════════════════════"
+
+  if [ -d "$SIBLING_REPO" ] && [ -x "$SIBLING_REPO/tooling/scripts/local-validate.sh" ]; then
+    "$SIBLING_REPO/tooling/scripts/local-validate.sh"
+  else
+    echo "⚠️  Sibling repo not found at: $SIBLING_REPO"
+    echo "   Expected: ancplua-mcp with tooling/scripts/local-validate.sh"
+  fi
+fi
