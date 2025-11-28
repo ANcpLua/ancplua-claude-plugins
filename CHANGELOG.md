@@ -8,19 +8,31 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
-- **Quad-AI Review System Documentation (2025-11-26):**
-  - Upgraded from Triple-AI to Quad-AI (Claude, Jules, Gemini, CodeRabbit)
-  - Added AI capability matrix to `CLAUDE.md`, `GEMINI.md`, `README.md`, `AGENTS.md`
-  - Documented workflow triggers (claude.yml vs claude-code-review.yml vs jules-auto-review.yml)
-  - Added "Shared Brain Coordination Pattern" to `AGENTS.md` with ASCII diagram
-  - Documented Jules as only AI that creates fix PRs (with human approval)
-  - All documentation now emphasizes:
-    - Each AI does COMPREHENSIVE reviews (same scope, not specialized)
-    - Coordination via shared files (CHANGELOG.md, CLAUDE.md), NOT real-time
-    - FORBIDDEN: speculation about what other AIs "might find"
-    - Focus on Type A repo: plugins, SKILL.md, shell scripts, YAML workflows
+- **Penta-AI Autonomous Agent System (2025-11-28):**
+  - Upgraded from Quad-AI to Penta-AI (Claude, Jules, Copilot, Gemini, CodeRabbit)
+  - All five agents can now create fix PRs autonomously (except Gemini)
+  - Updated AI capability matrix with new columns: Creates Fix PRs, Auto-Merge, Bypass Rules
+  - Added comprehensive GitHub settings guide for maximum autonomy in `AGENTS.md`
+  - Updated workflow permissions in `claude.yml` and `claude-code-review.yml`:
+    - Changed `contents: read` → `contents: write` for merge operations
+    - Added `--allowed-tools` for `gh pr merge`, `gh pr view`, `gh pr diff`, `gh pr comment`
+  - Documented autonomous loop: `detect failure → understand fix → push fix → re-run CI`
+  - Auto-merge tiers updated:
+    - Tier 1: Dependabot/Renovate → auto-merge
+    - Tier 2: Copilot/Jules fix PRs → auto-merge
+    - Tier 3: Claude fix PRs + 1 approval → auto-merge
+    - Tier 4: Other PRs → human review
+  - Branch protection bypass rules documented for: Copilot, Claude, Jules, Dependabot, Renovate, Mergify, CodeRabbit
 
 ### Added
+
+- **Copilot Coding Agent Instructions (2025-11-28):**
+  - Created `.github/instructions/copilot.instructions.md` (506 lines)
+  - Comprehensive guide for GitHub Copilot coding agent
+  - Includes: autonomous agent mode, target architecture, Type A/T separation
+  - Documents plugin structure, validation, code style, SOLID principles
+  - Full penta-AI system documentation with capability matrix
+  - GitHub settings guide for maximum agent autonomy
 
 - **GitHub Actions Workflows (2025-11-25):**
   - `.github/workflows/claude.yml` - Main Claude Code interaction workflow
@@ -135,6 +147,11 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - Updated references in README.md and CLAUDE.md
 
 ### Fixed
+
+- **MCP server integration config portability (2025-11-28):**
+  - Replaced hardcoded relative paths in `.mcp.json` with `${ANCPLUA_MCP_ROOT}` environment variable
+  - Added `_note` field explaining environment variable configuration requirement
+  - Enables portable configuration across different development machines
 
 - **jules-auto-review.yml shellcheck/security fixes (2025-11-26):**
   - Fixed SC2086: Added double quotes around `$GITHUB_OUTPUT` variable expansions
