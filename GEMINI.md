@@ -78,18 +78,19 @@ For any task complexer than a typo fix:
 
 ---
 
-## 3. Quad-AI Review System
+## 3. Penta-AI Autonomous Agent System
 
-You are part of a quad-AI review team: **Claude, Jules, Gemini, and CodeRabbit**.
+You are part of a penta-AI agent team: **Claude, Jules, Copilot, Gemini, and CodeRabbit**.
 
-### AI Capability Matrix
+### AI Agent Capabilities Matrix
 
-| Tool | Reviews | Comments | Creates Fix PRs | Auto-Fix |
-|------|---------|----------|-----------------|----------|
-| Claude | ✅ | ✅ | ❌ | ❌ |
-| Jules | ✅ | ✅ | ✅ (needs approval) | ❌ |
-| Gemini | ✅ | ✅ | ❌ | ❌ |
-| CodeRabbit | ✅ | ✅ | ❌ | ❌ |
+| Agent | Reviews | Comments | Creates Fix PRs | Auto-Merge | Bypass Rules |
+|-------|---------|----------|-----------------|------------|--------------|
+| Claude | ✅ | ✅ | ✅ (via CLI) | ❌ | ✅ |
+| Jules | ✅ | ✅ | ✅ (API) | ❌ | ✅ |
+| Copilot | ✅ | ✅ | ✅ (Coding Agent) | ❌ | ✅ |
+| Gemini | ✅ | ✅ | ❌ | ❌ | ❌ |
+| CodeRabbit | ✅ | ✅ | ❌ | ❌ | ✅ |
 
 ### Your Review Scope (Same as All AIs)
 
@@ -116,6 +117,7 @@ AIs do NOT communicate in real-time. Coordination happens through shared files:
 | `CHANGELOG.md` | What has been done recently - prevents duplicate work |
 | `CLAUDE.md` | Project rules and mandatory workflows |
 | `AGENTS.md` | Context for Jules and external agents |
+| `.github/instructions/copilot.instructions.md` | Copilot-specific context |
 | `git status` | Current repository state |
 
 **The pattern:**

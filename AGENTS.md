@@ -26,14 +26,19 @@ AIs (Claude, Jules, Gemini, CodeRabbit) cannot read each other's minds. They coo
 
 ### AI Capability Matrix
 
-| Tool | Reviews | Comments | Creates Fix PRs | Auto-Fix |
-|------|---------|----------|-----------------|----------|
-| Claude | ✅ | ✅ | ❌ | ❌ |
-| Jules | ✅ | ✅ | ✅ (needs approval) | ❌ |
-| Gemini | ✅ | ✅ | ❌ | ❌ |
-| CodeRabbit | ✅ | ✅ | ❌ | ❌ |
+| Tool | Reviews | Comments | Creates Fix PRs | Auto-Fix | Bypass Rules |
+|------|---------|----------|-----------------|----------|--------------|
+| Claude | ✅ | ✅ | ✅ (via CLI) | ❌ | ✅ |
+| Jules | ✅ | ✅ | ✅ (API) | ❌ | ✅ |
+| Copilot | ✅ | ✅ | ✅ (Coding Agent) | ❌ | ✅ |
+| Gemini | ✅ | ✅ | ❌ | ❌ | ❌ |
+| CodeRabbit | ✅ | ✅ | ❌ | ❌ | ✅ |
 
-**The gap:** No AI currently does `detect failure → understand fix → push fix → re-run CI` autonomously.
+**Autonomous capabilities enabled via:**
+
+- **Claude:** CLI with `gh pr create`, branch push via bypass rules
+- **Copilot:** Coding Agent (assign issues with `@github-copilot`)
+- **Jules:** API with `automationMode: "AUTO_CREATE_PR"`, `requirePlanApproval: false`
 
 ### How It Works
 
@@ -121,8 +126,11 @@ Jules (Google Labs) can work on this repository via the API.
 
 - Do NOT modify `.claude-plugin/` manifests without explicit instruction
 - Do NOT change `CLAUDE.md` or `AGENTS.md` without explicit instruction
-- Do NOT auto-merge PRs (require human approval)
 - Respect branch protection rules
+
+**To enable fully autonomous Jules:**
+
+Set `requirePlanApproval: false` in API calls for automatic fix PRs without human plan approval.
 
 ---
 
@@ -200,13 +208,28 @@ Every non-trivial change MUST update:
 Jules tasks are created via API:
 
 ```bash
-# Create a session
+# Fully autonomous - no plan approval required
 curl 'https://jules.googleapis.com/v1alpha/sessions' \
   -X POST \
   -H "Content-Type: application/json" \
   -H "X-Goog-Api-Key: $JULES_API_KEY" \
   -d '{
     "prompt": "Fix the bug in plugins/code-review/...",
+    "sourceContext": {
+      "source": "sources/github/ANcpLua/ancplua-claude-plugins",
+      "githubRepoContext": { "startingBranch": "main" }
+    },
+    "automationMode": "AUTO_CREATE_PR",
+    "requirePlanApproval": false
+  }'
+
+# With plan approval (safer for complex changes)
+curl 'https://jules.googleapis.com/v1alpha/sessions' \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "X-Goog-Api-Key: $JULES_API_KEY" \
+  -d '{
+    "prompt": "Refactor the autonomous-ci plugin...",
     "sourceContext": {
       "source": "sources/github/ANcpLua/ancplua-claude-plugins",
       "githubRepoContext": { "startingBranch": "main" }
@@ -222,8 +245,50 @@ curl 'https://jules.googleapis.com/v1alpha/sessions' \
 
 - **API keys:** Store in GitHub Secrets (`JULES_API_KEY`), never in code
 - **Permissions:** Jules workflows use minimal required permissions
-- **Auto-merge:** Disabled by default; require human review
-- **Bot loop prevention:** Skip PRs from bot users or `jules/` branches
+- **Auto-merge:** Enabled for bot PRs via Mergify/GitHub auto-merge
+- **Bot loop prevention:** Skip PRs from bot users or `jules/`, `copilot/` branches
+
+---
+
+## GitHub Settings for Maximum Autonomy
+
+### 1. Copilot Coding Agent (Settings → Copilot → Coding Agent)
+
+- Enable coding agent
+- Disable firewall OR enable "Recommended allowlist"
+- Configure MCP servers for extended capabilities
+
+### 2. Copilot Code Review (Settings → Copilot → Code Review)
+
+- ✅ Use custom instructions when reviewing pull requests
+- ✅ Automatically request Copilot code review
+- ✅ Review new pushes
+- ✅ Review draft pull requests
+- ✅ Manage static analysis tools (CodeQL, ESLint, PMD)
+
+### 3. Branch Protection Bypass (Settings → Rules → Rulesets)
+
+Add these apps to bypass list with "Always allow":
+
+| App | Provider | Purpose |
+|-----|----------|---------|
+| Copilot coding agent | github | Autonomous code fixes |
+| Claude | anthropic | CLI-based fixes |
+| Google Labs Jules | google-labs-code | API-based fixes |
+| Dependabot | github | Dependency updates |
+| Renovate | mend | Dependency updates |
+| Mergify | Mergifyio | Auto-merge |
+| coderabbitai | coderabbitai | Review comments |
+| Gemini Code Assist | google | Code suggestions |
+
+### 4. Actions Permissions (Settings → Actions → General)
+
+- ✅ Allow GitHub Actions to create and approve pull requests
+- Workflow permissions: Read and write permissions
+
+### 5. Auto-merge Configuration
+
+Enable auto-merge in repository settings, then configure Mergify or GitHub native auto-merge rules.
 
 ---
 

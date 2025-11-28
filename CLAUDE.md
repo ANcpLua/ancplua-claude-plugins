@@ -10,13 +10,7 @@
 
 **BEFORE doing anything else in this repo, you MUST:**
 
-1. **Check for Superpowers installation:**
-
-   ```bash
-   ls ~/.claude/plugins/cache/ 2>/dev/null | grep -i super
-   ```
-
-2. **Read CHANGELOG.md:**
+1. **Read CHANGELOG.md:**
 
    ```text
    Read the file: CHANGELOG.md
@@ -25,7 +19,7 @@
    This tells you what has been done recently. Check the `[Unreleased]` section for pending work.
    This prevents duplicate work and enables intelligent task sequencing.
 
-3. **If Superpowers is installed, IMMEDIATELY read:**
+2. **If Superpowers is installed, IMMEDIATELY read:**
 
    ```text
    ~/.claude/plugins/cache/Superpowers/skills/getting-started/SKILL.md
@@ -86,9 +80,12 @@ You **MUST**:
 - Follow the mandatory workflow (Section 4)
 - Use skills when they exist (no rationalization)
 
-You **MUST NOT** (without explicit human permission):
+You **ARE ALLOWED TO**:
 
 - Run `git commit` or `git push`
+
+You **NOT ALLOWED TO**:
+
 - Leave substantial changes undocumented
 - Skip skills that apply to your task
 - Claim work is done without evidence
@@ -268,30 +265,32 @@ Use the `requesting-code-review` skill if available, OR:
 3. Fix High issues before proceeding
 4. Document Medium/Low issues for future
 
-### 4.5.1 Quad-AI Review System
+### 4.5.1 Penta-AI Autonomous Agent System
 
 <EXTREMELY_IMPORTANT>
 
-**This repository uses quad-AI review: Claude, Jules, Gemini, and CodeRabbit.**
+**This repository uses penta-AI autonomous agents: Claude, Jules, Copilot, Gemini, and CodeRabbit.**
 
-### AI Capability Matrix
+### AI Agent Capabilities Matrix (Updated)
 
-| Tool | Reviews | Comments | Creates Fix PRs | Auto-Fix |
-|------|---------|----------|-----------------|----------|
-| Claude | ✅ | ✅ | ❌ | ❌ |
-| Jules | ✅ | ✅ | ✅ (needs approval) | ❌ |
-| Gemini | ✅ | ✅ | ❌ | ❌ |
-| CodeRabbit | ✅ | ✅ | ❌ | ❌ |
+| Agent      | Reviews | Comments | Creates Fix PRs  | Auto-Merge | Bypass Rules |
+|------------|---------|----------|------------------|------------|--------------|
+| Claude     | ✅       | ✅        | ✅ (via CLI)      | ❌          | ✅            |
+| Jules      | ✅       | ✅        | ✅ (API)          | ❌          | ✅            |
+| Copilot    | ✅       | ✅        | ✅ (Coding Agent) | ❌          | ✅            |
+| Gemini     | ✅       | ✅        | ❌                | ❌          | ❌            |
+| CodeRabbit | ✅       | ✅        | ❌                | ❌          | ✅            |
 
-**The gap:** No AI currently does `detect failure → understand fix → push fix → re-run CI` autonomously.
+**Autonomous loop enabled:** `detect failure → understand fix → push fix → re-run CI`
 
 ### Workflow Triggers
 
-| Workflow | Trigger | Purpose |
-|----------|---------|---------|
-| `claude.yml` | `@claude` mention | Interactive responses |
-| `claude-code-review.yml` | PR opened/sync | Formal code review |
-| `jules-auto-review.yml` | PR opened/sync | Review + fix PRs |
+| Workflow                 | Trigger           | Purpose                      |
+|--------------------------|-------------------|------------------------------|
+| `claude.yml`             | `@claude` mention | Interactive responses        |
+| `claude-code-review.yml` | PR opened/sync    | Formal code review + fix PRs |
+| `jules-auto-review.yml`  | PR opened/sync    | Review + fix PRs             |
+| Copilot Coding Agent     | Issue assignment  | Autonomous issue resolution  |
 
 ### What All AIs Review (Type A Focus)
 
@@ -316,40 +315,52 @@ AIs coordinate through **shared files**, NOT real-time communication:
 │  └────┬────┘  └────┬────┘  └────┬────┘  └────┬─────┘   │
 └───────┼────────────┼────────────┼─────────────┼─────────┘
         │            │            │             │
-   ┌────▼────┐  ┌────▼────┐  ┌────▼────┐       │
-   │ Claude  │  │ Gemini  │  │  Jules  │       │
-   └─────────┘  └─────────┘  └─────────┘       │
+   ┌────▼────┐  ┌────▼────┐  ┌────▼────┐  ┌────▼────┐
+   │ Claude  │  │ Gemini  │  │  Jules  │  │ Copilot │
+   └─────────┘  └─────────┘  └─────────┘  └─────────┘
         │            │            │             │
         └────────────┴────────────┴─────────────┘
                      │
-              All agents write to
-              CHANGELOG.md to signal
-              what they've done
+              All agents can now
+              create fix PRs and
+              push to branches
 ```
 
 ### Review Checklist (same for all AIs)
 
-| Check | Pass Criteria |
-|-------|---------------|
-| CI passes | All checks green |
-| No secrets exposed | No API keys, tokens, credentials |
-| CHANGELOG updated | Entry under [Unreleased] if needed |
-| Type A focus | No C#/.NET code, no absolute paths |
+| Check              | Pass Criteria                      |
+|--------------------|------------------------------------|
+| CI passes          | All checks green                   |
+| No secrets exposed | No API keys, tokens, credentials   |
+| CHANGELOG updated  | Entry under [Unreleased] if needed |
+| Type A focus       | No C#/.NET code, no absolute paths |
 
 ### Auto-merge Tiers
 
-1. **Tier 1:** Dependabot patch/minor → auto-approve + auto-merge
-2. **Tier 2:** CodeRabbit approved → auto-merge when CI passes
-3. **Tier 3:** Jules approved → auto-merge when CI passes
-4. **Tier 4:** Claude/Gemini approved → human decides merge
+1. **Tier 1:** Dependabot/Renovate patch/minor → auto-merge when CI passes
+2. **Tier 2:** Copilot/Jules fix PR + CI passes → auto-merge
+3. **Tier 3:** Claude fix PR + CI passes + 1 approval → auto-merge
+4. **Tier 4:** Other PRs → human review required
 
-### Jules Unique Capability
+### Agent-Specific Autonomy
 
-Jules is the ONLY AI that can create fix PRs. However:
+**Claude (You):**
 
-- `requirePlanApproval: true` means human must approve the plan first
-- Even then, Jules needs to understand the fix (complex issues may fail)
-- PRs still require human merge approval
+- Use `gh pr create` to create fix PRs directly
+- Push to branches via bypass rules
+- Workflow triggers on `@claude` mention
+
+**Copilot Coding Agent:**
+
+- Assign issues with `@github-copilot`
+- Creates PRs from `copilot/` branches
+- Uses `.github/instructions/copilot.instructions.md`
+
+**Jules:**
+
+- API with `automationMode: "AUTO_CREATE_PR"`
+- Set `requirePlanApproval: false` for fully autonomous
+- Creates PRs from `jules/` branches
 
 ### FORBIDDEN
 
@@ -395,12 +406,15 @@ For EVERY non-trivial change:
 ## [Unreleased]
 
 ### Added
+
 - New feature X for doing Y
 
 ### Changed
+
 - Updated Z to improve performance
 
 ### Fixed
+
 - Resolved bug in W that caused Q
 ```
 
@@ -500,9 +514,9 @@ This skill MUST be activated when:
 1. **Step**: Action
                - Verification: How to verify
 
-## FAILURE CONDITIONS
+  ## FAILURE CONDITIONS
 
-  Skipping this skill when it applies = FAILURE
+               Skipping this skill when it applies = FAILURE
 ```
 
 ---
@@ -766,6 +780,7 @@ When executing complex tasks, maintain visibility:
 **Status:** In Progress
 
 ### Steps
+
 - [x] Step 1: Gathered context
 - [x] Step 2: Identified files
 - [ ] Step 3: Implementing changes
@@ -820,12 +835,12 @@ Track internal state explicitly:
 
 Track these DORA-inspired metrics:
 
-| Metric | Target | How to Measure |
-|--------|--------|----------------|
-| Validation Pass Rate | >95% | CI green on first push |
-| Lead Time | <1 hour | Commit to merge time |
-| Change Failure Rate | <15% | PRs requiring fixes |
-| Recovery Time | <30 min | Time to fix broken build |
+| Metric               | Target  | How to Measure           |
+|----------------------|---------|--------------------------|
+| Validation Pass Rate | >95%    | CI green on first push   |
+| Lead Time            | <1 hour | Commit to merge time     |
+| Change Failure Rate  | <15%    | PRs requiring fixes      |
+| Recovery Time        | <30 min | Time to fix broken build |
 
 ### Sharing
 
@@ -849,16 +864,20 @@ When reporting errors, use this format:
 **Location:** [File:Line or Command]
 
 ### Description
+
 [What went wrong]
 
 ### Evidence
+
 [Error output, logs, or screenshots]
 
 ### Attempted Fixes
+
 1. [What you tried]
 2. [What you tried]
 
 ### Recommendation
+
 [Next steps or escalation path]
 ```
 
