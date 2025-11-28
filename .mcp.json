@@ -4,22 +4,22 @@
   "mcpServers": {
     "ancplua-workstation": {
       "command": "dotnet",
-      "args": ["run", "--no-build", "--project", "${ANCPLUA_MCP_ROOT}/src/Ancplua.Mcp.WorkstationServer/Ancplua.Mcp.WorkstationServer.csproj"],
+      "args": ["run", "--no-build", "--project", "${ANCPLUA_MCP_ROOT}/src/Servers/Stdio/Workstation/Ancplua.Mcp.Servers.Stdio.Workstation.csproj"],
       "env": {}
     },
     "ancplua-ai-services": {
       "command": "dotnet",
-      "args": ["run", "--no-build", "--project", "${ANCPLUA_MCP_ROOT}/src/Ancplua.Mcp.AIServicesServer/Ancplua.Mcp.AIServicesServer.csproj"],
+      "args": ["run", "--no-build", "--project", "${ANCPLUA_MCP_ROOT}/src/Servers/Stdio/AIServices/Ancplua.Mcp.Servers.Stdio.AIServices.csproj"],
       "env": {}
     },
     "ancplua-roslyn-metrics": {
       "command": "dotnet",
-      "args": ["run", "--no-build", "--project", "${ANCPLUA_MCP_ROOT}/src/Ancplua.Mcp.RoslynMetricsServer/Ancplua.Mcp.RoslynMetricsServer.csproj"],
+      "args": ["run", "--no-build", "--project", "${ANCPLUA_MCP_ROOT}/src/Servers/Stdio/RoslynMetrics/Ancplua.Mcp.Servers.Stdio.RoslynMetrics.csproj"],
       "env": {}
     },
     "ancplua-github-apps": {
       "command": "dotnet",
-      "args": ["run", "--no-build", "--project", "${ANCPLUA_MCP_ROOT}/src/Ancplua.Mcp.GitHubAppsServer/Ancplua.Mcp.GitHubAppsServer.csproj"],
+      "args": ["run", "--no-build", "--project", "${ANCPLUA_MCP_ROOT}/src/Servers/Stdio/GitHubApps/Ancplua.Mcp.Servers.Stdio.GitHubApps.csproj"],
       "env": {}
     }
   }
