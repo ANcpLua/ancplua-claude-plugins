@@ -1,18 +1,25 @@
 # Publishing & Creating Plugins
 
+> Based on [official Claude Code plugin docs](https://code.claude.com/docs/en/plugins)
+
 ## 1. Create Plugin Structure
 
+Use the template or create manually:
+
 ```bash
-# Create directories
+# Option A: Copy template
+cp -r tooling/templates/plugin-template plugins/<plugin-name>
+
+# Option B: Create manually
 mkdir -p plugins/<plugin-name>/.claude-plugin
-mkdir -p plugins/<plugin-name>/{skills,commands,hooks,scripts}
+mkdir -p plugins/<plugin-name>/{skills,commands,agents,hooks,scripts}
 ```
 
 ## 2. Create Manifests
 
 ### `plugins/<plugin-name>/.claude-plugin/plugin.json`
 
-**Rule:** relative paths must start with `./`
+**Required fields:** `name`, `description`, `version`, `author`
 
 ```json
 {
@@ -25,13 +32,14 @@ mkdir -p plugins/<plugin-name>/{skills,commands,hooks,scripts}
   },
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
   "license": "MIT"
-  // Add "mcpServers" or "hooks" here if needed
 }
 ```
 
+> Note: `repository` and `license` are optional but recommended.
+
 ### `.claude-plugin/marketplace.json` (Repo Root)
 
-This registers the plugin in the monorepo marketplace.
+Add your plugin to the monorepo marketplace:
 
 ```json
 {
@@ -42,24 +50,53 @@ This registers the plugin in the monorepo marketplace.
 }
 ```
 
-## 3. Documentation & Release
+## 3. Create a Skill (Optional)
+
+Create `plugins/<plugin-name>/skills/<skill-name>/SKILL.md`:
+
+```yaml
+---
+name: skill-name
+description: What this skill does and when Claude should use it
+---
+
+# Skill: skill-name
+
+Your skill instructions here...
+```
+
+Per [official docs](https://code.claude.com/docs/en/skills), only `name` and `description` are required in frontmatter.
+
+## 4. Documentation & Validation
 
 1. **README.md**: Add `plugins/<plugin-name>/README.md` explaining usage.
-2. **CHANGELOG.md**: Add entry under `[Unreleased]`.
-3. **Validate**: Run `./tooling/scripts/local-validate.sh`.
+2. **CHANGELOG.md**: Add entry under `[Unreleased]` in repo root.
+3. **Validate**:
+
+```bash
+# Full validation
+./tooling/scripts/local-validate.sh
+
+# Check marketplace sync
+./tooling/scripts/sync-marketplace.sh
+```
 
 ## Versioning & Release Checklist
 
-1. **Consistency**: Ensure `version` in `plugin.json` matches `marketplace.json`.
-2. **Changelog**: Document all changes.
-3. **Validation**: `local-validate.sh` must pass.
-4. **Restart**: **ALWAYS** restart Claude Code after installing/updating a plugin to load changes.
+- [ ] `version` in `plugin.json` matches `marketplace.json`
+- [ ] CHANGELOG.md updated
+- [ ] `local-validate.sh` passes
+- [ ] `sync-marketplace.sh` passes
+- [ ] README.md exists and is accurate
+- [ ] Restart Claude Code after changes (required to load updates)
 
 ## Common Pitfalls
 
 | Mistake | Solution |
-| :--- | :--- |
-| **Invalid JSON** | Run `jq . path/to/file.json` to verify syntax. |
-| **Hardcoded Paths** | Use `${CLAUDE_PLUGIN_ROOT}` in hooks/MCP configs. |
-| **Missing Permissions** | Run `chmod +x scripts/*.sh`. |
-| **Changes Not Visible** | Restart Claude Code. |
+|---------|----------|
+| Invalid JSON | Run `jq . path/to/file.json` to verify syntax |
+| Hardcoded paths | Use `${CLAUDE_PLUGIN_ROOT}` in hooks/MCP configs |
+| Missing permissions | Run `chmod +x scripts/*.sh` |
+| Changes not visible | Restart Claude Code |
+| Version mismatch | Run `sync-marketplace.sh` to detect |
+| Missing frontmatter | SKILL.md needs `name` and `description` in YAML |

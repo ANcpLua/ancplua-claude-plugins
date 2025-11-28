@@ -23,27 +23,55 @@ Use this skill when:
 ## Reference Library
 
 | Resource | Description |
-| :--- | :--- |
-| [Conventions](./references/conventions.md) | **Critical Rules**, Naming, Directory Layout, Git flow. |
-| [Publishing](./references/publishing.md) | Step-by-step guide to create, version, and release plugins. |
-| [Testing](./references/testing.md) | Validation commands and **Debugging Steps** (permissions, JSON). |
+|----------|-------------|
+| [Conventions](./references/conventions.md) | Critical rules, naming, directory layout, Git flow |
+| [Publishing](./references/publishing.md) | Step-by-step guide to create and release plugins |
+| [Testing](./references/testing.md) | Validation commands and debugging steps |
+
+## Official Documentation
+
+| Topic | Link |
+|-------|------|
+| Plugins | [code.claude.com/docs/en/plugins](https://code.claude.com/docs/en/plugins) |
+| Skills | [code.claude.com/docs/en/skills](https://code.claude.com/docs/en/skills) |
+| Hooks | [code.claude.com/docs/en/hooks](https://code.claude.com/docs/en/hooks) |
+| Marketplaces | [code.claude.com/docs/en/plugin-marketplaces](https://code.claude.com/docs/en/plugin-marketplaces) |
 
 ## Quick Actions
 
-**Validate Everything:**
+**Validate everything:**
 
 ```bash
 ./tooling/scripts/local-validate.sh
 ```
 
-**Validate Plugin JSON:**
+**Check marketplace sync:**
 
 ```bash
-claude plugin validate .
+./tooling/scripts/sync-marketplace.sh
 ```
 
-**Repo Layout:**
+**Validate single plugin:**
 
-- `plugins/` - The code lives here.
-- `.claude-plugin/` - The repo-level marketplace manifest.
-- `tooling/` - Shared scripts.
+```bash
+claude plugin validate plugins/<plugin-name>
+```
+
+## Repo Layout
+
+```text
+ancplua-claude-plugins/
+├── plugins/              # Individual plugins live here
+│   └── <plugin-name>/
+│       ├── .claude-plugin/plugin.json
+│       ├── skills/
+│       ├── commands/
+│       ├── agents/
+│       ├── hooks/
+│       └── README.md
+├── agents/               # Repo-level Agent SDK experiments
+├── skills/               # Repo-level shared skills (like this one)
+├── .claude-plugin/       # Marketplace manifest
+├── tooling/              # Validation scripts, templates
+└── docs/                 # Architecture, specs, ADRs
+```
