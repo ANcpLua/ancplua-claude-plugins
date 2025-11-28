@@ -1,24 +1,25 @@
 {
   "$schema": "https://raw.githubusercontent.com/anthropics/anthropic-cookbook/main/misc/mcp/.mcp.schema.json",
+  "_note": "Set ANCPLUA_MCP_ROOT environment variable to your ancplua-mcp repo root before use. See docs/examples/ for alternative configurations.",
   "mcpServers": {
     "ancplua-workstation": {
       "command": "dotnet",
-      "args": ["run", "--no-build", "--project", "/Users/ancplua/ancplua-mcp/src/Ancplua.Mcp.WorkstationServer/Ancplua.Mcp.WorkstationServer.csproj"],
+      "args": ["run", "--no-build", "--project", "${ANCPLUA_MCP_ROOT}/src/Ancplua.Mcp.WorkstationServer/Ancplua.Mcp.WorkstationServer.csproj"],
       "env": {}
     },
     "ancplua-ai-services": {
       "command": "dotnet",
-      "args": ["run", "--no-build", "--project", "/Users/ancplua/ancplua-mcp/src/Ancplua.Mcp.AIServicesServer/Ancplua.Mcp.AIServicesServer.csproj"],
+      "args": ["run", "--no-build", "--project", "${ANCPLUA_MCP_ROOT}/src/Ancplua.Mcp.AIServicesServer/Ancplua.Mcp.AIServicesServer.csproj"],
       "env": {}
     },
     "ancplua-roslyn-metrics": {
       "command": "dotnet",
-      "args": ["run", "--no-build", "--project", "/Users/ancplua/ancplua-mcp/src/Ancplua.Mcp.RoslynMetricsServer/Ancplua.Mcp.RoslynMetricsServer.csproj"],
+      "args": ["run", "--no-build", "--project", "${ANCPLUA_MCP_ROOT}/src/Ancplua.Mcp.RoslynMetricsServer/Ancplua.Mcp.RoslynMetricsServer.csproj"],
       "env": {}
     },
     "ancplua-github-apps": {
       "command": "dotnet",
-      "args": ["run", "--no-build", "--project", "/Users/ancplua/ancplua-mcp/src/Ancplua.Mcp.GitHubAppsServer/Ancplua.Mcp.GitHubAppsServer.csproj"],
+      "args": ["run", "--no-build", "--project", "${ANCPLUA_MCP_ROOT}/src/Ancplua.Mcp.GitHubAppsServer/Ancplua.Mcp.GitHubAppsServer.csproj"],
       "env": {}
     }
   }

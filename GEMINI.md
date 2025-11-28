@@ -43,7 +43,7 @@ You share this repository with Claude. While `CLAUDE.md` defines the *project ru
 ## 2. Operational Workflow
 
 ### 2.1 The "Plan-Then-Execute" Loop
-For any task complexer than a typo fix:
+For any task more complex than a typo fix:
 
 1.  **Investigate:** Use `codebase_investigator` or `glob`/`read_file` to understand the *current state*.
 2.  **Plan:** Formulate a step-by-step plan.

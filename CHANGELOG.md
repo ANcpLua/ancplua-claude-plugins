@@ -8,7 +8,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- **MCP server integration config (2025-11-25):**
+- **MCP server integration config (2025-11-25, updated 2025-11-28):**
   - `.mcp.json` - Root config for ancplua-mcp server integration
   - Enables cross-repo consumption of MCP servers from `ancplua-mcp`
   - Servers: ancplua-workstation, ancplua-ai-services, ancplua-roslyn-metrics, ancplua-github-apps
@@ -107,6 +107,11 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - Updated references in README.md and CLAUDE.md
 
 ### Fixed
+
+- **Review feedback fixes (2025-11-28):**
+  - `.mcp.json`: Replaced hardcoded `/Users/ancplua/` paths with `${ANCPLUA_MCP_ROOT}` env variable
+  - Added `_note` field explaining environment variable configuration requirement
+  - `GEMINI.md`: Fixed grammar ("complexer" → "more complex")
 
 - **Full markdown/workflow compliance cleanup (2025-11-25):**
   - Fixed SC2086 shellcheck warnings in `jules-review.yml` (proper variable quoting)
