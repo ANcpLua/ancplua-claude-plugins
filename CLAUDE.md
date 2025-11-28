@@ -19,15 +19,11 @@
    This tells you what has been done recently. Check the `[Unreleased]` section for pending work.
    This prevents duplicate work and enables intelligent task sequencing.
 
-2. **If Superpowers is installed, IMMEDIATELY read:**
+2. **If Superpowers is installed, read:** `~/.claude/plugins/cache/Superpowers/skills/getting-started/SKILL.md`
 
-   ```text
-   ~/.claude/plugins/cache/Superpowers/skills/getting-started/SKILL.md
-   ```
+3. **Read this file completely.**
 
-4. **Then read this file completely.**
-
-5. **For ANY task, check if a skill exists BEFORE starting work:**
+4. **Check for relevant skills before starting any task:**
 
    ```bash
    find ~/.claude -name "SKILL.md" 2>/dev/null | xargs grep -l "relevant-keyword"
@@ -354,7 +350,7 @@ AIs coordinate through **shared files**, NOT real-time communication:
 
 - Assign issues with `@github-copilot`
 - Creates PRs from `copilot/` branches
-- Uses `.github/instructions/copilot.instructions.md`
+- Uses `.github/copilot-instructions.md`
 
 **Jules:**
 

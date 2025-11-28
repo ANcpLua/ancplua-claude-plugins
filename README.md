@@ -1,170 +1,194 @@
 # ancplua-claude-plugins
 
-**Alexander’s Claude Code plugin marketplace, skills library, and agent lab.**
+**Claude Code plugins that make development faster and safer.**
 
-This repository is a long-lived, structured home for:
+## What's Inside
 
-- **Plugins:** Reusable Claude Code extensions (Type A)
-- **Skills:** Modular capabilities that encode development discipline
-- **Agents:** Autonomous workflows using the Agent SDK
-- **Integration:** Configuration to consume external MCP tools (Type T)
-
----
-
-## At a glance
-
-- **Goal:** A composable "Brain" for the Claude Code ecosystem.
-- **Architecture:** Type A (Application) consuming Type T (Technology) from `ancplua-mcp`.
-- **Validation:** `./tooling/scripts/local-validate.sh`
-- **Operational Spec:** `CLAUDE.md` (The Law)
-- **Change Log:** `CHANGELOG.md`
+| Plugin | What It Does | Command |
+|--------|--------------|---------|
+| **code-review** | AI-powered code review (bugs, security, style) | `/code-review` |
+| **smart-commit** | Generate semantic commit messages automatically | `/commit` |
+| **autonomous-ci** | Verify CI will pass before you push | *ask Claude* |
+| **jules-integration** | Delegate long tasks to Google Jules AI | `/jules <task>` |
 
 ---
 
-## 1. Architecture Overview
+## Quick Start
 
-This repository operates as the **Application Layer (Type A)** in a larger ecosystem.
+### Install Plugins in Your Project
 
-### Type A vs. Type T
+```bash
+cd your-project
+claude
+```
 
-| Layer | Repository | Role | Responsibilities |
-| :--- | :--- | :--- | :--- |
-| **Type A (Application)** | `ancplua-claude-plugins` | **The Brain** | Skills, Prompts, Orchestration, Workflow Logic |
-| **Type T (Technology)** | `ancplua-mcp` | **The Hands** | C# MCP Servers, Low-level Tools, System Access |
+Then inside Claude Code (per [official docs](https://code.claude.com/docs/en/plugins)):
 
-**Key Rule:** This repository NEVER contains MCP server implementations.
-It only contains the **configuration** (`docs/examples/*.mcp.json`) to connect to them.
+```text
+# Add the marketplace
+/plugin marketplace add ANcpLua/ancplua-claude-plugins
 
-### Directory Structure
+# Install a plugin
+/plugin install code-review@ancplua-claude-plugins
+/plugin install smart-commit@ancplua-claude-plugins
+```
+
+Or use the interactive browser:
+
+```text
+/plugin
+# Select "Browse Plugins" to explore available plugins
+```
+
+### Use Them
+
+```text
+/code-review              # Review your changes
+/commit                   # Generate commit message
+/jules Fix the login bug  # Delegate to Jules
+```
+
+---
+
+## Plugin Details
+
+### code-review
+
+Analyzes your code for issues before you commit.
+
+```text
+You: /code-review
+
+Claude: ## Issues Found
+
+  HIGH: SQL injection in auth.py:45
+   Fix: Use parameterized queries
+
+  MEDIUM: Unused import in utils.py:3
+   Fix: Remove 'import os'
+
+  No security vulnerabilities found
+```
+
+### smart-commit
+
+Generates proper commit messages following Conventional Commits.
+
+```text
+You: /commit
+
+Claude: Based on your changes, here's a commit message:
+
+feat(auth): add JWT refresh token support
+
+- Add refresh token generation on login
+- Store refresh tokens in Redis with TTL
+- Add /auth/refresh endpoint
+
+Commit with this message? [Y/n]
+```
+
+### autonomous-ci
+
+Runs the same checks CI will run - locally, before you push.
+
+```text
+You: Will CI pass if I push now?
+
+Claude: Running CI checks locally...
+
+  Tests: 47 passed
+  Lint: No errors
+  Build: Success
+  Type check: 2 errors in src/api.ts
+
+Fix the type errors before pushing.
+```
+
+### jules-integration
+
+Hands off complex, long-running tasks to Google Jules.
+
+```text
+You: /jules Refactor the user service to use dependency injection
+
+Claude: Created Jules task. Jules will:
+1. Analyze current user service
+2. Create a PR with DI refactoring
+3. You'll get a notification when ready
+```
+
+---
+
+## For Contributors
+
+### Repository Structure
 
 ```text
 ancplua-claude-plugins/
-├── CLAUDE.md                    # Operational Spec (Source of Truth)
-├── GEMINI.md                    # Gemini Operational Constitution
-├── README.md                    # This file
-├── CHANGELOG.md                 # Version history
-│
-├── .claude-plugin/
-│   └── marketplace.json         # Plugin Catalog
-│
-├── .github/
-│   └── workflows/               # CI Pipelines (Type A validation)
-│
-├── plugins/                     # The Plugins (Type A artifacts)
-│   ├── autonomous-ci/           # CI Verification Skill
-│   ├── code-review/             # Automated Reviewer
-│   ├── smart-commit/            # Semantic Committer
-│   └── jules-integration/       # Jules AI Delegation
-│
-├── agents/                      # Agent SDK Projects
-│   ├── repo-reviewer-agent/
-│   └── workflow-orchestrator/
-│
-├── skills/                      # Repo-level Shared Skills
-│
-├── docs/
-│   ├── ARCHITECTURE.md          # Detailed Architecture
-│   ├── examples/                # MCP Configs (Type T consumption)
-│   ├── specs/                   # Feature Specs
-│   └── decisions/               # ADRs
-│
-└── tooling/                     # Maintenance Scripts
+├── plugins/              # The plugins
+│   ├── code-review/
+│   ├── smart-commit/
+│   ├── autonomous-ci/
+│   └── jules-integration/
+├── agents/               # Agent SDK experiments
+├── skills/               # Shared development workflows
+├── docs/                 # Architecture, specs, ADRs
+└── tooling/              # Validation scripts
 ```
 
----
+### Validate Changes
 
-## 2. Usage
-
-### 2.1 As a Workbench (Editing this repo)
-
-1. **Install Dependencies:** Ensure `claude` CLI and `jq` are installed.
-2. **Start Session:**
-
-    ```bash
-    cd ancplua-claude-plugins
-    claude
-    ```
-
-    *Claude will automatically read `CLAUDE.md` to understand the project context.*
-3. **Validate Changes:**
-
-    ```bash
-    ./tooling/scripts/local-validate.sh
-    ```
-
-### 2.2 As a Marketplace (Installing plugins)
-
-You can install plugins from this repo into *other* projects.
-
-**Add Marketplace:**
-
-```text
-/plugin marketplace add ANcpLua/ancplua-claude-plugins
+```bash
+./tooling/scripts/local-validate.sh
 ```
 
-**Install Plugin:**
+### Key Files
 
-```text
-/plugin install autonomous-ci@ancplua-claude-plugins
-```
-
----
-
-## 3. Available Plugins
-
-| Plugin | Description | Type |
-| :--- | :--- | :--- |
-| **autonomous-ci** | Enforces CI verification before "Done". | Skill |
-| **smart-commit** | Generates semantic, conventional commits. | Skill + Command |
-| **code-review** | Automated security and style review. | Skill + Command |
-| **jules-integration**| Delegates tasks to Google Jules AI. | Skill + Command |
+| File | Purpose |
+|------|---------|
+| `CLAUDE.md` | Rules for Claude when working on this repo |
+| `GEMINI.md` | Rules for Gemini |
+| `AGENTS.md` | Context for Jules and external agents |
+| `CHANGELOG.md` | What changed and when |
 
 ---
 
-## 4. AI Review System
+## Architecture
 
-PRs are automatically reviewed by multiple AI systems:
+This repo is **Type A (Application)** - the "Brain" containing orchestration logic.
 
-### Capability Matrix
+It consumes tools from **Type T (Technology)** repos like `ancplua-mcp` which provide the "Hands".
 
-| Tool | Reviews | Comments | Creates Fix PRs | Auto-Fix |
-|------|---------|----------|-----------------|----------|
-| Claude | ✅ | ✅ | ❌ | ❌ |
-| Jules | ✅ | ✅ | ✅ (needs approval) | ❌ |
-| Gemini | ✅ | ✅ | ❌ | ❌ |
-| CodeRabbit | ✅ | ✅ | ❌ | ❌ |
-
-### How It Works
-
-1. Open a PR
-2. All AIs review independently (same scope)
-3. Overlapping findings = high-confidence signals
-4. Jules may create a fix PR (requires plan approval)
-5. Reviews appear in GitHub PR sidebar
-
-### What All AIs Review
-
-- Plugin schemas (`plugin.json`, `marketplace.json`)
-- SKILL.md files (YAML frontmatter, workflow clarity)
-- Shell scripts (shellcheck compliance, quoting)
-- YAML workflows (actionlint, permissions)
-- Documentation (CHANGELOG, README)
-
-Coordination happens via shared files (`CHANGELOG.md`, `CLAUDE.md`), not real-time
+**Rule:** No MCP server implementations here. Only plugin definitions, skills, and configs.
 
 ---
 
-## 5. Documentation Map
+## AI Review System
 
-- **Operational Rules:** `CLAUDE.md`
-- **Gemini Rules:** `GEMINI.md`
-- **Architecture Detail:** `docs/ARCHITECTURE.md`
-- **Plugin Standards:** `docs/PLUGINS.md`
-- **Agent SDK:** `docs/AGENTS.md`
-- **CI/CD Workflows:** `docs/WORKFLOWS.md`
+PRs are reviewed by 5 AI agents:
+
+| Agent | Can Create Fix PRs |
+|-------|-------------------|
+| Claude | Yes (via CLI) |
+| Jules | Yes (via API) |
+| Copilot | Yes (Coding Agent) |
+| Gemini | No |
+| CodeRabbit | No |
+
+All agents review the same things independently. Overlapping findings = high confidence.
 
 ---
 
-## 6. License
+## Official Documentation
 
-Private / Proprietary until a `LICENSE` file is added to the root.
+- [Plugins](https://code.claude.com/docs/en/plugins)
+- [Skills](https://code.claude.com/docs/en/skills)
+- [Hooks](https://code.claude.com/docs/en/hooks)
+- [Marketplaces](https://code.claude.com/docs/en/plugin-marketplaces)
+
+---
+
+## License
+
+Private until a LICENSE file is added.

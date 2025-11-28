@@ -10,5 +10,6 @@
   "license": "MIT",
   "keywords": [
     "claude-plugin"
-  ]
+  ],
+  "_comment": "Required fields per https://code.claude.com/docs/en/plugins: name, description, version, author"
 }
