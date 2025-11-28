@@ -1,0 +1,15 @@
+# CODEOWNERS - Require human approval for sensitive files
+#
+# Workflow files require codeowner approval. This ensures:
+# 1. Claude can't self-modify its own workflow (security)
+# 2. CodeRabbit (Tier 3a) can still approve for auto-merge
+# 3. Human review is always available as fallback
+
+# All workflow files require codeowner
+.github/workflows/ @ANcpLua
+
+# Claude-specific workflows (extra protection)
+.github/workflows/claude*.yml @ANcpLua
+
+# Security-sensitive files
+.github/CODEOWNERS @ANcpLua

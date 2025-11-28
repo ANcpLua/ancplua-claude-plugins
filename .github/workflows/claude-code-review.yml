@@ -11,9 +11,38 @@ on:
         type: number
 
 jobs:
+  # Pre-check: Detect if PR only modifies Claude workflow files
+  # If so, skip gracefully (not fail) to allow other reviewers to approve
+  check-files:
+    name: Check Changed Files
+    runs-on: ubuntu-latest
+    outputs:
+      skip_claude: ${{ steps.check.outputs.skip }}
+    steps:
+      - name: Check for Claude workflow-only changes
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # Get all changed files in this PR
+          FILES=$(gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" --json files -q '.files[].path')
+
+          # Check if ANY file is NOT a claude workflow file
+          if echo "$FILES" | grep -qvE '^\.github/workflows/claude'; then
+            echo "PR contains non-workflow files - Claude will review"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "PR only modifies Claude workflow files - skipping self-review"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
   claude-review:
-    # Skip draft PRs and bot PRs to prevent review loops
+    name: Claude Review
+    needs: check-files
+    # Skip if: workflow-only PR, draft, bot, or AI branch
     if: |
+      needs.check-files.outputs.skip_claude != 'true' &&
       !github.event.pull_request.draft &&
       github.event.pull_request.user.login != 'dependabot[bot]' &&
       github.event.pull_request.user.login != 'renovate[bot]' &&
@@ -46,82 +75,108 @@ jobs:
 
           prompt: |
             # Code Review Task (Type A Repository)
-            
+
             **Repository:** ${{ github.repository }}
             **PR Number:** ${{ github.event.pull_request.number || inputs.pr_number }}
             **Author:** ${{ github.event.pull_request.user.login }}
             **Branch:** ${{ github.event.pull_request.head.ref }}
-            
+
             ## Repository Context
-            
+
             This is a **Type A Repository** (brain/orchestration layer):
             - Contains: SKILL.md files, plugin.json, .mcp.json configs, shell scripts, YAML workflows
             - Consumes: MCP tools from ancplua-mcp (Type T)
             - **FORBIDDEN:** C#/.NET code, tool implementations
-            
+
             ## Review Checklist
-            
+
             1. **SKILL.md Quality**
                - Clear step-by-step workflows
                - Proper MCP tool references (tools must exist in ancplua-mcp)
                - No vague instructions like "do something"
                - Actionable, specific guidance
-            
+
             2. **Plugin Schema**
                - Valid plugin.json syntax
                - Required fields present (name, version, description)
                - Correct capability declarations
-            
+
             3. **Shell Scripts**
                - Shellcheck compliance
                - Proper quoting of variables
                - No hardcoded paths or secrets
                - Portable syntax (bash vs sh)
-            
+
             4. **Configuration Files**
                - Valid JSON/YAML syntax
                - .mcp.json references correct server paths
-            
+
             5. **CHANGELOG.md**
                - Updated for any user-facing changes
-            
+
             6. **Type T Violations (CRITICAL)**
                - NO C# code (.cs files)
                - NO .NET project files (.csproj)
                - This repo is orchestration only!
-            
+
             ## Steps
-            
+
             1. Run `gh pr diff ${{ github.event.pull_request.number || inputs.pr_number }}` to see changes
             2. Read CLAUDE.md or README.md for repository conventions
             3. Analyze the changes against the checklist
             4. Submit a formal review using `gh pr review`
-            
+
             ## Submit Review
-            
+
             ```bash
             gh pr review ${{ github.event.pull_request.number || inputs.pr_number }} \
               --approve|--request-changes|--comment \
               --body "## Claude Code Review (Opus 4.5)
-            
+
             **Verdict:** ✅ APPROVED | ⚠️ CHANGES REQUESTED | 💬 COMMENT
-            
+
             ### Summary
             [Brief description of what this PR does]
-            
+
             ### Findings
             [Issues found, categorized by severity]
-            
+
             ### Strengths
             [What was done well]
-            
+
             ---
             *Autonomous review by Claude Opus 4.5 (Type A repo)*"
             ```
-            
+
             **Decision Guide:**
             - `--approve`: No blocking issues, plugin config is valid
             - `--request-changes`: Invalid JSON, broken tool references, or Type T violations
             - `--comment`: Suggestions only, nothing blocking
 
           claude_args: '--model claude-opus-4-5-20251101 --allowed-tools "Bash(gh pr merge:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr edit:*),Bash(gh pr ready:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh search:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(jq:*),Bash(yq:*)"'
+
+  # Graceful skip notification - runs when Claude skips self-review
+  skip-notification:
+    name: Skip Notification
+    needs: check-files
+    if: needs.check-files.outputs.skip_claude == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Post skip notification
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" --body "## Claude Code Review - Skipped
+
+          This PR only modifies Claude workflow files. Claude cannot review changes to its own workflow (security measure).
+
+          **Alternative reviewers:**
+          - CodeRabbit (Tier 3a auto-merge)
+          - Human codeowner (@ANcpLua)
+          - Other AI reviewers (Gemini, Copilot)
+
+          ---
+          *This is expected behavior, not an error.*"
