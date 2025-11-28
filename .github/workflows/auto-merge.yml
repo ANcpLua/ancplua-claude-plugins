@@ -9,16 +9,18 @@
 # Requirements:
 # - Repo setting "Allow auto-merge" must be enabled
 # - Branch protection bypass for bot accounts in Rulesets
+#
+# Security: All external inputs are passed via env: to prevent code injection
 
 name: Auto-merge
 
 on:
   pull_request_target:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [ opened, synchronize, reopened, ready_for_review ]
   pull_request_review:
-    types: [submitted]
+    types: [ submitted ]
   check_suite:
-    types: [completed]
+    types: [ completed ]
 
 permissions:
   contents: write
@@ -40,22 +42,28 @@ jobs:
 
       - name: Auto-approve patch and minor updates
         if: steps.metadata.outputs.update-type != 'version-update:semver-major'
-        run: gh pr review --approve "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr review --approve "$PR_URL"
 
       - name: Enable auto-merge for patch and minor
         if: steps.metadata.outputs.update-type != 'version-update:semver-major'
-        run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge --auto --squash "$PR_URL"
 
       - name: Comment on major updates
         if: steps.metadata.outputs.update-type == 'version-update:semver-major'
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEP_NAMES: ${{ steps.metadata.outputs.dependency-names }}
+          PREV_VERSION: ${{ steps.metadata.outputs.previous-version }}
+          NEW_VERSION: ${{ steps.metadata.outputs.new-version }}
         run: |
-          gh pr comment "$PR_URL" --body "## Major Version Update
+          gh pr comment "$PR_URL" --body "## ⚠️ Major Version Update
 
           This is a **major version update** that may contain breaking changes.
 
@@ -64,11 +72,8 @@ jobs:
           2. Test locally if needed
           3. Approve and merge manually
 
-          Dependency: \`${{ steps.metadata.outputs.dependency-names }}\`
-          Update: \`${{ steps.metadata.outputs.previous-version }}\` -> \`${{ steps.metadata.outputs.new-version }}\`"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          Dependency: \`$DEP_NAMES\`
+          Update: \`$PREV_VERSION\` → \`$NEW_VERSION\`"
 
   # Tier 1b: Auto-merge Renovate PRs
   renovate-auto-merge:
@@ -78,16 +83,16 @@ jobs:
 
     steps:
       - name: Auto-approve Renovate PRs
-        run: gh pr review --approve "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr review --approve "$PR_URL"
 
       - name: Enable auto-merge for Renovate
-        run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge --auto --squash "$PR_URL"
 
   # Tier 2: Auto-merge AI agent fix PRs (Copilot, Jules, Claude)
   ai-agent-auto-merge:
@@ -99,33 +104,34 @@ jobs:
       startsWith(github.event.pull_request.head.ref, 'claude/')
 
     steps:
+      # SECURITY: Pass branch name via env to prevent code injection (CWE-94)
       - name: Identify AI agent
         id: agent
         env:
-          BRANCH_REF: ${{ github.event.pull_request.head.ref }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
         run: |
-          if [[ "$BRANCH_REF" == copilot/* ]]; then
+          if [[ "$BRANCH" == copilot/* ]]; then
             echo "agent=Copilot" >> "$GITHUB_OUTPUT"
-          elif [[ "$BRANCH_REF" == jules/* ]]; then
+          elif [[ "$BRANCH" == jules/* ]]; then
             echo "agent=Jules" >> "$GITHUB_OUTPUT"
-          elif [[ "$BRANCH_REF" == claude/* ]]; then
+          elif [[ "$BRANCH" == claude/* ]]; then
             echo "agent=Claude" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Auto-approve AI agent PRs
-        run: |
-          echo "Auto-approving $AGENT_NAME PR"
-          gh pr review --approve "$PR_URL" --body "Auto-approved: $AGENT_NAME autonomous fix PR"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AGENT_NAME: ${{ steps.agent.outputs.agent }}
+          AGENT: ${{ steps.agent.outputs.agent }}
+        run: |
+          echo "Auto-approving $AGENT PR"
+          gh pr review --approve "$PR_URL" --body "✅ Auto-approved: $AGENT autonomous fix PR"
 
       - name: Enable auto-merge for AI agent PRs
-        run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge --auto --squash "$PR_URL"
 
   # Tier 3a: Auto-merge PRs approved by CodeRabbit
   coderabbit-auto-merge:
@@ -138,27 +144,31 @@ jobs:
 
     steps:
       - name: Enable auto-merge for CodeRabbit approved PRs
-        run: |
-          echo "CodeRabbit approved PR #${{ github.event.pull_request.number }}"
-          gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          echo "CodeRabbit approved PR #$PR_NUMBER"
+          gh pr merge --auto --squash "$PR_URL"
 
   # Tier 3b: Auto-merge PRs approved by Claude
+  # SECURITY: Requires github-actions[bot] to prevent spoofing by humans
   claude-approved-auto-merge:
     name: Claude approved auto-merge
     runs-on: ubuntu-latest
     if: |
       github.event_name == 'pull_request_review' &&
       github.event.review.state == 'approved' &&
-      contains(github.event.review.body, 'Claude Code Review')
+      github.event.review.user.login == 'github-actions[bot]' &&
+      contains(github.event.review.body, '## Claude Code Review')
 
     steps:
       - name: Enable auto-merge for Claude approved PRs
-        run: |
-          echo "Claude approved PR #${{ github.event.pull_request.number }}"
-          gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          echo "Claude approved PR #$PR_NUMBER"
+          gh pr merge --auto --squash "$PR_URL"

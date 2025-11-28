@@ -6,6 +6,14 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Security
+
+- **Claude detection anti-spoofing fix (2025-11-28):**
+  - `auto-merge.yml`: Claude approval now requires `github-actions[bot]` + `## Claude Code Review` header
+  - `jules-auto-review.yml`: Same fix applied to jules-implement-suggestions job
+  - Prevents humans from spoofing Claude reviews by adding text to review body
+  - Added SC2086 fixes: quoted all `$GITHUB_OUTPUT` references
+
 ### Fixed
 
 - **Workflow alignment for full autonomy (2025-11-28):**

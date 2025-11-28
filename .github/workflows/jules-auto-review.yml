@@ -1,18 +1,32 @@
-# Jules Automatic PR Review - Fully Autonomous Mode
+# Jules Automatic PR Review + AI Suggestion Implementation (Type A Repository)
 #
 # Two modes:
-# 1. Auto-review: Reviews new PRs and creates fix PRs
-# 2. Implement suggestions: When Claude requests changes, Jules implements them
+# 1. AUTO-REVIEW: Jules reviews PRs automatically for plugin quality
+# 2. IMPLEMENT SUGGESTIONS: When ANY AI reviewer requests changes, Jules implements them
+#
+# Supported AI reviewers for implementation:
+# - Claude (claude-code-review.yml)
+# - CodeRabbit (coderabbitai[bot])
+# - Copilot (copilot review comments)
+# - Gemini (gemini-code-assist[bot])
+#
+# Loop prevention:
+# - Jules never reviews/implements on jules/ branches
+# - Jules never implements its own suggestions
 #
 # Required secret: JULES_API_KEY
+# Set requirePlanApproval: false for fully autonomous operation.
 
 name: Jules Auto Review
 
 on:
+  # Trigger 1: Auto-review new PRs
   pull_request:
-    types: [opened, synchronize, ready_for_review]
+    types: [ opened, synchronize, ready_for_review ]
+
+  # Trigger 2: Implement AI suggestions when changes requested
   pull_request_review:
-    types: [submitted]
+    types: [ submitted ]
 
 permissions:
   contents: write
@@ -21,16 +35,21 @@ permissions:
   id-token: write
 
 jobs:
-  # Job 1: Auto-review new PRs
+  # =============================================================================
+  # JOB 1: Auto-review PRs (Type A - Plugin repository)
+  # =============================================================================
   jules-review:
-    # Skip draft PRs, bot PRs, and Jules' own branches (but review Claude/Copilot PRs)
+    name: Jules Auto Review
+    runs-on: ubuntu-latest
+    # Only on PR events, skip drafts, bots, and AI branches
     if: |
       github.event_name == 'pull_request' &&
       !github.event.pull_request.draft &&
       github.event.pull_request.user.login != 'dependabot[bot]' &&
       github.event.pull_request.user.login != 'renovate[bot]' &&
-      !startsWith(github.event.pull_request.head.ref, 'jules/')
-    runs-on: ubuntu-latest
+      !startsWith(github.event.pull_request.head.ref, 'jules/') &&
+      !startsWith(github.event.pull_request.head.ref, 'copilot/') &&
+      !startsWith(github.event.pull_request.head.ref, 'claude/')
 
     steps:
       - name: Check API Key
@@ -52,7 +71,6 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
-          # Review prompt for Jules (Type A repo - plugins/orchestration)
           PROMPT="Review PR #${PR_NUMBER}: ${PR_TITLE}
 
           This is a Type A repository (Claude plugins/orchestration layer).
@@ -117,30 +135,63 @@ jobs:
               issue_number: prNumber,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## Jules AI Review Started
+              body: `## 🔮 Jules AI Review Started
 
             **Session:** [View in Jules](${julesUrl})
 
             Jules is analyzing this PR for plugin issues and improvements.
 
+            **Review scope (Type A repo):**
+            - SKILL.md workflow quality
+            - Plugin schema validation
+            - Shell script compliance
+            - Configuration file syntax
+
             - **Fully autonomous** - fixes will be created automatically
             - If issues found, Jules will create a fix PR
 
             ---
-            *Dual-AI review: Jules + Claude*`
+            *Penta-AI review: Jules + Claude + Copilot + CodeRabbit + Gemini*`
             });
 
-  # Job 2: Implement Claude's suggestions
+  # =============================================================================
+  # JOB 2: Implement AI Suggestions (NEW!)
+  # Triggers when Claude, CodeRabbit, Copilot, or Gemini request changes
+  # =============================================================================
   jules-implement-suggestions:
-    # Trigger when Claude requests changes
+    name: Jules Implement AI Suggestions
+    runs-on: ubuntu-latest
+    # SECURITY: Claude detection requires bot + exact header to prevent spoofing
     if: |
       github.event_name == 'pull_request_review' &&
       github.event.review.state == 'changes_requested' &&
-      contains(github.event.review.body, 'Claude Code Review') &&
-      !startsWith(github.event.pull_request.head.ref, 'jules/')
-    runs-on: ubuntu-latest
+      !startsWith(github.event.pull_request.head.ref, 'jules/') &&
+      (
+        (github.event.review.user.login == 'github-actions[bot]' && contains(github.event.review.body, '## Claude Code Review')) ||
+        github.event.review.user.login == 'coderabbitai[bot]' ||
+        github.event.review.user.login == 'copilot[bot]' ||
+        github.event.review.user.login == 'gemini-code-assist[bot]'
+      )
 
     steps:
+      - name: Identify AI Reviewer
+        id: reviewer
+        env:
+          REVIEW_BODY: ${{ github.event.review.body }}
+          REVIEWER_LOGIN: ${{ github.event.review.user.login }}
+        run: |
+          if echo "$REVIEW_BODY" | grep -q "## Claude Code Review"; then
+            echo "ai_reviewer=Claude" >> "$GITHUB_OUTPUT"
+          elif [ "$REVIEWER_LOGIN" = "coderabbitai[bot]" ]; then
+            echo "ai_reviewer=CodeRabbit" >> "$GITHUB_OUTPUT"
+          elif [ "$REVIEWER_LOGIN" = "copilot[bot]" ]; then
+            echo "ai_reviewer=Copilot" >> "$GITHUB_OUTPUT"
+          elif [ "$REVIEWER_LOGIN" = "gemini-code-assist[bot]" ]; then
+            echo "ai_reviewer=Gemini" >> "$GITHUB_OUTPUT"
+          else
+            echo "ai_reviewer=AI" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Check API Key
         id: check_key
         run: |
@@ -151,34 +202,40 @@ jobs:
             echo "has_key=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Implement Claude's Suggestions
+      - name: Create Jules Implementation Session
         if: steps.check_key.outputs.has_key == 'true'
         id: jules
         env:
           JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
-          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+          BASE_BRANCH: ${{ github.event.pull_request.head.ref }}
           REVIEW_BODY: ${{ github.event.review.body }}
+          AI_REVIEWER: ${{ steps.reviewer.outputs.ai_reviewer }}
         run: |
-          # Prompt Jules to implement Claude's suggestions
-          PROMPT="Implement the changes requested by Claude in PR #${PR_NUMBER}: ${PR_TITLE}
+          PROMPT="Implement the changes requested by ${AI_REVIEWER} on PR #${PR_NUMBER}: ${PR_TITLE}
 
-          Claude's review feedback:
-          ---
+          This is a Type A repository (plugins/orchestration). No C#/.NET code allowed.
+
+          ## ${AI_REVIEWER}'s Review Feedback:
           ${REVIEW_BODY}
-          ---
 
-          Your task:
-          1. Read Claude's suggestions carefully
+          ## Your Task:
+          1. Read the review feedback above carefully
           2. Implement ALL the requested changes
-          3. Create a fix PR with the implementations
-          4. Focus on correctness - implement exactly what Claude suggested
+          3. Address each issue mentioned in the review
+          4. Create a commit with the fixes
+          5. Push to the existing PR branch (not a new branch)
 
-          Do NOT add extra changes beyond what Claude requested."
+          Important:
+          - This is about IMPLEMENTING fixes, not reviewing again
+          - Address every point raised in the review
+          - Use conventional commits: fix:, feat:, docs:, etc.
+          - Update the PR, don't create a new one
+          - Only modify SKILL.md, plugin.json, shell scripts, YAML - NO C# code"
 
           PROMPT_JSON=$(echo "$PROMPT" | jq -Rsa .)
-          TITLE="Implement Claude suggestions for PR #${PR_NUMBER}"
+          TITLE="Implement ${AI_REVIEWER} suggestions for PR #${PR_NUMBER}"
           TITLE_JSON=$(echo "$TITLE" | jq -Rsa .)
 
           RESPONSE=$(curl -s -w "\n%{http_code}" \
@@ -213,29 +270,32 @@ jobs:
           echo "session_id=$SESSION_ID" >> "$GITHUB_OUTPUT"
           echo "success=true" >> "$GITHUB_OUTPUT"
 
-      - name: Post Implementation Notice
+      - name: Post Implementation Started Comment
         if: steps.check_key.outputs.has_key == 'true' && steps.jules.outputs.success == 'true'
         uses: actions/github-script@v7
+        env:
+          AI_REVIEWER: ${{ steps.reviewer.outputs.ai_reviewer }}
         with:
           script: |
             const sessionId = '${{ steps.jules.outputs.session_id }}';
             const julesUrl = `https://jules.google/session/${sessionId}`;
             const prNumber = ${{ github.event.pull_request.number }};
+            const aiReviewer = process.env.AI_REVIEWER;
 
             await github.rest.issues.createComment({
               issue_number: prNumber,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## Jules Implementing Claude's Suggestions
+              body: `## 🔧 Jules Implementing ${aiReviewer}'s Suggestions
 
             **Session:** [View in Jules](${julesUrl})
 
-            Jules is implementing the changes Claude requested.
+            Jules is now implementing the changes requested by ${aiReviewer}.
 
-            - Reading Claude's review feedback
-            - Creating a fix PR with implementations
-            - Will update this PR when complete
+            - Reading review feedback
+            - Implementing requested changes
+            - Will push fixes to this PR
 
             ---
-            *AI collaboration: Claude reviews -> Jules implements*`
+            *AI Collaboration: ${aiReviewer} reviews → Jules implements*`
             });
