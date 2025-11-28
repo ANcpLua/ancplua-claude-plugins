@@ -19,8 +19,8 @@ jobs:
       (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pull-requests: write   # Can reply to PR comments
+      contents: write        # Required for merge operations
+      pull-requests: write   # Can reply to PR comments and merge
       issues: write          # Can reply to issue comments
       id-token: write
       actions: read
@@ -38,4 +38,4 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           additional_permissions: |
             actions: read
-          claude_args: '--model claude-opus-4-5-20251101'
+          claude_args: '--model claude-opus-4-5-20251101 --allowed-tools "Bash(gh pr merge:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr comment:*)"'

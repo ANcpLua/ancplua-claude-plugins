@@ -11,8 +11,8 @@ on:
         type: number
 
 permissions:
-  contents: read
-  pull-requests: write
+  contents: write        # Required for merge operations
+  pull-requests: write   # Required for merge and comments
   issues: write
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          claude_args: '--model claude-opus-4-5-20251101'
+          claude_args: '--model claude-opus-4-5-20251101 --allowed-tools "Bash(gh pr merge:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr comment:*),Bash(gh pr review:*)"'
           prompt: |
             You are performing a comprehensive code review for ancplua-claude-plugins.
 
