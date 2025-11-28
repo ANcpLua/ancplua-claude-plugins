@@ -190,5 +190,4 @@ All agents review the same things independently. Overlapping findings = high con
 ---
 
 ## License
-
-Private until a LICENSE file is added.
+This project is licensed under the [MIT License](LICENSE).
