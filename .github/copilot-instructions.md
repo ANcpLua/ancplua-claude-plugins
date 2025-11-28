@@ -26,7 +26,7 @@ This repository is the **Application Layer (Type A)** - the "Brain" containing:
 - Plugin definitions and configurations
 - Workflow logic and agent coordination
 
-**Sister Repository:** [`ancplua-mcp`](https://github.com/ANcpLua/ancplua-mcp) (Type T - Technology) contains actual tool implementations.
+**Sister Repository:** `ancplua-mcp` (Type T - Technology) contains actual tool implementations.
 
 **Key Rule:** This repository NEVER contains MCP server implementations or C#/.NET code.
 
