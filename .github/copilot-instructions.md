@@ -65,8 +65,7 @@ ancplua-claude-plugins/
 │   └── marketplace.json         # Declares all plugins
 │
 ├── .github/
-│   ├── instructions/
-│   │   └── instructions.md      # This file
+│   ├── copilot-instructions.md  # This file
 │   └── workflows/
 │       ├── ci.yml               # Main CI pipeline
 │       └── dependabot.yml
@@ -399,7 +398,7 @@ You are one of **five AI agents** on this repository. All agents can now create 
 
 - Assign issues with `@github-copilot` to trigger autonomous work
 - Creates PRs from `copilot/` branches
-- Uses `.github/instructions/copilot.instructions.md` for context
+- Uses `.github/copilot-instructions.md` for context
 
 **Claude:**
 
@@ -418,7 +417,7 @@ You are one of **five AI agents** on this repository. All agents can now create 
 AIs coordinate through **shared files**, not real-time communication:
 
 - `CHANGELOG.md` - What has changed
-- `CLAUDE.md` / `GEMINI.md` / `.github/instructions/copilot.instructions.md` - Repository context
+- `CLAUDE.md` / `GEMINI.md` / `.github/copilot-instructions.md` - Repository context
 - `docs/specs/` and `docs/decisions/` - Authoritative requirements
 
 Each AI does its own complete review. Overlapping findings indicate high confidence issues.

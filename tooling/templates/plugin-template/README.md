@@ -11,7 +11,7 @@ Brief description of what this plugin does.
 
 This plugin is part of the `ancplua-claude-plugins` marketplace.
 
-```bash
+```text
 /plugin marketplace add ANcpLua/ancplua-claude-plugins
 /plugin install <plugin-name>@ancplua-claude-plugins
 ```
@@ -30,16 +30,20 @@ This plugin is part of the `ancplua-claude-plugins` marketplace.
 
 ## Directory Structure
 
+Per [official docs](https://code.claude.com/docs/en/plugins):
+
 ```text
 plugins/<plugin-name>/
 ├── .claude-plugin/
-│   └── plugin.json          # Plugin manifest (required)
+│   └── plugin.json          # Required: name, description, version, author
 ├── README.md                 # This file
 ├── skills/
 │   └── <skill-name>/
-│       └── SKILL.md         # Skill definition
+│       └── SKILL.md         # Skill definition (name + description required)
 ├── commands/
 │   └── <command>.md         # Slash commands
+├── agents/
+│   └── <agent>/             # Custom agents
 ├── hooks/
 │   └── hooks.json           # Lifecycle hooks (optional)
 └── scripts/
@@ -90,4 +94,4 @@ Run local validation before committing:
 
 - [SKILL.md](skills/<skill-name>/SKILL.md) - Skill documentation
 - [Plugin Guidelines](../../docs/PLUGINS.md) - Plugin development guide
-- [spec-XXXX](../../docs/specs/spec-XXXX.md) - Feature specification (if applicable)
+- [Official Plugin Docs](https://code.claude.com/docs/en/plugins)

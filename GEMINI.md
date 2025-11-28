@@ -117,7 +117,7 @@ AIs do NOT communicate in real-time. Coordination happens through shared files:
 | `CHANGELOG.md` | What has been done recently - prevents duplicate work |
 | `CLAUDE.md` | Project rules and mandatory workflows |
 | `AGENTS.md` | Context for Jules and external agents |
-| `.github/instructions/copilot.instructions.md` | Copilot-specific context |
+| `.github/copilot-instructions.md` | Copilot-specific context |
 | `git status` | Current repository state |
 
 **The pattern:**

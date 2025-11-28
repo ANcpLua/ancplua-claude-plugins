@@ -8,6 +8,12 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- **Copilot instructions location fix (2025-11-28):**
+  - Moved `.github/instructions/copilot.instructions.md` → `.github/copilot-instructions.md`
+  - Repository-wide instructions location per GitHub best practices
+  - Updated all references in CLAUDE.md, GEMINI.md, CHANGELOG.md
+  - Closes #11
+
 - **Penta-AI Autonomous Agent System (2025-11-28):**
   - Upgraded from Quad-AI to Penta-AI (Claude, Jules, Copilot, Gemini, CodeRabbit)
   - All five agents can now create fix PRs autonomously (except Gemini)
@@ -27,7 +33,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 
 - **Copilot Coding Agent Instructions (2025-11-28):**
-  - Created `.github/instructions/copilot.instructions.md` (506 lines)
+  - Created `.github/copilot-instructions.md` (506 lines)
   - Comprehensive guide for GitHub Copilot coding agent
   - Includes: autonomous agent mode, target architecture, Type A/T separation
   - Documents plugin structure, validation, code style, SOLID principles
