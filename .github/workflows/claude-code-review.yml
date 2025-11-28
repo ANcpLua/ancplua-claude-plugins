@@ -16,6 +16,9 @@ jobs:
   check-files:
     name: Check Changed Files
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
       skip_claude: ${{ steps.check.outputs.skip }}
     steps:
