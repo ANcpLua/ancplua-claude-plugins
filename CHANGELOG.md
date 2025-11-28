@@ -14,6 +14,11 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - Prevents humans from spoofing Claude reviews by adding text to review body
   - Added SC2086 fixes: quoted all `$GITHUB_OUTPUT` references
 
+- **Bot comment cascade prevention (2025-11-28):**
+  - `claude.yml`: Added bot comment filtering to prevent workflow cascade from AI reviewer comments
+  - Filters: `sender.type != 'Bot'`, copilot[bot], coderabbitai[bot], gemini-code-assist[bot], github-actions[bot]
+  - Prevents 30-45 pending workflow runs when Copilot/CodeRabbit/Gemini leave multiple review comments
+
 ### Fixed
 
 - **Workflow alignment for full autonomy (2025-11-28):**
