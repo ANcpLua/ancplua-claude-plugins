@@ -1,34 +1,35 @@
 # Jules Automatic PR Review - Fully Autonomous Mode
 #
-# Triggers Jules AI review automatically on every PR.
-# Works alongside Claude Code Review for dual-AI validation.
-# Required secret: JULES_API_KEY
+# Two modes:
+# 1. Auto-review: Reviews new PRs and creates fix PRs
+# 2. Implement suggestions: When Claude requests changes, Jules implements them
 #
-# Jules creates PRs with fixes, NOT review comments.
-# requirePlanApproval: false for fully autonomous operation.
+# Required secret: JULES_API_KEY
 
 name: Jules Auto Review
 
 on:
   pull_request:
     types: [opened, synchronize, ready_for_review]
+  pull_request_review:
+    types: [submitted]
 
 permissions:
   contents: write
   pull-requests: write
   issues: write
-  id-token: write  # Added for OIDC token exchange
+  id-token: write
 
 jobs:
+  # Job 1: Auto-review new PRs
   jules-review:
-    # Skip draft PRs and bot PRs to prevent infinite loops
+    # Skip draft PRs, bot PRs, and Jules' own branches (but review Claude/Copilot PRs)
     if: |
+      github.event_name == 'pull_request' &&
       !github.event.pull_request.draft &&
       github.event.pull_request.user.login != 'dependabot[bot]' &&
       github.event.pull_request.user.login != 'renovate[bot]' &&
-      !startsWith(github.event.pull_request.head.ref, 'jules/') &&
-      !startsWith(github.event.pull_request.head.ref, 'copilot/') &&
-      !startsWith(github.event.pull_request.head.ref, 'claude/')
+      !startsWith(github.event.pull_request.head.ref, 'jules/')
     runs-on: ubuntu-latest
 
     steps:
@@ -51,8 +52,7 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
-
-          # Review prompt for Jules - Type A repository (plugins, not code)
+          # Review prompt for Jules (Type A repo - plugins/orchestration)
           PROMPT="Review PR #${PR_NUMBER}: ${PR_TITLE}
 
           This is a Type A repository (Claude plugins/orchestration layer).
@@ -72,7 +72,6 @@ jobs:
           TITLE="Auto-Review PR #${PR_NUMBER}: $(echo "$PR_TITLE" | cut -c 1-50)"
           TITLE_JSON=$(echo "$TITLE" | jq -Rsa .)
 
-          # Fully autonomous mode - no plan approval required
           RESPONSE=$(curl -s -w "\n%{http_code}" \
             'https://jules.googleapis.com/v1alpha/sessions' \
             -X POST \
@@ -118,22 +117,125 @@ jobs:
               issue_number: prNumber,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## Jules AI Review Started (Autonomous Mode)
+              body: `## Jules AI Review Started
 
             **Session:** [View in Jules](${julesUrl})
 
             Jules is analyzing this PR for plugin issues and improvements.
 
-            **Review scope (Type A repo):**
-            - SKILL.md workflow quality
-            - Plugin schema validation
-            - Shell script compliance
-            - Configuration file syntax
-
             - **Fully autonomous** - fixes will be created automatically
             - If issues found, Jules will create a fix PR
-            - Monitor progress at the link above
 
             ---
-            *Dual-AI autonomous review: Jules + Claude*`
+            *Dual-AI review: Jules + Claude*`
+            });
+
+  # Job 2: Implement Claude's suggestions
+  jules-implement-suggestions:
+    # Trigger when Claude requests changes
+    if: |
+      github.event_name == 'pull_request_review' &&
+      github.event.review.state == 'changes_requested' &&
+      contains(github.event.review.body, 'Claude Code Review') &&
+      !startsWith(github.event.pull_request.head.ref, 'jules/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check API Key
+        id: check_key
+        run: |
+          if [ -z "${{ secrets.JULES_API_KEY }}" ]; then
+            echo "has_key=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::JULES_API_KEY not configured"
+          else
+            echo "has_key=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Implement Claude's Suggestions
+        if: steps.check_key.outputs.has_key == 'true'
+        id: jules
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+          REVIEW_BODY: ${{ github.event.review.body }}
+        run: |
+          # Prompt Jules to implement Claude's suggestions
+          PROMPT="Implement the changes requested by Claude in PR #${PR_NUMBER}: ${PR_TITLE}
+
+          Claude's review feedback:
+          ---
+          ${REVIEW_BODY}
+          ---
+
+          Your task:
+          1. Read Claude's suggestions carefully
+          2. Implement ALL the requested changes
+          3. Create a fix PR with the implementations
+          4. Focus on correctness - implement exactly what Claude suggested
+
+          Do NOT add extra changes beyond what Claude requested."
+
+          PROMPT_JSON=$(echo "$PROMPT" | jq -Rsa .)
+          TITLE="Implement Claude suggestions for PR #${PR_NUMBER}"
+          TITLE_JSON=$(echo "$TITLE" | jq -Rsa .)
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            'https://jules.googleapis.com/v1alpha/sessions' \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -H "X-Goog-Api-Key: $JULES_API_KEY" \
+            -d "{
+              \"prompt\": $PROMPT_JSON,
+              \"sourceContext\": {
+                \"source\": \"sources/github/${{ github.repository }}\",
+                \"githubRepoContext\": {
+                  \"startingBranch\": \"$BASE_BRANCH\",
+                  \"pullRequestNumber\": $PR_NUMBER
+                }
+              },
+              \"automationMode\": \"AUTO_CREATE_PR\",
+              \"requirePlanApproval\": false,
+              \"title\": $TITLE_JSON
+            }")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::warning::Jules API returned HTTP $HTTP_CODE"
+            echo "success=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          SESSION_ID=$(echo "$BODY" | jq -r '.id')
+          echo "session_id=$SESSION_ID" >> "$GITHUB_OUTPUT"
+          echo "success=true" >> "$GITHUB_OUTPUT"
+
+      - name: Post Implementation Notice
+        if: steps.check_key.outputs.has_key == 'true' && steps.jules.outputs.success == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const sessionId = '${{ steps.jules.outputs.session_id }}';
+            const julesUrl = `https://jules.google/session/${sessionId}`;
+            const prNumber = ${{ github.event.pull_request.number }};
+
+            await github.rest.issues.createComment({
+              issue_number: prNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Jules Implementing Claude's Suggestions
+
+            **Session:** [View in Jules](${julesUrl})
+
+            Jules is implementing the changes Claude requested.
+
+            - Reading Claude's review feedback
+            - Creating a fix PR with implementations
+            - Will update this PR when complete
+
+            ---
+            *AI collaboration: Claude reviews -> Jules implements*`
             });
