@@ -475,49 +475,40 @@ When you add/rename/remove a plugin:
 
 ### Plugin Structure
 
-Each plugin in `plugins/<name>/`:
+Each plugin in `plugins/<name>/` (per [official docs](https://code.claude.com/docs/en/plugins)):
 
 ```text
 plugins/<name>/
 ├── .claude-plugin/
-│   └── plugin.json      # REQUIRED: name, version, description, author, license
+│   └── plugin.json      # REQUIRED: name, version, description, author
 ├── README.md            # REQUIRED: User-facing docs
 ├── skills/
 │   └── <skill>/
 │       └── SKILL.md     # YAML frontmatter required
 ├── commands/            # Slash commands (.md)
+├── agents/              # Custom agents
 ├── hooks/               # Event hooks (hooks.json)
-├── scripts/             # Shell helpers (.sh)
-└── lib/                 # Implementation code
+└── scripts/             # Shell helpers (.sh)
 ```
 
 ### SKILL.md Format
 
-All SKILL.md files MUST have YAML frontmatter:
+All SKILL.md files MUST have YAML frontmatter (per [official docs](https://code.claude.com/docs/en/skills)):
 
 ```yaml
 ---
-name: skill-name
-description: What this skill does and when to use it
+name: skill-name          # Required: kebab-case, max 64 chars
+description: What this skill does and when to use it  # Required: max 1024 chars
 ---
 
 # Skill: skill-name
 
-## MANDATORY ACTIVATION
-
-This skill MUST be activated when:
-  - [ trigger 1 ]
-  - [ trigger 2 ]
-
-## WORKFLOW
-
-1. **Step**: Action
-               - Verification: How to verify
-
-  ## FAILURE CONDITIONS
-
-               Skipping this skill when it applies = FAILURE
+[Your skill content here - markdown format]
 ```
+
+**Optional frontmatter:** `allowed-tools` to restrict which tools Claude can use.
+
+**Note:** Our internal skills may include additional sections (MANDATORY ACTIVATION, WORKFLOW, FAILURE CONDITIONS) as team standards, but only `name` and `description` are required by Claude Code.
 
 ---
 
