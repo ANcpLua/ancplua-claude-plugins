@@ -8,6 +8,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- **Documentation aligned with official Claude Code docs (2025-11-28):**
+  - Rewrote `README.md` with official `/plugin` install commands
+  - Fixed `CLAUDE.md` plugin structure (added `agents/`, removed `lib/`)
+  - Fixed `CLAUDE.md` step numbering (1,2,4,5 → 1,2,3,4)
+  - Clarified SKILL.md format: only `name` and `description` required per official docs
+  - Added links to official documentation throughout
+  - Updated `plugin-template` to match official structure
+  - Added `agents/` directory to plugin template
+
 - **Copilot instructions location fix (2025-11-28):**
   - Moved `.github/instructions/copilot.instructions.md` → `.github/copilot-instructions.md`
   - Repository-wide instructions location per GitHub best practices
