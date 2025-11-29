@@ -122,37 +122,32 @@ jobs:
           echo "session_id=$SESSION_ID" >> "$GITHUB_OUTPUT"
           echo "success=true" >> "$GITHUB_OUTPUT"
 
-      - name: Post Jules Session Link
+      - name: Submit Jules Review
         if: steps.check_key.outputs.has_key == 'true' && steps.jules.outputs.success == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const sessionId = '${{ steps.jules.outputs.session_id }}';
-            const julesUrl = `https://jules.google/session/${sessionId}`;
-            const prNumber = ${{ github.event.pull_request.number }};
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SESSION_ID: ${{ steps.jules.outputs.session_id }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          JULES_URL="https://jules.google/session/${SESSION_ID}"
 
-            await github.rest.issues.createComment({
-              issue_number: prNumber,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `## 🔮 Jules AI Review Started
+          gh pr review "$PR_NUMBER" --comment --body "## 🔮 Jules AI Review (Opus 6)
 
-            **Session:** [View in Jules](${julesUrl})
+          **Verdict:** 🔄 ANALYZING
 
-            Jules is analyzing this PR for plugin issues and improvements.
+          **Session:** [View in Jules](${JULES_URL})
 
-            **Review scope (Type A repo):**
-            - SKILL.md workflow quality
-            - Plugin schema validation
-            - Shell script compliance
-            - Configuration file syntax
+          ### Review Scope (Type A repo)
+          - SKILL.md workflow quality
+          - Plugin schema validation
+          - Shell script compliance
+          - Configuration file syntax
 
-            - **Fully autonomous** - fixes will be created automatically
-            - If issues found, Jules will create a fix PR
+          ### Status
+          Jules is analyzing this PR asynchronously. If issues are found, a fix PR will be created automatically.
 
-            ---
-            *Penta-AI review: Jules + Claude + Copilot + CodeRabbit + Gemini*`
-            });
+          ---
+          *Autonomous review by Jules AI (Type A repo)*"
 
   # =============================================================================
   # JOB 2: Implement AI Suggestions (NEW!)

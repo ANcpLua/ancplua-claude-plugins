@@ -8,7 +8,7 @@ Generate a Testcontainers-based integration test for .NET applications.
 ## Usage
 
 ```text
-/testcontainers-dotnet:docker-tests [target]
+/testcontainers-dotnet:docker-tests [file | option]
 ```
 
 ## Targets
