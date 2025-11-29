@@ -18,11 +18,11 @@ This skill helps Claude Code agents write reliable .NET tests by providing:
 ### Installation
 
 ```bash
-# Claude Code - from plugin marketplace
-/plugin install testcontainers-dotnet@testcontainers-claude-skills
+# Claude Code - install from ancplua-claude-plugins marketplace
+/plugin install testcontainers-dotnet
 
-# Or manually register the marketplace
-/plugin marketplace add testcontainers/claude-skills
+# Or add the marketplace if not already registered
+/plugin marketplace add https://github.com/ANcpLua/ancplua-claude-plugins
 ```
 
 ### Usage
@@ -107,8 +107,8 @@ internal sealed class OcrEventHandler
 
 ## License
 
-MIT License - see [LICENSE](../LICENSE)
+MIT License - see [LICENSE](/LICENSE)
 
 ## Related Skills
 
-- [testcontainers-go](../testcontainers-go/) - Go integration testing with Testcontainers
+- [testcontainers-go](/plugins/testcontainers-go/) - Go integration testing with Testcontainers

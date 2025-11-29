@@ -7,7 +7,7 @@ global using Xunit.v3;  // For TheoryDataRow, AssemblyFixture, CaptureConsole, e
 
 // ═══════════════════════════════════════════════════════════════
 // ASSERTIONS - AwesomeAssertions (Apache 2.0 fork of FluentAssertions)
-// FluentAssertions 8.x requires COMMERCIAL LICENSE
+// FluentAssertions 8.x requires commercial license
 // ═══════════════════════════════════════════════════════════════
 
 global using AwesomeAssertions;

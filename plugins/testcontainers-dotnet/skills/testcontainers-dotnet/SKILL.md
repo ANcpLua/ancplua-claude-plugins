@@ -1,5 +1,5 @@
 ---
-name: dotnet-testcontainers
+name: testcontainers-dotnet
 description: |
   .NET integration testing with Testcontainers, xUnit v3, and Moq.
   Use when writing unit or integration tests for .NET applications that need:

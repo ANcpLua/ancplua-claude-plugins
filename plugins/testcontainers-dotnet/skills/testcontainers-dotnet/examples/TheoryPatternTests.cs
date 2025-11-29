@@ -202,12 +202,8 @@ public sealed class TheoryPatternTests
 		DocumentStatus[] allStatuses = Enum.GetValues<DocumentStatus>();
 		StatusDescriber describer = new();
 
-		foreach (DocumentStatus status in allStatuses)
-		{
-			// Should not throw
-			string description = describer.GetDescription(status);
-			description.Should().NotBeNullOrEmpty();
-		}
+		// Assert all enum values produce a non-null, non-empty description
+		allStatuses.All(status => !string.IsNullOrEmpty(describer.GetDescription(status))).Should().BeTrue();
 	}
 
 	// ═══════════════════════════════════════════════════════════════
@@ -277,9 +273,11 @@ public enum DocumentStatus
 
 public sealed class PasswordValidator
 {
+	private const int MinPasswordLength = 8;
+
 	public bool IsValid(string password)
 	{
-		if (string.IsNullOrEmpty(password) || password.Length < 8)
+		if (string.IsNullOrEmpty(password) || password.Length < MinPasswordLength)
 			return false;
 
 		bool hasUpper = password.Any(char.IsUpper);

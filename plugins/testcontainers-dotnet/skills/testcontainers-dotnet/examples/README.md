@@ -1,5 +1,10 @@
 # .NET Testcontainers Skill Examples
 
+> **Note:** This is reference-only code for educational purposes. These examples validate the patterns
+> documented in the [SKILL.md](../SKILL.md) but are not intended to be modified or executed within this
+> repository. This is a Type A (orchestration/brain) repository - production .NET code belongs in Type T
+> repositories like `ancplua-mcp`.
+
 This directory contains working examples that validate the patterns documented in the [SKILL.md](../SKILL.md).
 
 ## Prerequisites
