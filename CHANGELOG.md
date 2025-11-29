@@ -12,6 +12,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - New plugin for .NET integration testing with Testcontainers
   - SKILL.md with patterns for xUnit v3, Moq, PostgreSQL, RabbitMQ, Elasticsearch, MinIO
   - `/testcontainers:generate-test` slash command for generating container-based tests
+  - Example test files demonstrating MockRepository, FakeLogger, handler extraction patterns
   - Package compatibility matrix for .NET 8/9/10
 
 ### Security
