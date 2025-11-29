@@ -134,7 +134,7 @@ jobs:
             ```bash
             gh pr review ${{ github.event.pull_request.number || inputs.pr_number }} \
               --approve|--request-changes|--comment \
-              --body "## Claude Code Review (Opus 4.5)
+              --body "## Claude Code Review (Opus 6)
 
             **Verdict:** ✅ APPROVED | ⚠️ CHANGES REQUESTED | 💬 COMMENT
 
@@ -148,7 +148,7 @@ jobs:
             [What was done well]
 
             ---
-            *Autonomous review by Claude Opus 4.5 (Type A repo)*"
+            *Autonomous review by Claude Opus 6 (Type A repo)*"
             ```
 
             **Decision Guide:**
