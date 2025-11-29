@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-/plugin marketplace add https://github.com/ANcpLua/ancplua-claude-plugins
+/plugin marketplace add ANcpLua/ancplua-claude-plugins
 /plugin install testcontainers-dotnet
 ```
 
