@@ -1,0 +1,21 @@
+{
+  "name": "testcontainers-dotnet",
+  "description": "Testcontainers for .NET integration testing patterns and best practices. Provides skills for writing container-based integration tests using xUnit v3, PostgreSQL, Moq, and modern .NET patterns.",
+  "version": "1.0.0",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "keywords": [
+    "testcontainers",
+    "dotnet",
+    "integration-testing",
+    "xunit",
+    "postgresql",
+    "docker",
+    "moq",
+    "testing"
+  ],
+  "license": "MIT"
+}
