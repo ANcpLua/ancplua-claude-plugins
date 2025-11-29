@@ -31,6 +31,12 @@
       "description": "Integration with Google Jules AI coding agent for async task delegation via API.",
       "version": "0.1.0",
       "source": "./plugins/jules-integration"
+    },
+    {
+      "name": "testcontainers-dotnet",
+      "description": "Testcontainers for .NET integration testing patterns and best practices.",
+      "version": "1.0.0",
+      "source": "./plugins/testcontainers-dotnet"
     }
   ]
 }
