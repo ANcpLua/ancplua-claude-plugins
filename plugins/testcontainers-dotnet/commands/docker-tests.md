@@ -1,5 +1,5 @@
 ---
-name: generate-test
+name: docker-tests
 description: Generate .NET integration tests using Testcontainers, xUnit v3, and Moq
 ---
 
@@ -8,17 +8,17 @@ Generate a Testcontainers-based integration test for .NET applications.
 ## Usage
 
 ```text
-/testcontainers:generate-test [target]
+/testcontainers-dotnet:docker-tests [target]
 ```
 
 ## Targets
 
-- `/testcontainers:generate-test` - Analyze current context and generate appropriate test.
-- `/testcontainers:generate-test MyService.cs` - Generate tests for a specific service.
-- `/testcontainers:generate-test --postgres` - Generate PostgreSQL container fixture test.
-- `/testcontainers:generate-test --rabbitmq` - Generate RabbitMQ container fixture test.
-- `/testcontainers:generate-test --elasticsearch` - Generate Elasticsearch container test.
-- `/testcontainers:generate-test --minio` - Generate MinIO storage container test.
+- `/testcontainers-dotnet:docker-tests` - Analyze current context and generate appropriate test.
+- `/testcontainers-dotnet:docker-tests MyService.cs` - Generate tests for a specific service.
+- `/testcontainers-dotnet:docker-tests --postgres` - Generate PostgreSQL container fixture test.
+- `/testcontainers-dotnet:docker-tests --rabbitmq` - Generate RabbitMQ container fixture test.
+- `/testcontainers-dotnet:docker-tests --elasticsearch` - Generate Elasticsearch container test.
+- `/testcontainers-dotnet:docker-tests --minio` - Generate MinIO storage container test.
 
 ## Behavior
 
@@ -76,11 +76,11 @@ public sealed class MyServiceTests : IDisposable
 
 ## Options
 
-- `/testcontainers:generate-test --unit` - Generate unit test with mocks only.
-- `/testcontainers:generate-test --integration` - Generate integration test with containers.
-- `/testcontainers:generate-test --assembly-fixture` - Use AssemblyFixture pattern.
-- `/testcontainers:generate-test --class-fixture` - Use ClassFixture pattern.
-- `/testcontainers:generate-test --packages` - Show required package references.
+- `/testcontainers-dotnet:docker-tests --unit` - Generate unit test with mocks only.
+- `/testcontainers-dotnet:docker-tests --integration` - Generate integration test with containers.
+- `/testcontainers-dotnet:docker-tests --assembly-fixture` - Use AssemblyFixture pattern.
+- `/testcontainers-dotnet:docker-tests --class-fixture` - Use ClassFixture pattern.
+- `/testcontainers-dotnet:docker-tests --packages` - Show required package references.
 
 ## Package Requirements
 
