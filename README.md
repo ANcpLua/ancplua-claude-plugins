@@ -10,6 +10,7 @@
 | **smart-commit** | Generate semantic commit messages automatically | `/commit` |
 | **autonomous-ci** | Verify CI will pass before you push | *ask Claude* |
 | **jules-integration** | Delegate long tasks to Google Jules AI | `/jules <task>` |
+| **testcontainers-dotnet** | .NET integration testing patterns (xUnit v3, Moq) | *skill* |
 
 ---
 
@@ -130,7 +131,8 @@ ancplua-claude-plugins/
 │   ├── code-review/
 │   ├── smart-commit/
 │   ├── autonomous-ci/
-│   └── jules-integration/
+│   ├── jules-integration/
+│   └── testcontainers-dotnet/
 ├── agents/               # Agent SDK experiments
 ├── skills/               # Shared development workflows
 ├── docs/                 # Architecture, specs, ADRs
