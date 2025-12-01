@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '22'  # LTS version (was incorrectly 25)
 
@@ -79,7 +79,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Lint Markdown
-        uses: DavidAnson/markdownlint-cli2-action@v19
+        uses: DavidAnson/markdownlint-cli2-action@v21
         with:
           globs: '**/*.md'
         continue-on-error: true
