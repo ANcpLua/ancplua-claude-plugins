@@ -6,6 +6,12 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+
+- **metacognitive-guard hooks.json structure (2025-12-19):**
+  - Fixed missing top-level `hooks` object wrapper causing plugin load failure
+  - Event types (SessionStart, PreToolUse, Stop) must be nested under `hooks` key per Claude Code schema
+
 ### Added
 
 - **metacognitive-guard cognitive amplification stack (2025-12-19):**
