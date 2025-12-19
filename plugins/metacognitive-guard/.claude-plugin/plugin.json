@@ -1,0 +1,18 @@
+{
+  "name": "metacognitive-guard",
+  "description": "Detects when Claude is struggling and escalates to deep-thinking agents for better responses with fewer tokens.",
+  "version": "0.1.0",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "metacognition",
+    "deep-thinking",
+    "token-efficiency",
+    "struggle-detection",
+    "agent-escalation"
+  ]
+}
