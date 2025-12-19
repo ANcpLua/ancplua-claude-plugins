@@ -32,7 +32,7 @@ if echo "$CONTENT" | grep -qiE "\.NET 10.*(preview|not.*(released|LTS|available)
 {
   "decision": "block",
   "reason": "EPISTEMIC GUARD: Incorrect .NET version claim",
-  "message": "FACT CHECK: .NET 10 is LTS (Long Term Support) since November 12, 2025.\n\nIt is NOT preview. Use net10.0 in TargetFramework.\n\nSource: https://dotnet.microsoft.com/download/dotnet/10.0\n\nPlease correct your response before writing."
+  "message": "FACT CHECK: .NET 10 is LTS (Long Term Support) since November 11, 2025.\n\nIt is NOT preview. Use net10.0 in TargetFramework.\n\nSource: https://dotnet.microsoft.com/download/dotnet/10.0\n\nPlease correct your response before writing."
 }
 EOF
     exit 0

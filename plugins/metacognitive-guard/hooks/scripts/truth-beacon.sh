@@ -34,7 +34,7 @@ fi
 # Parse .NET version info (using grep/sed for portability, no yq dependency)
 DOTNET_VERSION=$(grep -A5 "dotnet:" "$ASSERTIONS" | grep "value:" | head -1 | sed 's/.*value: *"\([^"]*\)".*/\1/' || echo "10.0")
 DOTNET_STATUS=$(grep -A5 "dotnet:" "$ASSERTIONS" | grep "status:" | head -1 | sed 's/.*status: *"\([^"]*\)".*/\1/' || echo "LTS")
-DOTNET_DATE=$(grep -A5 "dotnet:" "$ASSERTIONS" | grep "release_date:" | head -1 | sed 's/.*release_date: *"\([^"]*\)".*/\1/' || echo "2025-11-12")
+DOTNET_DATE=$(grep -A5 "dotnet:" "$ASSERTIONS" | grep "release_date:" | head -1 | sed 's/.*release_date: *"\([^"]*\)".*/\1/' || echo "2025-11-11")
 
 CSHARP_VERSION=$(grep -A2 "csharp:" "$ASSERTIONS" | grep "value:" | head -1 | sed 's/.*value: *"\([^"]*\)".*/\1/' || echo "14.0")
 
