@@ -1,7 +1,8 @@
 ---
 name: Metacognitive Guard
-description: Monitors Claude's responses for struggle signals and suggests escalation to deep-thinking agents when complexity exceeds comfortable reasoning capacity.
-version: 0.1.0
+description: >-
+    Monitors Claude's responses for struggle signals and suggests escalation
+    to deep-thinking agents when complexity exceeds comfortable reasoning capacity.
 ---
 
 # Metacognitive Guard Skill
@@ -49,11 +50,11 @@ If you answer "no" to any of these, consider proactive escalation.
 
 Use the Task tool with the deep-think-partner agent:
 
-```
+```yaml
 Task tool:
-  subagent_type: deep-think-partner
-  prompt: [Detailed problem statement with all constraints]
-  description: [3-5 word summary]
+    subagent_type: deep-think-partner
+    prompt: [Detailed problem statement with all constraints]
+    description: [3-5 word summary]
 ```
 
 ### Good Prompts for Deep-Think Partner
@@ -73,16 +74,16 @@ Include:
 
 **Escalation:**
 
-```
+```yaml
 Task tool:
-  subagent_type: deep-think-partner
-  prompt: |
-    Context: Web application with 10k concurrent users, existing PostgreSQL database.
-    Question: Redis vs PostgreSQL for session storage.
-    Constraints: Team has PostgreSQL expertise, no Redis experience.
-    Must handle session expiry. Cost-sensitive.
-    Success: Clear recommendation with migration path.
-  description: Analyze session storage options
+    subagent_type: deep-think-partner
+    prompt: |
+        Context: Web application with 10k concurrent users, existing PostgreSQL database.
+        Question: Redis vs PostgreSQL for session storage.
+        Constraints: Team has PostgreSQL expertise, no Redis experience.
+        Must handle session expiry. Cost-sensitive.
+        Success: Clear recommendation with migration path.
+    description: Analyze session storage options
 ```
 
 ## Understanding Struggle Signals

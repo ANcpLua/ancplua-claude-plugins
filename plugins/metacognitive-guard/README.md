@@ -14,7 +14,7 @@ Claude doesn't reliably know when it's struggling. Complex questions often produ
 
 This plugin creates a **metacognitive feedback loop**:
 
-```
+```text
 Claude responds
        |
        v
@@ -39,14 +39,17 @@ Deep analysis in isolated context -> structured, actionable output
 
 ### Detection Signals
 
-| Signal        | Pattern                                           | Score           |
-| ------------- | ------------------------------------------------- | --------------- |
-| Hedging       | "I think", "probably", "might be", "I'm not sure" | +2 per instance |
-| Deflecting    | Many questions, short response                    | +3 per question |
-| Verbose       | >400 words, <2 code blocks                        | +10             |
-| Contradiction | "but actually", "wait,", "I was wrong"            | +15             |
-| Apologetic    | "sorry", "my mistake", "let me try again"         | +5 per apology  |
-| Weaseling     | "generally", "it depends", "typically"            | +2 per instance |
+| Signal            | Pattern                                           | Score             |
+| ----------------- | ------------------------------------------------- | ----------------- |
+| Hedging           | "I think", "probably", "might be", "I'm not sure" | +2 per instance   |
+| Deflecting        | Many questions, short response                    | +2 per question   |
+| Verbose           | >400 words, <2 code blocks                        | +5 base + scaling |
+| Contradiction     | "but actually", "wait,", "I was wrong"            | +15               |
+| Apologetic        | "sorry", "my mistake", "let me try again"         | +8 per apology    |
+| Weaseling         | "generally", "it depends", "typically"            | +3 per instance   |
+| Restarting        | "let me start over", "different approach"         | +20               |
+| No recommendation | Long response without clear advice                | +8                |
+| Tool use          | "let me read/search/check..."                     | -5 (negative)     |
 
 ### Trigger Conditions
 
@@ -118,22 +121,25 @@ The plugin works out-of-the-box with sensible defaults. Signal weights and thres
 
 ## Architecture
 
-```
+```text
 metacognitive-guard/
 |-- .claude-plugin/
-|   `-- plugin.json          # Plugin manifest
+|   `-- plugin.json              # Plugin manifest
 |-- agents/
-|   `-- deep-think-partner.md # Deep reasoning agent (Opus model)
+|   `-- deep-think-partner.md    # Deep reasoning agent (Opus model)
 |-- hooks/
-|   |-- hooks.json           # Stop event hook config
+|   |-- hooks.json               # Stop event hook config
 |   `-- scripts/
-|       `-- struggle-detector.sh  # Response analyzer
+|       `-- struggle-detector.sh # Response analyzer
+|-- skills/
+|   `-- metacognitive-guard/
+|       `-- SKILL.md             # Self-escalation guidance
 `-- README.md
 ```
 
 ### Component Interaction
 
-```
+```text
                     +------------------+
                     |   User Question  |
                     +--------+---------+

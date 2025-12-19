@@ -6,6 +6,7 @@
         {
           "type": "command",
           "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/struggle-detector.sh",
+          "stdin": "response",
           "timeout": 5000
         }
       ]
