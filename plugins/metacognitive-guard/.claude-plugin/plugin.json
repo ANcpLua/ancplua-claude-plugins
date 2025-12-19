@@ -1,7 +1,7 @@
 {
   "name": "metacognitive-guard",
-  "description": "Detects when Claude is struggling and escalates to deep-thinking agents for better responses with fewer tokens.",
-  "version": "0.1.0",
+  "description": "Cognitive amplification stack: prevents hallucinations via epistemic hooks, competitive code review, fact-checking, and deep-thinking agents.",
+  "version": "0.2.0",
   "author": {
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"
@@ -13,6 +13,10 @@
     "deep-thinking",
     "token-efficiency",
     "struggle-detection",
-    "agent-escalation"
+    "agent-escalation",
+    "hallucination-prevention",
+    "fact-checking",
+    "competitive-review",
+    "epistemic-checkpoint"
   ]
 }

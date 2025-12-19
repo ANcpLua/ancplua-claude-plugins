@@ -8,6 +8,18 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **metacognitive-guard cognitive amplification stack (2025-12-19):**
+    - **New Skills (4):**
+        - `using-superpowers` - Master orchestrator forcing explicit skill awareness before complex tasks
+        - `epistemic-checkpoint` - Forces verification of versions/dates/status via WebSearch before forming beliefs
+        - `competitive-review` - Dispatches competing arch-reviewer and impl-reviewer for thorough analysis
+        - `verification-before-completion` - Prevents false "it works" claims by requiring actual test execution
+    - **New Agents (2):**
+        - `arch-reviewer` - Architecture-focused reviewer (SOLID, dependencies, SSOT, layer boundaries)
+        - `impl-reviewer` - Implementation-focused reviewer with WebSearch for fact-checking version claims
+    - **Architecture:** Layered cognitive amplification (Layer 0: hooks block wrong output, Layers 1-5: skills prevent wrong reasoning)
+    - Version bump to 0.2.0
+
 - **metacognitive-guard plugin (2025-12-19):**
     - New plugin for detecting when Claude is struggling and escalating to deep-thinking agents
     - `struggle-detector.sh` Stop hook analyzing responses for 8 signal types:

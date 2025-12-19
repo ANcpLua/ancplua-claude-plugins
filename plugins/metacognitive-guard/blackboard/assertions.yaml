@@ -1,0 +1,56 @@
+# =============================================================================
+# AUTHORITATIVE ASSERTIONS - Ground Truth the Model MUST Defer To
+# =============================================================================
+# This is the DEFAULT assertions file bundled with metacognitive-guard.
+# Users can override with ~/.claude/assertions.yaml for project-specific facts.
+#
+# Authority levels:
+#   - authoritative: External source, never question
+#   - verified: Tested, high confidence
+#   - tentative: Working hypothesis, may change
+# =============================================================================
+
+runtime:
+  dotnet:
+    value: "10.0"
+    status: "LTS"
+    release_date: "2025-11-12"
+    authority: authoritative
+    source: "https://dotnet.microsoft.com/download/dotnet/10.0"
+    danger_patterns:
+      - ".NET 9"
+      - "net9.0"
+      - ".NET 10 preview"
+      - ".NET 10 is still in preview"
+      - ".NET 10 is not yet released"
+    correction: ".NET 10 is LTS (Long Term Support) since November 12, 2025. Use net10.0."
+
+  csharp:
+    value: "14.0"
+    authority: authoritative
+    source: "https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14"
+
+# Universal banned APIs (apply to all .NET projects)
+banned_apis:
+  datetime_now:
+    pattern: "DateTime\\.Now|DateTime\\.UtcNow"
+    replacement: "TimeProvider.System.GetUtcNow()"
+    authority: authoritative
+    reason: "Enables testability and follows .NET 8+ best practices"
+
+  object_lock:
+    pattern: "object\\s+_?lock\\s*="
+    replacement: "Lock _lock = new()"
+    authority: authoritative
+    reason: ".NET 9+ Lock type is more efficient and type-safe"
+
+  newtonsoft:
+    pattern: "Newtonsoft\\.Json|JsonConvert"
+    replacement: "System.Text.Json"
+    authority: authoritative
+    reason: "System.Text.Json is faster and has source generator support"
+
+# =============================================================================
+# To add project-specific assertions, create ~/.claude/assertions.yaml
+# or <project>/.claude/blackboard/assertions.yaml
+# =============================================================================
