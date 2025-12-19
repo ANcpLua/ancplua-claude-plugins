@@ -9,8 +9,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 
 - **metacognitive-guard cognitive amplification stack (2025-12-19):**
-    - **New Skills (4):**
-        - `using-superpowers` - Master orchestrator forcing explicit skill awareness before complex tasks
+    - **New Skills (3):**
         - `epistemic-checkpoint` - Forces verification of versions/dates/status via WebSearch before forming beliefs
         - `competitive-review` - Dispatches competing arch-reviewer and impl-reviewer for thorough analysis
         - `verification-before-completion` - Prevents false "it works" claims by requiring actual test execution
@@ -35,6 +34,13 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
     - `/testcontainers-dotnet:docker-tests` slash command for generating container-based tests
     - Example test files demonstrating MockRepository, FakeLogger, handler extraction patterns
     - Package compatibility matrix for .NET 8/9/10
+
+### Removed
+
+- **metacognitive-guard `using-superpowers` skill (2025-12-19):**
+    - Removed due to naming collision with official Superpowers plugin's `using-superpowers` skill
+    - Collision caused Claude to invoke duplicate/wrong skills (e.g., brainstorm vs brainstorming)
+    - Users should rely on official Superpowers orchestration + metacognitive-guard's unique skills
 
 ### Security
 
