@@ -37,6 +37,12 @@
       "description": "Testcontainers for .NET integration testing patterns and best practices.",
       "version": "1.0.0",
       "source": "./plugins/testcontainers-dotnet"
+    },
+    {
+      "name": "metacognitive-guard",
+      "description": "Detects when Claude is struggling and escalates to deep-thinking agents for better responses with fewer tokens.",
+      "version": "0.1.0",
+      "source": "./plugins/metacognitive-guard"
     }
   ]
 }
