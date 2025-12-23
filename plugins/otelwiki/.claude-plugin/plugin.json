@@ -1,0 +1,15 @@
+{
+  "name": "otelwiki",
+  "description": "Unified OpenTelemetry documentation with auto-sync. Auto-triggers on telemetry work, provides semantic conventions, collector config, and .NET 10 instrumentation guidance.",
+  "version": "1.0.0",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "commands": "./commands",
+  "skills": "./skills",
+  "agents": "./agents",
+  "hooks": "./hooks/hooks.json"
+}
