@@ -43,6 +43,12 @@
       "description": "Detects when Claude is struggling and escalates to deep-thinking agents for better responses with fewer tokens.",
       "version": "0.1.0",
       "source": "./plugins/metacognitive-guard"
+    },
+    {
+      "name": "otelwiki",
+      "description": "Unified OpenTelemetry documentation with auto-sync. Auto-triggers on telemetry work, provides semantic conventions, collector config, and .NET 10 instrumentation guidance.",
+      "version": "1.0.0",
+      "source": "./plugins/otelwiki"
     }
   ]
 }

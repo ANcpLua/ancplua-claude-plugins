@@ -1,0 +1,52 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/check-freshness.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": {
+          "tool": "Edit",
+          "glob": "**/*.cs"
+        },
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "If this C# code contains OpenTelemetry, ActivitySource, Meter, traces, spans, metrics, or telemetry patterns, use the otel-guide agent to validate semantic conventions are correct. Check: 1) Attribute names match semconv exactly 2) Using ActivitySource not DiagnosticSource 3) OTLP export patterns. Only report issues, don't block. Context: ${ARGUMENTS}"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool": "Write",
+          "glob": "**/*.cs"
+        },
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "If this C# code contains OpenTelemetry, ActivitySource, Meter, traces, spans, metrics, or telemetry patterns, use the otel-guide agent to validate semantic conventions are correct. Check: 1) Attribute names match semconv exactly 2) Using ActivitySource not DiagnosticSource 3) OTLP export patterns. Only report issues, don't block. Context: ${ARGUMENTS}"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool": "Edit",
+          "glob": "**/otel*.yaml"
+        },
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "This looks like OTel Collector config. Use the otel-guide agent to validate: 1) OTLP receiver/exporter config 2) Processor chain correctness 3) Pipeline configuration. Context: ${ARGUMENTS}"
+          }
+        ]
+      }
+    ]
+  }
+}
