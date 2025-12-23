@@ -8,9 +8,22 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **metacognitive-guard plugin not loading (2025-12-23):**
+  - Added missing component paths to plugin.json (`skills`, `agents`, `hooks`)
+  - Fixed PreToolUse matcher format from string `"Write|Edit"` to proper object `{"tool": "Write"}`
+  - Removed invalid `"matcher": ".*"` from Stop hook (Stop doesn't use matchers)
+  - Version bump to 0.2.1
+
 - **metacognitive-guard hooks.json structure (2025-12-19):**
   - Fixed missing top-level `hooks` object wrapper causing plugin load failure
   - Event types (SessionStart, PreToolUse, Stop) must be nested under `hooks` key per Claude Code schema
+
+### Changed
+
+- **README.md overhaul (2025-12-23):**
+  - Updated plugin table with all 7 plugins including metacognitive-guard and otelwiki
+  - Simplified install instructions and plugin details
+  - Removed outdated directory structure references
 
 ### Added
 

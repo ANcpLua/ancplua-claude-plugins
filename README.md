@@ -1,53 +1,35 @@
 # ancplua-claude-plugins
 
-**Claude Code plugins that make development faster and safer.**
+**Claude Code plugins for faster, safer development.**
 
-## What's Inside
+## Plugins
 
-| Plugin | What It Does | Command |
-|--------|--------------|---------|
-| **code-review** | AI-powered code review (bugs, security, style) | `/code-review` |
-| **smart-commit** | Generate semantic commit messages automatically | `/commit` |
-| **autonomous-ci** | Verify CI will pass before you push | *ask Claude* |
-| **jules-integration** | Delegate long tasks to Google Jules AI | `/jules <task>` |
-| **testcontainers-dotnet** | .NET integration testing patterns (xUnit v3, Moq) | *skill* |
+| Plugin | Purpose | Trigger |
+|--------|---------|---------|
+| **code-review** | AI code review (bugs, security, style) | `/code-review` |
+| **smart-commit** | Semantic commit messages | `/commit` |
+| **autonomous-ci** | Local CI verification | *ask Claude* |
+| **jules-integration** | Delegate tasks to Google Jules | `/jules <task>` |
+| **testcontainers-dotnet** | .NET integration testing patterns | *skill* |
+| **metacognitive-guard** | Detects Claude struggling, escalates to deep-thinking | *auto-hook* |
+| **otelwiki** | OpenTelemetry docs + semconv validation | *auto-hook* |
 
 ---
 
-## Quick Start
-
-### Install Plugins in Your Project
+## Install
 
 ```bash
-cd your-project
-claude
+cd your-project && claude
 ```
 
-Then inside Claude Code (per [official docs](https://code.claude.com/docs/en/plugins)):
+Inside Claude Code:
 
 ```text
-# Add the marketplace
 /plugin marketplace add ANcpLua/ancplua-claude-plugins
-
-# Install a plugin
 /plugin install code-review@ancplua-claude-plugins
-/plugin install smart-commit@ancplua-claude-plugins
 ```
 
-Or use the interactive browser:
-
-```text
-/plugin
-# Select "Browse Plugins" to explore available plugins
-```
-
-### Use Them
-
-```text
-/code-review              # Review your changes
-/commit                   # Generate commit message
-/jules Fix the login bug  # Delegate to Jules
-```
+Or browse: `/plugin` → "Browse Plugins"
 
 ---
 
@@ -55,141 +37,115 @@ Or use the interactive browser:
 
 ### code-review
 
-Analyzes your code for issues before you commit.
-
 ```text
-You: /code-review
+/code-review
 
-Claude: ## Issues Found
-
-  HIGH: SQL injection in auth.py:45
-   Fix: Use parameterized queries
-
+→ HIGH: SQL injection in auth.py:45
   MEDIUM: Unused import in utils.py:3
-   Fix: Remove 'import os'
-
-  No security vulnerabilities found
 ```
 
 ### smart-commit
 
-Generates proper commit messages following Conventional Commits.
-
 ```text
-You: /commit
+/commit
 
-Claude: Based on your changes, here's a commit message:
-
-feat(auth): add JWT refresh token support
-
-- Add refresh token generation on login
-- Store refresh tokens in Redis with TTL
-- Add /auth/refresh endpoint
-
-Commit with this message? [Y/n]
+→ feat(auth): add JWT refresh token support
+  Commit? [Y/n]
 ```
 
 ### autonomous-ci
 
-Runs the same checks CI will run - locally, before you push.
-
 ```text
-You: Will CI pass if I push now?
+"Will CI pass?"
 
-Claude: Running CI checks locally...
-
-  Tests: 47 passed
-  Lint: No errors
-  Build: Success
+→ Tests: 47 passed
   Type check: 2 errors in src/api.ts
-
-Fix the type errors before pushing.
 ```
 
 ### jules-integration
 
-Hands off complex, long-running tasks to Google Jules.
+```text
+/jules Refactor user service to use DI
+
+→ Created Jules task. PR incoming.
+```
+
+### metacognitive-guard
+
+Hooks into Claude's responses. When it detects uncertainty, hedging, or struggle patterns, it escalates to deep-thinking agents for better answers.
+
+**Auto-triggers on:** Long pauses, excessive caveats, circular reasoning
+
+### otelwiki
+
+Bundled OpenTelemetry documentation (172 files, 32K+ lines). Auto-validates semantic conventions when you edit C# telemetry code.
+
+**Auto-triggers on:** ActivitySource, Meter, OTLP, spans, traces, metrics
 
 ```text
-You: /jules Refactor the user service to use dependency injection
-
-Claude: Created Jules task. Jules will:
-1. Analyze current user service
-2. Create a PR with DI refactoring
-3. You'll get a notification when ready
+/otelwiki:sync  # Update bundled docs
 ```
 
 ---
 
-## For Contributors
-
-### Repository Structure
+## Repository Structure
 
 ```text
 ancplua-claude-plugins/
-├── plugins/              # The plugins
-│   ├── code-review/
-│   ├── smart-commit/
+├── plugins/
 │   ├── autonomous-ci/
+│   ├── code-review/
 │   ├── jules-integration/
+│   ├── metacognitive-guard/
+│   ├── otelwiki/
+│   ├── smart-commit/
 │   └── testcontainers-dotnet/
-├── agents/               # Agent SDK experiments
-├── skills/               # Shared development workflows
-├── docs/                 # Architecture, specs, ADRs
-└── tooling/              # Validation scripts
+├── docs/
+└── tooling/
 ```
 
-### Validate Changes
-
-```bash
-./tooling/scripts/local-validate.sh
-```
-
-### Key Files
+## Key Files
 
 | File | Purpose |
 |------|---------|
-| `CLAUDE.md` | Rules for Claude when working on this repo |
-| `GEMINI.md` | Rules for Gemini |
-| `AGENTS.md` | Context for Jules and external agents |
-| `CHANGELOG.md` | What changed and when |
+| `CLAUDE.md` | Rules for Claude |
+| `CHANGELOG.md` | Version history |
+| `.claude-plugin/marketplace.json` | Plugin registry |
 
 ---
 
 ## Architecture
 
-This repo is **Type A (Application)** - the "Brain" containing orchestration logic.
+**Type A (Application)** - Orchestration logic only.
 
-It consumes tools from **Type T (Technology)** repos like `ancplua-mcp` which provide the "Hands".
+Consumes tools from **Type T (Technology)** repos like `ancplua-mcp`.
 
-**Rule:** No MCP server implementations here. Only plugin definitions, skills, and configs.
+**Rule:** No MCP implementations here. Plugins, skills, hooks only.
 
 ---
 
-## AI Review System
+## AI Review
 
-PRs are reviewed by 5 AI agents:
+PRs reviewed by 5 AI agents:
 
-| Agent | Can Create Fix PRs |
-|-------|-------------------|
-| Claude | Yes (via CLI) |
-| Jules | Yes (via API) |
-| Copilot | Yes (Coding Agent) |
+| Agent | Fix PRs |
+|-------|---------|
+| Claude | Yes |
+| Jules | Yes |
+| Copilot | Yes |
 | Gemini | No |
 | CodeRabbit | No |
 
-All agents review the same things independently. Overlapping findings = high confidence.
-
 ---
 
-## Official Documentation
+## Docs
 
-- [Plugins](https://code.claude.com/docs/en/plugins)
-- [Skills](https://code.claude.com/docs/en/skills)
-- [Hooks](https://code.claude.com/docs/en/hooks)
-- [Marketplaces](https://code.claude.com/docs/en/plugin-marketplaces)
+- [Plugins](https://docs.anthropic.com/en/docs/claude-code/plugins)
+- [Skills](https://docs.anthropic.com/en/docs/claude-code/skills)
+- [Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks)
 
 ---
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
+
+[MIT](LICENSE)
