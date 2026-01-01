@@ -1,0 +1,16 @@
+[
+  {
+    "name": "dotnet-architecture-lint",
+    "description": "Validates MSBuild changes after edits",
+    "event": "PostToolUse",
+    "match_tools": ["Edit", "Write"],
+    "match_files": [
+      "*.props",
+      "*.targets",
+      "*.csproj",
+      "global.json",
+      "nuget.config"
+    ],
+    "prompt_file": "post-msbuild-edit.md"
+  }
+]
