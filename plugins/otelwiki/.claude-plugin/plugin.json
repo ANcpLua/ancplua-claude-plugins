@@ -10,6 +10,9 @@
   "license": "MIT",
   "commands": "./commands",
   "skills": "./skills",
-  "agents": "./agents",
+  "agents": [
+    "./agents/otel-guide.md",
+    "./agents/otel-librarian.md"
+  ],
   "hooks": "./hooks/hooks.json"
 }

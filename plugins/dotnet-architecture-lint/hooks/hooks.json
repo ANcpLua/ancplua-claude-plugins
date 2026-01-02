@@ -2,122 +2,20 @@
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": {
-          "tool": "Edit",
-          "path": "*.props"
-        },
+        "matcher": "Edit",
         "hooks": [
           {
             "type": "prompt",
-            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
+            "prompt": "If you just edited a .props, .targets, .csproj, global.json, or nuget.config file, run the architecture linter:\n\n```bash\nbash \"${CLAUDE_PLUGIN_ROOT}/scripts/lint-dotnet.sh\" .\n```\n\nIf VIOLATIONS found, fix them before git operations. If CLEAN, proceed normally."
           }
         ]
       },
       {
-        "matcher": {
-          "tool": "Edit",
-          "path": "*.targets"
-        },
+        "matcher": "Write",
         "hooks": [
           {
             "type": "prompt",
-            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
-          }
-        ]
-      },
-      {
-        "matcher": {
-          "tool": "Edit",
-          "path": "*.csproj"
-        },
-        "hooks": [
-          {
-            "type": "prompt",
-            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
-          }
-        ]
-      },
-      {
-        "matcher": {
-          "tool": "Edit",
-          "path": "global.json"
-        },
-        "hooks": [
-          {
-            "type": "prompt",
-            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
-          }
-        ]
-      },
-      {
-        "matcher": {
-          "tool": "Edit",
-          "path": "nuget.config"
-        },
-        "hooks": [
-          {
-            "type": "prompt",
-            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
-          }
-        ]
-      },
-      {
-        "matcher": {
-          "tool": "Write",
-          "path": "*.props"
-        },
-        "hooks": [
-          {
-            "type": "prompt",
-            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
-          }
-        ]
-      },
-      {
-        "matcher": {
-          "tool": "Write",
-          "path": "*.targets"
-        },
-        "hooks": [
-          {
-            "type": "prompt",
-            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
-          }
-        ]
-      },
-      {
-        "matcher": {
-          "tool": "Write",
-          "path": "*.csproj"
-        },
-        "hooks": [
-          {
-            "type": "prompt",
-            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
-          }
-        ]
-      },
-      {
-        "matcher": {
-          "tool": "Write",
-          "path": "global.json"
-        },
-        "hooks": [
-          {
-            "type": "prompt",
-            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
-          }
-        ]
-      },
-      {
-        "matcher": {
-          "tool": "Write",
-          "path": "nuget.config"
-        },
-        "hooks": [
-          {
-            "type": "prompt",
-            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
+            "prompt": "If you just wrote a .props, .targets, .csproj, global.json, or nuget.config file, run the architecture linter:\n\n```bash\nbash \"${CLAUDE_PLUGIN_ROOT}/scripts/lint-dotnet.sh\" .\n```\n\nIf VIOLATIONS found, fix them before git operations. If CLEAN, proceed normally."
           }
         ]
       }
