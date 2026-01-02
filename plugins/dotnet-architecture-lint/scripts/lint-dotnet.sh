@@ -3,8 +3,20 @@
 # Output format: RULE_X|file|details
 # Exit codes: 0 = clean, 1 = violations
 
-set -e
 REPO_ROOT="${1:-.}"
+
+# ============================================================
+# Try dotnet tool first (single source of truth)
+# ============================================================
+if command -v ancplua-lint &> /dev/null; then
+  ancplua-lint "$REPO_ROOT" --format compact
+  exit $?
+fi
+
+# ============================================================
+# Fallback to bash implementation
+# ============================================================
+set -e
 VIOLATIONS=()
 
 # ============================================================
@@ -92,9 +104,14 @@ fi
 
 # ============================================================
 # RULE G: No PackageReference with hardcoded Version in .csproj
-# Allowed: VersionOverride, Version="$(Variable)"
+# Allowed: VersionOverride, Version="$(Variable)", CPM-disabled projects
 # ============================================================
 while IFS= read -r -d '' file; do
+  # Skip projects that explicitly disable CPM
+  if grep -q '<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>' "$file" 2>/dev/null; then
+    continue
+  fi
+
   # Match Version= but exclude VersionOverride and $(Variable) patterns
   INLINE=$(grep -n 'PackageReference.*Version=' "$file" 2>/dev/null | grep -v 'VersionOverride' | grep -v 'Version="\$(' || true)
   if [[ -n "$INLINE" ]]; then
