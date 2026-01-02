@@ -3,20 +3,8 @@
 # Output format: RULE_X|file|details
 # Exit codes: 0 = clean, 1 = violations
 
-REPO_ROOT="${1:-.}"
-
-# ============================================================
-# Try dotnet tool first (single source of truth)
-# ============================================================
-if command -v ancplua-lint &> /dev/null; then
-  ancplua-lint "$REPO_ROOT" --format compact
-  exit $?
-fi
-
-# ============================================================
-# Fallback to bash implementation
-# ============================================================
 set -e
+REPO_ROOT="${1:-.}"
 VIOLATIONS=()
 
 # ============================================================
