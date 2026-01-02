@@ -49,6 +49,12 @@
       "description": "Unified OpenTelemetry documentation with auto-sync. Auto-triggers on telemetry work, provides semantic conventions, collector config, and .NET 10 instrumentation guidance.",
       "version": "1.0.0",
       "source": "./plugins/otelwiki"
+    },
+    {
+      "name": "dotnet-architecture-lint",
+      "description": "Enforces .NET build patterns: Version.props symlinks, CPM, and single-owner imports. Prevents AI agents from breaking centralized version management.",
+      "version": "1.0.0",
+      "source": "./plugins/dotnet-architecture-lint"
     }
   ]
 }

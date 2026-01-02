@@ -27,6 +27,18 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **dotnet-architecture-lint plugin (2026-01-02):**
+  - Deterministic bash linter for .NET build patterns with dotnet tool fallback
+  - **Rules enforced:**
+    - Rule A: No hardcoded versions in Directory.Packages.props
+    - Rule B: Version.props import owners (Directory.Packages.props, eng/Directory.Build.props, src/Sdk/*/Sdk.props)
+    - Rule C: Version.props symlink integrity in consumer repos
+    - Rule G: CPM enforcement (no inline PackageReference versions)
+  - PostToolUse hook triggers automatically on .props/.targets/.csproj edits
+  - `/lint-dotnet` skill for on-demand architecture validation
+  - Hybrid approach: bash script with optional `ancplua-lint` dotnet tool integration
+  - Multi-repo symlink pattern support (SDK → consumer repos via symlinks)
+
 - **metacognitive-guard cognitive amplification stack (2025-12-19):**
     - **New Skills (3):**
         - `epistemic-checkpoint` - Forces verification of versions/dates/status via WebSearch before forming beliefs

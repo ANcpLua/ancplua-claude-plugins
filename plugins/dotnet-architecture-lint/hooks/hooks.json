@@ -1,0 +1,78 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": {
+          "tool": "Edit",
+          "path": "*.props"
+        },
+        "hooks": [
+          {
+            "type": "prompt",
+            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool": "Edit",
+          "path": "*.targets"
+        },
+        "hooks": [
+          {
+            "type": "prompt",
+            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool": "Edit",
+          "path": "*.csproj"
+        },
+        "hooks": [
+          {
+            "type": "prompt",
+            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool": "Write",
+          "path": "*.props"
+        },
+        "hooks": [
+          {
+            "type": "prompt",
+            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool": "Write",
+          "path": "*.targets"
+        },
+        "hooks": [
+          {
+            "type": "prompt",
+            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool": "Write",
+          "path": "*.csproj"
+        },
+        "hooks": [
+          {
+            "type": "prompt",
+            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
+          }
+        ]
+      }
+    ]
+  }
+}

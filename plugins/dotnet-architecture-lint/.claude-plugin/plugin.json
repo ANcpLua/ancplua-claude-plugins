@@ -1,0 +1,23 @@
+{
+  "name": "dotnet-architecture-lint",
+  "description": "Enforces .NET build patterns: Version.props symlinks, CPM, and single-owner imports. Prevents AI agents from breaking centralized version management.",
+  "version": "1.0.0",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "dotnet",
+    "msbuild",
+    "nuget",
+    "cpm",
+    "central-package-management",
+    "version-props",
+    "architecture-lint",
+    "build-validation"
+  ],
+  "skills": "./skills",
+  "hooks": "./hooks/hooks.json"
+}
