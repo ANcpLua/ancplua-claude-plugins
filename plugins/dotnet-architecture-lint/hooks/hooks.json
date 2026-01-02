@@ -39,6 +39,30 @@
       },
       {
         "matcher": {
+          "tool": "Edit",
+          "path": "global.json"
+        },
+        "hooks": [
+          {
+            "type": "prompt",
+            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool": "Edit",
+          "path": "nuget.config"
+        },
+        "hooks": [
+          {
+            "type": "prompt",
+            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
+          }
+        ]
+      },
+      {
+        "matcher": {
           "tool": "Write",
           "path": "*.props"
         },
@@ -65,6 +89,30 @@
         "matcher": {
           "tool": "Write",
           "path": "*.csproj"
+        },
+        "hooks": [
+          {
+            "type": "prompt",
+            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool": "Write",
+          "path": "global.json"
+        },
+        "hooks": [
+          {
+            "type": "prompt",
+            "path": "${CLAUDE_PLUGIN_ROOT}/hooks/post-msbuild-edit.md"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool": "Write",
+          "path": "nuget.config"
         },
         "hooks": [
           {
