@@ -55,6 +55,12 @@
       "description": "Enforces .NET build patterns: Version.props symlinks, CPM, and single-owner imports. Prevents AI agents from breaking centralized version management.",
       "version": "1.0.0",
       "source": "./plugins/dotnet-architecture-lint"
+    },
+    {
+      "name": "ancplua-docs-librarian",
+      "description": "Documentation librarian for the ANcpLua ecosystem (SDK, Analyzers, Roslyn Utilities). Answers questions by searching and synthesizing documentation across all three repositories.",
+      "version": "1.0.0",
+      "source": "./plugins/ancplua-docs-librarian"
     }
   ]
 }
