@@ -1,0 +1,11 @@
+{
+  "name": "ancplua-docs-librarian",
+  "version": "1.0.0",
+  "description": "Documentation librarian for the ANcpLua ecosystem (SDK, Analyzers, Roslyn Utilities). Answers questions by searching and synthesizing documentation across all three repositories.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT"
+}

@@ -6,6 +6,23 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **ancplua-docs-librarian plugin (2026-01-02):**
+  - Documentation librarian for the ANcpLua ecosystem (SDK, Analyzers, Roslyn Utilities)
+  - **Components:**
+    - `ancplua-docs` skill - Search strategy and 75+ documentation file map
+    - `ancplua-librarian` agent - Answers questions with file citations using haiku model
+  - **Features:**
+    - Auto-triggers on questions about SDK features, analyzer rules, or utility APIs
+    - Cross-repository search across all three documentation sources
+    - Citation-based answers with exact file paths
+    - Topic classification (SDK/Analyzers/Utilities) for targeted searches
+  - **Documentation Coverage:**
+    - ANcpLua.NET.Sdk: SDK variants, banned APIs, polyfills, test fixtures, MSBuild properties
+    - ANcpLua.Analyzers: 17 rules (AL0001-AL0017) with per-rule documentation
+    - ANcpLua.Roslyn.Utilities: DiagnosticFlow, SemanticGuard, SymbolPattern, domain contexts
+
 ### Fixed
 
 - **metacognitive-guard plugin not loading (2025-12-23):**
