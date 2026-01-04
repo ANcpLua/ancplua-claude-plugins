@@ -1,7 +1,7 @@
 {
   "name": "otelwiki",
   "description": "Unified OpenTelemetry documentation with auto-sync. Auto-triggers on telemetry work, provides semantic conventions, collector config, and .NET 10 instrumentation guidance.",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "author": {
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"
@@ -13,6 +13,5 @@
   "agents": [
     "./agents/otel-guide.md",
     "./agents/otel-librarian.md"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }

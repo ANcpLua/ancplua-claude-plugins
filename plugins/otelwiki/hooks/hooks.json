@@ -12,38 +12,20 @@
     ],
     "PostToolUse": [
       {
-        "matcher": {
-          "tool": "Edit",
-          "glob": "**/*.cs"
-        },
+        "matcher": "Edit",
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "If this C# code contains OpenTelemetry, ActivitySource, Meter, traces, spans, metrics, or telemetry patterns, use the otel-guide agent to validate semantic conventions are correct. Check: 1) Attribute names match semconv exactly 2) Using ActivitySource not DiagnosticSource 3) OTLP export patterns. Only report issues, don't block. Context: ${ARGUMENTS}"
+            "prompt": "Check the file being edited: For .cs files with OpenTelemetry/ActivitySource/Meter/traces/spans/metrics patterns, or for .yaml/.json files with OTel Collector config (receivers/exporters/processors/pipelines), use the otel-guide agent to validate. Verify: 1) Semantic convention attribute names are exact 2) ActivitySource used (not DiagnosticSource) 3) OTLP export/receiver config is correct 4) Pipeline configuration is valid. Report issues only, don't block. Context: ${ARGUMENTS}"
           }
         ]
       },
       {
-        "matcher": {
-          "tool": "Write",
-          "glob": "**/*.cs"
-        },
+        "matcher": "Write",
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "If this C# code contains OpenTelemetry, ActivitySource, Meter, traces, spans, metrics, or telemetry patterns, use the otel-guide agent to validate semantic conventions are correct. Check: 1) Attribute names match semconv exactly 2) Using ActivitySource not DiagnosticSource 3) OTLP export patterns. Only report issues, don't block. Context: ${ARGUMENTS}"
-          }
-        ]
-      },
-      {
-        "matcher": {
-          "tool": "Edit",
-          "glob": "**/otel*.yaml"
-        },
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "This looks like OTel Collector config. Use the otel-guide agent to validate: 1) OTLP receiver/exporter config 2) Processor chain correctness 3) Pipeline configuration. Context: ${ARGUMENTS}"
+            "prompt": "Check the file being written: For .cs files with OpenTelemetry/ActivitySource/Meter/traces/spans/metrics patterns, or for .yaml/.json files with OTel Collector config (receivers/exporters/processors/pipelines), use the otel-guide agent to validate. Verify: 1) Semantic convention attribute names are exact 2) ActivitySource used (not DiagnosticSource) 3) OTLP export/receiver config is correct 4) Pipeline configuration is valid. Report issues only, don't block. Context: ${ARGUMENTS}"
           }
         ]
       }
