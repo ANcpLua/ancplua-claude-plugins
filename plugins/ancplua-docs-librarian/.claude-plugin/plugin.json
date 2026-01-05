@@ -7,5 +7,9 @@
     "url": "https://github.com/ANcpLua"
   },
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
-  "license": "MIT"
+  "license": "MIT",
+  "skills": "./skills",
+  "agents": [
+    "./agents/ancplua-librarian.md"
+  ]
 }

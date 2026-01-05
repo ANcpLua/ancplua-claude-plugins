@@ -14,5 +14,6 @@
     "github-actions",
     "quality"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "skills": "./skills"
 }
