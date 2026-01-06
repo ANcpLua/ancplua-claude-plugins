@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "ANcpLua Docs Librarian loaded.\n\n**Auto-freshness** (if user says search/latest/update/versions) OR ask 'Quick version check? (yes/no)':\n\n**NuGet API is source of truth:**\n1. WebFetch 'https://api.nuget.org/v3-flatcontainer/ancplua.net.sdk/index.json' → latest SDK version\n2. WebFetch 'https://api.nuget.org/v3-flatcontainer/microsoft.codeanalysis.csharp/index.json' → latest Roslyn\n3. Read local Version.props in each repo → current versions\n4. Compare → report delta\n\n**Key packages:**\n- ancplua.net.sdk\n- ancplua.analyzers  \n- microsoft.codeanalysis.csharp\n- xunit.v3 + xunit.v3.mtp-v2 (must match, exe output required)\n\n**If mismatch:** 'Local uses X.Y, NuGet has A.B - verifying patterns still apply'\n\nKeep it quick - user is waiting."
+          }
+        ]
+      }
+    ]
+  }
+}

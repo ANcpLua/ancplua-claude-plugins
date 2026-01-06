@@ -1,8 +1,15 @@
 ---
 name: otel-librarian
 description: Validates and syncs OTel documentation from upstream repos. Invoked via /otelwiki:sync command.
-tools: Bash, Read, Write, Grep, Glob, WebFetch
-model: haiku
+tools:
+  - Bash
+  - Read
+  - Write
+  - Grep
+  - Glob
+  - WebFetch
+  - WebSearch
+model: opus
 ---
 
 # OTel Documentation Librarian

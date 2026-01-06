@@ -1,8 +1,13 @@
 ---
 name: otel-guide
 description: Use this agent when working with OpenTelemetry, telemetry, observability, traces, spans, metrics, logs, OTLP, semantic conventions, instrumentation, or collector configuration. Triggers on questions like "what attributes should I use for HTTP spans", "how do I configure the collector", "what's the semconv for database", "which .NET APIs for tracing". Also use PROACTIVELY when writing telemetry code to validate semantic conventions are correct.
-tools: Read, Grep, Glob
-model: haiku
+tools:
+  - Read
+  - Grep
+  - Glob
+  - WebSearch
+  - WebFetch
+model: opus
 ---
 
 # OpenTelemetry Documentation Guide
@@ -72,6 +77,16 @@ When validating code implementations:
 2. Flag deprecated attributes
 3. Suggest correct .NET 10 patterns
 4. Ensure OTLP-compatible configurations
+
+## Web Capabilities
+
+Use WebSearch/WebFetch when:
+- Attribute not found in local docs (might be new)
+- User asks about deprecation status
+- gen-ai attributes (rapidly evolving - verify upstream)
+- User asks "is this still correct?"
+
+**Local docs synced via /otelwiki:sync. If something seems wrong, suggest re-syncing.**
 
 ## Constraints
 

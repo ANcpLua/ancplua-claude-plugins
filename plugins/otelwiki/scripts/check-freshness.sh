@@ -1,24 +1,13 @@
 #!/bin/bash
-# Check if OTel docs are stale and warn the user
+# Prompt user to sync OTel docs at session start
+# Simple: always offer, override if yes (even if newest - same files, no harm)
 
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(dirname "$(dirname "$0")")}"
 VERSION_FILE="${PLUGIN_ROOT}/docs/VERSION.md"
 
-# Check if VERSION.md exists
-if [ ! -f "$VERSION_FILE" ]; then
-  echo "OTel docs not initialized. Run /otelwiki:sync to set up."
-  exit 0
-fi
-
-# Check if older than 7 days
-if [ "$(uname)" = "Darwin" ]; then
-  # macOS
-  FILE_AGE=$(( ($(date +%s) - $(stat -f %m "$VERSION_FILE")) / 86400 ))
+if [ -f "$VERSION_FILE" ]; then
+  CURRENT_VERSION=$(grep -m1 "semconv" "$VERSION_FILE" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
+  echo "OTEL_DOCS_PROMPT|Current: semconv ${CURRENT_VERSION}|Offer user: /otelwiki:sync to refresh"
 else
-  # Linux
-  FILE_AGE=$(( ($(date +%s) - $(stat -c %Y "$VERSION_FILE")) / 86400 ))
-fi
-
-if [ "$FILE_AGE" -gt 7 ]; then
-  echo "OTel docs are stale (${FILE_AGE} days old). Run /otelwiki:sync to update."
+  echo "OTEL_DOCS_PROMPT|Not initialized|Offer user: /otelwiki:sync to set up"
 fi

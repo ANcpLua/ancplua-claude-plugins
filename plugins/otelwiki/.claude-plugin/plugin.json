@@ -13,5 +13,6 @@
   "agents": [
     "./agents/otel-guide.md",
     "./agents/otel-librarian.md"
-  ]
+  ],
+  "hooks": "./hooks/hooks.json"
 }

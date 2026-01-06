@@ -25,6 +25,26 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **Agent tools YAML format + model upgrades (2026-01-06):**
+  - Fixed `tools` field in 3 agents using string format instead of YAML array
+  - Affected: `otelwiki/otel-guide`, `otelwiki/otel-librarian`, `ancplua-docs-librarian/ancplua-librarian`
+  - Changed `tools: Read, Grep, Glob` to proper YAML list format
+  - Added WebSearch/WebFetch to all agents for version freshness checks
+  - Upgraded agent models: opus for reasoning agents, sonnet for doc lookup
+
+- **Missing hooks declarations in plugin.json (2026-01-06):**
+  - Added `"hooks": "./hooks/hooks.json"` to `metacognitive-guard` plugin.json
+  - Added `"hooks": "./hooks/hooks.json"` to `otelwiki` plugin.json
+  - Added `"hooks": "./hooks/hooks.json"` to `ancplua-docs-librarian` plugin.json
+
+- **Unified freshness hooks (2026-01-06):**
+  - Added SessionStart hooks with freshness prompts to all doc-related plugins
+  - Auto-triggers version check if user mentions search/latest/update/versions
+  - Otherwise prompts: "Quick version check?" before proceeding
+  - otelwiki: checks OTel semconv releases, offers sync + delta
+  - ancplua-docs-librarian: checks ANcpLua.NET.Sdk, Roslyn, xUnit versions
+  - Prevents suggesting outdated APIs, deprecated patterns, or old package versions
+
 - **metacognitive-guard plugin not loading (2025-12-23):**
   - Added missing component paths to plugin.json (`skills`, `agents`, `hooks`)
   - Fixed PreToolUse matcher format from string `"Write|Edit"` to proper object `{"tool": "Write"}`
