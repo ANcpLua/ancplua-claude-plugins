@@ -24,5 +24,6 @@
     "./agents/arch-reviewer.md",
     "./agents/deep-think-partner.md",
     "./agents/impl-reviewer.md"
-  ]
+  ],
+  "hooks": "./hooks/hooks.json"
 }

@@ -4,7 +4,7 @@ description: >-
   Implementation-focused competitive reviewer. Finds code-level issues like banned API usage,
   version mismatches, wrong assumptions, and fact-checks claims using WebSearch.
   Competes with arch-reviewer - whoever finds more valid issues gets promoted.
-model: sonnet
+model: opus
 tools:
   - Read
   - Grep
