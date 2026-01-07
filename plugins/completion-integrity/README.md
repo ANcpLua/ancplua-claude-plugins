@@ -12,14 +12,16 @@ Claude sometimes:
 
 ## Solution
 
-This plugin hooks into:
-1. **Pre-commit** - Blocks commits with integrity violations
-2. **Response end** - Warns when completion claims seem premature
+Git pre-commit hook that blocks commits with integrity violations.
 
 ## Install
 
 ```bash
+# Install the plugin
 /plugin install completion-integrity@ancplua-claude-plugins
+
+# Install the git hook in your repo
+bash scripts/install-git-hook.sh
 ```
 
 ## What Gets Blocked
@@ -38,7 +40,6 @@ This plugin hooks into:
 
 - **Assertions deleted**: >2 triggers violation (allows minor refactoring)
 - **TODOs added**: >2 triggers warning (allows occasional notes)
-- **Phase-end score**: >10 points triggers warning
 
 ## Manual Check
 
@@ -50,6 +51,5 @@ bash scripts/integrity-check.sh
 
 To avoid false positives, these are excluded from scanning:
 - `*.md` (documentation may contain examples)
-- `**/hooks/scripts/*.sh` (plugin scripts)
 - `**/scripts/*.sh` (utility scripts)
 - `**/*.test.*` / `**/*.spec.*` (test fixtures)
