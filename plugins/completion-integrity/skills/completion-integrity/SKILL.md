@@ -5,7 +5,13 @@ description: Prevents shortcuts and cheating when completing tasks. Blocks commi
 
 # Completion Integrity
 
-This plugin enforces honest task completion by detecting and blocking shortcuts.
+Git pre-commit hook that blocks commits with integrity violations.
+
+## Install
+
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/install-git-hook.sh"
+```
 
 ## What It Catches
 
@@ -13,46 +19,12 @@ This plugin enforces honest task completion by detecting and blocking shortcuts.
 |---------|--------------|
 | Warning suppression (`#pragma warning disable`, `eslint-disable`) | Hides problems instead of fixing them |
 | Commented-out tests | Tests exist for a reason |
-| Deleted assertions | Removing checks doesn't fix bugs |
+| Deleted assertions (>2) | Removing checks doesn't fix bugs |
 | Test file deletion | Don't delete tests to make them "pass" |
 | Empty catch blocks | Swallowing errors hides failures |
 | Fresh TODOs (>2 per commit) | Defer work explicitly, not via comments |
 
-## Hooks
-
-### Pre-Commit Gate (PreToolUse: Bash)
-
-Runs before any `git commit` command. Scans staged changes for violations.
-
-**Blocks commit if:**
-- Warning suppressions added
-- Tests commented out
-- Assertions deleted (threshold: >2 deleted)
-- Test files deleted
-
-**Excluded from scanning:**
-- Markdown files (documentation)
-- Shell scripts in plugin directories
-- Test fixtures
-
-### Phase-End Check (Stop)
-
-Runs after each Claude response. Detects premature completion claims.
-
-**Scoring system:**
-- HIGH severity (20-25 points): Untested claims, deleted code, added suppressions
-- MEDIUM severity (10-15 points): Dismissed warnings, deferred work
-- Warning threshold: >10 points (any medium+ signal triggers)
-
-**Warns if Claude says "done" but:**
-- Didn't actually run tests
-- Dismissed warnings as unimportant
-- Mentioned "for now" or "TODO"
-- Deleted code instead of fixing
-
 ## Manual Check
-
-Run the integrity check manually:
 
 ```bash
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/integrity-check.sh"
@@ -70,9 +42,8 @@ Sometimes suppressions are legitimate. If blocked:
 
 You have FAILED if you:
 
-1. Skip this skill when it applies to your task
-2. Commit code with integrity violations
-3. Claim "done!" without running actual verification
-4. Suppress warnings instead of fixing them
-5. Delete or comment out tests instead of fixing them
-6. Rationalize why these rules don't apply to you
+1. Commit code with integrity violations
+2. Claim "done!" without running actual verification
+3. Suppress warnings instead of fixing them
+4. Delete or comment out tests instead of fixing them
+5. Rationalize why these rules don't apply to you
