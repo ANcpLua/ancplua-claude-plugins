@@ -23,13 +23,14 @@ WARNINGS=()
 
 # Get staged diff (what's about to be committed)
 # Exclude: markdown files, shell scripts in plugin dirs, test fixtures
-STAGED_DIFF=$(git diff --cached --unified=0 \
-    -- ':!*.md' \
-    -- ':!**/hooks/scripts/*.sh' \
-    -- ':!**/scripts/*.sh' \
-    -- ':!**/*.test.*' \
-    -- ':!**/*.spec.*' \
-    -- ':!**/test-fixtures/**' \
+# All pathspecs must be after a single -- separator
+STAGED_DIFF=$(git diff --cached --unified=0 -- \
+    ':(exclude)*.md' \
+    ':(exclude)**/hooks/scripts/*.sh' \
+    ':(exclude)**/scripts/*.sh' \
+    ':(exclude)**/*.test.*' \
+    ':(exclude)**/*.spec.*' \
+    ':(exclude)**/test-fixtures/**' \
     2>/dev/null || echo "")
 
 if [[ -z "$STAGED_DIFF" ]]; then
@@ -113,6 +114,8 @@ fi
 
 # =============================================================================
 # RULE 3: TODO/FIXME ADDED (without context)
+# Threshold: >2 TODOs added triggers warning
+# Rationale: Occasional notes are fine, but bulk TODOs suggest deferred work
 # =============================================================================
 
 TODO_ADDED=$(echo "$ADDED_LINES" | grep -iE '//\s*TODO|#\s*TODO|//\s*FIXME|#\s*FIXME|//\s*HACK|#\s*HACK' || true)
@@ -128,6 +131,8 @@ fi
 
 # =============================================================================
 # RULE 4: ASSERTIONS DELETED
+# Threshold: >2 assertions deleted triggers violation
+# Rationale: Allows minor refactoring (1-2 removals) but catches bulk deletion
 # =============================================================================
 
 # C# assertions deleted

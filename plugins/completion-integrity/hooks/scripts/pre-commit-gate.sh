@@ -9,18 +9,18 @@
 set -euo pipefail
 
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"
-[[ -z "$PLUGIN_ROOT" ]] && exit 0
+[[ -z "${PLUGIN_ROOT}" ]] && exit 0
 
 # Read tool input from stdin
 INPUT=$(cat 2>/dev/null || true)
-[[ -z "$INPUT" ]] && exit 0
+[[ -z "${INPUT}" ]] && exit 0
 
 # Extract the bash command
-COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null || true)
-[[ -z "$COMMAND" ]] && exit 0
+COMMAND=$(echo "${INPUT}" | jq -r '.tool_input.command // empty' 2>/dev/null || true)
+[[ -z "${COMMAND}" ]] && exit 0
 
 # Only check git commit commands
-if ! echo "$COMMAND" | grep -qE 'git\s+commit'; then
+if ! echo "${COMMAND}" | grep -qE 'git\s+commit'; then
     exit 0
 fi
 
@@ -32,21 +32,25 @@ fi
 # Check if there are staged changes
 if ! git diff --cached --quiet 2>/dev/null; then
     # Run the integrity check
-    CHECK_OUTPUT=$("$PLUGIN_ROOT/scripts/integrity-check.sh" 2>&1 || true)
+    CHECK_OUTPUT=$("${PLUGIN_ROOT}/scripts/integrity-check.sh" 2>&1 || true)
     CHECK_EXIT=$?
 
-    if [[ "$CHECK_EXIT" -ne 0 ]]; then
+    if [[ "${CHECK_EXIT}" -ne 0 ]]; then
         # Violations found - block the commit
-        # Escape the output for JSON
-        ESCAPED_OUTPUT=$(echo "$CHECK_OUTPUT" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-
-        cat << EOF
-{
-  "decision": "block",
-  "reason": "COMPLETION INTEGRITY: Violations detected in staged changes",
-  "message": "BLOCKED: Cannot commit with integrity violations.\\n\\n${ESCAPED_OUTPUT}\\n\\nFix these issues before committing:\\n1. Remove warning suppressions - fix the actual warnings\\n2. Uncomment or properly delete tests - don't hide them\\n3. Keep assertions - they exist for a reason\\n\\nIf you believe these are false positives, explain why in the commit message."
-}
-EOF
+        # Use jq for safe JSON construction
+        jq -n --arg output "${CHECK_OUTPUT}" '{
+          decision: "block",
+          reason: "COMPLETION INTEGRITY: Violations detected in staged changes",
+          message: (
+            "BLOCKED: Cannot commit with integrity violations.\n\n"
+            + $output + "\n\n"
+            + "Fix these issues before committing:\n"
+            + "1. Remove warning suppressions - fix the actual warnings\n"
+            + "2. Uncomment or properly delete tests - do not hide them\n"
+            + "3. Keep assertions - they exist for a reason\n\n"
+            + "If you believe these are false positives, explain why in the commit message."
+          )
+        }'
         exit 0
     fi
 fi
