@@ -1,0 +1,21 @@
+{
+  "name": "completion-integrity",
+  "description": "Prevents shortcuts when completing tasks: blocks commits with warning suppressions, commented tests, deleted assertions. Detects premature completion claims.",
+  "version": "1.0.0",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "integrity",
+    "completion",
+    "pre-commit",
+    "warning-suppression",
+    "test-deletion",
+    "shortcuts"
+  ],
+  "skills": "./skills",
+  "hooks": "./hooks/hooks.json"
+}

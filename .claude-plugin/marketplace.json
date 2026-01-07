@@ -43,6 +43,12 @@
       "description": "Documentation librarian for the ANcpLua ecosystem (SDK, Analyzers, Roslyn Utilities). Answers questions by searching and synthesizing documentation across all three repositories.",
       "version": "1.0.0",
       "source": "./plugins/ancplua-docs-librarian"
+    },
+    {
+      "name": "completion-integrity",
+      "description": "Prevents shortcuts when completing tasks: blocks commits with warning suppressions, commented tests, deleted assertions. Detects premature completion claims.",
+      "version": "1.0.0",
+      "source": "./plugins/completion-integrity"
     }
   ]
 }
