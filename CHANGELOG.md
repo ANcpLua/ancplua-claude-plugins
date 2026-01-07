@@ -8,17 +8,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- **completion-integrity plugin (2026-01-07):**
+- **completion-integrity plugin (2026-01-08):**
   - Prevents Claude from taking shortcuts to finish tasks
-  - **Pre-Commit Gate (PreToolUse: Bash):**
-    - Blocks `git commit` when staged changes contain integrity violations
-    - Detects: C#/JS/Python warning suppressions, commented-out tests, test file deletion
-    - Detects: Deleted assertions, empty catch blocks, excessive fresh TODOs
-  - **Phase-End Check (Stop):**
-    - Warns when Claude claims "done!" but response indicates shortcuts
-    - Detects: Untested claims, dismissed warnings, deferred work, deleted code
+  - **Git Pre-Commit Hook:**
+    - `scripts/install-git-hook.sh` - installs native git hook
+    - Works in ALL modes including `--dangerously-skip-permissions`
+    - Blocks commits with: warning suppressions, commented tests, deleted assertions, deleted test files
   - **Manual Script:**
     - `scripts/integrity-check.sh` for on-demand scanning of staged changes
+  - Note: Claude plugin hooks removed (don't work with bypass mode)
 
 - **ancplua-docs-librarian plugin (2026-01-02):**
   - Documentation librarian for the ANcpLua ecosystem (SDK, Analyzers, Roslyn Utilities)
