@@ -12,15 +12,40 @@ Claude sometimes:
 
 ## Solution
 
-This plugin hooks into:
-1. **Pre-commit** - Blocks commits with integrity violations
-2. **Response end** - Warns when completion claims seem premature
+Two enforcement mechanisms:
+
+### 1. Git Pre-Commit Hook (Recommended)
+
+Works with ALL modes, including `--dangerously-skip-permissions`:
+
+```bash
+bash scripts/install-git-hook.sh
+```
+
+This installs a native git hook at `.git/hooks/pre-commit` that blocks commits with violations.
+
+### 2. Claude Plugin Hooks
+
+Only work when Claude prompts for permission (NOT with bypass mode):
+- **PreToolUse** - Intercepts `git commit` commands
+- **Stop** - Warns when completion claims seem premature
 
 ## Install
 
 ```bash
 /plugin install completion-integrity@ancplua-claude-plugins
+
+# Then install the git hook (recommended):
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/install-git-hook.sh"
 ```
+
+## Bypass Mode Compatibility
+
+| Feature | Normal Mode | `--dangerously-skip-permissions` |
+|---------|-------------|----------------------------------|
+| Git pre-commit hook | ✅ Works | ✅ Works |
+| PreToolUse hook | ✅ Works | ❌ Bypassed |
+| Stop hook | ✅ Works | ✅ Works (informational) |
 
 ## What Gets Blocked
 
