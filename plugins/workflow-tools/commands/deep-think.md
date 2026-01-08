@@ -1,36 +1,19 @@
 ---
-name: deep-think
-description: Extended reasoning with multiple perspectives for complex problems before taking action
-arguments:
-  - name: problem
-    description: "The problem to think deeply about"
-    required: true
-  - name: context
-    description: "Relevant files, directories, or domain"
-    default: "."
-  - name: mode
-    description: "Thinking mode: debug|architecture|refactor|decision"
-    default: "debug"
-  - name: auto
-    description: "Run fully autonomous without pauses (true|false)"
-    default: "true"
+description: "Extended reasoning with multiple perspectives for complex problems. Usage: /deep-think [problem] [context:.] [mode:debug]"
+allowed-tools: Task, TodoWrite
 ---
 
 # Deep Think Partner
 
 Extended multi-perspective reasoning before action.
 
-**Problem:** {{ problem }}
-**Context:** {{ context }}
-**Mode:** {{ mode }}
-**Autonomous:** {{ auto }}
+**Problem:** $1
+**Context:** $2 (default: .)
+**Mode:** $3 (default: debug, options: debug|architecture|refactor|decision)
 
 ---
 
-## EXECUTION MODE
-
-{{#if (eq auto "true")}}
-<AUTONOMOUS_MODE>
+<CRITICAL_EXECUTION_REQUIREMENT>
 **RUN ALL PHASES WITHOUT STOPPING.**
 
 1. Launch all Phase 1 agents in PARALLEL (single message, multiple Task calls)
@@ -39,17 +22,12 @@ Extended multi-perspective reasoning before action.
 4. DO NOT ask for confirmation between phases
 5. Only stop at the end with the final recommendation
 
-GO. Execute now.
-</AUTONOMOUS_MODE>
-{{else}}
-<INTERACTIVE_MODE>
-Pause after each phase for user review.
-</INTERACTIVE_MODE>
-{{/if}}
+**YOUR NEXT MESSAGE: Launch 3 Task tool calls for Phase 1. NOTHING ELSE.**
+</CRITICAL_EXECUTION_REQUIREMENT>
 
 ---
 
-## Phase 1: Problem Understanding
+## Phase 1: Problem Understanding (3 Parallel Agents)
 
 Launch ALL 3 agents in PARALLEL using a single message with multiple Task tool calls:
 
@@ -57,9 +35,10 @@ Launch ALL 3 agents in PARALLEL using a single message with multiple Task tool c
 ```yaml
 subagent_type: deep-debugger
 model: opus
+description: "Debugger perspective analysis"
 prompt: |
-  PROBLEM: {{ problem }}
-  CONTEXT: {{ context }}
+  PROBLEM: [insert $1 here]
+  CONTEXT: [insert $2 here, default .]
 
   THINK AS A DEBUGGER:
   1. What is the actual problem vs perceived problem?
@@ -78,9 +57,10 @@ prompt: |
 ```yaml
 subagent_type: framework-migration:architect-review
 model: opus
+description: "Architect perspective analysis"
 prompt: |
-  PROBLEM: {{ problem }}
-  CONTEXT: {{ context }}
+  PROBLEM: [insert $1 here]
+  CONTEXT: [insert $2 here, default .]
 
   THINK AS AN ARCHITECT:
   1. Where does this fit in the system?
@@ -95,9 +75,10 @@ prompt: |
 ### Perspective 3: Explorer Mindset
 ```yaml
 subagent_type: feature-dev:code-explorer
+description: "Code explorer analysis"
 prompt: |
-  PROBLEM: {{ problem }}
-  CONTEXT: {{ context }}
+  PROBLEM: [insert $1 here]
+  CONTEXT: [insert $2 here, default .]
 
   EXPLORE THE CODEBASE:
   1. Find all code related to this problem
@@ -109,13 +90,11 @@ prompt: |
   Output: Relevant code map with file:line references
 ```
 
-{{#if (eq auto "true")}}
 **→ IMMEDIATELY proceed to Phase 2 when agents complete. DO NOT STOP.**
-{{/if}}
 
 ---
 
-## Phase 2: Solution Synthesis
+## Phase 2: Solution Synthesis (2 Parallel Agents)
 
 Launch BOTH agents in PARALLEL:
 
@@ -123,6 +102,7 @@ Launch BOTH agents in PARALLEL:
 ```yaml
 subagent_type: dotnet-mtp-advisor
 model: opus
+description: "Solution synthesis"
 prompt: |
   Given the 3 perspectives from Phase 1:
 
@@ -144,6 +124,7 @@ prompt: |
 ### Devil's Advocate
 ```yaml
 subagent_type: feature-dev:code-reviewer
+description: "Devil's advocate review"
 prompt: |
   CHALLENGE each proposed solution:
 
@@ -157,9 +138,7 @@ prompt: |
   Output: Risk analysis and blind spots
 ```
 
-{{#if (eq auto "true")}}
 **→ IMMEDIATELY proceed to Phase 3 when agents complete. DO NOT STOP.**
-{{/if}}
 
 ---
 
@@ -178,31 +157,3 @@ Present the final consolidated output:
 **Recommended:** [Option X]
 **Reasoning:** [Why this is best given trade-offs]
 **Next Steps:** [Concrete actions to take]
-
----
-
-## Mode-Specific Focus
-
-{{#if (eq mode "architecture")}}
-Focus agents on:
-- System boundaries
-- Dependency directions
-- Interface contracts
-- Scalability implications
-{{/if}}
-
-{{#if (eq mode "refactor")}}
-Focus agents on:
-- Current vs desired state
-- Migration path
-- Breaking changes
-- Incremental approach
-{{/if}}
-
-{{#if (eq mode "decision")}}
-Focus agents on:
-- Options enumeration
-- Trade-off matrix
-- Reversibility
-- Stakeholder impact
-{{/if}}

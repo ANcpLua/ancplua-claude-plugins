@@ -1,59 +1,29 @@
 ---
-name: batch-implement
-description: Parallel implementation of multiple similar items using shared patterns
-arguments:
-  - name: type
-    description: "Type of items: diagnostics|tests|endpoints|features|fixes|migrations"
-    required: true
-  - name: items
-    description: "Comma-separated list of items to implement"
-    required: true
-  - name: template
-    description: "Path to existing implementation to use as template"
-    default: "auto-detect"
-  - name: auto
-    description: "Run fully autonomous without pauses (true|false)"
-    default: "true"
+description: "Parallel implementation of multiple similar items using shared patterns. Usage: /batch-implement [type] [items]"
+allowed-tools: Task, Bash, TodoWrite
 ---
 
 # Batch Implementation
 
 Parallel implementation of similar items with shared patterns.
 
-**Type:** {{ type }}
-**Items:** {{ items }}
-**Template:** {{ template }}
-**Autonomous:** {{ auto }}
+**Type:** $1 (options: diagnostics|tests|endpoints|features|fixes|migrations)
+**Items:** $2 (comma-separated list of items to implement)
 
 ---
 
-## EXECUTION MODE
+## EXECUTION INSTRUCTIONS
 
-{{#if (eq auto "true")}}
-<AUTONOMOUS_MODE>
 **RUN ALL PHASES WITHOUT STOPPING.**
 
 CRITICAL INSTRUCTIONS:
-1. Execute ALL phases (1→2→3→4) in sequence WITHOUT pausing
+1. Execute ALL phases (1->2->3->4) in sequence WITHOUT pausing
 2. For Phase 2, launch ONE agent PER ITEM in PARALLEL
-3. DO NOT ask "should I continue?" - just continue
-4. Use TodoWrite: one todo per item, mark complete as each finishes
-5. Only stop if: build fails, tests fail, or unrecoverable error
-6. At the end, provide the summary table
+3. Use TodoWrite: one todo per item, mark complete as each finishes
+4. Only stop if: build fails, tests fail, or unrecoverable error
+5. At the end, provide the summary table
 
-FORBIDDEN:
-- Stopping to ask "proceed?"
-- Waiting for user acknowledgment
-- Pausing between phases
-- Implementing items sequentially when parallel is possible
-
-GO. Execute all phases now.
-</AUTONOMOUS_MODE>
-{{else}}
-<INTERACTIVE_MODE>
-Pause after each phase for user approval.
-</INTERACTIVE_MODE>
-{{/if}}
+**YOUR NEXT MESSAGE: Launch 1 Task tool call for Phase 1 pattern extraction.**
 
 ---
 
@@ -62,10 +32,10 @@ Pause after each phase for user approval.
 ### Template Extractor
 ```yaml
 subagent_type: feature-dev:code-explorer
+description: "Extract implementation pattern"
 prompt: |
-  TYPE: {{ type }}
-  ITEMS: {{ items }}
-  TEMPLATE: {{ template }}
+  TYPE: [insert $1 here]
+  ITEMS: [insert $2 here]
 
   MISSION: Extract implementation pattern.
 
@@ -85,9 +55,7 @@ prompt: |
   Output: Implementation template with placeholders
 ```
 
-{{#if (eq auto "true")}}
-**→ IMMEDIATELY proceed to Phase 2 after template extraction. DO NOT STOP.**
-{{/if}}
+**-> IMMEDIATELY proceed to Phase 2 after template extraction.**
 
 ---
 
@@ -95,14 +63,15 @@ prompt: |
 
 **IMPORTANT:** Launch ONE agent PER ITEM in a SINGLE message with MULTIPLE Task tool calls.
 
-For each item in `{{ items }}`, create an agent:
+Parse the items from $2 (comma-separated) and create one agent per item:
 
-### Implementation Agent (per item)
+### Implementation Agent (create one per item)
 ```yaml
 subagent_type: feature-dev:code-architect
+description: "Implement [ITEM_NAME]"
 prompt: |
-  IMPLEMENT: [ITEM_NAME]
-  TYPE: {{ type }}
+  IMPLEMENT: [ITEM_NAME from $2]
+  TYPE: [insert $1 here]
 
   USING TEMPLATE from Phase 1:
 
@@ -122,9 +91,7 @@ prompt: |
   Output: Files created with paths
 ```
 
-{{#if (eq auto "true")}}
-**→ Wait for ALL parallel agents to complete, then IMMEDIATELY proceed to Phase 3. DO NOT STOP.**
-{{/if}}
+**-> Wait for ALL parallel agents to complete, then IMMEDIATELY proceed to Phase 3.**
 
 ---
 
@@ -133,6 +100,7 @@ prompt: |
 ### Consistency Reviewer
 ```yaml
 subagent_type: feature-dev:code-reviewer
+description: "Review consistency"
 prompt: |
   REVIEW all new implementations:
 
@@ -146,9 +114,7 @@ prompt: |
   Output: Issues found + recommendations
 ```
 
-{{#if (eq auto "true")}}
-**→ Fix any issues found, then IMMEDIATELY proceed to Phase 4. DO NOT STOP.**
-{{/if}}
+**-> Fix any issues found, then IMMEDIATELY proceed to Phase 4.**
 
 ---
 
@@ -161,7 +127,7 @@ Run these commands and report results:
 dotnet build --no-incremental 2>&1 || npm run build 2>&1 || make build 2>&1
 
 # Run tests for new items
-dotnet test --filter "{{ type }}" 2>&1 || npm test -- --grep "{{ type }}" 2>&1 || make test 2>&1
+dotnet test 2>&1 || npm test 2>&1 || make test 2>&1
 
 # Lint
 dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
@@ -171,9 +137,9 @@ dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 
 ## Type-Specific Guidance
 
-{{#if (eq type "diagnostics")}}
-### Diagnostic Implementation
+Based on the type ($1), follow these patterns:
 
+### diagnostics
 For each diagnostic:
 1. Add descriptor to `Descriptors.cs`
 2. Add analysis logic to analyzer
@@ -181,12 +147,7 @@ For each diagnostic:
 4. Write unit test triggering the diagnostic
 5. Write test for code fix if applicable
 
-**Pattern file:** Find existing `EOE00X` implementation
-{{/if}}
-
-{{#if (eq type "tests")}}
-### Test Implementation
-
+### tests
 For each test area:
 1. Identify untested code paths
 2. Write unit tests for happy path
@@ -194,12 +155,7 @@ For each test area:
 4. Write tests for error conditions
 5. Verify coverage increase
 
-**Pattern file:** Find existing test class
-{{/if}}
-
-{{#if (eq type "endpoints")}}
-### Endpoint Implementation
-
+### endpoints
 For each endpoint:
 1. Define route and HTTP method
 2. Add request/response DTOs
@@ -208,12 +164,7 @@ For each endpoint:
 5. Add OpenAPI documentation
 6. Write integration test
 
-**Pattern file:** Find existing endpoint
-{{/if}}
-
-{{#if (eq type "fixes")}}
-### Fix Implementation
-
+### fixes
 For each fix:
 1. Locate the issue
 2. Write regression test (failing)
@@ -221,12 +172,7 @@ For each fix:
 4. Verify test passes
 5. Check for similar issues
 
-**Pattern:** TDD - test first, then fix
-{{/if}}
-
-{{#if (eq type "migrations")}}
-### Migration Implementation
-
+### migrations
 For each migration:
 1. Identify source pattern
 2. Identify target pattern
@@ -235,16 +181,11 @@ For each migration:
 5. Run tests
 6. Update documentation
 
-**Pattern:** Incremental, one file at a time
-{{/if}}
-
 ---
 
 ## Output Summary
 
-{{#if (eq auto "true")}}
 After Phase 4, provide this summary table:
-{{/if}}
 
 | Item | Status | Files | Tests |
 |------|--------|-------|-------|

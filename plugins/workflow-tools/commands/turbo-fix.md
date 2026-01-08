@@ -1,37 +1,21 @@
 ---
-name: turbo-fix
-description: Maximum parallelism fix pipeline - launches maximum agents per phase for fastest resolution
-arguments:
-  - name: issue
-    description: "Issue description or ID from audit"
-    required: true
-  - name: severity
-    description: "Severity level: P0|P1|P2|P3"
-    default: "P0"
-  - name: context
-    description: "Relevant directory or files"
-    default: "."
+description: "Maximum parallelism fix pipeline - 16 agents across 4 phases for fastest resolution. Usage: /turbo-fix [issue] [severity:P0] [context:.]"
+allowed-tools: Task, Bash, TodoWrite
 ---
 
 # TURBO FIX
 
-**Issue:** {{ issue }}
-**Severity:** {{ severity }}
-**Context:** {{ context }}
+**Issue:** $1
+**Severity:** $2 (default: P0)
+**Context:** $3 (default: .)
 
 ---
 
-<CRITICAL_EXECUTION_REQUIREMENT>
-**YOU MUST USE THE TASK TOOL TO LAUNCH AGENTS. DO NOT FIX ANYTHING YOURSELF.**
+## EXECUTION INSTRUCTIONS
 
-⚠️ FORBIDDEN BEHAVIOR:
-- DO NOT read files yourself
-- DO NOT write code yourself
-- DO NOT fix issues yourself
-- DO NOT use Glob, Grep, Read, Edit, or Write tools directly
-- DO NOT do ANYTHING except launch Task tools
+**YOU MUST USE THE TASK TOOL TO LAUNCH AGENTS. YOU ORCHESTRATE, AGENTS FIX.**
 
-✅ REQUIRED BEHAVIOR:
+REQUIRED BEHAVIOR:
 - Phase 1: Launch 6 Task tools in ONE message
 - Phase 2: Launch 4 Task tools in ONE message
 - Phase 3: Launch 3 Task tools in ONE message
@@ -39,27 +23,25 @@ arguments:
 
 EACH TASK MUST USE:
 - subagent_type: (from the yaml blocks below)
-- prompt: (the full prompt text)
+- prompt: (the full prompt text with user's issue/context inserted)
 - description: (short 3-5 word summary)
 
-IF YOU READ A FILE OR WRITE CODE YOURSELF, YOU HAVE FAILED.
-
-**YOUR NEXT MESSAGE MUST CONTAIN 6 Task TOOL CALLS FOR PHASE 1. NOTHING ELSE.**
-</CRITICAL_EXECUTION_REQUIREMENT>
+**YOUR NEXT MESSAGE MUST CONTAIN 6 Task TOOL CALLS FOR PHASE 1.**
 
 ---
 
 ## Phase 1: SWARM ANALYSIS (6 Agents Parallel)
 
-Launch ALL 6 agents in ONE message:
+Launch ALL 6 agents in ONE message. Insert the user's issue ($1) and context ($3) into each prompt.
 
 ### Agent 1: Root Cause Hunter
 ```yaml
 subagent_type: deep-debugger
 model: opus
+description: "Hunt root cause"
 prompt: |
-  ISSUE: {{ issue }}
-  CONTEXT: {{ context }}
+  ISSUE: [insert $1 here]
+  CONTEXT: [insert $3 here, default .]
 
   MISSION: Find the ROOT CAUSE.
 
@@ -75,9 +57,10 @@ prompt: |
 ```yaml
 subagent_type: framework-migration:architect-review
 model: opus
+description: "Map system impact"
 prompt: |
-  ISSUE: {{ issue }}
-  CONTEXT: {{ context }}
+  ISSUE: [insert $1 here]
+  CONTEXT: [insert $3 here, default .]
 
   MISSION: Map system IMPACT.
 
@@ -92,9 +75,10 @@ prompt: |
 ### Agent 3: Code Explorer
 ```yaml
 subagent_type: feature-dev:code-explorer
+description: "Find relevant code"
 prompt: |
-  ISSUE: {{ issue }}
-  CONTEXT: {{ context }}
+  ISSUE: [insert $1 here]
+  CONTEXT: [insert $3 here, default .]
 
   MISSION: Find ALL relevant code.
 
@@ -109,9 +93,10 @@ prompt: |
 ### Agent 4: History Detective
 ```yaml
 subagent_type: Explore
+description: "Find change history"
 prompt: |
-  ISSUE: {{ issue }}
-  CONTEXT: {{ context }}
+  ISSUE: [insert $1 here]
+  CONTEXT: [insert $3 here, default .]
 
   MISSION: Find the HISTORY.
 
@@ -126,9 +111,10 @@ prompt: |
 ### Agent 5: Pattern Matcher
 ```yaml
 subagent_type: feature-dev:code-explorer
+description: "Find similar bugs"
 prompt: |
-  ISSUE: {{ issue }}
-  CONTEXT: {{ context }}
+  ISSUE: [insert $1 here]
+  CONTEXT: [insert $3 here, default .]
 
   MISSION: Find SIMILAR bugs.
 
@@ -143,9 +129,10 @@ prompt: |
 ### Agent 6: Test Analyzer
 ```yaml
 subagent_type: feature-dev:code-reviewer
+description: "Analyze test gaps"
 prompt: |
-  ISSUE: {{ issue }}
-  CONTEXT: {{ context }}
+  ISSUE: [insert $1 here]
+  CONTEXT: [insert $3 here, default .]
 
   MISSION: Analyze TEST coverage.
 
@@ -157,7 +144,7 @@ prompt: |
   Output: Test gap analysis
 ```
 
-**→ WAIT for all 6 agents, then IMMEDIATELY proceed to Phase 2.**
+**-> WAIT for all 6 agents, then IMMEDIATELY proceed to Phase 2.**
 
 ---
 
@@ -169,6 +156,7 @@ Launch ALL 4 agents in ONE message:
 ```yaml
 subagent_type: feature-dev:code-architect
 model: opus
+description: "Design minimal solution"
 prompt: |
   Given Phase 1 analysis, design Solution A.
 
@@ -186,6 +174,7 @@ prompt: |
 ```yaml
 subagent_type: feature-dev:code-architect
 model: opus
+description: "Design robust solution"
 prompt: |
   Given Phase 1 analysis, design Solution B.
 
@@ -203,6 +192,7 @@ prompt: |
 ```yaml
 subagent_type: dotnet-mtp-advisor
 model: opus
+description: "Design alternative solution"
 prompt: |
   Given Phase 1 analysis, design Solution C.
 
@@ -219,6 +209,7 @@ prompt: |
 ### Agent 10: Devil's Advocate
 ```yaml
 subagent_type: feature-dev:code-reviewer
+description: "Attack all solutions"
 prompt: |
   ATTACK all proposed solutions:
 
@@ -233,7 +224,7 @@ prompt: |
   Output: Risk analysis per solution
 ```
 
-**→ WAIT for all 4 agents, then SELECT best solution and proceed to Phase 3.**
+**-> WAIT for all 4 agents, then SELECT best solution and proceed to Phase 3.**
 
 ---
 
@@ -244,6 +235,7 @@ Launch ALL 3 agents in ONE message:
 ### Agent 11: Test Writer
 ```yaml
 subagent_type: feature-dev:code-architect
+description: "Write tests first"
 prompt: |
   WRITE TESTS FIRST.
 
@@ -261,6 +253,7 @@ prompt: |
 ```yaml
 subagent_type: feature-dev:code-architect
 model: opus
+description: "Implement the fix"
 prompt: |
   IMPLEMENT the selected solution.
 
@@ -275,6 +268,7 @@ prompt: |
 ### Agent 13: Documentation Updater
 ```yaml
 subagent_type: Explore
+description: "Check docs needed"
 prompt: |
   CHECK what docs need updating:
 
@@ -286,51 +280,23 @@ prompt: |
   Output: Documentation updates needed
 ```
 
-**→ WAIT for all 3 agents, then proceed to Phase 4.**
+**-> WAIT for all 3 agents, then proceed to Phase 4.**
 
 ---
 
-## Phase 4: VERIFICATION SWARM (3 Parallel)
+## Phase 4: VERIFICATION
 
-Run ALL 3 verification tasks in PARALLEL:
+Run verification commands:
 
 ```bash
-# Task 1: Build
-dotnet build --no-incremental 2>&1 &
+# Build
+dotnet build --no-incremental 2>&1 || npm run build 2>&1 || make build 2>&1
 
-# Task 2: Test
-dotnet test 2>&1 &
+# Test
+dotnet test 2>&1 || npm test 2>&1 || make test 2>&1
 
-# Task 3: Lint
-dotnet format --verify-no-changes 2>&1 &
-
-wait
-```
-
-Or use agents:
-
-### Verify Agent 1: Build Check
-```yaml
-subagent_type: Bash
-prompt: |
-  Run: dotnet build --no-incremental 2>&1 || npm run build 2>&1 || make build 2>&1
-  Report: Success/Failure with errors
-```
-
-### Verify Agent 2: Test Check
-```yaml
-subagent_type: Bash
-prompt: |
-  Run: dotnet test 2>&1 || npm test 2>&1 || make test 2>&1
-  Report: Pass/Fail count
-```
-
-### Verify Agent 3: Lint Check
-```yaml
-subagent_type: Bash
-prompt: |
-  Run: dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
-  Report: Clean/Issues
+# Lint
+dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 ```
 
 ---
@@ -340,17 +306,17 @@ prompt: |
 After ALL phases complete, provide this summary:
 
 ```
-╔══════════════════════════════════════════════════════════════╗
-║                    TURBO FIX COMPLETE                        ║
-╠══════════════════════════════════════════════════════════════╣
-║ Phase 1: Analysis    │ 6/6 agents │ Root cause: [X]          ║
-║ Phase 2: Solutions   │ 4/4 agents │ Selected: [A/B/C]        ║
-║ Phase 3: Implement   │ 3/3 agents │ Files: [count]           ║
-║ Phase 4: Verify      │ 3/3 tasks  │ Build/Test/Lint: ✅/❌    ║
-╠══════════════════════════════════════════════════════════════╣
-║ TOTAL AGENTS: 16     │ TIME: [X min]                         ║
-║ STATUS: FIXED / BLOCKED                                      ║
-╚══════════════════════════════════════════════════════════════╝
++--------------------------------------------------------------+
+|                    TURBO FIX COMPLETE                        |
++--------------------------------------------------------------+
+| Phase 1: Analysis    | 6/6 agents | Root cause: [X]          |
+| Phase 2: Solutions   | 4/4 agents | Selected: [A/B/C]        |
+| Phase 3: Implement   | 3/3 agents | Files: [count]           |
+| Phase 4: Verify      | 3/3 tasks  | Build/Test/Lint: OK/FAIL |
++--------------------------------------------------------------+
+| TOTAL AGENTS: 16     | TIME: [X min]                         |
+| STATUS: FIXED / BLOCKED                                      |
++--------------------------------------------------------------+
 ```
 
 | Phase | Agents | Findings |
@@ -360,6 +326,6 @@ After ALL phases complete, provide this summary:
 | 3. Implementation | 3 | [Files changed] |
 | 4. Verification | 3 | [Results] |
 
-**Issue:** {{ issue }}
+**Issue:** $1
 **Status:** FIXED / PARTIALLY FIXED / BLOCKED
 **Next Steps:** [If any]

@@ -1,34 +1,17 @@
 ---
-name: fix-pipeline
-description: Systematic fix pipeline - takes audit findings through deep analysis, planning, implementation, and verification
-arguments:
-  - name: issue
-    description: "Issue description or ID from audit"
-    required: true
-  - name: severity
-    description: "Severity level: P0|P1|P2|P3"
-    default: "P1"
-  - name: context
-    description: "Relevant directory or files"
-    default: "."
-  - name: auto
-    description: "Run fully autonomous without pauses (true|false)"
-    default: "true"
+description: "Systematic fix pipeline - takes audit findings through deep analysis, planning, implementation, and verification. Usage: /fix-pipeline [issue] [severity:P1] [context:.]"
+allowed-tools: Task, Bash, TodoWrite
 ---
 
 # Fix Pipeline
 
-**Issue:** {{ issue }}
-**Severity:** {{ severity }}
-**Context:** {{ context }}
-**Mode:** {{ auto }}
+**Issue:** $1
+**Severity:** $2 (default: P1)
+**Context:** $3 (default: .)
 
 ---
 
-## EXECUTION MODE
-
-{{#if (eq auto "true")}}
-<AUTONOMOUS_MODE>
+<CRITICAL_EXECUTION_REQUIREMENT>
 **YOU MUST RUN ALL PHASES WITHOUT STOPPING.**
 
 CRITICAL INSTRUCTIONS:
@@ -45,17 +28,12 @@ FORBIDDEN:
 - Pausing between phases
 - Asking clarifying questions (make reasonable assumptions)
 
-GO. Execute all phases now.
-</AUTONOMOUS_MODE>
-{{else}}
-<INTERACTIVE_MODE>
-Run each phase and pause for user approval before proceeding to the next.
-</INTERACTIVE_MODE>
-{{/if}}
+**YOUR NEXT MESSAGE: Launch 3 Task tool calls for Phase 1. NOTHING ELSE.**
+</CRITICAL_EXECUTION_REQUIREMENT>
 
 ---
 
-## Phase 1: Deep Analysis (Parallel Agents)
+## Phase 1: Deep Analysis (3 Parallel Agents)
 
 Launch ALL THREE agents in parallel using a single message with multiple Task tool calls:
 
@@ -64,9 +42,9 @@ Launch ALL THREE agents in parallel using a single message with multiple Task to
 subagent_type: deep-debugger
 model: opus
 prompt: |
-  ISSUE: {{ issue }}
-  SEVERITY: {{ severity }}
-  CONTEXT: {{ context }}
+  ISSUE: [insert $1 here]
+  SEVERITY: [insert $2 here, default P1]
+  CONTEXT: [insert $3 here, default .]
 
   MISSION: Find the root cause, not just symptoms.
 
@@ -85,8 +63,8 @@ prompt: |
 ```yaml
 subagent_type: framework-migration:architect-review
 prompt: |
-  ISSUE: {{ issue }}
-  CONTEXT: {{ context }}
+  ISSUE: [insert $1 here]
+  CONTEXT: [insert $3 here, default .]
 
   ASSESS IMPACT:
   1. What depends on the broken code?
@@ -101,8 +79,8 @@ prompt: |
 ```yaml
 subagent_type: feature-dev:code-explorer
 prompt: |
-  ISSUE: {{ issue }}
-  CONTEXT: {{ context }}
+  ISSUE: [insert $1 here]
+  CONTEXT: [insert $3 here, default .]
 
   GATHER CONTEXT:
   1. Find all relevant code paths
@@ -113,13 +91,13 @@ prompt: |
   Output: Relevant code locations and patterns
 ```
 
-{{#if (eq auto "true")}}
 **→ IMMEDIATELY proceed to Phase 2 after agents complete. DO NOT STOP.**
-{{/if}}
 
 ---
 
-## Phase 2: Solution Design
+## Phase 2: Solution Design (2 Parallel Agents)
+
+Launch BOTH agents in parallel:
 
 ### Agent 4: Solution Architect
 ```yaml
@@ -154,27 +132,13 @@ prompt: |
   Output: Risk analysis and counterarguments
 ```
 
-{{#if (eq auto "true")}}
 **→ Select the highest-ranked solution and IMMEDIATELY proceed to Phase 3. DO NOT STOP.**
-{{else}}
-### Decision Point
-
-Present to user:
-
-**Recommended Solution:** [Top ranked]
-**Confidence:** [X%]
-**Risk:** [Low/Medium/High]
-
-Proceed with implementation? [Y/n]
-{{/if}}
 
 ---
 
 ## Phase 3: Implementation
 
-{{#if (eq auto "true")}}
 **Execute the top-ranked solution directly. No user approval needed.**
-{{/if}}
 
 ### Implementation Agent
 ```yaml
@@ -198,9 +162,7 @@ prompt: |
   Output: Files changed + verification results
 ```
 
-{{#if (eq auto "true")}}
 **→ IMMEDIATELY proceed to Phase 4 after implementation. DO NOT STOP.**
-{{/if}}
 
 ---
 
@@ -223,7 +185,6 @@ dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 
 ## Final Summary
 
-{{#if (eq auto "true")}}
 After Phase 4, provide a SINGLE consolidated summary:
 
 | Phase | Status | Key Findings |
@@ -235,4 +196,3 @@ After Phase 4, provide a SINGLE consolidated summary:
 
 **Issue Status:** FIXED / PARTIALLY FIXED / BLOCKED
 **Next Steps:** [If any]
-{{/if}}

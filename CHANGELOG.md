@@ -36,6 +36,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
     - Complex debugging requiring multiple perspectives
     - Mass implementation of similar features
 
+### Fixed
+
+- **workflow-tools commands (2026-01-08):**
+  - Removed unsupported Handlebars template syntax (`{{ }}`, `{{#each}}`, `{{#if}}`)
+  - Fixed frontmatter to use only supported fields (`description`, `allowed-tools`)
+  - Changed variable references from `{{ var }}` to `$1`, `$2`, `$3` positional args
+  - Added `allowed-tools: Task, Bash, TodoWrite` for proper tool access
+  - All 6 commands now work correctly with Claude Code slash command system
+
 - **completion-integrity plugin (2026-01-08):**
   - Prevents Claude from taking shortcuts to finish tasks
   - **Git Pre-Commit Hook:**
@@ -62,6 +71,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
     - ANcpLua.Roslyn.Utilities: DiagnosticFlow, SemanticGuard, SymbolPattern, domain contexts
 
 ### Fixed
+
+- **workflow-tools slash command syntax compliance (2026-01-08):**
+  - Fixed 5 commands using unsupported Handlebars template syntax (`{{ }}`, `{{#if}}`, `{{#each}}`)
+  - Replaced with official Claude Code `$1`, `$2`, `$3` positional argument syntax
+  - Removed unsupported `name` field from all command frontmatter
+  - Removed unsupported `arguments` array from all command frontmatter
+  - Added `allowed-tools` field to all commands (Task, Bash, TodoWrite as needed)
+  - Affected commands: `fix-pipeline`, `mega-swarm`, `turbo-fix`, `deep-think`, `batch-implement`
+  - Reference: https://code.claude.com/docs/en/slash-commands
 
 - **Agent tools YAML format + model upgrades (2026-01-06):**
   - Fixed `tools` field in 3 agents using string format instead of YAML array
