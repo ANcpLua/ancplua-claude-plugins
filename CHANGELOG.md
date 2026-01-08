@@ -11,16 +11,24 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **workflow-tools plugin (2026-01-08):**
   - Post-audit workflow commands for systematic fixing and parallel implementation
   - **Commands:**
+    - `turbo-fix` - **16 agents across 4 phases** - Maximum parallelism fix pipeline (6→4→3→3)
+    - `mega-swarm` - **12 specialized auditors simultaneously** - Comprehensive codebase analysis
     - `fix-pipeline` - Takes audit findings through: Deep Analysis → Plan → Implement → Verify
     - `deep-think` - Extended multi-perspective reasoning before action (debugger, architect, explorer, devil's advocate)
     - `batch-implement` - Parallel implementation of similar items (diagnostics, tests, endpoints, fixes)
   - **Features:**
-    - **Fully autonomous by default** (`auto=true`) - runs all phases without stopping for user input
+    - **Fully autonomous by default** - runs all phases without stopping for user input
+    - **Maximum parallelism** - launch ALL agents within each phase simultaneously
     - Uses Opus model for deep reasoning phases
-    - Parallel agent execution for speed
     - TDD enforcement in implementation phase
     - Type-specific guidance (diagnostics, tests, endpoints, migrations)
     - Interactive mode available with `auto=false`
+  - **Agent Counts:**
+    - `/mega-swarm` - 12 parallel (all simultaneous)
+    - `/turbo-fix` - 16 total (6→4→3→3 phased)
+    - `/fix-pipeline` - 8 total (3→2→1→1 phased)
+    - `/deep-think` - 5 total (3→2 phased)
+    - `/batch-implement` - N+2 (scales with items)
   - **Use Cases:**
     - Post-swarm-audit systematic fixing
     - Complex debugging requiring multiple perspectives
