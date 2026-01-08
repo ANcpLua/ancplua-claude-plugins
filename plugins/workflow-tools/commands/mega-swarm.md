@@ -30,7 +30,7 @@ Launch ALL in ONE message. For each agent, use the Task tool with the specified 
 
 ### Agent 1: Architecture Auditor
 ```yaml
-subagent_type: framework-migration:architect-review
+subagent_type: metacognitive-guard:arch-reviewer
 model: opus
 description: "Audit architecture"
 prompt: |
@@ -264,25 +264,25 @@ prompt: |
 After ALL 12 agents complete, synthesize results:
 
 ```
-+------------------------------------------------------------------+
-|                    MEGA SWARM REPORT                             |
-+------------------------------------------------------------------+
-| Agents Deployed: 12          Time: [X min]                       |
-+------------------------------------------------------------------+
-|                     ISSUES BY SEVERITY                           |
-|  P0 (Critical):  [count]                                         |
-|  P1 (High):      [count]                                         |
-|  P2 (Medium):    [count]                                         |
-|  P3 (Low):       [count]                                         |
-+------------------------------------------------------------------+
-|                     ISSUES BY CATEGORY                           |
-|  Security:       [count]  |  Performance:    [count]             |
-|  Architecture:   [count]  |  Tests:          [count]             |
-|  Code Quality:   [count]  |  Errors:         [count]             |
-|  API:            [count]  |  Dependencies:   [count]             |
-|  Config:         [count]  |  Docs:           [count]             |
-|  Consistency:    [count]  |  Bugs:           [count]             |
-+------------------------------------------------------------------+
+╔══════════════════════════════════════════════════════════════════╗
+║                    MEGA SWARM REPORT                             ║
+╠══════════════════════════════════════════════════════════════════╣
+║ Agents Deployed: 12          Time: [X min]                       ║
+╠══════════════════════════════════════════════════════════════════╣
+║                     ISSUES BY SEVERITY                           ║
+║  P0 (Critical):  [count]                                         ║
+║  P1 (High):      [count]                                         ║
+║  P2 (Medium):    [count]                                         ║
+║  P3 (Low):       [count]                                         ║
+╠══════════════════════════════════════════════════════════════════╣
+║                     ISSUES BY CATEGORY                           ║
+║  Security:       [count]  │  Performance:    [count]             ║
+║  Architecture:   [count]  │  Tests:          [count]             ║
+║  Code Quality:   [count]  │  Errors:         [count]             ║
+║  API:            [count]  │  Dependencies:   [count]             ║
+║  Config:         [count]  │  Docs:           [count]             ║
+║  Consistency:    [count]  │  Bugs:           [count]             ║
+╚══════════════════════════════════════════════════════════════════╝
 ```
 
 ### P0 Issues (Fix Immediately)

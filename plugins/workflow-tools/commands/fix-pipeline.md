@@ -61,7 +61,7 @@ prompt: |
 
 ### Agent 2: Impact Assessment
 ```yaml
-subagent_type: framework-migration:architect-review
+subagent_type: metacognitive-guard:arch-reviewer
 prompt: |
   ISSUE: [insert $1 here]
   CONTEXT: [insert $3 here, default .]
