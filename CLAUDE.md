@@ -113,18 +113,19 @@ ancplua-claude-plugins/
 │       ├── ci.yml               # Main CI pipeline
 │       └── dependabot.yml
 │
-├── plugins/
-│   ├── autonomous-ci/           # CI verification plugin
-│   │   ├── .claude-plugin/plugin.json
-│   │   ├── README.md
-│   │   ├── skills/autonomous-ci/SKILL.md
-│   │   ├── commands/
-│   │   ├── hooks/
-│   │   └── scripts/
-│   │
-│   ├── code-review/             # Code review plugin
-│   ├── smart-commit/            # Commit message plugin
-│   └── jules-integration/       # Jules AI delegation
+├── plugins/                     # 8 plugins (as of 2026-01-08)
+│   ├── autonomous-ci/           # CI verification and monitoring
+│   ├── code-review/             # Security, style, performance analysis
+│   ├── metacognitive-guard/     # Cognitive amplification stack (v0.2.4)
+│   │   ├── agents/              # arch-reviewer, impl-reviewer, deep-think-partner
+│   │   ├── skills/              # competitive-review, epistemic-checkpoint
+│   │   └── hooks/               # Struggle detection, fact-checking
+│   ├── otelwiki/                # OpenTelemetry documentation (v1.0.3)
+│   ├── ancplua-docs-librarian/  # ANcpLua ecosystem docs
+│   ├── dotnet-architecture-lint/# .NET build pattern enforcement
+│   ├── completion-integrity/    # Prevents task shortcuts
+│   └── workflow-tools/          # Post-audit workflows (v1.0.1)
+│       └── commands/            # mega-swarm, turbo-fix, fix-pipeline, deep-think, batch-implement, tournament
 │
 ├── agents/
 │   ├── repo-reviewer-agent/     # Repository health reviewer
@@ -754,8 +755,13 @@ Apply these principles when designing or modifying plugins:
 Each plugin should do ONE thing well:
 
 - `autonomous-ci` → CI verification only
-- `smart-commit` → Commit messages only
 - `code-review` → Code analysis only
+- `metacognitive-guard` → Cognitive amplification (agents + hooks)
+- `otelwiki` → OpenTelemetry documentation only
+- `ancplua-docs-librarian` → ANcpLua ecosystem docs only
+- `dotnet-architecture-lint` → .NET build patterns only
+- `completion-integrity` → Task completion quality only
+- `workflow-tools` → Multi-agent orchestration workflows
 
 **Anti-pattern:** A plugin that handles CI, commits, AND reviews.
 
