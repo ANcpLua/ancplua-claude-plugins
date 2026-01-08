@@ -17,17 +17,26 @@ arguments:
 
 ---
 
-<SWARM_MODE>
-**12 AGENTS LAUNCHING SIMULTANEOUSLY**
+<CRITICAL_EXECUTION_REQUIREMENT>
+**YOU MUST USE THE TASK TOOL TO LAUNCH 12 PARALLEL AGENTS.**
 
-EXECUTION:
-1. Launch ALL 12 agents in a SINGLE message with 12 Task tool calls
-2. Let them ALL run in parallel
-3. Collect all results
-4. Synthesize into unified report
+⚠️ FORBIDDEN BEHAVIOR:
+- DO NOT read files yourself
+- DO NOT write code yourself
+- DO NOT fix issues yourself
+- DO NOT use Glob, Grep, Read, Edit, or Write tools
+- DO NOT do ANYTHING except launch Task tools
 
-**GO. LAUNCH ALL AGENTS NOW.**
-</SWARM_MODE>
+✅ REQUIRED BEHAVIOR:
+- Use the Task tool with subagent_type parameter
+- Launch ALL 12 agents in ONE message with 12 Task tool calls
+- Each Task call must have: description, prompt, subagent_type
+- WAIT for agents to complete, then synthesize
+
+IF YOU DO ANYTHING OTHER THAN LAUNCH TASK TOOLS, YOU HAVE FAILED.
+
+**YOUR NEXT MESSAGE MUST CONTAIN 12 Task TOOL CALLS. NOTHING ELSE.**
+</CRITICAL_EXECUTION_REQUIREMENT>
 
 ---
 
