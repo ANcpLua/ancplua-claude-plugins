@@ -14,8 +14,9 @@ AI agents lose context and break centralized version management:
 
 Hybrid approach:
 - **Deterministic script** detects violations (no false positives)
-- **PostToolUse hook** triggers after MSBuild file edits
-- **Prompt instructions** guide fixes
+- **PreToolUse hook** blocks violations BEFORE writes happen
+- **Python validator** checks proposed content against rules A, B, G
+- **Note:** Rule C (symlink integrity) checked by lint-dotnet.sh only (post-hoc)
 
 ## Rules
 
@@ -36,7 +37,7 @@ Hybrid approach:
 
 ### Automatic
 
-The PostToolUse hook triggers automatically when you edit:
+The PreToolUse hook blocks violations when you edit:
 - `*.props`
 - `*.targets`
 - `*.csproj`

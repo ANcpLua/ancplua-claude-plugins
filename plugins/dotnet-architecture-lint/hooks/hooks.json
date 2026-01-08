@@ -1,21 +1,13 @@
 {
   "hooks": {
-    "PostToolUse": [
+    "PreToolUse": [
       {
-        "matcher": "Edit",
+        "matcher": "Edit|Write",
         "hooks": [
           {
-            "type": "prompt",
-            "prompt": "If you just edited a .props, .targets, .csproj, global.json, or nuget.config file, run the architecture linter:\n\n```bash\nbash \"${CLAUDE_PLUGIN_ROOT}/scripts/lint-dotnet.sh\" .\n```\n\nIf VIOLATIONS found, fix them before git operations. If CLEAN, proceed normally."
-          }
-        ]
-      },
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "If you just wrote a .props, .targets, .csproj, global.json, or nuget.config file, run the architecture linter:\n\n```bash\nbash \"${CLAUDE_PLUGIN_ROOT}/scripts/lint-dotnet.sh\" .\n```\n\nIf VIOLATIONS found, fix them before git operations. If CLEAN, proceed normally."
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/precheck-dotnet.py\"",
+            "timeout": 10
           }
         ]
       }

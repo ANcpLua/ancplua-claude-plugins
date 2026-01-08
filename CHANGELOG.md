@@ -6,6 +6,17 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+
+- **dotnet-architecture-lint: Convert useless PostToolUse to blocking PreToolUse hook:**
+  - Previous hook fired on ALL Edit/Write operations, then asked Claude to self-filter
+  - This produced noise like "Edit to .cs file detected, but this is not a config file..."
+  - New PreToolUse hook uses Python script to:
+    - Only process .props, .targets, .csproj, global.json, nuget.config files
+    - Validate proposed content BEFORE write (not after)
+    - Exit 2 to BLOCK edits that violate MSBuild architecture rules
+  - Rules enforced: RULE_A (no hardcoded versions in Directory.Packages.props), RULE_B (Version.props import restrictions), RULE_G (no inline PackageReference versions)
+
 ### Changed
 
 - **Plugin ecosystem cleanup (2026-01-08):**
