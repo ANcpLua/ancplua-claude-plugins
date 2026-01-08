@@ -49,6 +49,12 @@
       "description": "Prevents shortcuts when completing tasks: blocks commits with warning suppressions, commented tests, deleted assertions. Detects premature completion claims.",
       "version": "1.0.0",
       "source": "./plugins/completion-integrity"
+    },
+    {
+      "name": "workflow-tools",
+      "description": "Post-audit workflow commands: fix-pipeline for systematic fixes, deep-think for extended reasoning, batch-implement for parallel mass implementation.",
+      "version": "1.0.0",
+      "source": "./plugins/workflow-tools"
     }
   ]
 }
