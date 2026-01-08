@@ -18,6 +18,5 @@
     "architecture-lint",
     "build-validation"
   ],
-  "skills": "./skills",
-  "hooks": "./hooks/hooks.json"
+  "skills": "./skills"
 }

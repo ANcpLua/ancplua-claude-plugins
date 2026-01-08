@@ -11,6 +11,5 @@
   "skills": "./skills",
   "agents": [
     "./agents/ancplua-librarian.md"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }
