@@ -11,6 +11,9 @@ arguments:
   - name: context
     description: "Relevant directory or files"
     default: "."
+  - name: auto
+    description: "Run fully autonomous without pauses (true|false)"
+    default: "true"
 ---
 
 # Fix Pipeline
@@ -18,8 +21,43 @@ arguments:
 **Issue:** {{ issue }}
 **Severity:** {{ severity }}
 **Context:** {{ context }}
+**Mode:** {{ auto }}
+
+---
+
+## EXECUTION MODE
+
+{{#if (eq auto "true")}}
+<AUTONOMOUS_MODE>
+**YOU MUST RUN ALL PHASES WITHOUT STOPPING.**
+
+CRITICAL INSTRUCTIONS:
+1. Execute ALL phases (1→2→3→4) in sequence WITHOUT pausing for user input
+2. DO NOT ask "should I continue?" - just continue
+3. DO NOT wait for confirmation between phases
+4. Use TodoWrite to track progress, mark items complete AS YOU GO
+5. Only stop if: build fails, tests fail, or you encounter an unrecoverable error
+6. At the end, provide a SINGLE summary of everything done
+
+FORBIDDEN:
+- Stopping to ask "proceed?"
+- Waiting for user acknowledgment
+- Pausing between phases
+- Asking clarifying questions (make reasonable assumptions)
+
+GO. Execute all phases now.
+</AUTONOMOUS_MODE>
+{{else}}
+<INTERACTIVE_MODE>
+Run each phase and pause for user approval before proceeding to the next.
+</INTERACTIVE_MODE>
+{{/if}}
+
+---
 
 ## Phase 1: Deep Analysis (Parallel Agents)
+
+Launch ALL THREE agents in parallel using a single message with multiple Task tool calls:
 
 ### Agent 1: Root Cause Analysis
 ```yaml
@@ -75,6 +113,10 @@ prompt: |
   Output: Relevant code locations and patterns
 ```
 
+{{#if (eq auto "true")}}
+**→ IMMEDIATELY proceed to Phase 2 after agents complete. DO NOT STOP.**
+{{/if}}
+
 ---
 
 ## Phase 2: Solution Design
@@ -112,11 +154,27 @@ prompt: |
   Output: Risk analysis and counterarguments
 ```
 
+{{#if (eq auto "true")}}
+**→ Select the highest-ranked solution and IMMEDIATELY proceed to Phase 3. DO NOT STOP.**
+{{else}}
+### Decision Point
+
+Present to user:
+
+**Recommended Solution:** [Top ranked]
+**Confidence:** [X%]
+**Risk:** [Low/Medium/High]
+
+Proceed with implementation? [Y/n]
+{{/if}}
+
 ---
 
 ## Phase 3: Implementation
 
-Based on approved solution:
+{{#if (eq auto "true")}}
+**Execute the top-ranked solution directly. No user approval needed.**
+{{/if}}
 
 ### Implementation Agent
 ```yaml
@@ -140,9 +198,15 @@ prompt: |
   Output: Files changed + verification results
 ```
 
+{{#if (eq auto "true")}}
+**→ IMMEDIATELY proceed to Phase 4 after implementation. DO NOT STOP.**
+{{/if}}
+
 ---
 
 ## Phase 4: Verification
+
+Run these commands and report results:
 
 ```bash
 # Build
@@ -157,12 +221,18 @@ dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 
 ---
 
-## Decision Point
+## Final Summary
 
-After Phase 2, present to user:
+{{#if (eq auto "true")}}
+After Phase 4, provide a SINGLE consolidated summary:
 
-**Recommended Solution:** [Top ranked]
-**Confidence:** [X%]
-**Risk:** [Low/Medium/High]
+| Phase | Status | Key Findings |
+|-------|--------|--------------|
+| 1. Analysis | ✅/❌ | [Root cause] |
+| 2. Design | ✅/❌ | [Chosen solution] |
+| 3. Implementation | ✅/❌ | [Files changed] |
+| 4. Verification | ✅/❌ | [Build/Test/Lint results] |
 
-Proceed with implementation? [Y/n]
+**Issue Status:** FIXED / PARTIALLY FIXED / BLOCKED
+**Next Steps:** [If any]
+{{/if}}

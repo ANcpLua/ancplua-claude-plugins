@@ -11,6 +11,9 @@ arguments:
   - name: template
     description: "Path to existing implementation to use as template"
     default: "auto-detect"
+  - name: auto
+    description: "Run fully autonomous without pauses (true|false)"
+    default: "true"
 ---
 
 # Batch Implementation
@@ -20,6 +23,37 @@ Parallel implementation of similar items with shared patterns.
 **Type:** {{ type }}
 **Items:** {{ items }}
 **Template:** {{ template }}
+**Autonomous:** {{ auto }}
+
+---
+
+## EXECUTION MODE
+
+{{#if (eq auto "true")}}
+<AUTONOMOUS_MODE>
+**RUN ALL PHASES WITHOUT STOPPING.**
+
+CRITICAL INSTRUCTIONS:
+1. Execute ALL phases (1→2→3→4) in sequence WITHOUT pausing
+2. For Phase 2, launch ONE agent PER ITEM in PARALLEL
+3. DO NOT ask "should I continue?" - just continue
+4. Use TodoWrite: one todo per item, mark complete as each finishes
+5. Only stop if: build fails, tests fail, or unrecoverable error
+6. At the end, provide the summary table
+
+FORBIDDEN:
+- Stopping to ask "proceed?"
+- Waiting for user acknowledgment
+- Pausing between phases
+- Implementing items sequentially when parallel is possible
+
+GO. Execute all phases now.
+</AUTONOMOUS_MODE>
+{{else}}
+<INTERACTIVE_MODE>
+Pause after each phase for user approval.
+</INTERACTIVE_MODE>
+{{/if}}
 
 ---
 
@@ -51,11 +85,17 @@ prompt: |
   Output: Implementation template with placeholders
 ```
 
+{{#if (eq auto "true")}}
+**→ IMMEDIATELY proceed to Phase 2 after template extraction. DO NOT STOP.**
+{{/if}}
+
 ---
 
 ## Phase 2: Parallel Implementation
 
-For each item in `{{ items }}`, launch an agent:
+**IMPORTANT:** Launch ONE agent PER ITEM in a SINGLE message with MULTIPLE Task tool calls.
+
+For each item in `{{ items }}`, create an agent:
 
 ### Implementation Agent (per item)
 ```yaml
@@ -82,6 +122,10 @@ prompt: |
   Output: Files created with paths
 ```
 
+{{#if (eq auto "true")}}
+**→ Wait for ALL parallel agents to complete, then IMMEDIATELY proceed to Phase 3. DO NOT STOP.**
+{{/if}}
+
 ---
 
 ## Phase 3: Integration Review
@@ -102,9 +146,15 @@ prompt: |
   Output: Issues found + recommendations
 ```
 
+{{#if (eq auto "true")}}
+**→ Fix any issues found, then IMMEDIATELY proceed to Phase 4. DO NOT STOP.**
+{{/if}}
+
 ---
 
 ## Phase 4: Batch Verification
+
+Run these commands and report results:
 
 ```bash
 # Build all
@@ -192,7 +242,9 @@ For each migration:
 
 ## Output Summary
 
-After completion:
+{{#if (eq auto "true")}}
+After Phase 4, provide this summary table:
+{{/if}}
 
 | Item | Status | Files | Tests |
 |------|--------|-------|-------|

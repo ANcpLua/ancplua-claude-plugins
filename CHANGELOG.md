@@ -15,10 +15,12 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
     - `deep-think` - Extended multi-perspective reasoning before action (debugger, architect, explorer, devil's advocate)
     - `batch-implement` - Parallel implementation of similar items (diagnostics, tests, endpoints, fixes)
   - **Features:**
+    - **Fully autonomous by default** (`auto=true`) - runs all phases without stopping for user input
     - Uses Opus model for deep reasoning phases
     - Parallel agent execution for speed
     - TDD enforcement in implementation phase
     - Type-specific guidance (diagnostics, tests, endpoints, migrations)
+    - Interactive mode available with `auto=false`
   - **Use Cases:**
     - Post-swarm-audit systematic fixing
     - Complex debugging requiring multiple perspectives
