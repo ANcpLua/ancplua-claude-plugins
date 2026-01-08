@@ -314,7 +314,7 @@ After ALL phases complete, provide this summary:
 ║ Phase 3: Implement   │ 3/3 agents │ Files: [count]           ║
 ║ Phase 4: Verify      │ 3/3 tasks  │ Build/Test/Lint: ✅/❌    ║
 ╠══════════════════════════════════════════════════════════════╣
-║ TOTAL AGENTS: 16     │ TIME: [X min]                         ║
+║ TOTAL AGENTS: 16          TIME: [X min]                      ║
 ║ STATUS: FIXED / BLOCKED                                      ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
