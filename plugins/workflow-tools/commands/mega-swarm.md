@@ -1,56 +1,41 @@
 ---
-name: mega-swarm
-description: Maximum parallel audit - launches 12+ specialized agents simultaneously for comprehensive codebase analysis
-arguments:
-  - name: scope
-    description: "Scope to audit: full|src|tests|config|security"
-    default: "full"
-  - name: focus
-    description: "Optional focus area or concern"
-    default: ""
+description: "Maximum parallel audit - launches 12 specialized agents simultaneously for comprehensive codebase analysis. Usage: /mega-swarm [scope:full] [focus]"
+allowed-tools: Task, TodoWrite
 ---
 
 # MEGA SWARM AUDIT
 
-**Scope:** {{ scope }}
-**Focus:** {{ focus }}
+**Scope:** $1 (default: full - options: full|src|tests|config|security)
+**Focus:** $2 (optional focus area or concern)
 
 ---
 
-<CRITICAL_EXECUTION_REQUIREMENT>
+## EXECUTION INSTRUCTIONS
+
 **YOU MUST USE THE TASK TOOL TO LAUNCH 12 PARALLEL AGENTS.**
 
-⚠️ FORBIDDEN BEHAVIOR:
-- DO NOT read files yourself
-- DO NOT write code yourself
-- DO NOT fix issues yourself
-- DO NOT use Glob, Grep, Read, Edit, or Write tools
-- DO NOT do ANYTHING except launch Task tools
-
-✅ REQUIRED BEHAVIOR:
+REQUIRED BEHAVIOR:
 - Use the Task tool with subagent_type parameter
 - Launch ALL 12 agents in ONE message with 12 Task tool calls
 - Each Task call must have: description, prompt, subagent_type
-- WAIT for agents to complete, then synthesize
+- WAIT for agents to complete, then synthesize results
 
-IF YOU DO ANYTHING OTHER THAN LAUNCH TASK TOOLS, YOU HAVE FAILED.
-
-**YOUR NEXT MESSAGE MUST CONTAIN 12 Task TOOL CALLS. NOTHING ELSE.**
-</CRITICAL_EXECUTION_REQUIREMENT>
+**YOUR NEXT MESSAGE MUST CONTAIN 12 Task TOOL CALLS.**
 
 ---
 
 ## THE SWARM (12 Parallel Agents)
 
-Launch ALL in ONE message:
+Launch ALL in ONE message. For each agent, use the Task tool with the specified subagent_type and adapt the prompt to include the user's scope ($1) and focus ($2).
 
 ### Agent 1: Architecture Auditor
 ```yaml
 subagent_type: framework-migration:architect-review
 model: opus
+description: "Audit architecture"
 prompt: |
-  SCOPE: {{ scope }}
-  FOCUS: {{ focus }}
+  SCOPE: [insert $1 here, default: full]
+  FOCUS: [insert $2 here if provided]
 
   AUDIT: Architecture & Design
 
@@ -65,9 +50,10 @@ prompt: |
 ### Agent 2: Security Auditor
 ```yaml
 subagent_type: feature-dev:code-reviewer
+description: "Audit security"
 prompt: |
-  SCOPE: {{ scope }}
-  FOCUS: {{ focus }}
+  SCOPE: [insert $1 here, default: full]
+  FOCUS: [insert $2 here if provided]
 
   AUDIT: Security
 
@@ -83,9 +69,10 @@ prompt: |
 ### Agent 3: Performance Auditor
 ```yaml
 subagent_type: feature-dev:code-explorer
+description: "Audit performance"
 prompt: |
-  SCOPE: {{ scope }}
-  FOCUS: {{ focus }}
+  SCOPE: [insert $1 here, default: full]
+  FOCUS: [insert $2 here if provided]
 
   AUDIT: Performance
 
@@ -101,9 +88,10 @@ prompt: |
 ### Agent 4: Test Coverage Auditor
 ```yaml
 subagent_type: feature-dev:code-reviewer
+description: "Audit test coverage"
 prompt: |
-  SCOPE: {{ scope }}
-  FOCUS: {{ focus }}
+  SCOPE: [insert $1 here, default: full]
+  FOCUS: [insert $2 here if provided]
 
   AUDIT: Test Quality
 
@@ -119,9 +107,10 @@ prompt: |
 ### Agent 5: Code Quality Auditor
 ```yaml
 subagent_type: feature-dev:code-reviewer
+description: "Audit code quality"
 prompt: |
-  SCOPE: {{ scope }}
-  FOCUS: {{ focus }}
+  SCOPE: [insert $1 here, default: full]
+  FOCUS: [insert $2 here if provided]
 
   AUDIT: Code Quality
 
@@ -137,9 +126,10 @@ prompt: |
 ### Agent 6: Error Handling Auditor
 ```yaml
 subagent_type: deep-debugger
+description: "Audit error handling"
 prompt: |
-  SCOPE: {{ scope }}
-  FOCUS: {{ focus }}
+  SCOPE: [insert $1 here, default: full]
+  FOCUS: [insert $2 here if provided]
 
   AUDIT: Error Handling
 
@@ -155,9 +145,10 @@ prompt: |
 ### Agent 7: API Contract Auditor
 ```yaml
 subagent_type: feature-dev:code-explorer
+description: "Audit API contracts"
 prompt: |
-  SCOPE: {{ scope }}
-  FOCUS: {{ focus }}
+  SCOPE: [insert $1 here, default: full]
+  FOCUS: [insert $2 here if provided]
 
   AUDIT: API Contracts
 
@@ -173,9 +164,10 @@ prompt: |
 ### Agent 8: Dependency Auditor
 ```yaml
 subagent_type: Explore
+description: "Audit dependencies"
 prompt: |
-  SCOPE: {{ scope }}
-  FOCUS: {{ focus }}
+  SCOPE: [insert $1 here, default: full]
+  FOCUS: [insert $2 here if provided]
 
   AUDIT: Dependencies
 
@@ -191,9 +183,10 @@ prompt: |
 ### Agent 9: Configuration Auditor
 ```yaml
 subagent_type: Explore
+description: "Audit configuration"
 prompt: |
-  SCOPE: {{ scope }}
-  FOCUS: {{ focus }}
+  SCOPE: [insert $1 here, default: full]
+  FOCUS: [insert $2 here if provided]
 
   AUDIT: Configuration
 
@@ -209,9 +202,10 @@ prompt: |
 ### Agent 10: Documentation Auditor
 ```yaml
 subagent_type: Explore
+description: "Audit documentation"
 prompt: |
-  SCOPE: {{ scope }}
-  FOCUS: {{ focus }}
+  SCOPE: [insert $1 here, default: full]
+  FOCUS: [insert $2 here if provided]
 
   AUDIT: Documentation
 
@@ -227,9 +221,10 @@ prompt: |
 ### Agent 11: Consistency Auditor
 ```yaml
 subagent_type: feature-dev:code-reviewer
+description: "Audit consistency"
 prompt: |
-  SCOPE: {{ scope }}
-  FOCUS: {{ focus }}
+  SCOPE: [insert $1 here, default: full]
+  FOCUS: [insert $2 here if provided]
 
   AUDIT: Consistency
 
@@ -246,9 +241,10 @@ prompt: |
 ```yaml
 subagent_type: deep-debugger
 model: opus
+description: "Hunt for bugs"
 prompt: |
-  SCOPE: {{ scope }}
-  FOCUS: {{ focus }}
+  SCOPE: [insert $1 here, default: full]
+  FOCUS: [insert $2 here if provided]
 
   HUNT: Active Bugs
 
@@ -268,25 +264,25 @@ prompt: |
 After ALL 12 agents complete, synthesize results:
 
 ```
-╔══════════════════════════════════════════════════════════════════╗
-║                    MEGA SWARM REPORT                             ║
-╠══════════════════════════════════════════════════════════════════╣
-║ Agents Deployed: 12          Time: [X min]                       ║
-╠══════════════════════════════════════════════════════════════════╣
-║                     ISSUES BY SEVERITY                           ║
-║  P0 (Critical):  [count]                                         ║
-║  P1 (High):      [count]                                         ║
-║  P2 (Medium):    [count]                                         ║
-║  P3 (Low):       [count]                                         ║
-╠══════════════════════════════════════════════════════════════════╣
-║                     ISSUES BY CATEGORY                           ║
-║  Security:       [count]  │  Performance:    [count]             ║
-║  Architecture:   [count]  │  Tests:          [count]             ║
-║  Code Quality:   [count]  │  Errors:         [count]             ║
-║  API:            [count]  │  Dependencies:   [count]             ║
-║  Config:         [count]  │  Docs:           [count]             ║
-║  Consistency:    [count]  │  Bugs:           [count]             ║
-╚══════════════════════════════════════════════════════════════════╝
++------------------------------------------------------------------+
+|                    MEGA SWARM REPORT                             |
++------------------------------------------------------------------+
+| Agents Deployed: 12          Time: [X min]                       |
++------------------------------------------------------------------+
+|                     ISSUES BY SEVERITY                           |
+|  P0 (Critical):  [count]                                         |
+|  P1 (High):      [count]                                         |
+|  P2 (Medium):    [count]                                         |
+|  P3 (Low):       [count]                                         |
++------------------------------------------------------------------+
+|                     ISSUES BY CATEGORY                           |
+|  Security:       [count]  |  Performance:    [count]             |
+|  Architecture:   [count]  |  Tests:          [count]             |
+|  Code Quality:   [count]  |  Errors:         [count]             |
+|  API:            [count]  |  Dependencies:   [count]             |
+|  Config:         [count]  |  Docs:           [count]             |
+|  Consistency:    [count]  |  Bugs:           [count]             |
++------------------------------------------------------------------+
 ```
 
 ### P0 Issues (Fix Immediately)

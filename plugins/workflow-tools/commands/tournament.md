@@ -1,23 +1,12 @@
 ---
-name: tournament
-description: Competitive tournament - multiple agents compete to produce the best solution, winner takes all
-arguments:
-  - name: task
-    description: "What needs to be fixed/implemented"
-    required: true
-  - name: competitors
-    description: "Number of competing agents (3-8)"
-    default: "5"
-  - name: rounds
-    description: "Tournament rounds: single|double|elimination"
-    default: "single"
+description: "Competitive coding tournament - N agents compete, judge picks winner. Usage: /tournament [task] [competitors:5]"
+allowed-tools: Task, Bash, TodoWrite
 ---
 
 # TOURNAMENT MODE 🏆
 
-**Task:** {{ task }}
-**Competitors:** {{ competitors }}
-**Rounds:** {{ rounds }}
+**Task:** $1
+**Competitors:** $2 (default: 5)
 
 ---
 
@@ -31,34 +20,34 @@ arguments:
 - YOU ONLY: launch agents, evaluate results, pick winner
 
 ✅ TOURNAMENT RULES:
-1. Launch {{ competitors }} competing agents in ONE message
-2. Each agent works INDEPENDENTLY on the SAME task
-3. Agents DO NOT know about each other
-4. After all complete, YOU judge the solutions
-5. WINNER's code gets committed
+1. Parse $2 for number of competitors (default 5 if not specified)
+2. Launch that many competing agents in ONE message using Task tool
+3. Each agent works INDEPENDENTLY on the SAME task
+4. Agents DO NOT know about each other
+5. After all complete, launch a Judge agent to score solutions
+6. WINNER's code gets committed
 
-**YOUR NEXT MESSAGE: {{ competitors }} Task TOOL CALLS. NOTHING ELSE.**
+**YOUR NEXT MESSAGE: Launch N Task tool calls (one per competitor). NOTHING ELSE.**
 </CRITICAL_EXECUTION_REQUIREMENT>
 
 ---
 
-## ROUND 1: COMPETITION ({{ competitors }} Agents)
+## ROUND 1: COMPETITION
 
-Launch ALL competitors in ONE message using Task tool:
+For EACH competitor, launch a Task with:
 
-{{#each (range 1 competitors)}}
-### Competitor {{ this }}
 ```yaml
 subagent_type: feature-dev:code-architect
 model: opus
+description: "Tournament competitor N"
 prompt: |
   🏆 TOURNAMENT COMPETITION 🏆
 
-  You are Competitor {{ this }} in a coding tournament.
+  You are a competitor in a coding tournament.
   Other competitors are working on the SAME task.
   Only the BEST solution wins.
 
-  TASK: {{ ../task }}
+  TASK: [insert $1 here]
 
   RULES:
   - Write the BEST, most elegant solution
@@ -79,23 +68,21 @@ prompt: |
   - Explanation of approach
   - Why this solution is BEST
 ```
-{{/each}}
 
 ---
 
 ## ROUND 2: JUDGING
 
-After ALL competitors complete:
+After ALL competitors complete, launch ONE judge:
 
-### Judge Agent
 ```yaml
 subagent_type: feature-dev:code-reviewer
 model: opus
+description: "Tournament judge"
 prompt: |
   🏆 TOURNAMENT JUDGE 🏆
 
-  You are judging {{ competitors }} solutions for:
-  TASK: {{ task }}
+  You are judging N solutions for the task.
 
   SCORING (100 points total):
   - Correctness: 40 pts (compiles, tests pass, no bugs)
@@ -113,30 +100,26 @@ prompt: |
   1. 🥇 Winner: [name] - [score]/100
   2. 🥈 Second: [name] - [score]/100
   3. 🥉 Third: [name] - [score]/100
-  ...
 
   WINNER'S SOLUTION:
-  [Show the winning code]
-
-  MERGE RECOMMENDATION:
-  [If multiple solutions have good parts, recommend hybrid]
+  [Show the winning code that should be applied]
 ```
 
 ---
 
 ## ROUND 3: IMPLEMENTATION
 
-### Winner Implementation
+Launch ONE implementer:
+
 ```yaml
 subagent_type: feature-dev:code-architect
+description: "Implement winner solution"
 prompt: |
   IMPLEMENT the winning solution from the tournament.
 
   Apply all the winning code changes.
   Ensure tests pass.
   Format code properly.
-
-  If judge recommended a hybrid, merge the best parts.
 
   Output: Files changed with verification
 ```
@@ -146,21 +129,22 @@ prompt: |
 ## FINAL: VERIFICATION
 
 ```bash
-dotnet build --no-incremental 2>&1
-dotnet test 2>&1
-dotnet format --verify-no-changes 2>&1
+dotnet build 2>&1 || npm run build 2>&1 || make build 2>&1
+dotnet test 2>&1 || npm test 2>&1 || make test 2>&1
 ```
 
 ---
 
-## TOURNAMENT SUMMARY
+## SUMMARY
+
+After completion, output:
 
 ```
 ╔══════════════════════════════════════════════════════════════════╗
 ║                    🏆 TOURNAMENT RESULTS 🏆                       ║
 ╠══════════════════════════════════════════════════════════════════╣
-║ Task: {{ task }}                                                  ║
-║ Competitors: {{ competitors }}                                    ║
+║ Task: $1                                                          ║
+║ Competitors: N                                                    ║
 ╠══════════════════════════════════════════════════════════════════╣
 ║                         FINAL STANDINGS                          ║
 ║  🥇 1st: [Competitor X] - [score]/100                            ║
@@ -172,7 +156,3 @@ dotnet format --verify-no-changes 2>&1
 ║ Tests: PASS/FAIL                                                 ║
 ╚══════════════════════════════════════════════════════════════════╝
 ```
-
-**Winner:** [Competitor X]
-**Score:** [X]/100
-**Key Insight:** [What made this solution the best]
