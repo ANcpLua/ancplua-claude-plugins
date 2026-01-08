@@ -1,150 +1,140 @@
 # ancplua-claude-plugins
 
-**Claude Code plugins for faster, safer development.**
+Alexander's lifetime Claude Code plugin marketplace. Plugins for CI verification, code review, cognitive amplification, and post-audit workflows.
 
 ## Plugins
 
-| Plugin | Purpose | Trigger |
-|--------|---------|---------|
-| **code-review** | AI code review (bugs, security, style) | `/code-review` |
-| **smart-commit** | Semantic commit messages | `/commit` |
-| **autonomous-ci** | Local CI verification | *ask Claude* |
-| **jules-integration** | Delegate tasks to Google Jules | `/jules <task>` |
-| **testcontainers-dotnet** | .NET integration testing patterns | *skill* |
-| **metacognitive-guard** | Detects Claude struggling, escalates to deep-thinking | *auto-hook* |
-| **otelwiki** | OpenTelemetry docs + semconv validation | *auto-hook* |
+| Plugin | Version | Description |
+|--------|---------|-------------|
+| **autonomous-ci** | 0.1.0 | CI verification and monitoring. Local test runners and GitHub Actions monitoring. |
+| **code-review** | 0.1.0 | Security scanning, style checking, and code improvement suggestions. |
+| **metacognitive-guard** | 0.2.4 | Detects Claude struggling, escalates to deep-thinking agents. Includes arch-reviewer, impl-reviewer, and deep-think-partner agents. |
+| **otelwiki** | 1.0.3 | OpenTelemetry documentation with auto-sync. 172 bundled doc files, semantic convention validation. |
+| **ancplua-docs-librarian** | 1.0.0 | Documentation librarian for ANcpLua ecosystem (SDK, Analyzers, Roslyn Utilities). |
+| **dotnet-architecture-lint** | 1.0.0 | .NET build pattern enforcement. Version.props symlinks, CPM, single-owner imports. |
+| **completion-integrity** | 1.0.0 | Prevents task shortcuts. Blocks commits with warning suppressions, commented tests, deleted assertions. |
+| **workflow-tools** | 1.0.1 | Post-audit workflows: mega-swarm (12 auditors), turbo-fix (16 agents), fix-pipeline, deep-think, batch-implement, tournament. |
 
----
-
-## Install
+## Installation
 
 ```bash
-cd your-project && claude
+# Inside Claude Code
+claude plugin install <plugin>@ancplua-claude-plugins
+
+# Examples
+claude plugin install metacognitive-guard@ancplua-claude-plugins
+claude plugin install workflow-tools@ancplua-claude-plugins
+claude plugin install otelwiki@ancplua-claude-plugins
 ```
 
-Inside Claude Code:
+Or from the interactive menu:
 
 ```text
 /plugin marketplace add ANcpLua/ancplua-claude-plugins
 /plugin install code-review@ancplua-claude-plugins
 ```
 
-Or browse: `/plugin` → "Browse Plugins"
-
----
-
-## Plugin Details
-
-### code-review
-
-```text
-/code-review
-
-→ HIGH: SQL injection in auth.py:45
-  MEDIUM: Unused import in utils.py:3
-```
-
-### smart-commit
-
-```text
-/commit
-
-→ feat(auth): add JWT refresh token support
-  Commit? [Y/n]
-```
-
-### autonomous-ci
-
-```text
-"Will CI pass?"
-
-→ Tests: 47 passed
-  Type check: 2 errors in src/api.ts
-```
-
-### jules-integration
-
-```text
-/jules Refactor user service to use DI
-
-→ Created Jules task. PR incoming.
-```
+## Highlights
 
 ### metacognitive-guard
 
-Hooks into Claude's responses. When it detects uncertainty, hedging, or struggle patterns, it escalates to deep-thinking agents for better answers.
+Detects when Claude is struggling (hedging, verbosity, contradictions) and escalates to deep-thinking agents. Achieves 3-4x token efficiency on complex questions.
 
-**Auto-triggers on:** Long pauses, excessive caveats, circular reasoning
+```text
+User asks complex architecture question
+       |
+       v
+Claude responds with hedging/uncertainty
+       |
+       v
+struggle-detector.sh detects patterns (score > 25)
+       |
+       v
+deep-think-partner agent spawned (Opus model)
+       |
+       v
+Structured, actionable recommendations
+```
+
+### workflow-tools
+
+Post-audit commands for maximum parallelism:
+
+| Command | Agents | Purpose |
+|---------|--------|---------|
+| `/tournament` | N+2 | Competitive coding - N agents compete, judge picks winner |
+| `/mega-swarm` | 12 | Parallel audit - 12 specialized auditors simultaneously |
+| `/turbo-fix` | 16 | Maximum parallelism fix pipeline (6+4+3+3 phased) |
+| `/fix-pipeline` | 8 | Systematic fix pipeline (analysis, design, implement, verify) |
+| `/deep-think` | 5 | Extended multi-perspective reasoning |
+| `/batch-implement` | N+2 | Parallel implementation of similar items |
 
 ### otelwiki
 
-Bundled OpenTelemetry documentation (172 files, 32K+ lines). Auto-validates semantic conventions when you edit C# telemetry code.
-
-**Auto-triggers on:** ActivitySource, Meter, OTLP, spans, traces, metrics
+Bundled OpenTelemetry documentation (172 files). Auto-triggers on telemetry work, validates semantic conventions.
 
 ```text
-/otelwiki:sync  # Update bundled docs
+/otelwiki:sync   # Update bundled docs from upstream
 ```
 
----
+## Architecture
 
-## Repository Structure
+**Type A (Application)** - This repo provides the "Brain" (plugins, skills, orchestration).
+
+**Type T (Technology)** - Companion repo `ancplua-mcp` provides the "Hands" (MCP servers, tools).
 
 ```text
 ancplua-claude-plugins/
-├── plugins/
+├── plugins/              # 8 plugins
 │   ├── autonomous-ci/
 │   ├── code-review/
-│   ├── jules-integration/
 │   ├── metacognitive-guard/
 │   ├── otelwiki/
-│   ├── smart-commit/
-│   └── testcontainers-dotnet/
-├── docs/
-└── tooling/
+│   ├── ancplua-docs-librarian/
+│   ├── dotnet-architecture-lint/
+│   ├── completion-integrity/
+│   └── workflow-tools/
+├── docs/                 # Architecture, specs, ADRs
+└── tooling/              # Validation scripts
 ```
+
+Rule: No MCP implementations here. This repo contains plugins, skills, and hooks only.
+
+## External Plugins
+
+This ecosystem works alongside plugins from other marketplaces:
+
+| Source | Plugins |
+|--------|---------|
+| superpowers-marketplace | superpowers, episodic-memory, elements-of-style, double-shot-latte |
+| claude-code-plugins | commit-commands, hookify, feature-dev |
+
+## AI Review
+
+PRs are reviewed by 5 AI agents:
+
+| Agent | Reviews | Creates Fix PRs |
+|-------|---------|-----------------|
+| Claude | Yes | Yes |
+| Jules | Yes | Yes |
+| Copilot | Yes | Yes |
+| Gemini | Yes | No |
+| CodeRabbit | Yes | No |
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| `CLAUDE.md` | Rules for Claude |
-| `CHANGELOG.md` | Version history |
-| `.claude-plugin/marketplace.json` | Plugin registry |
+| [CHANGELOG.md](CHANGELOG.md) | Version history and recent changes |
+| [CLAUDE.md](CLAUDE.md) | Operational instructions for Claude |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Technical architecture |
+| [.claude-plugin/marketplace.json](.claude-plugin/marketplace.json) | Plugin registry |
 
----
+## Documentation
 
-## Architecture
-
-**Type A (Application)** - Orchestration logic only.
-
-Consumes tools from **Type T (Technology)** repos like `ancplua-mcp`.
-
-**Rule:** No MCP implementations here. Plugins, skills, hooks only.
-
----
-
-## AI Review
-
-PRs reviewed by 5 AI agents:
-
-| Agent | Fix PRs |
-|-------|---------|
-| Claude | Yes |
-| Jules | Yes |
-| Copilot | Yes |
-| Gemini | No |
-| CodeRabbit | No |
-
----
-
-## Docs
-
-- [Plugins](https://docs.anthropic.com/en/docs/claude-code/plugins)
-- [Skills](https://docs.anthropic.com/en/docs/claude-code/skills)
-- [Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks)
-
----
+- [Claude Code Plugins](https://docs.anthropic.com/en/docs/claude-code/plugins)
+- [Claude Code Skills](https://docs.anthropic.com/en/docs/claude-code/skills)
+- [Claude Code Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks)
 
 ## License
 
