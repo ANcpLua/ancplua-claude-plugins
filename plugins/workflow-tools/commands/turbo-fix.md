@@ -55,7 +55,7 @@ prompt: |
 
 ### Agent 2: System Architect
 ```yaml
-subagent_type: framework-migration:architect-review
+subagent_type: metacognitive-guard:arch-reviewer
 model: opus
 description: "Map system impact"
 prompt: |
@@ -306,17 +306,17 @@ dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 After ALL phases complete, provide this summary:
 
 ```
-+--------------------------------------------------------------+
-|                    TURBO FIX COMPLETE                        |
-+--------------------------------------------------------------+
-| Phase 1: Analysis    | 6/6 agents | Root cause: [X]          |
-| Phase 2: Solutions   | 4/4 agents | Selected: [A/B/C]        |
-| Phase 3: Implement   | 3/3 agents | Files: [count]           |
-| Phase 4: Verify      | 3/3 tasks  | Build/Test/Lint: OK/FAIL |
-+--------------------------------------------------------------+
-| TOTAL AGENTS: 16     | TIME: [X min]                         |
-| STATUS: FIXED / BLOCKED                                      |
-+--------------------------------------------------------------+
+╔══════════════════════════════════════════════════════════════╗
+║                    TURBO FIX COMPLETE                        ║
+╠══════════════════════════════════════════════════════════════╣
+║ Phase 1: Analysis    │ 6/6 agents │ Root cause: [X]          ║
+║ Phase 2: Solutions   │ 4/4 agents │ Selected: [A/B/C]        ║
+║ Phase 3: Implement   │ 3/3 agents │ Files: [count]           ║
+║ Phase 4: Verify      │ 3/3 tasks  │ Build/Test/Lint: ✅/❌    ║
+╠══════════════════════════════════════════════════════════════╣
+║ TOTAL AGENTS: 16          TIME: [X min]                      ║
+║ STATUS: FIXED / BLOCKED                                      ║
+╚══════════════════════════════════════════════════════════════╝
 ```
 
 | Phase | Agents | Findings |

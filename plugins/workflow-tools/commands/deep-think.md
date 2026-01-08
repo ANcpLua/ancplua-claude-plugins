@@ -55,7 +55,7 @@ prompt: |
 
 ### Perspective 2: Architect Mindset
 ```yaml
-subagent_type: framework-migration:architect-review
+subagent_type: metacognitive-guard:arch-reviewer
 model: opus
 description: "Architect perspective analysis"
 prompt: |

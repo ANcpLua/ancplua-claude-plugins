@@ -6,6 +6,25 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **Plugin ecosystem cleanup (2026-01-08):**
+  - Rationalized plugin set from 18+ to 12 core plugins
+  - Removed duplicates and unused plugins:
+    - `ralph-wiggum` - Experimental, unused
+    - `accessibility-compliance@claude-code-workflows` - Unused
+    - `code-review@claude-code-plugins` - Duplicate of `code-review@ancplua-claude-plugins`
+    - `plugin-dev@claude-code-plugins` - Duplicate with issues
+    - `plugin-dev@claude-plugins-official` - Had 7x duplicate agents
+    - `superpowers-developing-for-claude-code` - Plugin dev helper, niche use
+    - `framework-migration@claude-code-workflows` - Caused issues, not installed
+  - Verified `workflow-tools` commands use `metacognitive-guard:arch-reviewer` (no dependency on removed plugins)
+  - Kept `feature-dev@claude-code-plugins` (workflow-tools depends on code-architect, code-explorer, code-reviewer agents)
+  - **Final plugin set (12 core):**
+    - Tier 1: superpowers, episodic-memory, elements-of-style, commit-commands, hookify
+    - Tier 2: metacognitive-guard, otelwiki, ancplua-docs-librarian, workflow-tools
+    - Tier 3: double-shot-latte, superpowers-chrome, feature-dev
+
 ### Added
 
 - **workflow-tools plugin (2026-01-08):**
