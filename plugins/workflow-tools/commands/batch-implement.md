@@ -108,13 +108,13 @@ prompt: |
 
 ```bash
 # Build all
-dotnet build --no-incremental 2>&1 || npm run build 2>&1
+dotnet build --no-incremental 2>&1 || npm run build 2>&1 || make build 2>&1
 
 # Run tests for new items
-dotnet test --filter "{{ type }}" 2>&1 || npm test -- --grep "{{ type }}" 2>&1
+dotnet test --filter "{{ type }}" 2>&1 || npm test -- --grep "{{ type }}" 2>&1 || make test 2>&1
 
 # Lint
-dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1
+dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 ```
 
 ---

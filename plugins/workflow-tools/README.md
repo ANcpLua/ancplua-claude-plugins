@@ -86,5 +86,6 @@ Parallel implementation of multiple similar items with shared patterns.
 ## Installation
 
 ```bash
+claude plugin marketplace add ANcpLua/ancplua-claude-plugins
 claude plugin install workflow-tools@ancplua-claude-plugins
 ```
