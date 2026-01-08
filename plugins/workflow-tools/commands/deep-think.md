@@ -11,6 +11,9 @@ arguments:
   - name: mode
     description: "Thinking mode: debug|architecture|refactor|decision"
     default: "debug"
+  - name: auto
+    description: "Run fully autonomous without pauses (true|false)"
+    default: "true"
 ---
 
 # Deep Think Partner
@@ -20,12 +23,35 @@ Extended multi-perspective reasoning before action.
 **Problem:** {{ problem }}
 **Context:** {{ context }}
 **Mode:** {{ mode }}
+**Autonomous:** {{ auto }}
+
+---
+
+## EXECUTION MODE
+
+{{#if (eq auto "true")}}
+<AUTONOMOUS_MODE>
+**RUN ALL PHASES WITHOUT STOPPING.**
+
+1. Launch all Phase 1 agents in PARALLEL (single message, multiple Task calls)
+2. When they complete, IMMEDIATELY proceed to Phase 2
+3. When Phase 2 completes, IMMEDIATELY present final recommendation
+4. DO NOT ask for confirmation between phases
+5. Only stop at the end with the final recommendation
+
+GO. Execute now.
+</AUTONOMOUS_MODE>
+{{else}}
+<INTERACTIVE_MODE>
+Pause after each phase for user review.
+</INTERACTIVE_MODE>
+{{/if}}
 
 ---
 
 ## Phase 1: Problem Understanding
 
-Launch 3 agents in parallel for diverse perspectives:
+Launch ALL 3 agents in PARALLEL using a single message with multiple Task tool calls:
 
 ### Perspective 1: Debugger Mindset
 ```yaml
@@ -83,9 +109,15 @@ prompt: |
   Output: Relevant code map with file:line references
 ```
 
+{{#if (eq auto "true")}}
+**→ IMMEDIATELY proceed to Phase 2 when agents complete. DO NOT STOP.**
+{{/if}}
+
 ---
 
 ## Phase 2: Solution Synthesis
+
+Launch BOTH agents in PARALLEL:
 
 ### Solution Designer
 ```yaml
@@ -125,11 +157,15 @@ prompt: |
   Output: Risk analysis and blind spots
 ```
 
+{{#if (eq auto "true")}}
+**→ IMMEDIATELY proceed to Phase 3 when agents complete. DO NOT STOP.**
+{{/if}}
+
 ---
 
 ## Phase 3: Recommendation
 
-Present to user:
+Present the final consolidated output:
 
 ### Summary
 | Solution | Confidence | Risk | Complexity |
@@ -141,11 +177,11 @@ Present to user:
 ### Recommendation
 **Recommended:** [Option X]
 **Reasoning:** [Why this is best given trade-offs]
-**Next Steps:** [Concrete actions]
+**Next Steps:** [Concrete actions to take]
 
 ---
 
-## Mode-Specific Prompts
+## Mode-Specific Focus
 
 {{#if (eq mode "architecture")}}
 Focus agents on:
