@@ -11,6 +11,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **workflow-tools plugin (2026-01-08):**
   - Post-audit workflow commands for systematic fixing and parallel implementation
   - **Commands:**
+    - `tournament` - **Competitive coding tournament** - N agents compete on same task, judge picks winner
     - `turbo-fix` - **16 agents across 4 phases** - Maximum parallelism fix pipeline (6→4→3→3)
     - `mega-swarm` - **12 specialized auditors simultaneously** - Comprehensive codebase analysis
     - `fix-pipeline` - Takes audit findings through: Deep Analysis → Plan → Implement → Verify
@@ -24,6 +25,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
     - Type-specific guidance (diagnostics, tests, endpoints, migrations)
     - Interactive mode available with `auto=false`
   - **Agent Counts:**
+    - `/tournament` - N+2 (N competitors + judge + implementer)
     - `/mega-swarm` - 12 parallel (all simultaneous)
     - `/turbo-fix` - 16 total (6→4→3→3 phased)
     - `/fix-pipeline` - 8 total (3→2→1→1 phased)

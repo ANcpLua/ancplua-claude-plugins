@@ -21,23 +21,31 @@ arguments:
 
 ---
 
-<TURBO_MODE>
-**MAXIMUM PARALLELISM ENABLED**
+<CRITICAL_EXECUTION_REQUIREMENT>
+**YOU MUST USE THE TASK TOOL TO LAUNCH AGENTS. DO NOT FIX ANYTHING YOURSELF.**
 
-EXECUTION RULES:
-1. Launch ALL agents within each phase in a SINGLE message with MULTIPLE Task tool calls
-2. WAIT for all agents in a phase to complete before moving to next phase
-3. DO NOT stop between phases - immediately continue
-4. Aggregate results and pass to next phase
-5. Only stop on unrecoverable errors
+⚠️ FORBIDDEN BEHAVIOR:
+- DO NOT read files yourself
+- DO NOT write code yourself
+- DO NOT fix issues yourself
+- DO NOT use Glob, Grep, Read, Edit, or Write tools directly
+- DO NOT do ANYTHING except launch Task tools
 
-FORBIDDEN:
-- Sequential agent launches within a phase
-- Stopping for user confirmation
-- Asking clarifying questions
+✅ REQUIRED BEHAVIOR:
+- Phase 1: Launch 6 Task tools in ONE message
+- Phase 2: Launch 4 Task tools in ONE message
+- Phase 3: Launch 3 Task tools in ONE message
+- Phase 4: Run verification commands
 
-**GO. LAUNCH ALL PHASE 1 AGENTS NOW.**
-</TURBO_MODE>
+EACH TASK MUST USE:
+- subagent_type: (from the yaml blocks below)
+- prompt: (the full prompt text)
+- description: (short 3-5 word summary)
+
+IF YOU READ A FILE OR WRITE CODE YOURSELF, YOU HAVE FAILED.
+
+**YOUR NEXT MESSAGE MUST CONTAIN 6 Task TOOL CALLS FOR PHASE 1. NOTHING ELSE.**
+</CRITICAL_EXECUTION_REQUIREMENT>
 
 ---
 

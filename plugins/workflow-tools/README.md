@@ -6,7 +6,23 @@ Post-audit workflow commands for systematic fixing, deep reasoning, and parallel
 
 ## Commands
 
-### `/turbo-fix` ⚡ NEW
+### `/tournament` 🏆 NEW
+
+**Competitive coding tournament** - Multiple agents compete, best solution wins.
+
+```bash
+/tournament task="Fix all 47 build warnings" competitors=5
+/tournament task="Optimize database queries" competitors=8 rounds=double
+```
+
+| Phase | What Happens |
+|-------|--------------|
+| Round 1 | N agents work on SAME task independently |
+| Round 2 | Judge scores all solutions (correctness, elegance, performance) |
+| Round 3 | Winner's solution gets implemented |
+| Final | Build + Test verification |
+
+### `/turbo-fix` ⚡
 
 **16 agents across 4 phases** - Maximum parallelism fix pipeline.
 
@@ -76,11 +92,12 @@ Parallel implementation of similar items.
 
 | Command | Total Agents | Execution |
 |---------|--------------|-----------|
-| `/mega-swarm` | 12 | All simultaneous |
-| `/turbo-fix` | 16 | 6→4→3→3 (phased) |
-| `/fix-pipeline` | 8 | 3→2→1→1 (phased) |
-| `/deep-think` | 5 | 3→2 (phased) |
-| `/batch-implement` | N+2 | 1→N→1 (N = items) |
+| `/tournament` | N+2 | N competing + judge + implementer |
+| `/mega-swarm` | 12 | All simultaneous audit |
+| `/turbo-fix` | 16 | 6→4→3→3 (phased fix) |
+| `/fix-pipeline` | 8 | 3→2→1→1 (phased fix) |
+| `/deep-think` | 5 | 3→2 (phased reasoning) |
+| `/batch-implement` | N+2 | 1→N→1 (parallel items) |
 
 ## Workflow
 
