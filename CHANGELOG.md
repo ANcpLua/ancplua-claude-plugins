@@ -8,6 +8,22 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **workflow-tools plugin (2026-01-08):**
+  - Post-audit workflow commands for systematic fixing and parallel implementation
+  - **Commands:**
+    - `fix-pipeline` - Takes audit findings through: Deep Analysis → Plan → Implement → Verify
+    - `deep-think` - Extended multi-perspective reasoning before action (debugger, architect, explorer, devil's advocate)
+    - `batch-implement` - Parallel implementation of similar items (diagnostics, tests, endpoints, fixes)
+  - **Features:**
+    - Uses Opus model for deep reasoning phases
+    - Parallel agent execution for speed
+    - TDD enforcement in implementation phase
+    - Type-specific guidance (diagnostics, tests, endpoints, migrations)
+  - **Use Cases:**
+    - Post-swarm-audit systematic fixing
+    - Complex debugging requiring multiple perspectives
+    - Mass implementation of similar features
+
 - **completion-integrity plugin (2026-01-08):**
   - Prevents Claude from taking shortcuts to finish tasks
   - **Git Pre-Commit Hook:**
