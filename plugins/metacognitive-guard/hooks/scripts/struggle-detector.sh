@@ -143,22 +143,18 @@ CONSECUTIVE=$(cat "$STRUGGLE_COUNT_FILE" 2>/dev/null || echo "0")
     echo "timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
     echo "score: $score"
     echo "consecutive: $CONSECUTIVE"
-    if [[ ${#signals[@]} -gt 0 ]]; then
-        for sig in "${signals[@]}"; do
-            echo "  - $sig"
-        done
-    fi
+    for sig in "${signals[@]}"; do
+        echo "  - $sig"
+    done
 } >> "$STRUGGLE_FILE"
 
 # Trigger after 2+ consecutive struggling responses OR high single score
 if [[ "$CONSECUTIVE" -ge 2 ]] || [[ "$score" -gt 25 ]]; then
     # Build signals list with proper escaping
     SIGNALS_LIST=""
-    if [[ ${#signals[@]} -gt 0 ]]; then
-        for sig in "${signals[@]}"; do
-            SIGNALS_LIST="${SIGNALS_LIST}- ${sig}\\n"
-        done
-    fi
+    for sig in "${signals[@]}"; do
+        SIGNALS_LIST="${SIGNALS_LIST}- ${sig}\\n"
+    done
 
     cat <<EOF
 {

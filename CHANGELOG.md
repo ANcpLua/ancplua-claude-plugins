@@ -8,6 +8,17 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **otelwiki v1.0.4: Remove PostToolUse hooks causing "stopped continuation" bug:**
+  - PostToolUse prompt hooks fired on EVERY Edit/Write, regardless of file type
+  - Claude interpreted these prompts as instructions to stop and explain why they don't apply
+  - This caused Claude to stop after every edit with messages like "The edited file is a Swift source file, not a .props file..."
+  - **Solution:** Removed PostToolUse hooks entirely - OTel validation available via otel-guide agent on demand
+  - SessionStart hooks preserved for freshness check
+
+- **dotnet-architecture-lint v1.0.1: Remove stale cached hooks causing same bug:**
+  - hooks.json was deleted from source in commit 1e2893e but plugin cache retained old version
+  - Cache cleared to apply fix
+
 - **metacognitive-guard v0.2.5 robustness improvements:**
   - `epistemic-guard.sh`: Added jq availability check with grep/sed fallback for systems without jq
   - `struggle-detector.sh`: Added safety checks for empty arrays to prevent errors with `set -u`

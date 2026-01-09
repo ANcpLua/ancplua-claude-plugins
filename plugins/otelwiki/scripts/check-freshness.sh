@@ -14,10 +14,9 @@ PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"
 VERSION_FILE="${PLUGIN_ROOT}/docs/VERSION.md"
 
 if [[ -f "$VERSION_FILE" ]]; then
-    CURRENT_VERSION=$(grep -m1 "semconv" "$VERSION_FILE" 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
+    # Use subshell to prevent pipefail from exiting on grep failure
+    CURRENT_VERSION=$( (grep -m1 "semconv" "$VERSION_FILE" 2>/dev/null || true) | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
     echo "OTEL_DOCS_PROMPT|Current: semconv ${CURRENT_VERSION}|Offer user: /otelwiki:sync to refresh"
 else
     echo "OTEL_DOCS_PROMPT|Not initialized|Offer user: /otelwiki:sync to set up"
 fi
-
-exit 0

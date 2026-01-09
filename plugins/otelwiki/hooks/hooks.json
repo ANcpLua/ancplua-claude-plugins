@@ -13,26 +13,6 @@
           }
         ]
       }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Check the file being edited: For .cs files with OpenTelemetry/ActivitySource/Meter/traces/spans/metrics patterns, or for .yaml/.json files with OTel Collector config (receivers/exporters/processors/pipelines), use the otel-guide agent to validate. Verify: 1) Semantic convention attribute names are exact 2) ActivitySource used (not DiagnosticSource) 3) OTLP export/receiver config is correct 4) Pipeline configuration is valid. Report issues only, don't block. Context: ${ARGUMENTS}"
-          }
-        ]
-      },
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Check the file being written: For .cs files with OpenTelemetry/ActivitySource/Meter/traces/spans/metrics patterns, or for .yaml/.json files with OTel Collector config (receivers/exporters/processors/pipelines), use the otel-guide agent to validate. Verify: 1) Semantic convention attribute names are exact 2) ActivitySource used (not DiagnosticSource) 3) OTLP export/receiver config is correct 4) Pipeline configuration is valid. Report issues only, don't block. Context: ${ARGUMENTS}"
-          }
-        ]
-      }
     ]
   }
 }
