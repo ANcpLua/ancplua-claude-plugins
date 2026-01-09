@@ -19,7 +19,14 @@ INPUT=$(cat 2>/dev/null || true)
 [[ -z "$INPUT" ]] && exit 0
 
 # Extract content being written/edited
-CONTENT=$(echo "$INPUT" | jq -r '.tool_input.content // .tool_input.new_string // empty' 2>/dev/null || true)
+# Try jq first, fall back to grep/sed if jq unavailable
+if command -v jq &>/dev/null; then
+    CONTENT=$(echo "$INPUT" | jq -r '.tool_input.content // .tool_input.new_string // empty' 2>/dev/null || true)
+else
+    # Fallback: extract content/new_string using grep/sed (less reliable but works)
+    # Note: This fallback won't handle escaped quotes or JSON string unescaping
+    CONTENT=$(printf '%s' "$INPUT" | grep -oE '"(content|new_string)"\s*:\s*"[^"]*"' | head -1 | sed 's/.*: *"\([^"]*\)".*/\1/' || true)
+fi
 [[ -z "$CONTENT" ]] && exit 0
 
 # =============================================================================
