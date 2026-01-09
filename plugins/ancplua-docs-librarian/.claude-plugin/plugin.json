@@ -1,6 +1,6 @@
 {
   "name": "ancplua-docs-librarian",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Documentation librarian for the ANcpLua ecosystem (SDK, Analyzers, Roslyn Utilities). Answers questions by searching and synthesizing documentation across all three repositories.",
   "author": {
     "name": "ANcpLua",
