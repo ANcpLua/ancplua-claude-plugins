@@ -1,7 +1,7 @@
 {
   "name": "dotnet-architecture-lint",
   "description": "Enforces .NET build patterns: Version.props symlinks, CPM, and single-owner imports. Prevents AI agents from breaking centralized version management.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"
@@ -18,5 +18,6 @@
     "architecture-lint",
     "build-validation"
   ],
-  "skills": "./skills"
+  "skills": "./skills",
+  "hooks": "./hooks"
 }

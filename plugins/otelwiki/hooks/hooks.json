@@ -8,8 +8,9 @@
             "command": "${CLAUDE_PLUGIN_ROOT}/scripts/check-freshness.sh"
           },
           {
-            "type": "prompt",
-            "prompt": "OTel docs plugin loaded. Follow this flow:\n\n1. IF user mentions 'search/web/latest/update' → auto-proceed with checks (don't ask)\n\n2. OTHERWISE ask: 'Sync OTel docs? (yes/no)'\n\n**Freshness sources:**\n- Semconv: WebFetch 'https://api.github.com/repos/open-telemetry/semantic-conventions/releases/latest'\n- .NET SDK: WebFetch 'https://api.nuget.org/v3-flatcontainer/opentelemetry/index.json'\n- Read ${CLAUDE_PLUGIN_ROOT}/docs/VERSION.md → local version\n- Compare → report delta\n\n**On YES:** run /otelwiki:sync, then show what changed\n**On NO:** 'Check for patches?' → YES = fetch latest release notes, NO = proceed\n\nKeep it quick - user is waiting."
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/session-prompt.sh",
+            "timeout": 5000
           }
         ]
       }
