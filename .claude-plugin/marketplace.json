@@ -28,8 +28,8 @@
     },
     {
       "name": "otelwiki",
-      "description": "Unified OpenTelemetry documentation with auto-sync. Auto-triggers on telemetry work, provides semantic conventions, collector config, and .NET 10 instrumentation guidance.",
-      "version": "1.0.3",
+      "description": "OpenTelemetry documentation with auto-sync. Semantic conventions, collector config, .NET instrumentation.",
+      "version": "1.0.5",
       "source": "./plugins/otelwiki"
     },
     {
@@ -40,8 +40,8 @@
     },
     {
       "name": "ancplua-docs-librarian",
-      "description": "Documentation librarian for the ANcpLua ecosystem (SDK, Analyzers, Roslyn Utilities). Answers questions by searching and synthesizing documentation across all three repositories.",
-      "version": "1.0.0",
+      "description": "Documentation librarian for ANcpLua ecosystem (SDK, Analyzers, Roslyn Utilities).",
+      "version": "1.0.1",
       "source": "./plugins/ancplua-docs-librarian"
     },
     {

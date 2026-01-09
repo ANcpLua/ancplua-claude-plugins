@@ -8,6 +8,11 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **otelwiki v1.0.5, ancplua-docs-librarian v1.0.1: Convert inline prompt hooks to script-based:**
+  - Claude Code v2.1.2 bug: prompt hooks in SessionStart require ToolUseContext
+  - Workaround: replaced `type: prompt` with `type: command` running `session-prompt.sh`
+  - Both plugins now use shell scripts to output their freshness prompts
+
 - **otelwiki v1.0.4: Remove PostToolUse hooks causing "stopped continuation" bug:**
   - PostToolUse prompt hooks fired on EVERY Edit/Write, regardless of file type
   - Claude interpreted these prompts as instructions to stop and explain why they don't apply
