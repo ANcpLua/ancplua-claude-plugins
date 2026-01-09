@@ -8,6 +8,14 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **metacognitive-guard v0.2.5 robustness improvements:**
+  - `epistemic-guard.sh`: Added jq availability check with grep/sed fallback for systems without jq
+  - `struggle-detector.sh`: Added safety checks for empty arrays to prevent errors with `set -u`
+
+- **otelwiki v1.0.4 robustness improvements:**
+  - `check-freshness.sh`: Added `set -euo pipefail`, switched to `#!/usr/bin/env bash` for portability
+  - Added proper PLUGIN_ROOT validation and error handling
+
 - **dotnet-architecture-lint: Convert useless PostToolUse to blocking PreToolUse hook:**
   - Previous hook fired on ALL Edit/Write operations, then asked Claude to self-filter
   - This produced noise like "Edit to .cs file detected, but this is not a config file..."
