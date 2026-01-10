@@ -8,6 +8,11 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **metacognitive-guard v0.2.6, otelwiki v1.0.6: Remove duplicate hooks declaration:**
+  - Claude Code auto-loads `hooks/hooks.json` from standard location
+  - Explicit `"hooks": "./hooks/hooks.json"` in plugin.json caused duplicate load error
+  - Removed redundant hooks field from both plugin manifests
+
 - **otelwiki v1.0.5, ancplua-docs-librarian v1.0.1: Convert inline prompt hooks to script-based:**
   - Claude Code v2.1.2 bug: prompt hooks in SessionStart require ToolUseContext
   - Workaround: replaced `type: prompt` with `type: command` running `session-prompt.sh`
