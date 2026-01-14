@@ -15,7 +15,7 @@ Invoke this agent when you need help with:
 
 ## Examples
 
-```
+```text
 User: "My API docs are empty even though I have XML comments on all my classes"
 → Use docfx-principal to audit metadata configuration and fix API documentation generation
 
