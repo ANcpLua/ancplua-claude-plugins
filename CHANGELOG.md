@@ -8,6 +8,24 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **docfx-principal plugin v1.0.0 (2026-01-14):**
+  - DocFX documentation pipeline expert agent using Opus model
+  - **Capabilities:**
+    - Audits existing DocFX configurations and produces `DOCFX_AUDIT.md`
+    - Fixes metadata extraction from .NET assemblies (XML docs → API YAML)
+    - Configures navigation architecture (toc.yml hierarchies)
+    - Resolves cross-reference issues (xref, UID resolution)
+    - Implements multi-repo documentation aggregation
+    - Validates GitHub Pages deployment requirements (`.nojekyll`, assets)
+  - **Use Cases:**
+    - DocFX build failures or warnings
+    - Empty API documentation despite XML comments
+    - Broken navigation or missing pages
+    - Unresolved cross-references (xref warnings)
+    - Multi-repository documentation sites
+    - GitHub Pages 404 errors
+  - **Tools:** Read, Grep, Glob, Write, Edit, Bash, WebSearch, WebFetch
+
 - **trigger-docs.yml workflow (2026-01-14):**
   - Triggers documentation rebuild on ANcpLua.io when this repo changes
   - Triggers on: push to main, release published
