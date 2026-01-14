@@ -1,0 +1,41 @@
+# Trigger docs rebuild on ANcpLua.io when this repo changes
+#
+# When source code changes in ancplua-claude-plugins, this workflow
+# sends a repository_dispatch event to ANcpLua.io to rebuild documentation.
+#
+# Requirements:
+# - DOCS_TRIGGER_PAT secret must be a PAT with repo scope for ANcpLua/ANcpLua.io
+#
+# Security: External inputs passed via env to prevent code injection
+
+name: Trigger Docs Rebuild
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+
+jobs:
+  trigger-docs:
+    name: Trigger ANcpLua.io docs rebuild
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send repository_dispatch to ANcpLua.io
+        env:
+          GH_TOKEN: ${{ secrets.DOCS_TRIGGER_PAT }}
+          SOURCE_REF: ${{ github.ref }}
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/ANcpLua/ANcpLua.io/dispatches \
+            -f "event_type=docs-update" \
+            -f "client_payload[source]=ancplua-claude-plugins" \
+            -f "client_payload[ref]=$SOURCE_REF"
+
+          echo "Triggered docs rebuild on ANcpLua.io"
+          echo "Source: ancplua-claude-plugins"
+          echo "Ref: $SOURCE_REF"

@@ -6,6 +6,16 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **trigger-docs.yml workflow (2026-01-14):**
+  - Triggers documentation rebuild on ANcpLua.io when this repo changes
+  - Triggers on: push to main, release published
+  - Sends repository_dispatch event to ANcpLua/ANcpLua.io with event type `docs-update`
+  - Client payload includes source repo name and git ref
+  - Uses DOCS_TRIGGER_PAT secret for authentication
+  - Enables automatic documentation updates at https://ancplua.github.io/ANcpLua.io/
+
 ### Fixed
 
 - **metacognitive-guard v0.2.6, otelwiki v1.0.6: Remove duplicate hooks declaration:**
