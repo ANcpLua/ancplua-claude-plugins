@@ -55,6 +55,12 @@
       "description": "Post-audit workflow commands: fix-pipeline for systematic fixes, deep-think for extended reasoning, batch-implement for parallel mass implementation, mega-swarm for comprehensive audits, turbo-fix for maximum parallelism, tournament for competitive coding.",
       "version": "1.0.1",
       "source": "./plugins/workflow-tools"
+    },
+    {
+      "name": "docfx-principal",
+      "description": "DocFX documentation pipeline expert. Implements and fixes DocFX builds, API reference generation, multi-repo aggregation, navigation architecture, and cross-reference resolution.",
+      "version": "1.0.0",
+      "source": "./plugins/docfx-principal"
     }
   ]
 }

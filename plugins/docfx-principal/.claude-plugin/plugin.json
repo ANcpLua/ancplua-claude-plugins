@@ -1,0 +1,14 @@
+{
+  "name": "docfx-principal",
+  "version": "1.0.0",
+  "description": "DocFX documentation pipeline expert. Implements and fixes DocFX builds, API reference generation, multi-repo aggregation, navigation architecture, and cross-reference resolution.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "agents": [
+    "./agents/docfx-principal.md"
+  ]
+}
