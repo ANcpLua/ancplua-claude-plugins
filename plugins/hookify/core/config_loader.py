@@ -7,8 +7,7 @@ Loads and parses .claude/hookify.*.local.md files.
 import os
 import sys
 import glob
-import re
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Tuple
 from dataclasses import dataclass, field
 
 
@@ -84,7 +83,7 @@ class Rule:
         )
 
 
-def extract_frontmatter(content: str) -> tuple[Dict[str, Any], str]:
+def extract_frontmatter(content: str) -> Tuple[Dict[str, Any], str]:
     """Extract YAML frontmatter and message body from markdown.
 
     Returns (frontmatter_dict, message_body).
@@ -214,14 +213,20 @@ def load_rules(event: Optional[str] = None) -> List[Rule]:
     seen_names = set()
 
     # Find all hookify.*.local.md files from both locations
-    # Global rules first (lower priority)
-    global_pattern = os.path.join(os.path.expanduser('~'), '.claude', 'global-rules', 'hookify.*.local.md')
+    # Global rules (lower priority) - configurable via env var
+    global_rules_dir = os.environ.get(
+        'CLAUDE_GLOBAL_RULES_DIR',
+        os.path.join(os.path.expanduser('~'), '.claude', 'global-rules')
+    )
+    global_pattern = os.path.join(global_rules_dir, 'hookify.*.local.md')
     # Project-specific rules (higher priority)
     local_pattern = os.path.join('.claude', 'hookify.*.local.md')
 
     # Load local rules first (they take precedence)
     local_files = glob.glob(local_pattern)
-    global_files = glob.glob(global_pattern)
+    global_files: List[str] = []
+    if os.path.isdir(global_rules_dir):
+        global_files = glob.glob(global_pattern)
 
     # Process local files first to track their names
     files = local_files + global_files
@@ -284,11 +289,11 @@ def load_rule_file(file_path: str) -> Optional[Rule]:
     except (IOError, OSError, PermissionError) as e:
         print(f"Error: Cannot read {file_path}: {e}", file=sys.stderr)
         return None
-    except (ValueError, KeyError, AttributeError, TypeError) as e:
-        print(f"Error: Malformed rule file {file_path}: {e}", file=sys.stderr)
-        return None
     except UnicodeDecodeError as e:
         print(f"Error: Invalid encoding in {file_path}: {e}", file=sys.stderr)
+        return None
+    except (ValueError, KeyError, AttributeError, TypeError) as e:
+        print(f"Error: Malformed rule file {file_path}: {e}", file=sys.stderr)
         return None
     except Exception as e:
         print(f"Error: Unexpected error parsing {file_path} ({type(e).__name__}): {e}", file=sys.stderr)

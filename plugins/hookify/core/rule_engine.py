@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Rule evaluation engine for hookify plugin."""
 
+import os
 import re
 import sys
 from functools import lru_cache
@@ -208,6 +209,10 @@ class RuleEngine:
                 # Read transcript file if path provided
                 transcript_path = input_data.get('transcript_path')
                 if transcript_path:
+                    # Security: Prevent path traversal attacks
+                    if os.path.isabs(transcript_path) or '..' in transcript_path.split(os.path.sep):
+                        print(f"Warning: Invalid or unsafe transcript path: {transcript_path}", file=sys.stderr)
+                        return ''
                     try:
                         with open(transcript_path, 'r') as f:
                             return f.read()
