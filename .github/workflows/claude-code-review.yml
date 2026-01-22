@@ -54,6 +54,8 @@ jobs:
       !startsWith(github.event.pull_request.head.ref, 'jules/')
 
     runs-on: ubuntu-latest
+    # Don't block PR if Claude Code Action has infrastructure issues
+    continue-on-error: true
     permissions:
       contents: write
       pull-requests: write
