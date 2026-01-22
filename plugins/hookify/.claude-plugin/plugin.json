@@ -1,0 +1,27 @@
+{
+  "name": "hookify",
+  "version": "0.2.0",
+  "description": "Create hooks to prevent unwanted behaviors. Fork with global rules support (~/.claude/global-rules/)",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "originalAuthor": {
+    "name": "Daisy Hollman",
+    "email": "daisy@anthropic.com"
+  },
+  "keywords": [
+    "hooks",
+    "rules",
+    "safety",
+    "bash",
+    "file",
+    "global-rules"
+  ],
+  "hooks": "./hooks",
+  "skills": "./skills",
+  "commands": "./commands",
+  "agents": "./agents"
+}
