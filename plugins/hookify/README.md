@@ -31,7 +31,7 @@ This analyzes your request and creates `.claude/hookify.warn-rm.local.md`.
 **No restart needed!** Rules take effect on the very next tool use.
 
 Ask Claude to run a command that should trigger the rule:
-```
+```text
 Run rm -rf /tmp/test
 ```
 

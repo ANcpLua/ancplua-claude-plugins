@@ -1,10 +1,29 @@
 ---
-name: Writing Hookify Rules
-description: This skill should be used when the user asks to "create a hookify rule", "write a hook rule", "configure hookify", "add a hookify rule", or needs guidance on hookify rule syntax and patterns.
+name: writing-rules
+description: >
+  Guide for creating hookify rules to prevent unwanted AI behaviors.
+  Use when user asks to create, write, or configure hookify rules.
 version: 0.1.0
 ---
 
 # Writing Hookify Rules
+
+## When to Use
+
+Use this skill when:
+
+- User asks to "create a hookify rule" or "write a hook rule"
+- User wants to configure hookify or add new rules
+- User needs guidance on hookify rule syntax and patterns
+- User wants to prevent specific behaviors in Claude Code
+
+## Process
+
+1. **Identify the behavior** to prevent (dangerous command, debug code, etc.)
+2. **Choose the event type** (bash, file, stop, prompt)
+3. **Write the regex pattern** or conditions
+4. **Create the rule file** in `.claude/hookify.{name}.local.md`
+5. **Test immediately** - rules take effect on next tool use
 
 ## Overview
 
