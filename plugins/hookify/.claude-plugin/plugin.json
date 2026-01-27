@@ -8,10 +8,6 @@
   },
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
   "license": "MIT",
-  "originalAuthor": {
-    "name": "Daisy Hollman",
-    "email": "daisy@anthropic.com"
-  },
   "keywords": [
     "hooks",
     "rules",
@@ -19,9 +15,5 @@
     "bash",
     "file",
     "global-rules"
-  ],
-  "hooks": "./hooks",
-  "skills": "./skills",
-  "commands": "./commands",
-  "agents": "./agents"
+  ]
 }
