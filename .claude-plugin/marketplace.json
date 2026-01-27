@@ -61,6 +61,18 @@
       "description": "DocFX documentation pipeline expert. Implements and fixes DocFX builds, API reference generation, multi-repo aggregation, navigation architecture, and cross-reference resolution.",
       "version": "1.0.0",
       "source": "./plugins/docfx-principal"
+    },
+    {
+      "name": "hookify",
+      "description": "User-configurable hooks from .local.md files. Define blocking and warning rules for Bash commands, file edits, and session events.",
+      "version": "0.2.0",
+      "source": "./plugins/hookify"
+    },
+    {
+      "name": "feature-dev",
+      "description": "Guided feature development with codebase understanding and clean architecture focus.",
+      "version": "0.1.0",
+      "source": "./plugins/feature-dev"
     }
   ]
 }
