@@ -51,6 +51,9 @@ def main():
         # Load rules
         rules = load_rules(event=event)
 
+        # Set hook_event_name for rule engine to use correct response format
+        input_data['hook_event_name'] = 'PreToolUse'
+
         # Evaluate rules
         engine = RuleEngine()
         result = engine.evaluate_rules(rules, input_data)
