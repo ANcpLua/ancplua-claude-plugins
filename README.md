@@ -1,6 +1,6 @@
 # ancplua-claude-plugins
 
-Claude Code plugin marketplace. 8 plugins for CI, code review, cognitive amplification, and workflows.
+Claude Code plugin marketplace. 9 plugins for CI, code review, cognitive amplification, and workflows.
 
 ## Plugins
 
@@ -11,9 +11,10 @@ Claude Code plugin marketplace. 8 plugins for CI, code review, cognitive amplifi
 | **otelwiki** | 1.0.4 | OpenTelemetry docs with auto-sync |
 | **code-review** | 0.1.0 | Security, style, performance analysis |
 | **autonomous-ci** | 0.1.0 | CI verification and monitoring |
-| **ancplua-docs-librarian** | 1.0.1 | ANcpLua ecosystem documentation |
 | **dotnet-architecture-lint** | 1.0.0 | .NET build pattern enforcement |
 | **completion-integrity** | 1.0.0 | Prevents task shortcuts |
+| **hookify** | 0.2.0 | User-configurable hooks from .local.md |
+| **feature-dev** | 0.1.0 | Guided feature development |
 
 ## Install
 
@@ -33,9 +34,10 @@ plugins/
 ├── otelwiki/              # OTel docs + sync
 ├── code-review/
 ├── autonomous-ci/
-├── ancplua-docs-librarian/
 ├── dotnet-architecture-lint/
-└── completion-integrity/
+├── completion-integrity/
+├── hookify/               # user-configurable hooks
+└── feature-dev/           # guided feature development
 ```
 
 ## Links
