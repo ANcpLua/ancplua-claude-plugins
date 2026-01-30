@@ -6,6 +6,23 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **ancplua-project-routing plugin v1.0.0 (2026-01-30):**
+  - Auto-routes Claude to specialist agents based on current project directory
+  - SessionStart hook injects project-specific context
+  - **Supported projects:**
+    - ErrorOrX → erroror-generator-specialist
+    - ANcpLua.Analyzers → ancplua-analyzers-specialist
+    - ANcpLua.NET.Sdk → ancplua-sdk-specialist, msbuild-expert
+    - ANcpLua.Roslyn.Utilities → (with caution - consumers depend on it)
+    - qyl → qyl-observability-specialist, otel-genai-architect
+    - ServiceDefaults → servicedefaults-specialist, otel-genai-architect
+    - Template → template-clean-arch-specialist
+    - ancplua-claude-plugins → Type A rules
+    - ancplua-mcp → Type T rules
+  - Each routing context includes key patterns, available skills, and verification commands
+
 ### Removed
 
 - **ancplua-docs-librarian plugin (2026-01-30):**

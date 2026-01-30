@@ -61,6 +61,12 @@
       "description": "Guided feature development with codebase understanding and clean architecture focus.",
       "version": "0.1.0",
       "source": "./plugins/feature-dev"
+    },
+    {
+      "name": "ancplua-project-routing",
+      "description": "Auto-routes to specialist agents based on current project directory. Injects context for ErrorOrX, Analyzers, SDK, qyl, ServiceDefaults, Template, and plugin repos.",
+      "version": "1.0.0",
+      "source": "./plugins/ancplua-project-routing"
     }
   ]
 }
