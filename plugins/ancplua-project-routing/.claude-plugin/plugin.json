@@ -1,0 +1,8 @@
+{
+  "name": "ancplua-project-routing",
+  "description": "Auto-routes to specialist agents based on current project directory",
+  "version": "1.0.0",
+  "author": {
+    "name": "ancplua"
+  }
+}
