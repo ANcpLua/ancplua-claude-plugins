@@ -39,12 +39,6 @@
       "source": "./plugins/dotnet-architecture-lint"
     },
     {
-      "name": "ancplua-docs-librarian",
-      "description": "Documentation librarian for ANcpLua ecosystem (SDK, Analyzers, Roslyn Utilities).",
-      "version": "1.0.1",
-      "source": "./plugins/ancplua-docs-librarian"
-    },
-    {
       "name": "completion-integrity",
       "description": "Prevents shortcuts when completing tasks: blocks commits with warning suppressions, commented tests, deleted assertions. Detects premature completion claims.",
       "version": "1.0.0",
@@ -55,12 +49,6 @@
       "description": "Post-audit workflow commands: fix-pipeline for systematic fixes, deep-think for extended reasoning, batch-implement for parallel mass implementation, mega-swarm for comprehensive audits, turbo-fix for maximum parallelism, tournament for competitive coding.",
       "version": "1.0.1",
       "source": "./plugins/workflow-tools"
-    },
-    {
-      "name": "docfx-principal",
-      "description": "DocFX documentation pipeline expert. Implements and fixes DocFX builds, API reference generation, multi-repo aggregation, navigation architecture, and cross-reference resolution.",
-      "version": "1.0.0",
-      "source": "./plugins/docfx-principal"
     },
     {
       "name": "hookify",

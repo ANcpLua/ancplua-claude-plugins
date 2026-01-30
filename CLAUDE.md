@@ -121,7 +121,6 @@ ancplua-claude-plugins/
 │   │   ├── skills/              # competitive-review, epistemic-checkpoint
 │   │   └── hooks/               # Struggle detection, fact-checking
 │   ├── otelwiki/                # OpenTelemetry documentation (v1.0.3)
-│   ├── ancplua-docs-librarian/  # ANcpLua ecosystem docs
 │   ├── dotnet-architecture-lint/# .NET build pattern enforcement
 │   ├── completion-integrity/    # Prevents task shortcuts
 │   └── workflow-tools/          # Post-audit workflows (v1.0.1)
@@ -758,10 +757,11 @@ Each plugin should do ONE thing well:
 - `code-review` → Code analysis only
 - `metacognitive-guard` → Cognitive amplification (agents + hooks)
 - `otelwiki` → OpenTelemetry documentation only
-- `ancplua-docs-librarian` → ANcpLua ecosystem docs only
 - `dotnet-architecture-lint` → .NET build patterns only
 - `completion-integrity` → Task completion quality only
 - `workflow-tools` → Multi-agent orchestration workflows
+- `hookify` → User-configurable hooks
+- `feature-dev` → Guided feature development
 
 **Anti-pattern:** A plugin that handles CI, commits, AND reviews.
 

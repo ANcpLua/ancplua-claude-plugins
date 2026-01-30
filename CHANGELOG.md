@@ -6,6 +6,19 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Removed
+
+- **ancplua-docs-librarian plugin (2026-01-30):**
+  - Removed documentation librarian plugin (ANcpLua ecosystem moved to separate site)
+  - Deleted `plugins/ancplua-docs-librarian/` directory
+  - Removed from marketplace.json
+
+- **docfx-principal plugin (2026-01-30):**
+  - Removed DocFX documentation agent plugin (no longer needed)
+  - Deleted `plugins/docfx-principal/` directory
+  - Deleted `docs/specs/spec-0006-docfx-principal.md`
+  - Removed from marketplace.json
+
 ### Added
 
 - **docfx-principal plugin v1.0.0 (2026-01-14):**
