@@ -42,24 +42,27 @@ signals=()
 score=0
 
 # 1. HEDGING LANGUAGE (uncertainty markers) - count each instance
-HEDGE_COUNT=$(echo "$RESPONSE" | grep -oiE \
-    "I think|I believe|probably|might be|could be|I'm not sure|not certain|unclear|I assume|possibly|perhaps" 2>/dev/null \
-    | wc -l | tr -d ' ' || echo "0")
+# Note: Use subshell with || true to prevent pipefail from causing double output
+HEDGE_COUNT=$(echo "$RESPONSE" | { grep -oiE \
+    "I think|I believe|probably|might be|could be|I'm not sure|not certain|unclear|I assume|possibly|perhaps" 2>/dev/null || true; } \
+    | wc -l | tr -d ' \n')
+HEDGE_COUNT=${HEDGE_COUNT:-0}
 if [[ "$HEDGE_COUNT" -gt 3 ]]; then
     signals+=("hedging:$HEDGE_COUNT instances of uncertain language")
     score=$((score + HEDGE_COUNT * 2))
 fi
 
 # 2. EXCESSIVE QUESTIONS (avoiding action) - count each question mark
-QUESTION_COUNT=$(echo "$RESPONSE" | grep -o '?' 2>/dev/null | wc -l | tr -d ' ' || echo "0")
-RESPONSE_LINES=$(echo "$RESPONSE" | wc -l | tr -d ' ')
+QUESTION_COUNT=$(echo "$RESPONSE" | { grep -o '?' 2>/dev/null || true; } | wc -l | tr -d ' \n')
+QUESTION_COUNT=${QUESTION_COUNT:-0}
+RESPONSE_LINES=$(echo "$RESPONSE" | wc -l | tr -d ' \n')
 if [[ "$QUESTION_COUNT" -gt 3 && "$RESPONSE_LINES" -lt 30 ]]; then
     signals+=("deflecting:$QUESTION_COUNT questions in short response")
     score=$((score + QUESTION_COUNT * 2))
 fi
 
 # 3. LONG RESPONSE WITHOUT CODE (vague rambling)
-WORD_COUNT=$(echo "$RESPONSE" | wc -w | tr -d ' ')
+WORD_COUNT=$(echo "$RESPONSE" | wc -w | tr -d ' \n')
 # Count actual code blocks (pairs of ```)
 BACKTICK_COUNT=$(echo "$RESPONSE" | grep -c '```' || true)
 CODE_BLOCKS=$((BACKTICK_COUNT / 2))
@@ -76,18 +79,20 @@ if echo "$RESPONSE" | grep -qiE \
 fi
 
 # 5. APOLOGETIC PATTERNS (sign of prior failure) - count each instance
-APOLOGY_COUNT=$(echo "$RESPONSE" | grep -oiE \
-    "sorry|apologize|my mistake|I was wrong|let me try again|I missed" 2>/dev/null \
-    | wc -l | tr -d ' ' || echo "0")
+APOLOGY_COUNT=$(echo "$RESPONSE" | { grep -oiE \
+    "sorry|apologize|my mistake|I was wrong|let me try again|I missed" 2>/dev/null || true; } \
+    | wc -l | tr -d ' \n')
+APOLOGY_COUNT=${APOLOGY_COUNT:-0}
 if [[ "$APOLOGY_COUNT" -gt 1 ]]; then
     signals+=("apologetic:$APOLOGY_COUNT apologies")
     score=$((score + APOLOGY_COUNT * 8))
 fi
 
 # 6. WEASEL WORDS (avoiding commitment) - count each instance
-WEASEL_COUNT=$(echo "$RESPONSE" | grep -oiE \
-    "generally|typically|usually|in most cases|it depends|that said|to be fair" 2>/dev/null \
-    | wc -l | tr -d ' ' || echo "0")
+WEASEL_COUNT=$(echo "$RESPONSE" | { grep -oiE \
+    "generally|typically|usually|in most cases|it depends|that said|to be fair" 2>/dev/null || true; } \
+    | wc -l | tr -d ' \n')
+WEASEL_COUNT=${WEASEL_COUNT:-0}
 if [[ "$WEASEL_COUNT" -gt 2 ]]; then
     signals+=("weaseling:$WEASEL_COUNT non-committal phrases")
     score=$((score + WEASEL_COUNT * 3))
