@@ -15,8 +15,7 @@ context about which specialist agents to use for that project.
 | `ANcpLua.Analyzers` | ancplua-analyzers-specialist | Roslyn diagnostics |
 | `ANcpLua.NET.Sdk` | ancplua-sdk-specialist, msbuild-expert | MSBuild SDK |
 | `ANcpLua.Roslyn.Utilities` | (careful!) | Shared Roslyn helpers |
-| `qyl` | qyl-observability-specialist | AI observability |
-| `ServiceDefaults` | servicedefaults-specialist | OTel instrumentation |
+| `qyl` | qyl-observability-specialist, servicedefaults-specialist | AI observability + OTel instrumentation |
 | `Template` | template-clean-arch-specialist | Clean Architecture |
 | `ancplua-claude-plugins` | (Type A rules) | Plugin development |
 | `ancplua-mcp` | (Type T rules) | MCP servers |

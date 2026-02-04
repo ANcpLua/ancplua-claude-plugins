@@ -46,8 +46,8 @@
     },
     {
       "name": "workflow-tools",
-      "description": "Post-audit workflow commands: fix-pipeline for systematic fixes, deep-think for extended reasoning, batch-implement for parallel mass implementation, mega-swarm for comprehensive audits, turbo-fix for maximum parallelism, tournament for competitive coding.",
-      "version": "1.0.1",
+      "description": "Multi-agent workflow orchestration: /fix (unified fix pipeline), /red-blue-review (adversarial security), /tournament (competitive coding), /mega-swarm (parallel audit), /deep-think (extended reasoning), /batch-implement (parallel implementation).",
+      "version": "2.0.0",
       "source": "./plugins/workflow-tools"
     },
     {
@@ -64,8 +64,8 @@
     },
     {
       "name": "ancplua-project-routing",
-      "description": "Auto-routes to specialist agents based on current project directory. Injects context for ErrorOrX, Analyzers, SDK, qyl, ServiceDefaults, Template, and plugin repos.",
-      "version": "1.0.0",
+      "description": "Auto-routes to specialist agents based on current project directory. Injects context for ErrorOrX, Analyzers, SDK, qyl (includes servicedefaults), Template, and plugin repos.",
+      "version": "1.0.1",
       "source": "./plugins/ancplua-project-routing"
     }
   ]
