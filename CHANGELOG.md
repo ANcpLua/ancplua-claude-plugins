@@ -8,6 +8,41 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **workflow-tools v2.0.0 - Major refactor with patterns from ErrorOrX (2026-02-04):**
+  - **New `/fix` command** - Unified fix pipeline merging turbo-fix + fix-pipeline
+    - Configurable parallelism: `maximum` (16 agents) or `standard` (8 agents)
+    - Mode variants: `aggressive`, `balanced`, `conservative`
+    - Quick mode: `quick=true` skips devil's advocate phases
+    - Gate checkpoints between each phase with pass/fail validation
+  - **New `/red-blue-review` command** - Adversarial security review pattern
+    - Phase 1: Red Team Attack (3 agents: Crash Hunter, Security Attacker, API Breaker)
+    - Phase 2: Blue Team Defense (1 agent per valid finding)
+    - Phase 3: Verification (Red re-attacks each fix)
+    - Scoring system with points for valid findings, penalties for false alarms
+    - Release recommendation output: SAFE TO RELEASE or BLOCK RELEASE
+  - **Updated `/tournament`** - Penalty-based scoring with transparency
+    - Scoring rubric now shown in competitor prompts (not just judge phase)
+    - Penalties: style nitpicks (-2), over-engineering (-3), doesn't compile (-10)
+    - Explicit tiebreaker rules: Correctness → Performance → First submitted
+  - **Updated `/mega-swarm`** - Configurable agent count
+    - Mode parameter: `full` (12 agents), `quick` (6 agents), `focused` (8 agents)
+    - Gate checkpoint after agent completion with ≥80% success threshold
+  - **Deprecated commands:**
+    - `/turbo-fix` → Use `/fix parallelism=maximum` instead
+    - `/fix-pipeline` → Use `/fix` instead (standard parallelism is default)
+  - **Inspired by ErrorOrX patterns:** stage-gated pipelines, adversarial review, penalty scoring
+
+- **cleanup-specialist agent v1.0.0 (2026-02-04):**
+  - Zero-tolerance cleanup agent - no suppressions, no shortcuts, no technical debt
+  - **Phase 0**: Suppression audit FIRST - finds all #pragma, NoWarn, SuppressMessage
+  - **Phase 1**: Dead code elimination - unused imports, methods, orphan files
+  - **Phase 2**: Duplication elimination - extract to shared utilities
+  - **Phase 3**: Cross-repo cascade - upstream fixes, publish, update downstream
+  - **Phase 4**: Iterate until clean - count > 0 means GO AGAIN
+  - Auto-detects scope: single-file, multi-file, repo, or cross-repo
+  - Dispatches to domain specialists when needed
+  - Mantra: "Clean code. No exceptions. No excuses. Iterate until done."
+
 - **ancplua-project-routing plugin v1.0.0 (2026-01-30):**
   - Auto-routes Claude to specialist agents based on current project directory
   - SessionStart hook injects project-specific context

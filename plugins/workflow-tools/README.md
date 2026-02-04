@@ -1,108 +1,117 @@
-# workflow-tools
+# workflow-tools v2.0.0
 
-Post-audit workflow commands for systematic fixing, deep reasoning, and parallel implementation.
+Multi-agent workflow orchestration with configurable parallelism, adversarial review patterns, and stage-gated pipelines.
 
 **All commands run fully autonomous** - maximum parallelism, no stopping for user input.
 
+## What's New in v2.0.0
+
+- **Unified `/fix` command** - Merged turbo-fix + fix-pipeline with configurable parallelism
+- **`/red-blue-review`** - NEW adversarial Red Team / Blue Team security pattern
+- **Mode variants** - All commands support mode= and quick= parameters
+- **Gate checkpoints** - Explicit pass/fail validation between phases
+- **Penalty scoring** - Tournament now penalizes nitpicks and over-engineering
+
 ## Commands
 
-### `/mega-swarm` - Comprehensive Codebase Audit
+### `/fix` - Unified Fix Pipeline (NEW)
 
-**12 specialized auditors simultaneously** analyzing your entire codebase.
+**Configurable parallelism** for issue resolution. Replaces both `/turbo-fix` and `/fix-pipeline`.
 
 ```bash
-/mega-swarm scope=full
-/mega-swarm scope=src focus="error handling"
+# Standard parallelism (8 agents, 4 phases)
+/fix issue="NullRef in Generator" severity=P1
+
+# Maximum parallelism (16 agents, 4 phases)
+/fix issue="Critical memory leak" severity=P0 parallelism=maximum
+
+# Quick mode (skip devil's advocate)
+/fix issue="Minor bug" severity=P2 quick=true
+
+# Conservative mode (minimal changes, high confidence required)
+/fix issue="API change" severity=P1 mode=conservative
 ```
 
-**When to use:** Starting a new project audit, before major refactors, periodic health checks.
+| Parallelism | Agents | Phases | Best For |
+|-------------|--------|--------|----------|
+| **maximum** | 16 | 6→4→3→3 | P0 critical bugs |
+| **standard** | 8 | 3→2→1→1 | P1/P2 standard bugs |
 
-| Auditor | Focus Area |
-|---------|------------|
-| Architecture | Design, SOLID, coupling |
-| Security | OWASP, injection, auth |
-| Performance | N+1, memory, blocking |
-| Tests | Coverage, quality, flaky |
-| Code Quality | Dead code, duplication |
-| Error Handling | Exceptions, recovery |
-| API | Contracts, versioning |
-| Dependencies | Outdated, vulnerabilities |
-| Configuration | Hardcoded, secrets |
-| Documentation | Accuracy, completeness |
-| Consistency | Style, patterns |
-| Bug Hunter | Null refs, race conditions |
-
-**Output:** Consolidated report with issues ranked P0-P3, recommended fix order.
+**Key features:** Gate checkpoints between phases, mode variants (aggressive/balanced/conservative).
 
 ---
 
-### `/turbo-fix` - Maximum Parallelism Fix Pipeline
+### `/red-blue-review` - Adversarial Review (NEW)
 
-**16 agents across 4 phases** for fastest issue resolution.
+**Red Team attacks, Blue Team defends, verify fixes.**
 
 ```bash
-/turbo-fix issue="Generator NRE in DiagnosticFlow" severity=P0
-/turbo-fix issue="Memory leak in cache" severity=P1 context=src/Cache
+/red-blue-review target="staged changes"
+/red-blue-review target="src/Generators" scope=security
 ```
-
-**When to use:** Critical bugs (P0/P1), complex issues requiring deep analysis.
 
 | Phase | Agents | Purpose |
 |-------|--------|---------|
-| 1. Analysis | 6 | Root cause, impact, history, patterns, tests |
-| 2. Solutions | 4 | 3 architects + devil's advocate |
-| 3. Implement | 3 | Tests, code, docs |
-| 4. Verify | 3 | Build, test, lint |
+| 1. Red Attack | 3 | Crash Hunter, Security Attacker, API Breaker |
+| 2. Blue Defense | 1 per finding | Propose and test fixes |
+| 3. Verification | 1 per fix | Red re-attacks to validate |
 
-**Key features:** Uses Opus model for root cause analysis and solution architecture.
+**Scoring system:** Valid findings = points, false alarms = penalties.
+**Output:** Release recommendation (SAFE / BLOCK).
 
 ---
 
-### `/tournament` - Competitive Coding Tournament
+### `/mega-swarm` - Comprehensive Audit
 
-**N agents compete independently**, judge picks the best solution.
+**Configurable agent count** for codebase analysis.
+
+```bash
+# Full audit (12 agents)
+/mega-swarm scope=full
+
+# Quick audit (6 essential agents)
+/mega-swarm scope=full mode=quick
+
+# Focused audit (8 agents on specific area)
+/mega-swarm scope=src focus="error handling" mode=focused
+```
+
+| Mode | Agents | Best For |
+|------|--------|----------|
+| **full** | 12 | Release readiness, complete audit |
+| **quick** | 6 | Fast health check, CI integration |
+| **focused** | 8 | Deep dive on specific concern |
+
+**Auditors:** Architecture, Security, Performance, Tests, Code Quality, Error Handling, API, Dependencies, Configuration, Documentation, Consistency, Bug Hunter.
+
+---
+
+### `/tournament` - Competitive Coding
+
+**N agents compete with penalty-based scoring.**
 
 ```bash
 /tournament task="Fix all 47 build warnings" competitors=5
 /tournament task="Optimize database queries" competitors=8
 ```
 
-**When to use:** Problems with multiple valid approaches, optimization challenges, quality competitions.
+**Scoring (visible to competitors upfront):**
 
-| Phase | What Happens |
-|-------|--------------|
-| Round 1 | N agents work on SAME task independently |
-| Round 2 | Judge scores: correctness (40%), elegance (25%), performance (20%), completeness (15%) |
-| Round 3 | Winner's solution gets implemented |
-| Final | Build + Test verification |
+| Criterion | Points |
+|-----------|--------|
+| Correctness | 40 pts |
+| Elegance | 25 pts |
+| Performance | 20 pts |
+| Completeness | 15 pts |
+| Style nitpicks | -2 pts |
+| Over-engineering | -3 pts |
+| Doesn't compile | -10 pts |
 
-**Agents:** N competitors + 1 judge + 1 implementer.
-
----
-
-### `/fix-pipeline` - Systematic Fix Pipeline
-
-**8 agents across 4 phases** for methodical issue resolution.
-
-```bash
-/fix-pipeline issue="Generator NRE" severity=P0
-/fix-pipeline issue="complex-bug" severity=P2 context=src/Core
-```
-
-**When to use:** Standard bug fixes, issues requiring careful analysis before implementation.
-
-| Phase | Agents | Purpose |
-|-------|--------|---------|
-| 1. Analysis | 3 | Root cause, impact, codebase context |
-| 2. Design | 2 | Solution architect + devil's advocate |
-| 3. Implement | 1 | TDD implementation |
-| 4. Verify | 1 | Build, test, lint |
-
-**Key features:** TDD enforced, single implementer for focused changes.
+**Tiebreaker:** Correctness → Performance → First submitted.
 
 ---
 
-### `/deep-think` - Extended Multi-Perspective Reasoning
+### `/deep-think` - Extended Reasoning
 
 **5 agents across 2 phases** for complex problem analysis.
 
@@ -111,30 +120,24 @@ Post-audit workflow commands for systematic fixing, deep reasoning, and parallel
 /deep-think problem="Complex debugging scenario" context=src/Generators mode=debug
 ```
 
-**When to use:** Before major decisions, complex debugging, architecture planning, refactoring strategy.
-
 | Phase | Agents | Perspectives |
 |-------|--------|--------------|
 | 1. Understanding | 3 | Debugger, Architect, Explorer |
 | 2. Synthesis | 2 | Solution Designer + Devil's Advocate |
 
-**Modes:** `debug` (default), `architecture`, `refactor`, `decision`.
-
-**Output:** Ranked solutions with confidence, risk, and complexity scores.
+**Modes:** `debug`, `architecture`, `refactor`, `decision`.
 
 ---
 
 ### `/batch-implement` - Parallel Implementation
 
-**N+2 agents** for implementing multiple similar items efficiently.
+**N+2 agents** for implementing multiple similar items.
 
 ```bash
 /batch-implement type=diagnostics items="EOE010,EOE011,EOE012"
 /batch-implement type=tests items="EmptyErrors,ErrorOrExtensions"
 /batch-implement type=endpoints items="GetUser,UpdateUser,DeleteUser"
 ```
-
-**When to use:** Implementing multiple similar features, adding test coverage, creating endpoints.
 
 | Phase | Agents | Purpose |
 |-------|--------|---------|
@@ -147,33 +150,45 @@ Post-audit workflow commands for systematic fixing, deep reasoning, and parallel
 
 ---
 
-## Agent Comparison
+## Deprecated Commands
 
-| Command | Total Agents | Execution Pattern | Best For |
-|---------|--------------|-------------------|----------|
-| `/mega-swarm` | 12 | All simultaneous | Full codebase audit |
-| `/turbo-fix` | 16 | 6-4-3-3 (phased) | Critical fixes |
-| `/tournament` | N+2 | N competing + judge | Quality optimization |
-| `/fix-pipeline` | 8 | 3-2-1-1 (phased) | Standard bug fixes |
-| `/deep-think` | 5 | 3-2 (phased) | Analysis before action |
-| `/batch-implement` | N+2 | 1-N-1 (parallel) | Similar items |
+The following commands are deprecated and will be removed in v3.0.0:
+
+- `/turbo-fix` → Use `/fix parallelism=maximum` instead
+- `/fix-pipeline` → Use `/fix` instead (standard parallelism is default)
+
+---
+
+## Command Comparison
+
+| Command | Agents | Pattern | Best For |
+|---------|--------|---------|----------|
+| `/fix` | 8-16 | Phased pipeline | Bug fixes |
+| `/red-blue-review` | 3+N | Adversarial | Security review |
+| `/mega-swarm` | 6-12 | All parallel | Codebase audit |
+| `/tournament` | N+2 | Competition | Quality optimization |
+| `/deep-think` | 5 | Multi-perspective | Analysis before action |
+| `/batch-implement` | N+2 | Template + parallel | Similar items |
 
 ## Typical Workflow
 
 ```bash
 # 1. Audit the codebase
-/mega-swarm scope=full
+/mega-swarm scope=full mode=quick
 
-# 2. Fix critical issues with maximum parallelism
-/turbo-fix issue="P0 from audit" severity=P0
+# 2. Fix critical issues
+/fix issue="P0 from audit" severity=P0 parallelism=maximum
 
-# 3. Think through architectural decisions
+# 3. Security review before release
+/red-blue-review target="staged changes"
+
+# 4. Think through architectural decisions
 /deep-think problem="How to refactor the cache layer" mode=architecture
 
-# 4. Batch implement missing features
+# 5. Batch implement missing features
 /batch-implement type=diagnostics items="EOE010,EOE011,EOE012"
 
-# 5. Re-audit to confirm fixes
+# 6. Re-audit to confirm fixes
 /mega-swarm scope=full
 ```
 
@@ -183,6 +198,7 @@ This plugin integrates with agents from:
 
 - `feature-dev` - code-architect, code-explorer, code-reviewer
 - `metacognitive-guard` - arch-reviewer
+- `deep-debugger` - systematic debugging
 
 ## Installation
 

@@ -1,5 +1,5 @@
 ---
-description: "Maximum parallel audit - launches 12 specialized agents simultaneously for comprehensive codebase analysis. Usage: /mega-swarm [scope:full] [focus]"
+description: "Maximum parallel audit - configurable agent count for codebase analysis. Usage: /mega-swarm [scope:full] [focus] [mode:full] [quick:false]"
 allowed-tools: Task, TodoWrite
 ---
 
@@ -7,24 +7,76 @@ allowed-tools: Task, TodoWrite
 
 **Scope:** $1 (default: full - options: full|src|tests|config|security)
 **Focus:** $2 (optional focus area or concern)
+**Mode:** $3 (default: full - options: full|quick|focused)
+**Quick:** $4 (default: false - if true, same as mode=quick)
+
+---
+
+## MODE CONFIGURATIONS
+
+| Mode | Agents | Best For |
+|------|--------|----------|
+| **full** | 12 | Complete codebase audit, release readiness |
+| **quick** | 6 | Fast health check, CI integration |
+| **focused** | 8 | Deep dive on specific concern area |
+
+### Agent Selection by Mode
+
+**Full Mode (12 agents):** All auditors
+**Quick Mode (6 agents):** Security, Performance, Tests, Code Quality, Bugs, Architecture
+**Focused Mode (8 agents):** Based on $2 focus area + related auditors
 
 ---
 
 ## EXECUTION INSTRUCTIONS
 
-**YOU MUST USE THE TASK TOOL TO LAUNCH 12 PARALLEL AGENTS.**
+**YOU MUST USE THE TASK TOOL TO LAUNCH PARALLEL AGENTS.**
 
 REQUIRED BEHAVIOR:
+- Full mode ($3 = full or unspecified): Launch 12 agents
+- Quick mode ($3 = quick OR $4 = true): Launch 6 agents
+- Focused mode ($3 = focused): Launch 8 agents relevant to focus area
 - Use the Task tool with subagent_type parameter
-- Launch ALL 12 agents in ONE message with 12 Task tool calls
+- Launch ALL agents in ONE message
 - Each Task call must have: description, prompt, subagent_type
 - WAIT for agents to complete, then synthesize results
 
-**YOUR NEXT MESSAGE MUST CONTAIN 12 Task TOOL CALLS.**
+**YOUR NEXT MESSAGE MUST CONTAIN Task TOOL CALLS for the selected mode.**
 
 ---
 
-## THE SWARM (12 Parallel Agents)
+## GATE: Audit Completion
+
+After agents complete, validate results:
+
+```
+AUDIT GATE:
+┌────────────────────────────────────────────────────────────┐
+│ Mode: [full/quick/focused]                                 │
+│ Agents Completed: [X/Y]                                    │
+│ Agents Failed: [count]                                     │
+├────────────────────────────────────────────────────────────┤
+│ If ≥80% completed: SYNTHESIZE results                      │
+│ If <80% completed: REPORT partial + offer retry            │
+└────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## QUICK MODE AGENTS (6 Essential Auditors)
+
+Use if $3 = quick OR $4 = true. Launch ALL 6 in ONE message:
+
+1. **Architecture Auditor** - SOLID, coupling, design
+2. **Security Auditor** - OWASP, injection, auth
+3. **Performance Auditor** - N+1, memory, blocking
+4. **Test Coverage Auditor** - Gaps, quality, flaky
+5. **Code Quality Auditor** - Dead code, duplication
+6. **Bug Hunter** - Null refs, race conditions
+
+---
+
+## THE SWARM - FULL MODE (12 Parallel Agents)
 
 Launch ALL in ONE message. For each agent, use the Task tool with the specified subagent_type and adapt the prompt to include the user's scope ($1) and focus ($2).
 
