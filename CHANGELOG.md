@@ -58,6 +58,13 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
     - ancplua-mcp → Type T rules
   - Each routing context includes key patterns, available skills, and verification commands
 
+### Changed
+
+- **ancplua-project-routing - ServiceDefaults merged into qyl (2026-02-04):**
+  - Removed separate ServiceDefaults routing (now part of qyl)
+  - Updated qyl routing to include servicedefaults-specialist
+  - qyl routing now mentions OTel SemConv v1.39 and source generator instrumentation
+
 ### Removed
 
 - **ancplua-docs-librarian plugin (2026-01-30):**

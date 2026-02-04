@@ -105,7 +105,7 @@ ErrorOrX, ANcpLua.Analyzers, qyl generators
 elif [[ "$PWD" == *"qyl"* ]]; then
   CONTEXT='<QYL_ROUTING>
 
-You are working in qyl AI observability platform.
+You are working in qyl AI observability platform (includes servicedefaults).
 
 ## MANDATORY Routing
 
@@ -113,6 +113,7 @@ You are working in qyl AI observability platform.
 |------|-----|
 | Implementation | Task tool → qyl-observability-specialist |
 | OTel work | Task tool → otel-genai-architect |
+| Servicedefaults | Task tool → servicedefaults-specialist |
 | TypeSpec | Check qyl/core/specs/ first |
 | Before done | dotnet build + dotnet test (show output) |
 
@@ -122,32 +123,10 @@ You are working in qyl AI observability platform.
 - MCP server
 - SSE streaming
 - BCL-only types in qyl.protocol
+- OTel SemConv v1.39 (servicedefaults)
+- Source generator instrumentation
 
 </QYL_ROUTING>'
-
-  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$CONTEXT\"}}"
-
-elif [[ "$PWD" == *"ServiceDefaults"* ]]; then
-  CONTEXT='<SERVICEDEFAULTS_ROUTING>
-
-You are working in ServiceDefaults1 (zero-config OTel instrumentation).
-
-## MANDATORY Routing
-
-| Task | Use |
-|------|-----|
-| Implementation | Task tool → servicedefaults-specialist |
-| OTel work | Task tool → otel-genai-architect |
-| Semantic conventions | Skill → /otel-expert |
-| Before done | dotnet build + dotnet test (show output) |
-
-## Key Patterns
-- Interceptors
-- Runtime decorators
-- OTel SemConv v1.39
-- Entry: builder.UseQyl() → app.MapQylEndpoints()
-
-</SERVICEDEFAULTS_ROUTING>'
 
   echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$CONTEXT\"}}"
 
