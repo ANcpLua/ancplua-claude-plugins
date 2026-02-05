@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 # Inject .NET architecture constraints as passive context on SessionStart.
 # Claude gets the rules BEFORE writing code, precheck-dotnet.py enforces AFTER.
 
@@ -50,7 +51,7 @@ Example flow for Serilog:
 
 ## Quick Check
 
-Use skill: /dotnet-architecture-lint (runs lint-dotnet.sh on current directory)
+Use skill: /lint-dotnet (runs lint-dotnet.sh on current directory)
 
 </DOTNET_ARCHITECTURE_RULES>'
 
