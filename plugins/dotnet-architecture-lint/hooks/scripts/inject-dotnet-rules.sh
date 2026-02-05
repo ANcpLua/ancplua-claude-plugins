@@ -35,6 +35,19 @@ Use MSBuild variables, never literals:
 Projects with ManagePackageVersionsCentrally=false are exempt from Rule G.
 All other .csproj files MUST NOT have Version= on PackageReference.
 
+## Version Lookup (NEVER guess versions)
+
+When adding or updating a NuGet package:
+1. WebFetch https://api.nuget.org/v3-flatcontainer/{package-id-lowercase}/index.json -> pick latest stable
+2. Or: mcp__github__get_latest_release for packages hosted on GitHub
+3. Put version in Version.props as $(PackageNameVersion), reference via CPM
+
+Example flow for Serilog:
+- WebFetch https://api.nuget.org/v3-flatcontainer/serilog/index.json -> get latest
+- Version.props: <SerilogVersion>X.Y.Z</SerilogVersion>
+- Directory.Packages.props: <PackageVersion Include="Serilog" Version="$(SerilogVersion)" />
+- .csproj: <PackageReference Include="Serilog" /> (no version!)
+
 ## Quick Check
 
 Use skill: /dotnet-architecture-lint (runs lint-dotnet.sh on current directory)
