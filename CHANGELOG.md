@@ -6,7 +6,18 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **dotnet-architecture-lint v1.0.2 — context-aware hooks (2026-02-05):**
+  - SessionStart hook injects .NET architecture rules (4 rules: A/B/C/G) as passive context
+  - PreToolUse hook wires up `precheck-dotnet.py` to block violations on Write/Edit (was never connected)
+  - Claude now knows the rules BEFORE writing code, not just getting blocked after
+  - Removed invalid `"hooks"` field from plugin.json (auto-discovered by convention)
+
 ### Fixed
+
+- **Plugin doctor fixes (2026-02-05):**
+  - Cleaned stale `codebase-improver` from local plugin cache (plugin no longer in marketplace)
 
 - **Review findings sweep (2026-02-05):**
   - Propagated `weave-validate.sh` rename across 9 files (CLAUDE.md, GEMINI.md, copilot-instructions, docs/*, templates)

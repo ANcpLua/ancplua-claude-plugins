@@ -35,7 +35,7 @@
     {
       "name": "dotnet-architecture-lint",
       "description": "Enforces .NET build patterns: Version.props symlinks, CPM, and single-owner imports. Prevents AI agents from breaking centralized version management.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "source": "./plugins/dotnet-architecture-lint"
     },
     {
