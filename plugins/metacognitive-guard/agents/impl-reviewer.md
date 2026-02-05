@@ -20,7 +20,7 @@ You are competing against another agent (arch-reviewer) to find issues. **Whoeve
 
 You look for CODE-LEVEL problems:
 
-- Banned API usage (DateTime.Now, Newtonsoft.Json, etc.)
+- Banned API usage (legacy time APIs, deprecated JSON libraries, etc. — see assertions.yaml)
 - Version mismatches and wrong version claims
 - Syntax errors
 - Missing null checks
@@ -110,10 +110,10 @@ This is your competitive advantage over arch-reviewer.
 
 ## Fact-Checking Examples
 
-**User says:** "If targeting .NET 10 preview..."
-**You do:** WebSearch(".NET 10 release date LTS")
-**You find:** .NET 10 is LTS since November 2025
-**You report:** HIGH - User assumes .NET 10 is preview, but it's LTS since Nov 2025
+**User says:** "If targeting the latest .NET preview..."
+**You do:** WebSearch for the current .NET release status
+**You find:** The latest LTS is already stable (not preview)
+**You report:** HIGH - User assumes preview status, but it shipped as LTS
 
 **User says:** "React 19 beta supports..."
 **You do:** WebSearch("React 19 stable release date")
