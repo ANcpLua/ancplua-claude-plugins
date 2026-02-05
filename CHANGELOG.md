@@ -8,6 +8,57 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **AGENTS.md for ANcpLua.Roslyn.Utilities (2026-02-05):**
+  - Compressed decision tree routing agents to use utilities instead of raw Roslyn APIs
+  - Pipe-delimited docs index pointing to 3 CLAUDE.md files (1,867 lines total)
+  - Key instruction: "NEVER write raw Roslyn API code. Always use utilities first."
+  - Covers: Guard, Match DSL, DiagnosticFlow, EquatableArray, Contexts, Extensions
+- **AGENTS.md for ANcpLua.Analyzers (2026-02-05):**
+  - Compressed decision tree for analyzer/code fix/test development patterns
+  - Updated diagnostic categories: AL0001-AL0093 (93 diagnostics, not 44)
+  - Maps all source of truth files, banned patterns, and testing conventions
+
+### Changed
+
+- **AGENTS.md rewritten as compressed passive-context index (2026-02-05):**
+  - Applied Vercel AGENTS.md research: passive context outperforms skills (100% vs 53%)
+  - Replaced 307-line bloated AGENTS.md with 115-line compressed routing index
+  - Added decision tree: tells agents WHEN to use WHICH skill/agent/command
+  - Added pipe-delimited docs index mapping all 10 skills, 9 agents, 8 commands
+  - Key instruction: "Prefer retrieval-led reasoning over pre-training-led reasoning"
+  - Removed stale content: smart-commit refs, planned agents, Jules API examples
+- **Skills refactor — compress for agent efficiency (2026-02-05):**
+  - Applied learnings from Vercel AGENTS.md research and skills.sh FAQ best practices
+  - Compressed all 7 bloated skills (total reduction: 65% fewer lines)
+  - Moved verbose reference material to `references/` directories (progressive disclosure)
+  - autonomous-ci: 272→67 lines, added `references/project-examples.md`
+  - code-review: 214→74 lines, added `references/common-patterns.md`
+  - hookify/writing-rules: 393→75 lines, added `references/patterns-and-examples.md`
+  - metacognitive-guard: 119→63 lines
+  - competitive-review: 131→55 lines
+  - epistemic-checkpoint: 127→46 lines
+  - verification-before-completion: 164→62 lines
+  - Concise skills left unchanged: completion-integrity (49), dotnet-architecture-lint (55), otel-expert (53)
+
+### Removed
+
+- **Dead directories and orphaned artifacts (2026-02-05):**
+  - Deleted `agents/workflow-orchestrator/` — referenced deleted plugins (smart-commit, jules-integration)
+  - Deleted `agents/AGENTS_BASE.md` — stale shared prompt referencing deleted plugins
+  - Deleted `skills/working-on-ancplua-plugins/` — redundant with CLAUDE.md (passive context beats skills)
+  - Deleted `docs/specs/spec-0004-jules-integration.md` — spec for deleted plugin
+  - Deleted `docs/specs/spec-0005-workflow-orchestrator.md` — spec referencing deleted plugins
+  - Deleted `docs/decisions/ADR-0003-jules-agent-delegation.md` — ADR for deleted plugin
+
+### Fixed
+
+- **Stale references cleanup (2026-02-05):**
+  - Removed smart-commit and jules-integration references from `docs/ARCHITECTURE.md`
+  - Removed smart-commit integration section from `plugins/code-review/README.md` and SKILL.md
+  - Fixed README.md: plugin count 9→10, added ancplua-project-routing, version updates
+
+### Added
+
 - **workflow-tools v2.0.0 - Major refactor with patterns from ErrorOrX (2026-02-04):**
   - **New `/fix` command** - Unified fix pipeline merging turbo-fix + fix-pipeline
     - Configurable parallelism: `maximum` (16 agents) or `standard` (8 agents)

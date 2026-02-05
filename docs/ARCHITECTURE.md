@@ -52,7 +52,8 @@ ancplua-claude-plugins/
 ├── plugins/
 │   ├── autonomous-ci/
 │   ├── code-review/
-│   └── smart-commit/
+│   ├── metacognitive-guard/
+│   └── ... (10 plugins total)
 │
 ├── agents/                      # Agent SDK projects
 │
@@ -211,9 +212,9 @@ Each plugin handles ONE concern:
 | Plugin | Responsibility |
 |--------|----------------|
 | `autonomous-ci` | CI verification and monitoring |
-| `smart-commit` | Commit message generation |
 | `code-review` | Code quality analysis |
-| `jules-integration` | External agent delegation |
+| `metacognitive-guard` | Cognitive amplification and struggle detection |
+| `workflow-tools` | Multi-agent orchestration workflows |
 
 **Anti-pattern:** A "super-plugin" that does everything.
 
