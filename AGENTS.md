@@ -7,7 +7,7 @@
 
 ## Repository
 
-ancplua-claude-plugins | Type A (Brain) | 10 plugins, 10 skills, 9 agents, 8 commands.
+ancplua-claude-plugins | Type A (Brain) | 11 plugins, 10 skills, 11 agents, 8 commands.
 Consumes MCP tools from ancplua-mcp (Type T/Hands). No C# or .NET code here.
 
 ## Decision Tree
@@ -91,7 +91,7 @@ IF zero-tolerance cleanup needed
 
 ## Coordination
 
-5 AIs (Claude, Jules, Copilot, Gemini, CodeRabbit) coordinate via shared files.
+4 AIs (Claude, Copilot, Gemini, CodeRabbit) coordinate via shared files.
 
 | File | Read to | Write when |
 |------|---------|------------|

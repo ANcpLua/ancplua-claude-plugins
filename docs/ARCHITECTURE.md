@@ -159,10 +159,10 @@ Any time a plugin adds or changes MCP usage:
 
 Local and CI validation are aligned:
 
-- `tooling/scripts/local-validate.sh` is the **single entry point** for local checks.
+- `tooling/scripts/weave-validate.sh` is the **single entry point** for local checks.
 - CI uses `.github/workflows/ci.yml` to run the same checks.
 
-At minimum, `local-validate.sh` should:
+At minimum, `weave-validate.sh` should:
 
 - Run `claude plugin validate`:
   - On the marketplace root (`.claude-plugin/marketplace.json`)
@@ -174,7 +174,7 @@ At minimum, `local-validate.sh` should:
 Rules:
 
 - Before claiming a non-trivial change is “done”, developers (human or Claude) must:
-  - Run `./tooling/scripts/local-validate.sh`
+  - Run `./tooling/scripts/weave-validate.sh`
   - Fix failures
   - Re-run until clean
 
@@ -249,7 +249,7 @@ Plugins orchestrate via Skills. Skills define contracts. MCP servers implement.
 
 | Stage | Tool | Purpose |
 |-------|------|---------|
-| Local | `local-validate.sh` | Pre-commit checks |
+| Local | `weave-validate.sh` | Pre-commit checks |
 | CI | `ci.yml` | Automated validation |
 | Review | `claude-code-review.yml` | AI-assisted review |
 | Merge | `auto-merge.yml` | Tiered auto-merge |

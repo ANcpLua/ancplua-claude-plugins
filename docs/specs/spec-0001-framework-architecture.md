@@ -33,7 +33,7 @@ This framework is successful when:
   - Installed via marketplace from this repo.
   - Validated via `claude plugin validate`.
 - New plugins and agents can be added **without changing** the top-level architecture.
-- CI and `tooling/scripts/local-validate.sh` run without unexpected errors after structural changes.
+- CI and `tooling/scripts/weave-validate.sh` run without unexpected errors after structural changes.
 - Claude can follow `CLAUDE.md` to:
   - Refactor the repo.
   - Add or update plugins.
@@ -71,7 +71,7 @@ This framework removes:
 
 - **Ambiguous plugin boundaries**: no more “where does this Skill belong?”.
 - **Unclear responsibilities**: plugins vs agents vs repo-level Skills are explicitly separated.
-- **Inconsistent validation**: CI configuration and `local-validate.sh` define one verification spine.
+- **Inconsistent validation**: CI configuration and `weave-validate.sh` define one verification spine.
 
 ### System complexity issues
 
@@ -252,7 +252,7 @@ From the root of this repo:
 
 ```bash
 cd /Users/ancplua/WebstormProjects/ancplua-claude-plugins
-./tooling/scripts/local-validate.sh
+./tooling/scripts/weave-validate.sh
 ```
 
 Expected behavior:

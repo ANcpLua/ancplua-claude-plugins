@@ -36,5 +36,4 @@ ignore_patterns:
   # Lock files (transient)
   - ".claude-lock"
   - ".gemini-lock"
-  - ".jules-lock"
   - ".gemini/tmp/**"

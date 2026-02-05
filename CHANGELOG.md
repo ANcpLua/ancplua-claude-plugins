@@ -6,6 +6,22 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+
+- **Review findings sweep (2026-02-05):**
+  - Propagated `weave-validate.sh` rename across 9 files (CLAUDE.md, GEMINI.md, copilot-instructions, docs/*, templates)
+  - Removed all Jules references — user no longer uses Jules AI agent
+    - Deleted `.github/workflows/jules-auto-review.yml`
+    - Updated Penta-AI → Quad-AI (Claude, Copilot, Gemini, CodeRabbit)
+    - Removed from: CLAUDE.md, GEMINI.md, copilot-instructions.md, auto-merge.yml, claude-code-review.yml, .gemini/
+  - Fixed 4 marketplace.json version mismatches: metacognitive-guard 0.2.4→0.2.6, otelwiki 1.0.5→1.0.6, dotnet-architecture-lint 1.0.0→1.0.1, feature-dev 0.1.0→1.0.0
+  - Fixed cleanup-specialist dangling `AGENTS_BASE.md` reference (file was deleted)
+  - Fixed copilot-instructions.md stale target architecture (smart-commit, jules-integration → current 11 plugins)
+  - Fixed AGENTS.md counts: 10→11 plugins, 9→11 agents (including standalone)
+  - Fixed ADR-0002 dangling `skills/working-on-ancplua-plugins/` reference
+  - Rewrote docs/AGENTS.md: stale planned agents → current agent inventory (11 agents, 2 standalone + 9 plugin-hosted)
+  - Fixed CLAUDE.md target architecture: removed deleted dirs, added current plugins
+
 ### Added
 
 - **exodia v1.0.0 plugin (2026-02-05):**

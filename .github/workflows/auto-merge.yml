@@ -3,7 +3,7 @@
 # Tiers:
 # 1a. Dependabot PRs: Auto-approve + auto-merge for patch/minor
 # 1b. Renovate PRs: Auto-approve + auto-merge
-# 2.  AI Agent fix PRs (copilot/, jules/, claude/): Auto-merge when CI passes
+# 2.  AI Agent fix PRs (copilot/, claude/): Auto-merge when CI passes
 # 3.  CodeRabbit/Claude approved PRs: Auto-merge when CI passes
 #
 # Requirements:
@@ -94,13 +94,12 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr merge --auto --squash "$PR_URL"
 
-  # Tier 2: Auto-merge AI agent fix PRs (Copilot, Jules, Claude)
+  # Tier 2: Auto-merge AI agent fix PRs (Copilot, Claude)
   ai-agent-auto-merge:
     name: AI Agent auto-merge
     runs-on: ubuntu-latest
     if: |
       startsWith(github.event.pull_request.head.ref, 'copilot/') ||
-      startsWith(github.event.pull_request.head.ref, 'jules/') ||
       startsWith(github.event.pull_request.head.ref, 'claude/')
 
     steps:
@@ -112,8 +111,6 @@ jobs:
         run: |
           if [[ "$BRANCH" == copilot/* ]]; then
             echo "agent=Copilot" >> "$GITHUB_OUTPUT"
-          elif [[ "$BRANCH" == jules/* ]]; then
-            echo "agent=Jules" >> "$GITHUB_OUTPUT"
           elif [[ "$BRANCH" == claude/* ]]; then
             echo "agent=Claude" >> "$GITHUB_OUTPUT"
           fi

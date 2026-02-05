@@ -88,7 +88,6 @@ You **NOT ALLOWED TO**:
 
 ### Co-Agents
 
-- **Jules:** Code Reviewer & CI Guardian.
 - **Gemini:** Senior Dev & Implementation Specialist (See `GEMINI.md` for operational specifics).
 
 ---
@@ -113,27 +112,22 @@ ancplua-claude-plugins/
 │       ├── ci.yml               # Main CI pipeline
 │       └── dependabot.yml
 │
-├── plugins/                     # 8 plugins (as of 2026-01-08)
+├── plugins/                     # 11 plugins
 │   ├── autonomous-ci/           # CI verification and monitoring
 │   ├── code-review/             # Security, style, performance analysis
-│   ├── metacognitive-guard/     # Cognitive amplification stack (v0.2.4)
-│   │   ├── agents/              # arch-reviewer, impl-reviewer, deep-think-partner
-│   │   ├── skills/              # competitive-review, epistemic-checkpoint
-│   │   └── hooks/               # Struggle detection, fact-checking
-│   ├── otelwiki/                # OpenTelemetry documentation (v1.0.3)
+│   ├── metacognitive-guard/     # Cognitive amplification stack (v0.2.6)
+│   ├── otelwiki/                # OpenTelemetry documentation (v1.0.6)
 │   ├── dotnet-architecture-lint/# .NET build pattern enforcement
 │   ├── completion-integrity/    # Prevents task shortcuts
-│   └── workflow-tools/          # Post-audit workflows (v1.0.1)
-│       └── commands/            # mega-swarm, turbo-fix, fix-pipeline, deep-think, batch-implement, tournament
+│   ├── workflow-tools/          # Multi-agent orchestration (v2.0.0)
+│   ├── hookify/                 # User-configurable hooks
+│   ├── feature-dev/             # Guided feature development
+│   ├── ancplua-project-routing/ # Auto-routes to specialist agents
+│   └── exodia/                  # Skills-standard workflow orchestration
 │
 ├── agents/
-│   ├── repo-reviewer-agent/     # Repository health reviewer
-│   └── workflow-orchestrator/   # Pipeline coordination
-│
-├── skills/
-│   └── working-on-ancplua-plugins/
-│       ├── SKILL.md             # Repo-level skill
-│       └── references/
+│   ├── cleanup-specialist/      # Zero-tolerance cleanup agent
+│   └── repo-reviewer-agent/     # Repository health reviewer
 │
 ├── docs/
 │   ├── ARCHITECTURE.md
@@ -151,7 +145,7 @@ ancplua-claude-plugins/
 │
 └── tooling/
     ├── scripts/
-    │   ├── local-validate.sh    # Single validation entrypoint
+    │   ├── weave-validate.sh    # Single validation entrypoint
     │   └── sync-marketplace.sh
     └── templates/
         └── plugin-template/
@@ -261,18 +255,17 @@ Use the `requesting-code-review` skill if available, OR:
 3. Fix High issues before proceeding
 4. Document Medium/Low issues for future
 
-### 4.5.1 Penta-AI Autonomous Agent System
+### 4.5.1 Quad-AI Autonomous Agent System
 
 <EXTREMELY_IMPORTANT>
 
-**This repository uses penta-AI autonomous agents: Claude, Jules, Copilot, Gemini, and CodeRabbit.**
+**This repository uses quad-AI autonomous agents: Claude, Copilot, Gemini, and CodeRabbit.**
 
-### AI Agent Capabilities Matrix (Updated)
+### AI Agent Capabilities Matrix
 
 | Agent      | Reviews | Comments | Creates Fix PRs  | Auto-Merge | Bypass Rules |
 |------------|---------|----------|------------------|------------|--------------|
 | Claude     | ✅       | ✅        | ✅ (via CLI)      | ❌          | ✅            |
-| Jules      | ✅       | ✅        | ✅ (API)          | ❌          | ✅            |
 | Copilot    | ✅       | ✅        | ✅ (Coding Agent) | ❌          | ✅            |
 | Gemini     | ✅       | ✅        | ❌                | ❌          | ❌            |
 | CodeRabbit | ✅       | ✅        | ❌                | ❌          | ✅            |
@@ -285,7 +278,6 @@ Use the `requesting-code-review` skill if available, OR:
 |--------------------------|-------------------|------------------------------|
 | `claude.yml`             | `@claude` mention | Interactive responses        |
 | `claude-code-review.yml` | PR opened/sync    | Formal code review + fix PRs |
-| `jules-auto-review.yml`  | PR opened/sync    | Review + fix PRs             |
 | Copilot Coding Agent     | Issue assignment  | Autonomous issue resolution  |
 
 ### What All AIs Review (Type A Focus)
@@ -304,22 +296,16 @@ Each AI performs **comprehensive, independent reviews** - same scope:
 AIs coordinate through **shared files**, NOT real-time communication:
 
 ```text
-┌─────────────────────────────────────────────────────────┐
-│                    SHARED FILES                         │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌──────────┐   │
-│  │CLAUDE.md│  │GEMINI.md│  │AGENTS.md│  │CHANGELOG │   │
-│  └────┬────┘  └────┬────┘  └────┬────┘  └────┬─────┘   │
-└───────┼────────────┼────────────┼─────────────┼─────────┘
-        │            │            │             │
-   ┌────▼────┐  ┌────▼────┐  ┌────▼────┐  ┌────▼────┐
-   │ Claude  │  │ Gemini  │  │  Jules  │  │ Copilot │
-   └─────────┘  └─────────┘  └─────────┘  └─────────┘
-        │            │            │             │
-        └────────────┴────────────┴─────────────┘
-                     │
-              All agents can now
-              create fix PRs and
-              push to branches
+┌──────────────────────────────────────────────────┐
+│                  SHARED FILES                    │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐          │
+│  │CLAUDE.md│  │AGENTS.md│  │CHANGELOG│          │
+│  └────┬────┘  └────┬────┘  └────┬────┘          │
+└───────┼────────────┼────────────┼────────────────┘
+        │            │            │
+   ┌────▼────┐  ┌────▼────┐  ┌────▼────┐
+   │ Claude  │  │ Gemini  │  │ Copilot │
+   └─────────┘  └─────────┘  └─────────┘
 ```
 
 ### Review Checklist (same for all AIs)
@@ -334,7 +320,7 @@ AIs coordinate through **shared files**, NOT real-time communication:
 ### Auto-merge Tiers
 
 1. **Tier 1:** Dependabot/Renovate patch/minor → auto-merge when CI passes
-2. **Tier 2:** Copilot/Jules fix PR + CI passes → auto-merge
+2. **Tier 2:** Copilot fix PR + CI passes → auto-merge
 3. **Tier 3:** Claude fix PR + CI passes + 1 approval → auto-merge
 4. **Tier 4:** Other PRs → human review required
 
@@ -352,12 +338,6 @@ AIs coordinate through **shared files**, NOT real-time communication:
 - Creates PRs from `copilot/` branches
 - Uses `.github/copilot-instructions.md`
 
-**Jules:**
-
-- API with `automationMode: "AUTO_CREATE_PR"`
-- Set `requirePlanApproval: false` for fully autonomous
-- Creates PRs from `jules/` branches
-
 ### FORBIDDEN
 
 - Do NOT speculate about what other AIs "might find"
@@ -369,7 +349,7 @@ AIs coordinate through **shared files**, NOT real-time communication:
 ### 4.6 Validation (MANDATORY)
 
 ```bash
-./tooling/scripts/local-validate.sh
+./tooling/scripts/weave-validate.sh
 ```
 
 - **MUST pass** before claiming done
@@ -425,7 +405,7 @@ Your completion message MUST include:
 | Item                  | Required                    |
 |-----------------------|-----------------------------|
 | Files modified        | List with summary           |
-| Validation output     | `local-validate.sh` results |
+| Validation output     | `weave-validate.sh` results |
 | Specs created/updated | IDs and filenames           |
 | ADRs created/updated  | IDs and filenames           |
 | CHANGELOG entry       | Exact text added            |
@@ -559,7 +539,7 @@ You MUST NOT:
 Single entrypoint:
 
 ```bash
-./tooling/scripts/local-validate.sh
+./tooling/scripts/weave-validate.sh
 ```
 
 **MUST pass before claiming any task complete.**
@@ -639,11 +619,11 @@ cd ~/ancplua-mcp && git fetch origin && git reset --hard origin/main
 **Validate Both Repos:**
 ```bash
 # Run validation on both
-~/WebstormProjects/ancplua-claude-plugins/tooling/scripts/local-validate.sh
-~/ancplua-mcp/tooling/scripts/local-validate.sh
+~/WebstormProjects/ancplua-claude-plugins/tooling/scripts/weave-validate.sh
+~/ancplua-mcp/tooling/scripts/weave-validate.sh
 
 # Or use the --dual flag (validates sibling repo too)
-./tooling/scripts/local-validate.sh --dual
+./tooling/scripts/weave-validate.sh --dual
 ```
 
 **Create Matching PRs:**
@@ -692,7 +672,7 @@ When changes affect both repos (e.g., workflow updates):
 pwd                              # Confirm location
 git status --short               # Check state
 cat CLAUDE.md                    # Load context
-./tooling/scripts/local-validate.sh  # Baseline
+./tooling/scripts/weave-validate.sh  # Baseline
 ```
 
 ### Skill Search
@@ -705,7 +685,7 @@ find ~/.claude -name "SKILL.md" 2>/dev/null # Superpowers
 ### Validation
 
 ```bash
-./tooling/scripts/local-validate.sh
+./tooling/scripts/weave-validate.sh
 claude plugin validate .
 ```
 
@@ -847,13 +827,13 @@ Track internal state explicitly:
 ### Culture
 
 - **Blameless post-mortems:** When things fail, focus on systemic improvements
-- **Shared ownership:** All agents (Claude, Jules, Gemini) share responsibility
+- **Shared ownership:** All agents (Claude, Copilot, Gemini, CodeRabbit) share responsibility
 - **Fast feedback:** Validate early and often
 
 ### Automation
 
 - **CI/CD:** All changes go through `.github/workflows/ci.yml`
-- **Validation:** `local-validate.sh` is the single source of truth
+- **Validation:** `weave-validate.sh` is the single source of truth
 - **No manual steps:** If it can be automated, it must be
 
 ### Lean

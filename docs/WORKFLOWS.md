@@ -47,7 +47,7 @@ actionlint .github/workflows/*.yml
 Run all checks locally with:
 
 ```bash
-./tooling/scripts/local-validate.sh
+./tooling/scripts/weave-validate.sh
 ```
 
 This script mirrors CI and runs:
@@ -61,7 +61,7 @@ This script mirrors CI and runs:
 
 Before committing changes:
 
-1. Run `./tooling/scripts/local-validate.sh`
+1. Run `./tooling/scripts/weave-validate.sh`
 2. Fix any failures
 3. Update `CHANGELOG.md` for non-trivial changes
 4. Update relevant specs/ADRs if architectural changes were made

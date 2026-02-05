@@ -1,55 +1,54 @@
 # Agents
 
-This directory (`agents/`) is reserved for **Agent SDK-based agents** that consume plugins from this marketplace.
+This directory (`agents/`) contains **standalone agents** that consume plugins from this marketplace.
 
-## Concept
-
-Agents are autonomous programs built with the Claude Agent SDK that can:
-
-- Consume plugins from this marketplace
-- Use Skills from `skills/` and `plugins/**/skills/`
-- Perform complex, multi-step workflows
-- Integrate with external systems via MCP servers
-
-## Planned agents
+## Current Agents
 
 | Agent                 | Description                                           | Status  |
 | --------------------- | ----------------------------------------------------- | ------- |
-| `repo-reviewer-agent` | Reviews code changes and provides feedback            | Planned |
-| `ci-guardian-agent`   | Monitors CI runs and reports failures                 | Planned |
-| `sandbox-agent`       | Isolated environment for testing plugin interactions  | Planned |
+| `cleanup-specialist`  | Zero-tolerance cleanup: no suppressions, no shortcuts | Active  |
+| `repo-reviewer-agent` | Reviews repository health and structure               | Active  |
+
+## Plugin-Hosted Agents
+
+These agents live inside their plugins under `plugins/<name>/agents/`:
+
+| Plugin               | Agent                  | Description                              |
+| -------------------- | ---------------------- | ---------------------------------------- |
+| `metacognitive-guard`| `arch-reviewer`        | Architecture-focused competitive review  |
+| `metacognitive-guard`| `impl-reviewer`        | Implementation-focused competitive review|
+| `metacognitive-guard`| `deep-think-partner`   | Extended reasoning partner               |
+| `otelwiki`           | `otel-guide`           | OpenTelemetry guidance                   |
+| `otelwiki`           | `otel-librarian`       | OTel docs sync and validation            |
+| `feature-dev`        | `code-architect`       | Feature architecture design              |
+| `feature-dev`        | `code-explorer`        | Codebase analysis and tracing            |
+| `feature-dev`        | `code-reviewer`        | Implementation review                    |
+| `hookify`            | `conversation-analyzer`| Analyze conversations for hook patterns  |
 
 ## Structure
 
-Each agent under `agents/<agent-name>/` follows this pattern:
+Each standalone agent under `agents/<agent-name>/` follows:
 
 ```text
 agents/<agent-name>/
 ├── README.md
-├── package.json        # or pyproject.toml
-├── src/
-│   └── index.ts        # or main.py
+├── prompts/
+│   └── system.md       # Agent system prompt
 ├── config/
-│   └── agent.json
+│   └── agent.json      # Agent configuration
 └── tests/
 ```
 
-## Integration with plugins
+## Integration with Plugins
 
-Agents can use plugins by:
+Agents consume plugins by:
 
-1. Installing plugins from this marketplace
-2. Loading Skills at runtime
-3. Calling MCP tools exposed by plugins or external servers
+1. Loading Skills at runtime
+2. Calling MCP tools exposed by plugins or external servers
+3. Using the Task tool with `subagent_type` matching the agent name
 
 The separation of concerns:
 
 - **Plugins** encode reusable behavior and Skills
 - **Agents** orchestrate plugins and execute workflows
-- **MCP servers** expose tools for agents and plugins to call
-
-## Resources
-
-- [Claude Agent SDK documentation](https://code.claude.com/docs/en/agent-sdk)
-- [Plugin development guide](./PLUGINS.md)
-- [MCP integration](./ARCHITECTURE.md#4-mcp-integration)
+- **MCP servers** (in `ancplua-mcp`) expose tools for agents to call
