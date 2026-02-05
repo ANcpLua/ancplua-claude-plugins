@@ -8,6 +8,11 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **exodia v1.0.0 plugin (2026-02-05):**
+  - Skills-standard counterpart to workflow-tools (same 8 workflows as skills instead of commands)
+  - Skills: turbo-fix, fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review
+  - AGENTS.md passive context with decision tree and compressed docs index
+  - Follows skills.sh open standard: `skills/{name}/SKILL.md` with YAML frontmatter
 - **AGENTS.md for ANcpLua.Roslyn.Utilities (2026-02-05):**
   - Compressed decision tree routing agents to use utilities instead of raw Roslyn APIs
   - Pipe-delimited docs index pointing to 3 CLAUDE.md files (1,867 lines total)
