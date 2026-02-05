@@ -129,11 +129,11 @@ plugins/<name>/
 - Paths are relative, not absolute
 - Tool definitions match MCP SDK patterns
 
-## Triple-AI Review System
+## Multi-AI Review System
 
-This repository uses **Claude, Jules, and Gemini** for comprehensive PR reviews.
+This repository uses **Claude, Copilot, Gemini, and CodeRabbit** for comprehensive PR reviews.
 
-### All Three AIs Review the SAME Things
+### All AIs Review the SAME Things
 
 - Plugin schemas (`plugin.json`, `marketplace.json`)
 - SKILL.md files (YAML frontmatter, workflow clarity)
@@ -150,11 +150,7 @@ AIs coordinate through shared files, NOT real-time communication:
 | `CHANGELOG.md` | What has been done - read to avoid duplicate work |
 | `CLAUDE.md` | Project rules and workflows |
 | `GEMINI.md` | Gemini operational constitution |
-| `AGENTS.md` | Jules and external agent context |
-
-### Jules Creates Fix PRs
-
-Jules is unique: it can create branches and PRs to implement fixes.
+| `AGENTS.md` | Agent routing index |
 
 ### FORBIDDEN in Reviews
 

@@ -50,7 +50,7 @@ This repository:
 When Superpowers is installed:
 
 - Claude SHOULD use Superpowers for general workflows (brainstorming, TDD, debugging).
-- Claude SHOULD use repo Skills (`working-on-ancplua-plugins`) for repo-specific behavior.
+- Claude SHOULD use plugin Skills for repo-specific behavior.
 - Plugin Skills (e.g., `autonomous-ci`) add specialized capabilities.
 
 When Superpowers is NOT installed:
@@ -119,8 +119,7 @@ When Superpowers is NOT installed:
 ### Skill precedence
 
 1. **Superpowers Skills** (if installed): General development workflows.
-2. **Repo Skills** (`skills/working-on-ancplua-plugins/`): Repo-specific behavior.
-3. **Plugin Skills** (`plugins/*/skills/`): Plugin-specific capabilities.
+2. **Plugin Skills** (`plugins/*/skills/`): Plugin-specific and repo-specific behavior.
 
 ### Hook guidelines
 

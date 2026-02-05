@@ -87,7 +87,7 @@ Claude: [Executes command]
 Run local validation before committing:
 
 ```bash
-./tooling/scripts/local-validate.sh
+./tooling/scripts/weave-validate.sh
 ```
 
 ## Related

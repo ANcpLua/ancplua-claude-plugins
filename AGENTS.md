@@ -1,306 +1,115 @@
 # AGENTS.md
 
-> **For Jules AI and other autonomous coding agents.**
+> Compressed context for autonomous agents. Always loaded, always present.
 >
-> This file describes the agents, conventions, and workflows in `ancplua-claude-plugins`.
+> **IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning.**
+> Always read the relevant SKILL.md before implementing. Skills are deep docs.
 
----
+## Repository
 
-## Repository Overview
+ancplua-claude-plugins | Type A (Brain) | 11 plugins, 10 skills, 11 agents, 8 commands.
+Consumes MCP tools from ancplua-mcp (Type T/Hands). No C# or .NET code here.
 
-**ancplua-claude-plugins** is a Claude Code plugin marketplace plus experimental agent lab.
-
-| Directory | Purpose |
-|-----------|---------|
-| `plugins/` | Individual Claude Code plugins (autonomous-ci, code-review, smart-commit) |
-| `agents/` | Agent SDK-based agents that consume plugins |
-| `skills/` | Reusable development workflow skills |
-| `tooling/` | Scripts, templates, validation utilities |
-| `docs/` | Architecture, specs, ADRs, workflows |
-
----
-
-## The "Shared Brain" Coordination Pattern
-
-AIs (Claude, Jules, Gemini, CodeRabbit) cannot read each other's minds. They coordinate through **shared files**.
-
-### AI Capability Matrix
-
-| Tool | Reviews | Comments | Creates Fix PRs | Auto-Fix | Bypass Rules |
-|------|---------|----------|-----------------|----------|--------------|
-| Claude | ✅ | ✅ | ✅ (via CLI) | ❌ | ✅ |
-| Jules | ✅ | ✅ | ✅ (API) | ❌ | ✅ |
-| Copilot | ✅ | ✅ | ✅ (Coding Agent) | ❌ | ✅ |
-| Gemini | ✅ | ✅ | ❌ | ❌ | ❌ |
-| CodeRabbit | ✅ | ✅ | ❌ | ❌ | ✅ |
-
-**Autonomous capabilities enabled via:**
-
-- **Claude:** CLI with `gh pr create`, branch push via bypass rules
-- **Copilot:** Coding Agent (assign issues with `@github-copilot`)
-- **Jules:** API with `automationMode: "AUTO_CREATE_PR"`, `requirePlanApproval: false`
-
-### How It Works
+## Decision Tree
 
 ```text
-┌─────────────────────────────────────────────────────────┐
-│                    SHARED FILES                         │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐        │
-│  │ CHANGELOG   │ │ CLAUDE.md   │ │ AGENTS.md   │        │
-│  │ (what's     │ │ (project    │ │ (agent      │        │
-│  │  done)      │ │  rules)     │ │  context)   │        │
-│  └──────┬──────┘ └──────┬──────┘ └──────┬──────┘        │
-│         │               │               │               │
-└─────────┼───────────────┼───────────────┼───────────────┘
-          │               │               │
-    ┌─────▼─────┐   ┌─────▼─────┐   ┌─────▼─────┐
-    │  CLAUDE   │   │   JULES   │   │  GEMINI   │
-    │  (reads)  │   │  (reads)  │   │  (reads)  │
-    └─────┬─────┘   └─────┬─────┘   └─────┬─────┘
-          │               │               │
-          └───────────────┼───────────────┘
-                          ▼
-              ┌───────────────────────┐
-              │  Updates CHANGELOG    │
-              │  when work complete   │
-              └───────────────────────┘
+IF struggling > 2 min
+  → read metacognitive-guard skill, escalate to deep-think-partner agent
+
+IF claiming done/complete/fixed/works
+  → read verification-before-completion skill (run build+tests, show output)
+
+IF version/date/status question
+  → read epistemic-checkpoint skill (check assertions.yaml, then WebSearch)
+
+IF code review needed
+  → read competitive-review skill (spawns arch-reviewer + impl-reviewer)
+
+IF building a new feature
+  → use feature-dev plugin (code-architect → code-explorer → code-reviewer)
+
+IF writing telemetry/observability code
+  → read otel-expert skill, spawn otel-guide agent
+
+IF CI verification before merge
+  → read autonomous-ci skill
+
+IF creating hookify rules
+  → read writing-rules skill
+
+IF .NET MSBuild/CPM patterns
+  → read dotnet-architecture-lint skill
+
+IF about to commit with suppressions/shortcuts
+  → completion-integrity blocks it automatically
+
+IF multi-agent orchestration needed
+  → workflow-tools commands:
+    /fix [issue]              - unified fix pipeline (configurable parallelism)
+    /mega-swarm [scope]       - parallel codebase audit (6-12 agents)
+    /red-blue-review [target] - adversarial security review
+    /deep-think [problem]     - extended multi-perspective reasoning
+    /tournament [task]        - competitive coding (N agents compete)
+    /batch-implement [items]  - parallel similar implementations
+
+IF zero-tolerance cleanup needed
+  → cleanup-specialist agent (agents/cleanup-specialist/)
 ```
 
-### Shared Truth Files
-
-| File | AI Reads To | AI Writes When |
-|------|-------------|----------------|
-| `CHANGELOG.md` | Know what's already done | Completing work |
-| `CLAUDE.md` | Understand project rules | N/A (human-maintained) |
-| `GEMINI.md` | Gemini-specific rules | N/A (human-maintained) |
-| `AGENTS.md` | Agent context, constraints | N/A (human-maintained) |
-| `git status` | Current repo state | (via git operations) |
-
-### Communication Protocol
-
-1. **At session start:** Read `CHANGELOG.md` to see recent work
-2. **During work:** Follow rules in `CLAUDE.md` / `GEMINI.md`
-3. **On completion:** Add entry to `CHANGELOG.md`
-
-### Conflict Prevention
-
-- Each AI sees the SAME shared files
-- No direct AI-to-AI communication
-- Humans synthesize overlapping findings
-- CHANGELOG entries include AI attribution
-
-### FORBIDDEN
-
-- Guessing what another AI "might think"
-- Adding "triangulation notes" about other AIs
-- Claiming consensus without evidence
-
----
-
-## Agents in This Repository
-
-### 1. Claude Code Agents
-
-Claude Code agents are defined in `agents/` and use the Claude Agent SDK.
-
-| Agent | Purpose | Status |
-|-------|---------|--------|
-| `repo-reviewer-agent` | Reviews repository health, structure, code quality | Planned |
-| `ci-guardian-agent` | Monitors CI runs, reports failures, suggests fixes | Planned |
-| `sandbox-agent` | Isolated testing environment for plugin interactions | Planned |
-
-**Configuration:** Each agent has `config/agent.json` defining its plugins, checks, and output format.
-
-### 2. Jules Integration
-
-Jules (Google Labs) can work on this repository via the API.
-
-**Supported tasks for Jules:**
-
-- Bug fixes in plugin code
-- Documentation improvements
-- Test additions
-- Code cleanup and refactoring
-
-**Constraints for Jules:**
-
-- Do NOT modify `.claude-plugin/` manifests without explicit instruction
-- Do NOT change `CLAUDE.md` or `AGENTS.md` without explicit instruction
-- Respect branch protection rules
-
-**To enable fully autonomous Jules:**
-
-Set `requirePlanApproval: false` in API calls for automatic fix PRs without human plan approval.
-
----
-
-## Code Conventions
-
-### Plugin Structure
-
-Each plugin under `plugins/<name>/` follows:
+## Compressed Docs Index
 
 ```text
-plugins/<name>/
-├── .claude-plugin/
-│   └── plugin.json          # Manifest (required)
-├── skills/
-│   └── <skill-name>/
-│       └── SKILL.md         # Skill definition
-├── commands/                # Slash commands
-├── hooks/
-│   └── hooks.json          # Event hooks
-├── scripts/                # Shell utilities
-└── README.md
+[Skills]|root: ./plugins
+|IMPORTANT: Always read SKILL.md first for workflow instructions
+|autonomous-ci/skills/autonomous-ci:{SKILL.md,references/project-examples.md}
+|code-review/skills/code-review:{SKILL.md,references/common-patterns.md}
+|completion-integrity/skills/completion-integrity:{SKILL.md}
+|dotnet-architecture-lint/skills/dotnet-architecture-lint:{SKILL.md}
+|hookify/skills/writing-rules:{SKILL.md,references/patterns-and-examples.md}
+|metacognitive-guard/skills/metacognitive-guard:{SKILL.md}
+|metacognitive-guard/skills/competitive-review:{SKILL.md}
+|metacognitive-guard/skills/epistemic-checkpoint:{SKILL.md}
+|metacognitive-guard/skills/verification-before-completion:{SKILL.md}
+|otelwiki/skills/otel-expert:{SKILL.md}
+
+[Agents]|root: ./plugins
+|Spawn via Task tool with subagent_type matching agent name
+|metacognitive-guard/agents:{arch-reviewer.md,impl-reviewer.md,deep-think-partner.md}
+|otelwiki/agents:{otel-guide.md,otel-librarian.md}
+|feature-dev/agents:{code-architect.md,code-explorer.md,code-reviewer.md}
+|hookify/agents:{conversation-analyzer.md}
+
+[Commands]|root: ./plugins/workflow-tools/commands
+|Invoke via /workflow-tools:<name>
+|{fix.md,mega-swarm.md,red-blue-review.md,deep-think.md,tournament.md,batch-implement.md}
+|DEPRECATED:{turbo-fix.md→/fix parallelism=maximum,fix-pipeline.md→/fix}
+
+[Standalone Agents]|root: ./agents
+|cleanup-specialist:{prompts/,config/}
+|repo-reviewer-agent:{config/}
 ```
 
-### File Naming
+## Coordination
 
-- **Markdown:** kebab-case (`my-document.md`)
-- **Scripts:** kebab-case (`verify-local.sh`)
-- **JSON configs:** lowercase (`plugin.json`, `marketplace.json`)
-- **Skills:** Directory per skill, file is always `SKILL.md`
+4 AIs (Claude, Copilot, Gemini, CodeRabbit) coordinate via shared files.
 
-### Code Style
+| File | Read to | Write when |
+|------|---------|------------|
+| CHANGELOG.md | Know what's done | Completing work |
+| CLAUDE.md | Project rules | Never (human-maintained) |
+| AGENTS.md | This routing index | Never (human-maintained) |
 
-- **Shell scripts:** Use `shellcheck` for linting
-- **Markdown:** Use `markdownlint` for consistency
-- **YAML workflows:** Use `actionlint` for validation
+FORBIDDEN: Guessing what another AI thinks. Triangulation notes. Claiming consensus.
 
----
-
-## Validation Commands
-
-Before submitting changes, run:
+## Validation
 
 ```bash
-# Full local validation
-./tooling/scripts/local-validate.sh
-
-# Plugin-specific validation
-claude plugin validate plugins/<name>
-
-# Marketplace validation
-claude plugin validate .
+./tooling/scripts/weave-validate.sh   # MUST pass before claiming done
+claude plugin validate .               # Marketplace validation
 ```
 
----
+## Conventions
 
-## Documentation Requirements
-
-Every non-trivial change MUST update:
-
-1. **Specs** (`docs/specs/spec-XXXX-*.md`) - Feature contracts
-2. **ADRs** (`docs/decisions/ADR-XXXX-*.md`) - Architectural decisions
-3. **CHANGELOG.md** - Change log under `[Unreleased]`
-
----
-
-## CI/CD Integration
-
-### GitHub Actions
-
-- `ci.yml` - Plugin validation, linting, workflow checks
-- Jules workflows use the Jules API (not GitHub Actions marketplace)
-
-### Jules API Integration
-
-Jules tasks are created via API:
-
-```bash
-# Fully autonomous - no plan approval required
-curl 'https://jules.googleapis.com/v1alpha/sessions' \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -H "X-Goog-Api-Key: $JULES_API_KEY" \
-  -d '{
-    "prompt": "Fix the bug in plugins/code-review/...",
-    "sourceContext": {
-      "source": "sources/github/ANcpLua/ancplua-claude-plugins",
-      "githubRepoContext": { "startingBranch": "main" }
-    },
-    "automationMode": "AUTO_CREATE_PR",
-    "requirePlanApproval": false
-  }'
-
-# With plan approval (safer for complex changes)
-curl 'https://jules.googleapis.com/v1alpha/sessions' \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -H "X-Goog-Api-Key: $JULES_API_KEY" \
-  -d '{
-    "prompt": "Refactor the autonomous-ci plugin...",
-    "sourceContext": {
-      "source": "sources/github/ANcpLua/ancplua-claude-plugins",
-      "githubRepoContext": { "startingBranch": "main" }
-    },
-    "automationMode": "AUTO_CREATE_PR",
-    "requirePlanApproval": true
-  }'
-```
-
----
-
-## Security Notes
-
-- **API keys:** Store in GitHub Secrets (`JULES_API_KEY`), never in code
-- **Permissions:** Jules workflows use minimal required permissions
-- **Auto-merge:** Enabled for bot PRs via Mergify/GitHub auto-merge
-- **Bot loop prevention:** Skip PRs from bot users or `jules/`, `copilot/` branches
-
----
-
-## GitHub Settings for Maximum Autonomy
-
-### 1. Copilot Coding Agent (Settings → Copilot → Coding Agent)
-
-- Enable coding agent
-- Disable firewall OR enable "Recommended allowlist"
-- Configure MCP servers for extended capabilities
-
-### 2. Copilot Code Review (Settings → Copilot → Code Review)
-
-- ✅ Use custom instructions when reviewing pull requests
-- ✅ Automatically request Copilot code review
-- ✅ Review new pushes
-- ✅ Review draft pull requests
-- ✅ Manage static analysis tools (CodeQL, ESLint, PMD)
-
-### 3. Branch Protection Bypass (Settings → Rules → Rulesets)
-
-Add these apps to bypass list with "Always allow":
-
-| App | Provider | Purpose |
-|-----|----------|---------|
-| Copilot coding agent | github | Autonomous code fixes |
-| Claude | anthropic | CLI-based fixes |
-| Google Labs Jules | google-labs-code | API-based fixes |
-| Dependabot | github | Dependency updates |
-| Renovate | mend | Dependency updates |
-| Mergify | Mergifyio | Auto-merge |
-| coderabbitai | coderabbitai | Review comments |
-| Gemini Code Assist | google | Code suggestions |
-
-### 4. Actions Permissions (Settings → Actions → General)
-
-- ✅ Allow GitHub Actions to create and approve pull requests
-- Workflow permissions: Read and write permissions
-
-### 5. Auto-merge Configuration
-
-Enable auto-merge in repository settings, then configure Mergify or GitHub native auto-merge rules.
-
----
-
-## Getting Help
-
-- **Claude Code docs:** <https://code.claude.com/docs>
-- **Jules docs:** <https://jules.google/docs/>
-- **Jules API:** <https://developers.google.com/jules/api>
-
----
-
-## Contact
-
-- **Owner:** AncpLua
-- **Repository:** <https://github.com/ANcpLua/ancplua-claude-plugins>
+- Plugin: `plugins/<name>/{.claude-plugin/plugin.json, README.md, skills/, commands/, hooks/}`
+- Files: kebab-case. Skills: always `SKILL.md`. Linting: shellcheck, markdownlint, actionlint.
+- Changes: `CHANGELOG.md` under `[Unreleased]`. Specs: `docs/specs/`. ADRs: `docs/decisions/`.

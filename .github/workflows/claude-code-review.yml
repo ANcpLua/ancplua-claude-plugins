@@ -50,8 +50,7 @@ jobs:
       github.event.pull_request.user.login != 'dependabot[bot]' &&
       github.event.pull_request.user.login != 'renovate[bot]' &&
       !startsWith(github.event.pull_request.head.ref, 'claude/') &&
-      !startsWith(github.event.pull_request.head.ref, 'copilot/') &&
-      !startsWith(github.event.pull_request.head.ref, 'jules/')
+      !startsWith(github.event.pull_request.head.ref, 'copilot/')
 
     runs-on: ubuntu-latest
     # Don't block PR if Claude Code Action has infrastructure issues

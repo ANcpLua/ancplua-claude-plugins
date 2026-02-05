@@ -14,7 +14,7 @@
    - `.mcp.json` plus MCP server code (for example, under `mcp/` or `lib/`) when the plugin uses MCP.
 4. Update `.claude-plugin/marketplace.json` (or run `tooling/scripts/sync-marketplace.sh` when present).
 5. Update `CHANGELOG.md` for any user-visible change.
-6. Run `./tooling/scripts/local-validate.sh`.
+6. Run `./tooling/scripts/weave-validate.sh`.
 
 ### Example: plugin with MCP server
 

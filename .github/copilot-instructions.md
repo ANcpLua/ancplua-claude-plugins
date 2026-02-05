@@ -24,7 +24,7 @@ This repo is about **Claude Code plugins only** (Type A). It does not contain MC
 
 1. **Act decisively** - Don't ask for permission on routine tasks
 2. **Fix forward** - When you find issues, fix them immediately
-3. **Validate always** - Run `./tooling/scripts/local-validate.sh` before completing
+3. **Validate always** - Run `./tooling/scripts/weave-validate.sh` before completing
 4. **Document changes** - Update CHANGELOG.md for any non-trivial change
 
 ---
@@ -80,16 +80,19 @@ ancplua-claude-plugins/
 │   │   └── scripts/
 │   │
 │   ├── code-review/             # Code review plugin
-│   ├── smart-commit/            # Commit message plugin
-│   └── jules-integration/       # Jules AI delegation
+│   ├── metacognitive-guard/     # Cognitive amplification stack
+│   ├── otelwiki/                # OpenTelemetry documentation
+│   ├── dotnet-architecture-lint/# .NET build pattern enforcement
+│   ├── completion-integrity/    # Prevents task shortcuts
+│   ├── workflow-tools/          # Multi-agent orchestration
+│   ├── hookify/                 # User-configurable hooks
+│   ├── feature-dev/             # Guided feature development
+│   ├── ancplua-project-routing/ # Auto-routes to specialist agents
+│   └── exodia/                  # Skills-standard workflow orchestration
 │
 ├── agents/
-│   ├── repo-reviewer-agent/     # Repository health reviewer
-│   └── workflow-orchestrator/   # Pipeline coordination
-│
-├── skills/
-│   └── working-on-ancplua-plugins/
-│       └── SKILL.md             # Repo-level skill
+│   ├── cleanup-specialist/      # Zero-tolerance cleanup agent
+│   └── repo-reviewer-agent/     # Repository health reviewer
 │
 ├── docs/
 │   ├── ARCHITECTURE.md
@@ -105,7 +108,7 @@ ancplua-claude-plugins/
 │
 └── tooling/
     ├── scripts/
-    │   ├── local-validate.sh    # Single validation entrypoint
+    │   ├── weave-validate.sh    # Single validation entrypoint
     │   └── sync-marketplace.sh
     └── templates/
         └── plugin-template/
@@ -259,7 +262,7 @@ Expected checks include:
 Before committing:
 
 - Run the same steps as CI
-- Use the dedicated script: `./tooling/scripts/local-validate.sh`
+- Use the dedicated script: `./tooling/scripts/weave-validate.sh`
 
 If tests or builds fail:
 
@@ -308,7 +311,7 @@ When adding a new plugin:
 3. Create skills in `skills/<skill-name>/SKILL.md`
 4. Add commands in `commands/` if needed
 5. Update `.claude-plugin/marketplace.json`
-6. Run `./tooling/scripts/local-validate.sh`
+6. Run `./tooling/scripts/weave-validate.sh`
 7. Update `CHANGELOG.md`
 
 When adding a new skill:
@@ -328,16 +331,15 @@ When fixing a bug:
 
 ---
 
-## 9. Penta-AI Autonomous Agent System
+## 9. Quad-AI Autonomous Agent System
 
-You are one of **five AI agents** on this repository. All agents can now create fix PRs autonomously.
+You are one of **four AI agents** on this repository. All agents can now create fix PRs autonomously.
 
-### 9.1 AI Agent Capabilities Matrix (Updated)
+### 9.1 AI Agent Capabilities Matrix
 
 | Agent          | Reviews | Comments | Creates Fix PRs  | Auto-Merge | Bypass Rules |
 |----------------|---------|----------|------------------|------------|--------------|
 | **Claude**     | ✅       | ✅        | ✅ (via CLI)      | ❌          | ✅            |
-| **Jules**      | ✅       | ✅        | ✅ (API)          | ❌          | ✅            |
 | **Copilot**    | ✅       | ✅        | ✅ (Coding Agent) | ❌          | ✅            |
 | **Gemini**     | ✅       | ✅        | ❌                | ❌          | ❌            |
 | **CodeRabbit** | ✅       | ✅        | ❌                | ❌          | ✅            |
@@ -362,7 +364,6 @@ You are one of **five AI agents** on this repository. All agents can now create 
     - Add to bypass list:
         - `Copilot coding agent` (App • github)
         - `Claude` (App • anthropic)
-        - `Google Labs Jules` (App • google-labs-code)
         - `Dependabot` (App • github)
         - `Renovate` (App • mend)
         - `Mergify` (App • Mergifyio)
@@ -406,18 +407,12 @@ You are one of **five AI agents** on this repository. All agents can now create 
 - Workflow: `claude-code-review.yml` triggers on PR events
 - Can push to branches when bypass rules are configured
 
-**Jules:**
-
-- API-based with `automationMode: "AUTO_CREATE_PR"`
-- Set `requirePlanApproval: false` for fully autonomous fixes
-- Creates PRs from `jules/` branches
-
 ### 9.5 AI Coordination
 
 AIs coordinate through **shared files**, not real-time communication:
 
 - `CHANGELOG.md` - What has changed
-- `CLAUDE.md` / `GEMINI.md` / `.github/copilot-instructions.md` - Repository context
+- `CLAUDE.md` / `.github/copilot-instructions.md` - Repository context
 - `docs/specs/` and `docs/decisions/` - Authoritative requirements
 
 Each AI does its own complete review. Overlapping findings indicate high confidence issues.
@@ -440,7 +435,7 @@ All AIs review the same things in this repo:
 |-------|-----------------------------------------------|-----------------------|
 | **1** | Dependabot patch/minor + CI passes            | Auto-merge            |
 | **2** | Renovate updates + CI passes                  | Auto-merge            |
-| **3** | Copilot/Jules fix PR + CI passes + 1 approval | Auto-merge            |
+| **3** | Copilot fix PR + CI passes + 1 approval       | Auto-merge            |
 | **4** | Any other PR                                  | Human review required |
 
 ### 9.8 FORBIDDEN
@@ -463,8 +458,8 @@ Apply these principles when designing or modifying plugins:
 Each plugin should do ONE thing well:
 
 - `autonomous-ci` → CI verification only
-- `smart-commit` → Commit messages only
 - `code-review` → Code analysis only
+- `metacognitive-guard` → Cognitive amplification
 
 **Anti-pattern:** A plugin that handles CI, commits, AND reviews.
 

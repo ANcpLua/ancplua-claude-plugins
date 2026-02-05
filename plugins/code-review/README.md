@@ -128,13 +128,6 @@ The Skill follows a structured checklist:
 3. Fix issues found.
 4. Use `autonomous-ci` to verify.
 
-### With smart-commit
-
-1. Make changes.
-2. Use `code-review` to check.
-3. Fix issues.
-4. Use `smart-commit` to commit.
-
 ## Configuration
 
 The plugin respects project configuration:

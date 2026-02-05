@@ -31,7 +31,7 @@ definitions), `GEMINI.md` defines your *operational strategy* to adhere to those
   - **Type T (Technology):** `ancplua-mcp` (External Repo). Contains C# MCP Servers & Tools.
 - **Build System:** `npm` / `yarn` (Verify which lockfile exists).
 - **Validation:**
-  - **Script:** `./tooling/scripts/local-validate.sh` (THE canonical check).
+  - **Script:** `./tooling/scripts/weave-validate.sh` (THE canonical check).
   - **Command:** `claude plugin validate .`
 - **Testing:**
   - Look for `.test.ts` or `.spec.ts`.
@@ -60,7 +60,7 @@ For any task complexer than a typo fix:
    - Identify or create the test case *first*.
    - Run the test to confirm failure (Red).
 4. **Implement:** Write minimal code to pass the test (Green).
-5. **Verify:** Run `./tooling/scripts/local-validate.sh`.
+5. **Verify:** Run `./tooling/scripts/weave-validate.sh`.
 
 ### 2.2 Code Modification Guidelines
 
@@ -78,16 +78,15 @@ For any task complexer than a typo fix:
 
 ---
 
-## 3. Penta-AI Autonomous Agent System
+## 3. Quad-AI Autonomous Agent System
 
-You are part of a penta-AI agent team: **Claude, Jules, Copilot, Gemini, and CodeRabbit**.
+You are part of a quad-AI agent team: **Claude, Copilot, Gemini, and CodeRabbit**.
 
 ### AI Agent Capabilities Matrix
 
 | Agent | Reviews | Comments | Creates Fix PRs | Auto-Merge | Bypass Rules |
 |-------|---------|----------|-----------------|------------|--------------|
 | Claude | ✅ | ✅ | ✅ (via CLI) | ❌ | ✅ |
-| Jules | ✅ | ✅ | ✅ (API) | ❌ | ✅ |
 | Copilot | ✅ | ✅ | ✅ (Coding Agent) | ❌ | ✅ |
 | Gemini | ✅ | ✅ | ❌ | ❌ | ❌ |
 | CodeRabbit | ✅ | ✅ | ❌ | ❌ | ✅ |
@@ -116,7 +115,7 @@ AIs do NOT communicate in real-time. Coordination happens through shared files:
 |------|----------|
 | `CHANGELOG.md` | What has been done recently - prevents duplicate work |
 | `CLAUDE.md` | Project rules and mandatory workflows |
-| `AGENTS.md` | Context for Jules and external agents |
+| `AGENTS.md` | Context for external agents |
 | `.github/copilot-instructions.md` | Copilot-specific context |
 | `git status` | Current repository state |
 
@@ -129,7 +128,7 @@ AIs do NOT communicate in real-time. Coordination happens through shared files:
 
 ### FORBIDDEN
 
-- Do NOT speculate about what Claude or Jules "might find"
+- Do NOT speculate about what Claude "might find"
 - Do NOT add "triangulation notes" guessing other perspectives
 - Do NOT claim to know what another AI is thinking
 - If you see `.claude/` configuration, **respect it**
@@ -196,11 +195,11 @@ When working on plugins, apply these principles:
 ### Culture
 
 - **Blameless:** Focus on fixes, not blame
-- **Shared ownership:** You, Claude, and Jules are a team
+- **Shared ownership:** You, Claude, Copilot, and CodeRabbit are a team
 
 ### Automation
 
-- Always use `local-validate.sh`
+- Always use `weave-validate.sh`
 - Never skip automated checks
 
 ### Lean
@@ -254,7 +253,7 @@ Location: [File:Line]
 You have **FAILED** if:
 
 - You act on outdated context (e.g., trying to run `dotnet build`)
-- You skip validation (`local-validate.sh`)
+- You skip validation (`weave-validate.sh`)
 - You break the build and don't fix it
 - You ignore a `SKILL.md` relevant to your task
 - You confuse Type A (Plugins) and Type T (MCP) responsibilities
@@ -267,7 +266,7 @@ You have **FAILED** if:
 
 You have **SUCCEEDED** when:
 
-- Validation passes (`local-validate.sh` exits 0)
+- Validation passes (`weave-validate.sh` exits 0)
 - All applicable skills were followed
 - Changes are documented (CHANGELOG)
 - Evidence supports your claims
