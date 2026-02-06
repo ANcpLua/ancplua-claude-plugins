@@ -1,7 +1,7 @@
 {
   "name": "exodia",
-  "version": "1.0.0",
-  "description": "Multi-agent workflow orchestration as skills: turbo-fix, fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review. Skills-standard counterpart to workflow-tools.",
+  "version": "1.1.0",
+  "description": "Multi-agent workflow orchestration as skills: turbo-fix, fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, hades (Smart cleanup with audit trail). Skills-standard counterpart to workflow-tools.",
   "author": {
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"

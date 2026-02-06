@@ -1,197 +1,132 @@
 ---
 name: tournament
-description: "Use when multiple valid approaches exist and you need the best one. N agents compete, judge picks winner. For complex trade-offs without competition -> use deep-think."
+description: "IF multiple valid approaches THEN use this. N agents compete, judge picks winner by penalty scoring. For trade-offs without competition → deep-think."
 allowed-tools: Task, Bash, TodoWrite
 ---
 
-# TOURNAMENT MODE
+# TOURNAMENT — Competitive Coding with Penalty Scoring
+
+> N competitors. 1 judge. Winner's code ships.
 
 **Task:** $1
 **Competitors:** $2 (default: 5)
 
 ---
 
-## SCORING SYSTEM (Visible to ALL Competitors)
+## SCORING (Visible to ALL)
 
-| Finding Type | Points |
-|--------------|--------|
-| **Correctness** (compiles, tests pass, no bugs) | 40 pts |
-| **Elegance** (clean, readable, idiomatic) | 25 pts |
-| **Performance** (efficient, no waste) | 20 pts |
-| **Completeness** (edge cases, error handling) | 15 pts |
-| **PENALTIES** | |
-| Style/formatting nitpicks | -2 pts |
-| Over-engineering | -3 pts |
-| Unnecessary complexity | -3 pts |
-| Code that doesn't compile | -10 pts |
-| False claims about solution | -5 pts |
+| Criterion | Points | Penalty | Points |
+|-----------|--------|---------|--------|
+| Correctness | 40 | Style nitpicks | -2 |
+| Elegance | 25 | Over-engineering | -3 |
+| Performance | 20 | Unnecessary complexity | -3 |
+| Completeness | 15 | Doesn't compile | -10 |
+| | | False claims | -5 |
 
-### Tiebreaker Rules
+**Tiebreaker:** Correctness → Performance → First submitted
 
-If two competitors have equal scores:
-1. Higher Correctness score wins
-2. If still tied: Higher Performance score wins
-3. If still tied: First submitted solution wins
+---
+
+## TEAM ARCHITECTURE
+
+```text
+TOURNAMENT JUDGE (You — Orchestrator)
+│
+├─ Round 1: COMPETITION ($2 parallel competitors)
+│  ├── competitor-1
+│  ├── competitor-2
+│  ├── ...
+│  └── competitor-N
+│  └── GATE → all complete
+│
+├─ Round 2: JUDGING (1 agent)
+│  └── tournament-judge
+│  └── GATE → winner selected
+│
+└─ Round 3: IMPLEMENTATION (1 agent)
+   └── winner-implementer
+   └── Build + Test → SHIPPED | BLOCKED
+```
 
 ---
 
 <CRITICAL_EXECUTION_REQUIREMENT>
-**THIS IS A COMPETITION. YOU ORCHESTRATE, AGENTS COMPETE.**
 
-YOU ARE THE JUDGE, NOT A COMPETITOR:
-- DO NOT read files yourself
-- DO NOT write code yourself
-- DO NOT fix issues yourself
-- YOU ONLY: launch agents, evaluate results, pick winner
+**YOU ARE THE JUDGE, NOT A COMPETITOR.**
 
-TOURNAMENT RULES:
-1. Parse $2 for number of competitors (default 5 if not specified)
-2. Launch that many competing agents in ONE message using Task tool
-3. Each agent works INDEPENDENTLY on the SAME task
-4. Agents DO NOT know about each other
-5. Competitors see scoring rubric UPFRONT (transparency)
-6. After all complete, launch a Judge agent to score solutions
-7. WINNER's code gets committed
+- DO NOT read files, write code, or fix issues yourself
+- YOU ONLY: launch competitors, evaluate results, pick winner
 
-**YOUR NEXT MESSAGE: Launch N Task tool calls (one per competitor). NOTHING ELSE.**
+1. Parse $2 for competitor count (default 5)
+2. Launch $2 competitors in ONE message (Task tool, parallel)
+3. Each works INDEPENDENTLY — no knowledge of others
+4. Launch 1 judge to score all solutions
+5. Launch 1 implementer for winning solution
+6. Verify build + tests
+
+**YOUR NEXT MESSAGE: $2 Task tool calls. NOTHING ELSE.**
+
 </CRITICAL_EXECUTION_REQUIREMENT>
 
 ---
 
 ## ROUND 1: COMPETITION
 
-For EACH competitor, launch a Task with:
+Launch $2 agents in ONE message. Identical prompt per competitor:
 
-```yaml
-subagent_type: feature-dev:code-architect
-model: opus
-description: "Tournament competitor N"
-prompt: |
-  TOURNAMENT COMPETITION
+### competitor-N (one per competitor)
 
-  You are a competitor in a coding tournament.
-  Other competitors are working on the SAME task.
-  Only the BEST solution wins.
-
-  TASK: [insert $1 here]
-
-  ===============================================================
-  SCORING RUBRIC (100 points total):
-  ---------------------------------------------------------------
-  Correctness:   40 pts - Compiles, tests pass, no bugs
-  Elegance:      25 pts - Clean, readable, idiomatic
-  Performance:   20 pts - Efficient, no waste
-  Completeness:  15 pts - Edge cases, error handling
-
-  PENALTIES (applied by judge):
-     Style nitpicks:        -2 pts
-     Over-engineering:      -3 pts
-     Unnecessary complexity: -3 pts
-     Doesn't compile:       -10 pts
-     False claims:          -5 pts
-
-  TIEBREAKER: Correctness -> Performance -> First submitted
-  ===============================================================
-
-  RULES:
-  - Write the BEST, most elegant solution
-  - Be AGGRESSIVE - don't just fix, OPTIMIZE
-  - Show your work: explain WHY your solution is superior
-  - Code must compile and pass tests
-  - AVOID nitpicks and over-engineering (penalties!)
-
-  At the end, explain why YOUR solution should win.
-
-  Output:
-  - All code changes (full files or diffs)
-  - Explanation of approach
-  - Why this solution is BEST
-```
+> subagent: feature-dev:code-architect | model: opus
+>
+> TOURNAMENT — You are competing against others on the SAME task. Only the BEST wins.
+>
+> TASK: $1
+>
+> SCORING: Correctness(40) + Elegance(25) + Performance(20) + Completeness(15) = 100
+> PENALTIES: Style(-2), Over-engineering(-3), Complexity(-3), No-compile(-10), False claims(-5)
+> TIEBREAKER: Correctness → Performance → First submitted
+>
+> Write the BEST solution. Code must compile and pass tests. AVOID penalties.
+> Explain WHY your solution should win.
+>
+> Output: All code changes + approach explanation + why this wins
 
 ---
 
 ## ROUND 2: JUDGING
 
-After ALL competitors complete, launch ONE judge:
+### tournament-judge
 
-```yaml
-subagent_type: feature-dev:code-reviewer
-model: opus
-description: "Tournament judge"
-prompt: |
-  TOURNAMENT JUDGE
-
-  You are judging N solutions for the task.
-
-  ===============================================================
-  SCORING (100 points total):
-  ---------------------------------------------------------------
-  Correctness:   40 pts - Compiles, tests pass, no bugs
-  Elegance:      25 pts - Clean, readable, idiomatic
-  Performance:   20 pts - Efficient, no waste
-  Completeness:  15 pts - Edge cases, error handling
-
-  PENALTIES (APPLY THESE):
-     Style nitpicks:        -2 pts
-     Over-engineering:      -3 pts
-     Unnecessary complexity: -3 pts
-     Doesn't compile:       -10 pts
-     False claims:          -5 pts
-
-  TIEBREAKER: Correctness -> Performance -> First submitted
-  ===============================================================
-
-  FOR EACH COMPETITOR:
-  1. Score each positive criterion (0-max)
-  2. Apply penalty deductions
-  3. Calculate total score
-  4. Specific praise (what they did well)
-  5. Specific criticism (what cost them points)
-
-  DETAILED SCORECARD:
-  | Competitor | Correct | Elegant | Perf | Complete | Penalties | TOTAL |
-  |------------|---------|---------|------|----------|-----------|-------|
-  | 1          | /40     | /25     | /20  | /15      | -X        | /100  |
-  | 2          | /40     | /25     | /20  | /15      | -X        | /100  |
-  | ...        |         |         |      |          |           |       |
-
-  PENALTY LOG:
-  - Competitor X: -2 (style nitpick: [reason])
-  - Competitor Y: -3 (over-engineering: [reason])
-
-  FINAL RANKING:
-  1. Winner: [name] - [score]/100
-  2. Second: [name] - [score]/100
-  3. Third: [name] - [score]/100
-
-  TIEBREAKER APPLIED: [Yes/No - explain if yes]
-
-  WINNER'S SOLUTION:
-  [Show the winning code that should be applied]
-```
+> subagent: feature-dev:code-reviewer | model: opus
+>
+> JUDGE $2 solutions for: $1
+>
+> SCORING: Correctness(40) + Elegance(25) + Performance(20) + Completeness(15)
+> PENALTIES: Style(-2), Over-engineering(-3), Complexity(-3), No-compile(-10), False claims(-5)
+> TIEBREAKER: Correctness → Performance → First submitted
+>
+> For each: score criteria, apply penalties, calculate total.
+>
+> Output:
+> SCORECARD: | Competitor | Correct | Elegant | Perf | Complete | Penalties | TOTAL |
+> PENALTY LOG: Competitor X: -N (reason)
+> FINAL RANKING with winner's solution code
 
 ---
 
 ## ROUND 3: IMPLEMENTATION
 
-Launch ONE implementer:
+### winner-implementer
 
-```yaml
-subagent_type: feature-dev:code-architect
-description: "Implement winner solution"
-prompt: |
-  IMPLEMENT the winning solution from the tournament.
-
-  Apply all the winning code changes.
-  Ensure tests pass.
-  Format code properly.
-
-  Output: Files changed with verification
-```
+> subagent: feature-dev:code-architect
+>
+> IMPLEMENT the winning tournament solution.
+> Apply all code changes. Ensure tests pass. Format properly.
+> Output: Files changed + verification
 
 ---
 
-## FINAL: VERIFICATION
+## VERIFICATION
 
 ```bash
 dotnet build 2>&1 || npm run build 2>&1 || make build 2>&1
@@ -200,24 +135,18 @@ dotnet test 2>&1 || npm test 2>&1 || make test 2>&1
 
 ---
 
-## SUMMARY
+## FINAL REPORT
 
-After completion, output:
-
-```
+```text
 +====================================================================+
 |                    TOURNAMENT RESULTS                               |
 +====================================================================+
-| Task: $1                                                            |
-| Competitors: N                                                      |
-+====================================================================+
-|                         FINAL STANDINGS                             |
-|  1st: [Competitor X] - [score]/100                                  |
-|  2nd: [Competitor Y] - [score]/100                                  |
-|  3rd: [Competitor Z] - [score]/100                                  |
-+====================================================================+
-| Winning Solution Applied: YES                                       |
-| Build: PASS/FAIL                                                    |
-| Tests: PASS/FAIL                                                    |
+| Task: $1 | Competitors: $2                                          |
++--------------------------------------------------------------------+
+| 1st: [name] — [score]/100                                           |
+| 2nd: [name] — [score]/100                                           |
+| 3rd: [name] — [score]/100                                           |
++--------------------------------------------------------------------+
+| Winner Applied: YES | Build: PASS/FAIL | Tests: PASS/FAIL           |
 +====================================================================+
 ```

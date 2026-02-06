@@ -1,160 +1,142 @@
 ---
 name: deep-think
-description: "Use before action on complex problems needing multi-perspective analysis. 5 agents, 3 phases. For competing implementations -> use tournament instead."
+description: "IF complex problem needing multi-perspective analysis THEN use this. 5 agents, 3 phases: understand→synthesize→recommend. No implementation. For competing implementations → tournament."
 allowed-tools: Task, TodoWrite
 ---
 
-# Deep Think Partner
+# DEEP THINK — Multi-Perspective Reasoning Before Action
 
-Extended multi-perspective reasoning before action.
+> Three perspectives. One synthesis. No implementation — just understanding.
 
 **Problem:** $1
 **Context:** $2 (default: .)
-**Mode:** $3 (default: debug, options: debug|architecture|refactor|decision)
+**Mode:** $3 (default: debug | debug|architecture|refactor|decision)
+
+---
+
+## TEAM ARCHITECTURE
+
+```text
+THINK LEAD (You — Synthesizer)
+│
+├─ Phase 1: PROBLEM UNDERSTANDING (3 agents parallel)
+│  ├── debugger-mind
+│  ├── architect-mind
+│  └── explorer-mind
+│  └── → IMMEDIATELY proceed
+│
+├─ Phase 2: SOLUTION SYNTHESIS (2 agents parallel)
+│  ├── solution-designer
+│  └── devils-advocate
+│  └── → IMMEDIATELY proceed
+│
+└─ Phase 3: RECOMMENDATION (you — consolidate)
+   └── Summary table + recommended action
+```
 
 ---
 
 <CRITICAL_EXECUTION_REQUIREMENT>
-**RUN ALL PHASES WITHOUT STOPPING.**
 
-1. Launch all Phase 1 agents in PARALLEL (single message, multiple Task calls)
-2. When they complete, IMMEDIATELY proceed to Phase 2
-3. When Phase 2 completes, IMMEDIATELY present final recommendation
-4. DO NOT ask for confirmation between phases
-5. Only stop at the end with the final recommendation
+**RUN ALL 3 PHASES WITHOUT STOPPING.**
 
-**YOUR NEXT MESSAGE: Launch 3 Task tool calls for Phase 1. NOTHING ELSE.**
+1. Launch 3 Phase 1 agents in ONE message
+2. When complete, IMMEDIATELY launch 2 Phase 2 agents
+3. When complete, IMMEDIATELY present recommendation
+
+**DO NOT** ask for confirmation between phases.
+**YOUR NEXT MESSAGE: 3 Task tool calls for Phase 1. NOTHING ELSE.**
+
 </CRITICAL_EXECUTION_REQUIREMENT>
 
 ---
 
-## Phase 1: Problem Understanding (3 Parallel Agents)
+## PHASE 1: PROBLEM UNDERSTANDING — 3 Agents
 
-Launch ALL 3 agents in PARALLEL using a single message with multiple Task tool calls:
+Launch ALL 3 in ONE message.
 
-### Perspective 1: Debugger Mindset
-```yaml
-subagent_type: deep-debugger
-model: opus
-description: "Debugger perspective analysis"
-prompt: |
-  PROBLEM: [insert $1 here]
-  CONTEXT: [insert $2 here, default .]
+### debugger-mind
 
-  THINK AS A DEBUGGER:
-  1. What is the actual problem vs perceived problem?
-  2. What are ALL possible root causes? (list 5+)
-  3. What evidence would confirm/deny each?
-  4. What's the minimum viable investigation?
-  5. What assumptions am I making?
+> subagent: deep-debugger | model: opus
+>
+> You are debugger-mind. THINK AS A DEBUGGER.
+> PROBLEM: $1 | CONTEXT: $2
+>
+> 1. Actual problem vs perceived problem?
+> 2. ALL possible root causes (5+)
+> 3. Evidence to confirm/deny each
+> 4. Minimum viable investigation
+> 5. Assumptions being made
+>
+> DO NOT propose solutions. Just understand completely.
+> Output: Problem analysis with confidence per hypothesis
 
-  DO NOT PROPOSE SOLUTIONS.
-  Just understand completely.
+### architect-mind
 
-  Output: Problem analysis with confidence levels per hypothesis
-```
+> subagent: metacognitive-guard:arch-reviewer | model: opus
+>
+> You are architect-mind. THINK AS AN ARCHITECT.
+> PROBLEM: $1 | CONTEXT: $2
+>
+> 1. Where does this fit in the system?
+> 2. Boundaries and interfaces?
+> 3. Invariants violated?
+> 4. Ripple effects of changes?
+> 5. Local issue or systemic?
+>
+> Output: Architectural context and implications
 
-### Perspective 2: Architect Mindset
-```yaml
-subagent_type: metacognitive-guard:arch-reviewer
-model: opus
-description: "Architect perspective analysis"
-prompt: |
-  PROBLEM: [insert $1 here]
-  CONTEXT: [insert $2 here, default .]
+### explorer-mind
 
-  THINK AS AN ARCHITECT:
-  1. Where does this fit in the system?
-  2. What are the boundaries and interfaces?
-  3. What invariants might be violated?
-  4. What are the ripple effects of changes?
-  5. Is this a local issue or systemic?
-
-  Output: Architectural context and implications
-```
-
-### Perspective 3: Explorer Mindset
-```yaml
-subagent_type: feature-dev:code-explorer
-description: "Code explorer analysis"
-prompt: |
-  PROBLEM: [insert $1 here]
-  CONTEXT: [insert $2 here, default .]
-
-  EXPLORE THE CODEBASE:
-  1. Find all code related to this problem
-  2. How is this pattern used elsewhere?
-  3. What's the history of this code?
-  4. What tests exist for this area?
-  5. Similar problems solved before?
-
-  Output: Relevant code map with file:line references
-```
-
-**-> IMMEDIATELY proceed to Phase 2 when agents complete. DO NOT STOP.**
+> subagent: feature-dev:code-explorer
+>
+> You are explorer-mind. EXPLORE THE CODEBASE.
+> PROBLEM: $1 | CONTEXT: $2
+>
+> 1. All code related to this problem
+> 2. Pattern used elsewhere?
+> 3. History of this code
+> 4. Tests for this area?
+> 5. Similar problems solved before?
+>
+> Output: Relevant code map with file:line references
 
 ---
 
-## Phase 2: Solution Synthesis (2 Parallel Agents)
+## PHASE 2: SOLUTION SYNTHESIS — 2 Agents
 
-Launch BOTH agents in PARALLEL:
+Launch BOTH in ONE message.
 
-### Solution Designer
-```yaml
-subagent_type: dotnet-mtp-advisor
-model: opus
-description: "Solution synthesis"
-prompt: |
-  Given the 3 perspectives from Phase 1:
+### solution-designer
 
-  SYNTHESIZE SOLUTIONS:
+> subagent: feature-dev:code-architect | model: opus
+>
+> SYNTHESIZE solutions from Phase 1's 3 perspectives.
+>
+> Per solution: what it addresses, implementation approach, complexity (1-10), confidence (%), reversibility, time estimate.
+> Rank by: confidence × impact / (complexity × risk).
+> Output: Top 3 solutions with trade-offs
 
-  For each potential solution:
-  1. What it addresses
-  2. Implementation approach
-  3. Complexity (1-10)
-  4. Confidence (%)
-  5. Reversibility
-  6. Time to implement
+### devils-advocate
 
-  RANK: confidence x impact / (complexity x risk)
-
-  Output: Top 3 solutions with trade-offs
-```
-
-### Devil's Advocate
-```yaml
-subagent_type: feature-dev:code-reviewer
-description: "Devil's advocate review"
-prompt: |
-  CHALLENGE each proposed solution:
-
-  For each:
-  1. What could go wrong?
-  2. Worst case scenario?
-  3. Hidden assumptions?
-  4. What would make this fail?
-  5. Is there a simpler approach?
-
-  Output: Risk analysis and blind spots
-```
-
-**-> IMMEDIATELY proceed to Phase 3 when agents complete. DO NOT STOP.**
+> subagent: feature-dev:code-reviewer
+>
+> CHALLENGE each proposed solution:
+> What could go wrong? Worst case? Hidden assumptions? Simpler approach?
+> Output: Risk analysis and blind spots
 
 ---
 
-## Phase 3: Recommendation
+## PHASE 3: RECOMMENDATION
 
-Present the final consolidated output:
+Present consolidated output:
 
-### Summary
 | Solution | Confidence | Risk | Complexity |
 |----------|------------|------|------------|
 | Option A | X% | Low/Med/High | 1-10 |
 | Option B | X% | Low/Med/High | 1-10 |
 | Option C | X% | Low/Med/High | 1-10 |
 
-### Recommendation
 **Recommended:** [Option X]
 **Reasoning:** [Why this is best given trade-offs]
-**Next Steps:** [Concrete actions to take]
+**Next Steps:** [Concrete actions — e.g., `/fix "implement option A"` ]

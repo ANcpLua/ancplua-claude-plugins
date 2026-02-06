@@ -1,359 +1,202 @@
 ---
 name: mega-swarm
-description: "Use for codebase audit or release readiness check. 6-12 agents scan in parallel. Full(12), quick(6), or focused(8) mode. Feed findings into fix-pipeline."
+description: "IF codebase audit or release readiness check THEN use this. 6-12 agents scan in parallel. Full(12), quick(6), focused(8). Feed findings into fix-pipeline."
 allowed-tools: Task, TodoWrite
 ---
 
-# MEGA SWARM AUDIT
+# MEGA SWARM — Parallel Codebase Audit
 
-**Scope:** $1 (default: full - options: full|src|tests|config|security)
-**Focus:** $2 (optional focus area or concern)
-**Mode:** $3 (default: full - options: full|quick|focused)
-**Quick:** $4 (default: false - if true, same as mode=quick)
+> Maximum coverage. Every angle. One report.
 
----
-
-## MODE CONFIGURATIONS
-
-| Mode | Agents | Best For |
-|------|--------|----------|
-| **full** | 12 | Complete codebase audit, release readiness |
-| **quick** | 6 | Fast health check, CI integration |
-| **focused** | 8 | Deep dive on specific concern area |
-
-### Agent Selection by Mode
-
-**Full Mode (12 agents):** All auditors
-**Quick Mode (6 agents):** Security, Performance, Tests, Code Quality, Bugs, Architecture
-**Focused Mode (8 agents):** Based on $2 focus area + related auditors
+**Scope:** $1 (default: full | full|src|tests|config|security)
+**Focus:** $2 (optional focus area)
+**Mode:** $3 (default: full | full|quick|focused)
+**Quick:** $4 (default: false — same as mode=quick)
 
 ---
 
-## EXECUTION INSTRUCTIONS
+## TEAM ARCHITECTURE
 
-**YOU MUST USE THE TASK TOOL TO LAUNCH PARALLEL AGENTS.**
-
-REQUIRED BEHAVIOR:
-- Full mode ($3 = full or unspecified): Launch 12 agents
-- Quick mode ($3 = quick OR $4 = true): Launch 6 agents
-- Focused mode ($3 = focused): Launch 8 agents relevant to focus area
-- Use the Task tool with subagent_type parameter
-- Launch ALL agents in ONE message
-- Each Task call must have: description, prompt, subagent_type
-- WAIT for agents to complete, then synthesize results
-
-**YOUR NEXT MESSAGE MUST CONTAIN Task TOOL CALLS for the selected mode.**
-
----
-
-## GATE: Audit Completion
-
-After agents complete, validate results:
-
+```text
+SWARM LEAD (You — Orchestrator)
+│
+├─ Full mode (12 agents) ─────────────────────
+│  ├── arch-auditor        ├── api-auditor
+│  ├── security-auditor    ├── dependency-auditor
+│  ├── perf-auditor        ├── config-auditor
+│  ├── test-auditor        ├── docs-auditor
+│  ├── quality-auditor     ├── consistency-auditor
+│  ├── error-auditor       └── bug-hunter
+│
+├─ Quick mode (6 agents) ─────────────────────
+│  ├── arch-auditor    ├── security-auditor
+│  ├── perf-auditor    ├── test-auditor
+│  ├── quality-auditor └── bug-hunter
+│
+├─ Focused mode (8 agents) ───────────────────
+│  └── $2-related auditors + adjacent concerns
+│
+└── GATE → >=80% complete → SYNTHESIZE
 ```
+
+---
+
+<CRITICAL_EXECUTION_REQUIREMENT>
+
+**Launch ALL agents for selected mode in ONE message. NOTHING ELSE.**
+
+- Full ($3=full or unspecified): 12 agents
+- Quick ($3=quick or $4=true): 6 agents
+- Focused ($3=focused): 8 agents relevant to $2
+
+Wait for completion. Synthesize. Report.
+
+**YOUR NEXT MESSAGE: Task tool calls for selected mode. NOTHING ELSE.**
+
+</CRITICAL_EXECUTION_REQUIREMENT>
+
+---
+
+## AUDITORS
+
+Each scans SCOPE=$1 through its lens. Output: issues with severity P0-P3.
+
+### arch-auditor
+
+> subagent: metacognitive-guard:arch-reviewer | model: opus
+>
+> AUDIT Architecture. Scope: $1 | Focus: $2
+> SOLID violations? Coupling? Scalability? Design issues?
+> Output: Issues with P0-P3 severity
+
+### security-auditor
+
+> subagent: feature-dev:code-reviewer
+>
+> AUDIT Security. Scope: $1 | Focus: $2
+> Injection? Auth issues? Secrets exposed? Input validation? OWASP Top 10?
+> Output: Issues with severity
+
+### perf-auditor
+
+> subagent: feature-dev:code-explorer
+>
+> AUDIT Performance. Scope: $1 | Focus: $2
+> N+1 queries? Memory leaks? Allocations? Blocking calls? Cache misses?
+> Output: Issues with severity
+
+### test-auditor
+
+> subagent: feature-dev:code-reviewer
+>
+> AUDIT Test Quality. Scope: $1 | Focus: $2
+> Coverage gaps? Flaky tests? Missing edge cases? Integration gaps?
+> Output: Issues with severity
+
+### quality-auditor
+
+> subagent: feature-dev:code-reviewer
+>
+> AUDIT Code Quality. Scope: $1 | Focus: $2
+> Dead code? Duplication? Cyclomatic complexity? Magic numbers? Naming?
+> Output: Issues with severity
+
+### bug-hunter
+
+> subagent: deep-debugger | model: opus
+>
+> HUNT Active Bugs. Scope: $1 | Focus: $2
+> Null refs? Race conditions? Off-by-one? Resource leaks? Logic errors?
+> Output: Potential bugs with severity
+
+### error-auditor ← full/focused only
+
+> subagent: deep-debugger
+>
+> AUDIT Error Handling. Scope: $1 | Focus: $2
+> Swallowed exceptions? Missing handlers? Poor messages? Recovery gaps?
+> Output: Issues with severity
+
+### api-auditor ← full/focused only
+
+> subagent: feature-dev:code-explorer
+>
+> AUDIT API Contracts. Scope: $1 | Focus: $2
+> Breaking changes? Version compat? Doc accuracy? Response consistency?
+> Output: Issues with severity
+
+### dependency-auditor ← full/focused only
+
+> subagent: Explore
+>
+> AUDIT Dependencies. Scope: $1 | Focus: $2
+> Outdated? Vulnerabilities? License issues? Unnecessary? Conflicts?
+> Output: Issues with severity
+
+### config-auditor ← full/focused only
+
+> subagent: Explore
+>
+> AUDIT Configuration. Scope: $1 | Focus: $2
+> Hardcoded values? Missing env vars? Validation? Secrets management?
+> Output: Issues with severity
+
+### docs-auditor ← full/focused only
+
+> subagent: Explore
+>
+> AUDIT Documentation. Scope: $1 | Focus: $2
+> Outdated? Missing? Code comments? README accuracy?
+> Output: Issues with severity
+
+### consistency-auditor ← full/focused only
+
+> subagent: feature-dev:code-reviewer
+>
+> AUDIT Consistency. Scope: $1 | Focus: $2
+> Naming conventions? Code style? Pattern inconsistencies? File organization?
+> Output: Issues with severity
+
+---
+
+## GATE: Audit Complete
+
+```text
 AUDIT GATE:
 +------------------------------------------------------------+
-| Mode: [full/quick/focused]                                 |
-| Agents Completed: [X/Y]                                    |
-| Agents Failed: [count]                                     |
+| Mode: $3 | Agents: [X/Y] completed                        |
 +------------------------------------------------------------+
-| If >=80% completed: SYNTHESIZE results                     |
-| If <80% completed: REPORT partial + offer retry            |
+| >=80% → SYNTHESIZE                                          |
+| <80% → REPORT PARTIAL + offer retry                         |
 +------------------------------------------------------------+
 ```
 
 ---
 
-## QUICK MODE AGENTS (6 Essential Auditors)
+## FINAL REPORT
 
-Use if $3 = quick OR $4 = true. Launch ALL 6 in ONE message:
-
-1. **Architecture Auditor** - SOLID, coupling, design
-2. **Security Auditor** - OWASP, injection, auth
-3. **Performance Auditor** - N+1, memory, blocking
-4. **Test Coverage Auditor** - Gaps, quality, flaky
-5. **Code Quality Auditor** - Dead code, duplication
-6. **Bug Hunter** - Null refs, race conditions
-
----
-
-## THE SWARM - FULL MODE (12 Parallel Agents)
-
-Launch ALL in ONE message. For each agent, use the Task tool with the specified subagent_type and adapt the prompt to include the user's scope ($1) and focus ($2).
-
-### Agent 1: Architecture Auditor
-```yaml
-subagent_type: metacognitive-guard:arch-reviewer
-model: opus
-description: "Audit architecture"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Architecture & Design
-
-  1. Is the architecture sound?
-  2. Coupling/cohesion issues?
-  3. SOLID violations?
-  4. Scalability concerns?
-
-  Output: Architecture issues with severity (P0-P3)
-```
-
-### Agent 2: Security Auditor
-```yaml
-subagent_type: feature-dev:code-reviewer
-description: "Audit security"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Security
-
-  1. Injection vulnerabilities?
-  2. Auth/authz issues?
-  3. Secrets exposed?
-  4. Input validation?
-  5. OWASP Top 10?
-
-  Output: Security issues with severity
-```
-
-### Agent 3: Performance Auditor
-```yaml
-subagent_type: feature-dev:code-explorer
-description: "Audit performance"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Performance
-
-  1. N+1 queries?
-  2. Memory leaks?
-  3. Unnecessary allocations?
-  4. Blocking calls?
-  5. Cache misses?
-
-  Output: Performance issues with severity
-```
-
-### Agent 4: Test Coverage Auditor
-```yaml
-subagent_type: feature-dev:code-reviewer
-description: "Audit test coverage"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Test Quality
-
-  1. Coverage gaps?
-  2. Flaky tests?
-  3. Missing edge cases?
-  4. Test quality issues?
-  5. Integration test gaps?
-
-  Output: Test issues with severity
-```
-
-### Agent 5: Code Quality Auditor
-```yaml
-subagent_type: feature-dev:code-reviewer
-description: "Audit code quality"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Code Quality
-
-  1. Dead code?
-  2. Duplications?
-  3. Complex functions (cyclomatic)?
-  4. Magic numbers/strings?
-  5. Naming issues?
-
-  Output: Quality issues with severity
-```
-
-### Agent 6: Error Handling Auditor
-```yaml
-subagent_type: deep-debugger
-description: "Audit error handling"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Error Handling
-
-  1. Swallowed exceptions?
-  2. Missing error handling?
-  3. Poor error messages?
-  4. Unhandled edge cases?
-  5. Recovery mechanisms?
-
-  Output: Error handling issues with severity
-```
-
-### Agent 7: API Contract Auditor
-```yaml
-subagent_type: feature-dev:code-explorer
-description: "Audit API contracts"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: API Contracts
-
-  1. Breaking changes?
-  2. Version compatibility?
-  3. Documentation accuracy?
-  4. Response consistency?
-  5. Error response format?
-
-  Output: API issues with severity
-```
-
-### Agent 8: Dependency Auditor
-```yaml
-subagent_type: Explore
-description: "Audit dependencies"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Dependencies
-
-  1. Outdated packages?
-  2. Security vulnerabilities?
-  3. License issues?
-  4. Unnecessary dependencies?
-  5. Version conflicts?
-
-  Output: Dependency issues with severity
-```
-
-### Agent 9: Configuration Auditor
-```yaml
-subagent_type: Explore
-description: "Audit configuration"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Configuration
-
-  1. Hardcoded values?
-  2. Missing env vars?
-  3. Config validation?
-  4. Secrets management?
-  5. Environment parity?
-
-  Output: Config issues with severity
-```
-
-### Agent 10: Documentation Auditor
-```yaml
-subagent_type: Explore
-description: "Audit documentation"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Documentation
-
-  1. Outdated docs?
-  2. Missing docs?
-  3. Code comments?
-  4. README accuracy?
-  5. API documentation?
-
-  Output: Doc issues with severity
-```
-
-### Agent 11: Consistency Auditor
-```yaml
-subagent_type: feature-dev:code-reviewer
-description: "Audit consistency"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Consistency
-
-  1. Naming conventions?
-  2. Code style violations?
-  3. Pattern inconsistencies?
-  4. File organization?
-  5. Import ordering?
-
-  Output: Consistency issues with severity
-```
-
-### Agent 12: Bug Hunter
-```yaml
-subagent_type: deep-debugger
-model: opus
-description: "Hunt for bugs"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  HUNT: Active Bugs
-
-  1. Null reference risks?
-  2. Race conditions?
-  3. Off-by-one errors?
-  4. Resource leaks?
-  5. Logic errors?
-
-  Output: Potential bugs with severity
-```
-
----
-
-## SWARM SYNTHESIS
-
-After ALL agents complete, synthesize results:
-
-```
+```text
 +====================================================================+
 |                    MEGA SWARM REPORT                                |
 +====================================================================+
-| Agents Deployed: [count]     Time: [X min]                          |
-+====================================================================+
-|                     ISSUES BY SEVERITY                              |
-|  P0 (Critical):  [count]                                            |
-|  P1 (High):      [count]                                            |
-|  P2 (Medium):    [count]                                            |
-|  P3 (Low):       [count]                                            |
-+====================================================================+
-|                     ISSUES BY CATEGORY                              |
-|  Security:       [count]  |  Performance:    [count]                |
-|  Architecture:   [count]  |  Tests:          [count]                |
-|  Code Quality:   [count]  |  Errors:         [count]                |
-|  API:            [count]  |  Dependencies:   [count]                |
-|  Config:         [count]  |  Docs:           [count]                |
-|  Consistency:    [count]  |  Bugs:           [count]                |
+| Mode: $3 | Agents: [count] | Scope: $1                             |
++--------------------------------------------------------------------+
+| P0 Critical: [n] | P1 High:   [n]                                  |
+| P2 Medium:   [n] | P3 Low:    [n]                                  |
++--------------------------------------------------------------------+
+| Security:    [n] | Performance: [n] | Architecture: [n]             |
+| Tests:       [n] | Quality:     [n] | Bugs:         [n]             |
 +====================================================================+
 ```
 
 ### P0 Issues (Fix Immediately)
-| # | Category | Issue | Location |
-|---|----------|-------|----------|
-| 1 | [cat] | [description] | [file:line] |
 
-### P1 Issues (Fix Soon)
 | # | Category | Issue | Location |
 |---|----------|-------|----------|
-| 1 | [cat] | [description] | [file:line] |
 
 ### Recommended Fix Order
-1. [Most critical issue]
-2. [Second most critical]
-3. [Third most critical]
 
-**Next Command:**
-```
-/turbo-fix issue="[P0 issue description]" severity=P0
-```
+1. [Most critical]
+2. [Second most critical]
+
+**Next:** `/fix-pipeline "[P0 issue]"`

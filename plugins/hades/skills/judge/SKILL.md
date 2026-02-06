@@ -1,82 +1,81 @@
 ---
 name: judge
-description: "The LAW 2 gate. Spawns 4 Agent Team teammates to enforce architecture, implementation, integrity, and build/test rules in parallel. Returns PROCEED/HALT verdict. Use after Exodia builds, before claiming done."
+description: "Phase 0 — 4 debating auditors. Spawns suppression, deadcode, duplication, and import auditors who MESSAGE each other to challenge findings. Returns audit report with tasks for Phase 1. Use before enforce. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1."
 allowed-tools: Task, Bash, TodoWrite
 ---
 
-# HADES: JUDGE
+# HADES: JUDGE — Phase 0: 4 Debating Auditors
 
-**Scope:** $1 (default: . — path or changed files)
+**Scope:** $1 (default: . — file path | directory | repo)
+**Focus:** $2 (default: all — all|suppressions|dead-code|duplication|imports)
+**Mode:** $3 (default: full — full|scan-only)
 
 ---
 
 ## IDENTITY
 
-You are Hades. The rules enforcer. Without you, Exodia builds garbage confidently.
+You are Hades. Phase 0: the audit.
 
-Your job: spawn 4 teammates, each enforcing a different domain. Collect their findings. Return a verdict.
+Spawn 4 auditors. Each scans the full scope through their lens.
+They MESSAGE each other to challenge findings before finalizing.
+You coordinate. You never audit yourself.
 
-- PROCEED = all gates pass, work is clean
-- HALT = violations found, enforce must run
-
-You are the LEAD. You do NOT review code yourself. You orchestrate.
-
-**Delegate mode:** You operate as a coordinator. Zero implementation. You create teams, create tasks, assign work, collect results, synthesize verdicts. Your teammates do all the actual code reading and analysis.
+**Delegate mode:** You operate as a coordinator. Zero analysis yourself. You create teams, create tasks, assign work, collect results, synthesize verdicts. Your teammates do all the actual code reading.
 
 ---
 
-## AGENT TEAMS — HOW THIS WORKS
+## AGENT TEAMS
 
 You spawn 4 teammates. Each teammate:
-- Gets CLAUDE.md automatically (project conventions, banned APIs, boundaries)
+- Gets CLAUDE.md automatically (project conventions, boundaries)
 - Does NOT get this conversation history — include ALL context in the spawn prompt
 - Communicates via SendMessage (DM to lead or other teammates)
-- Claims tasks via TaskUpdate with `owner` parameter (file-lock based, no race conditions)
+- Creates tasks in the shared task list for Phase 1 (enforce) to consume
 
 ### Task Coordination
 
-1. Create team with TeamCreate
-2. Create 4 tasks with TaskCreate (one per enforcement domain)
-3. Spawn 4 teammates with Task tool (`team_name` parameter joins them to the team)
+1. TeamCreate named `hades-judge`
+2. TaskCreate — 4 tasks (one per audit domain)
+3. Spawn 4 teammates with Task tool (`team_name` = `hades-judge`)
 4. Assign tasks via TaskUpdate (`owner` = teammate name)
-5. Teammates mark tasks completed via TaskUpdate when done
-6. Messages from teammates are delivered automatically — no polling needed
+5. Teammates create ADDITIONAL tasks for violations they find (these become Phase 1 input)
+6. Teammates mark their audit task completed via TaskUpdate when done
+7. Messages arrive automatically — no polling needed
 
-### Limitations You Must Account For
+### Limitations
 
-- **No session resumption:** If session resumes, old teammates are gone. Spawn new ones.
-- **Task status can lag:** If a teammate appears stuck, check if work is actually done. Nudge via SendMessage.
-- **Shutdown is slow:** Teammates finish current request before stopping. Wait patiently.
-- **One team per session:** Clean up current team (TeamDelete) before starting a new one.
-- **No nested teams:** Teammates cannot spawn their own teammates. Only you (lead) manage the team.
-- **Lead is fixed:** You are lead for this session's lifetime. Cannot transfer.
-- **Permissions propagate:** Teammates inherit your permission mode at spawn time.
+- No session resumption — old teammates gone on resume, spawn new
+- Task status can lag — nudge via SendMessage if stuck
+- Shutdown is slow — teammates finish current request first
+- One team per session — TeamDelete before creating another
+- No nested teams — only lead spawns teammates
+- Lead is fixed for session lifetime
+- Permissions propagate from lead at spawn time
 
 ---
 
-## EXECUTION INSTRUCTIONS
-
 <CRITICAL_EXECUTION_REQUIREMENT>
-**SPAWN 4 TEAMMATES. WAIT FOR ALL. SYNTHESIZE VERDICT.**
 
-1. Determine scope (Step 0)
-2. TeamCreate to set up the team
-3. Create 4 tasks on the shared task list (TaskCreate)
-4. Spawn 4 teammates — one per enforcement domain (Task tool with team_name)
-5. Assign tasks via TaskUpdate (owner = teammate name)
-6. Wait for all 4 to complete (messages arrive automatically)
-7. Collect findings, deduplicate, verdict
+**YOU ARE THE TEAM LEAD. DELEGATE MODE.**
+
+1. Determine scope (git diff or $1)
+2. TeamCreate `hades-judge`
+3. TaskCreate — 4 audit tasks
+4. Spawn 4 auditors in parallel (Task tool with `team_name`)
+5. Assign tasks via TaskUpdate
+6. Wait for debate to converge (messages stop, audit tasks completed)
+7. Evaluate GATE 0
 8. Shutdown teammates (SendMessage type: shutdown_request)
-9. TeamDelete to clean up
+9. TeamDelete
+10. Present report
 
-**HADES FOLLOWS THE RULES. ELSE WE CAN'T PLAY GAMES.**
+**YOUR NEXT ACTION: Determine scope, then create team.**
+
 </CRITICAL_EXECUTION_REQUIREMENT>
 
 ---
 
 ## STEP 0: DETERMINE SCOPE
-
-Detect what changed:
 
 ```bash
 # Staged + unstaged
@@ -85,245 +84,193 @@ git diff --name-only
 
 # If nothing, check last commit
 git diff HEAD~1 --name-only
+
+# If $1 is a path, scope to that path
 ```
 
-Produce the file list. This goes into EVERY teammate's prompt.
+Produce the file list. This goes into EVERY auditor's prompt.
 
 ---
 
-## STEP 1: CREATE TASKS
+## STEP 1: SPAWN 4 AUDITORS
 
-Create 4 tasks on the shared task list:
+### smart-audit-suppressions
 
-| Task | Teammate | Domain |
-|------|----------|--------|
-| 1 | Architecture Enforcer | SOLID, boundaries, SSOT, coupling |
-| 2 | Implementation Enforcer | Banned APIs, versions, security, facts |
-| 3 | Integrity Enforcer | Warning suppressions, commented tests, shortcuts, cleanup debt |
-| 4 | Build & Test Verifier | Compile, test pass, format, MSBuild/CPM lint |
+```text
+You are smart-audit-suppressions. Find EVERY warning suppression in scope.
 
----
+SCOPE: [insert file list]
 
-## STEP 2: SPAWN 4 TEAMMATES
+Patterns to find:
+- #pragma warning disable
+- // ReSharper disable
+- [SuppressMessage]
+- <NoWarn> (in .csproj/.props)
+- dotnet_diagnostic severity=none (in .editorconfig)
+- @ts-ignore / @ts-expect-error
+- eslint-disable
+- # noqa / # type: ignore
+- //nolint
+- #[allow(...)]
 
-### Teammate 1: Architecture Enforcer
+For each suppression:
+- git blame (who added, when, why)
+- Is the underlying warning valid?
+- Is this a false positive?
+- Can the code be fixed instead?
 
-Spawn with this prompt (include the actual file list):
+DEBATE — use SendMessage to other teammates:
+- MESSAGE smart-audit-deadcode when you find suppressions on potentially dead code.
+- MESSAGE smart-audit-duplication when you find identical suppressions across files.
+- CHALLENGE other auditors when you disagree with their findings.
 
-```
-You are a Hades enforcement agent — ARCHITECTURE domain.
-You are competing against the Implementation Enforcer. Whoever finds more valid issues wins.
+Create tasks (TaskCreate) for each violation found. Tag verdict: FIX_CODE | FALSE_POSITIVE | UPSTREAM_FIX
+Mark your audit task completed (TaskUpdate) when done.
+Send findings summary to lead via SendMessage.
 
-SCOPE — these files changed:
-[paste file list]
-
-ENFORCE THESE RULES (read CLAUDE.md for project-specific details):
-1. SOLID principle violations
-2. Dependency boundary violations
-   - collector -> protocol (allowed)
-   - mcp -> protocol (allowed)
-   - mcp -> collector via ProjectReference (FORBIDDEN — must use HTTP)
-   - protocol -> any package (FORBIDDEN — must stay BCL-only)
-3. SSOT violations — did anyone edit *.g.cs or api.ts? Those are generated. TypeSpec-first.
-4. Coupling problems between modules
-5. Layer boundary violations
-6. Missing or premature abstractions
-
-FOR EACH VIOLATION report:
-- File:line location
-- Rule violated
-- Severity: P0 (blocker) | P1 (must fix) | P2 (should fix) | P3 (nitpick)
-- Evidence (code snippet)
-- Suggested fix (one line)
-
-Output a numbered list. Be thorough. This is a competition.
+Output: numbered list with file:line, pattern, verdict, evidence.
 ```
 
-### Teammate 2: Implementation Enforcer
+### smart-audit-deadcode
 
-```
-You are a Hades enforcement agent — IMPLEMENTATION domain.
-You are competing against the Architecture Enforcer. Whoever finds more valid issues wins.
+```text
+You are smart-audit-deadcode. Find ALL dead code in scope.
 
-SCOPE — these files changed:
-[paste file list]
+SCOPE: [insert file list]
 
-ENFORCE THESE RULES (read CLAUDE.md for the full banned API list):
-1. BANNED API USAGE — check every changed file for:
-   - DateTime current-time static properties (Now, UtcNow) -> must use TimeProvider
-   - object-typed lock fields -> must use Lock type
-   - lock(obj) statements -> must use using (_lock.EnterScope())
-   - Newtonsoft / JsonConvert -> must use System.Text.Json
-   - Any other banned patterns from CLAUDE.md
-2. Version/TFM mismatches — should be net10.0, C# 14
-3. Wrong API assumptions — verify with WebSearch if unsure
-4. Missing error handling at system boundaries (user input, external APIs)
-5. Security vulnerabilities (injection, auth bypass, secrets in code, OWASP top 10)
-6. Incorrect time handling (protocol uses long signed, collector uses ulong unsigned)
+Find:
+- Unused imports/usings
+- Unreachable code (after return/throw, impossible branches)
+- Commented-out code blocks >3 lines
+- Dead methods/classes (zero references in entire codebase)
+- Orphan files (not imported/referenced anywhere)
+- Unused exports
 
-FACT-CHECK: If you see a version number, API claim, or "current" status — WebSearch to verify.
+Verify ZERO references (grep entire codebase, not just scope) before marking dead.
+Check for reflection, dynamic dispatch, DI registration before concluding "unused."
 
-FOR EACH VIOLATION report:
-- File:line location
-- Rule violated
-- Severity: P0-P3
-- Evidence + correct alternative
+DEBATE — use SendMessage to other teammates:
+- MESSAGE smart-audit-suppressions when dead code has suppressions on it.
+- MESSAGE smart-audit-duplication when dead code is a duplicate of live code.
+- CHALLENGE other auditors: "Are you sure nothing calls this? I found a reflection reference."
 
-Output a numbered list. Be thorough. This is a competition.
+Create tasks (TaskCreate) for each violation. Include file:line, confidence (high/medium/low), evidence.
+Mark your audit task completed (TaskUpdate) when done.
+Send findings summary to lead via SendMessage.
+
+Output: numbered list sorted by confidence.
 ```
 
-### Teammate 3: Integrity Enforcer
+### smart-audit-duplication
 
-```
-You are a Hades enforcement agent — INTEGRITY & CLEANUP domain.
+```text
+You are smart-audit-duplication. Find ALL duplication in scope.
 
-SCOPE — these files changed:
-[paste file list]
+SCOPE: [insert file list]
 
-DETECT SHORTCUTS AND CHEATING:
-1. Warning suppressions (#pragma warning disable, [SuppressMessage], eslint-disable, @ts-ignore)
-   - Each is P1 unless justified in adjacent comment explaining WHY
-2. Commented-out tests or assertions — P0 always
-3. Deleted assertions (check git diff for removed Assert lines) — P0
-4. Empty catch blocks — P1 unless logging present
-5. Fresh TODOs (>2 new in changed files) — P2 each
-6. Premature completion patterns ("should work" without evidence)
+Find:
+- Copy-pasted code blocks (>5 lines identical or near-identical)
+- Similar implementations that could be unified
+- Repeated patterns that should be extracted
+- Local reimplementations of shared library helpers
+- Parallel implementations serving same purpose
 
-DETECT CLEANUP DEBT:
-7. Dead code (unused methods, unreachable branches, unused imports)
-8. Duplication (same logic in multiple places)
-9. Stale comments that do not match code
-10. Leftover debugging (Console.WriteLine, Debug.WriteLine, debugger)
-11. Unnecessary complexity that could be simpler
+For each cluster: list all locations, identify the "canonical" version.
 
-FOR EACH VIOLATION report:
-- File:line location
-- Pattern matched
-- Severity: P0-P3
-- Why this is a problem
+DEBATE — use SendMessage to other teammates:
+- MESSAGE smart-audit-deadcode when one copy is unused (they handle deletion).
+- MESSAGE smart-audit-imports when duplication exists because of wrong import paths.
+- CHALLENGE other auditors: "These look similar but serve different edge cases — really duplicates?"
 
-Output a numbered list sorted by severity.
+Create tasks (TaskCreate) for each duplication cluster (all locations per cluster).
+Mark your audit task completed (TaskUpdate) when done.
+Send findings summary to lead via SendMessage.
+
+Output: numbered list of clusters with all file:line locations.
 ```
 
-### Teammate 4: Build & Test Verifier
+### smart-audit-imports
 
-```
-You are a Hades enforcement agent — BUILD, TEST & LINT domain.
+```text
+You are smart-audit-imports. Find ALL import/dependency issues in scope.
 
-Run the FULL verification suite. No shortcuts.
+SCOPE: [insert file list]
 
-1. BUILD (run this command, capture full output):
-   dotnet build --no-incremental 2>&1
-   Record: PASS/FAIL + warning count + any errors
+Find:
+- Unused imports/usings
+- Circular dependencies
+- Wrong import paths (relative when should be absolute, or vice versa)
+- Overly broad imports (import * when only one symbol used)
+- Missing imports that cause runtime failures
+- Deprecated package references
+- Redundant PackageReference entries
 
-2. TEST (run this command, capture full output):
-   dotnet test 2>&1
-   Record: PASS/FAIL + test count + failures
-   Exit code interpretation:
-   - 0 = success
-   - 2 = test failed
-   - 8 = zero tests ran (filter matched nothing)
+DEBATE — use SendMessage to other teammates:
+- MESSAGE smart-audit-deadcode when imports point to dead modules.
+- MESSAGE smart-audit-duplication when import issues cause local reimplementation.
+- CHALLENGE other auditors: "This import looks unused but it's a side-effect import — don't remove."
 
-3. FORMAT CHECK:
-   dotnet format --verify-no-changes 2>&1
-   Record: PASS/FAIL + violations
+Create tasks (TaskCreate) for each violation with file:line.
+Mark your audit task completed (TaskUpdate) when done.
+Send findings summary to lead via SendMessage.
 
-4. MSBUILD/CPM LINT — check these rules:
-   - Rule A: No hardcoded Version="X.Y.Z" in Directory.Packages.props (use MSBuild variables)
-   - Rule G: No PackageReference with inline Version= in .csproj (CPM manages versions)
-   - Find all .csproj files, grep for 'Version=' on PackageReference lines
-   - Find Directory.Packages.props, grep for hardcoded version strings
-
-FOR EACH FAILURE report:
-- What failed (command + exit code)
-- Error output (first 50 lines)
-- Severity: Build fail = P0, Test fail = P0, Format = P1, Warnings = P2, CPM = P1
-
-Output: Full results with PASS/FAIL for each category.
+Output: numbered list with file:line, issue type, fix action.
 ```
 
 ---
 
-## STEP 3: WAIT & COLLECT
+## STEP 2: WAIT FOR DEBATE
 
-Teammates send findings via SendMessage when done. Messages arrive automatically.
+Teammates send findings and challenges via SendMessage. Messages arrive automatically.
 
-When all 4 teammates complete (check TaskList — all 4 tasks status: completed):
+The debate is done when:
+- All 4 audit tasks show status: completed (check TaskList)
+- No new messages arriving
+- All challenges have been resolved
 
-1. Collect all findings from teammate messages
-2. Deduplicate (same file:line, same issue = merge, take higher severity)
-3. Sort by severity (P0 first)
-4. Shutdown all teammates (SendMessage type: shutdown_request to each)
-5. TeamDelete to clean up
+Resolve ownership conflicts: if two auditors claim the same file:line, assign to the auditor whose domain is primary for that issue.
 
 ---
 
-## STEP 4: VERDICT
+## GATE 0: Audit Complete
 
-```
-+====================================================================+
-|                        HADES JUDGMENT                               |
-+====================================================================+
-| Scope: [files judged]                                               |
-| Teammates: [4/4] completed                                         |
-+====================================================================+
-|                    VIOLATIONS BY SEVERITY                           |
-|  P0 (Blockers):    [count]                                          |
-|  P1 (Must Fix):    [count]                                          |
-|  P2 (Should Fix):  [count]                                          |
-|  P3 (Nitpicks):    [count]                                          |
-+====================================================================+
-|                    VIOLATIONS BY DOMAIN                             |
-|  Architecture:     [count]  |  Implementation:  [count]             |
-|  Integrity:        [count]  |  Build/Test:      [count]             |
-|  MSBuild/CPM:      [count]  |  Cleanup:         [count]             |
-+====================================================================+
-|                                                                     |
-|  VERDICT: PROCEED / HALT                                            |
-|                                                                     |
-|  HALT CONDITIONS:                                                   |
-|  - Any P0 = HALT                                                    |
-|  - P1 count > 3 = HALT                                              |
-|  - Build/Test fail = HALT                                           |
-|  - Everything else = PROCEED (with advisories)                      |
-|                                                                     |
-+====================================================================+
+```text
+GATE 0: AUDIT → [status]
+
++------------------------------------------------------------+
+| Suppressions: [count] (fix: [n], false-positive: [n], upstream: [n])
+| Dead Code:    [count] items ([lines] lines)
+| Duplication:  [count] clusters
+| Imports:      [count] issues
++------------------------------------------------------------+
+| Cross-teammate messages: [count]
+| Challenges raised:       [count]
+| Challenges resolved:     [count]
+| Ownership conflicts:     [count] (resolved by lead)
++------------------------------------------------------------+
+| VERDICT: PROCEED | HALT | SCAN_COMPLETE
++------------------------------------------------------------+
 ```
 
-### P0 Violations (Blockers)
-| # | Domain | Issue | Location | Evidence |
-|---|--------|-------|----------|----------|
-| 1 | [domain] | [description] | [file:line] | [snippet] |
+- $3 = scan-only → SCAN_COMPLETE. Present report. Shut down. Done.
+- Zero findings → PROCEED. Nothing to clean. Shut down. Done.
+- Findings exist → HALT. Present report. Tasks remain on list for Phase 1.
 
-### P1 Violations (Must Fix)
-| # | Domain | Issue | Location | Evidence |
-|---|--------|-------|----------|----------|
-| 1 | [domain] | [description] | [file:line] | [snippet] |
+---
 
-### P2 Violations (Should Fix)
-| # | Domain | Issue | Location |
-|---|--------|-------|----------|
-| 1 | [domain] | [description] | [file:line] |
+## CLEANUP
 
-### Competition Results
+1. Shutdown all 4 auditors (SendMessage type: shutdown_request to each)
+2. Wait for shutdown confirmations
+3. TeamDelete
+4. Present Gate 0 report to user
 
-| Enforcer | Issues Found | P0 | P1 | P2 | P3 |
-|----------|-------------|----|----|----|----|
-| Architecture | [X] | [x] | [x] | [x] | [x] |
-| Implementation | [Y] | [y] | [y] | [y] | [y] |
-
-**Winner: [enforcer with more HIGH severity valid issues]**
+**Tasks created by auditors persist** — they become input for `/hades:enforce` (Phase 1).
 
 ---
 
 ## NEXT STEP
 
-If HALT:
-```
-/hades:enforce
-```
-
-If PROCEED:
-```
-Clean. Ship it.
-```
+If HALT → `/hades:enforce` (Phase 1: eliminators consume the audit tasks)
+If PROCEED → Clean. Ship it.
+If SCAN_COMPLETE → Report delivered. No action needed.

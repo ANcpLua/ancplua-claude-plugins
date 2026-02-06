@@ -1,10 +1,15 @@
+> **DEPRECATED:** Use `exodia/hades` (smart-hades) instead. Smart-hades provides
+> Smart IDs, deletion permits, an append-only audit ledger, and hookify safety guards
+> on top of the same 3-phase x 4-teammate architecture. This standalone agent is
+> maintained for backwards compatibility but will not receive new features.
+
 # cleanup-specialist
 
 Zero-tolerance cleanup agent. No suppressions. No shortcuts. No technical debt.
 
 ## Status
 
-**Active** - Production-ready alpha-mode cleanup agent.
+**Deprecated** - Superseded by [smart-hades](../../plugins/exodia/skills/hades/SKILL.md).
 
 ## Philosophy
 
