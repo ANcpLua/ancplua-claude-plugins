@@ -217,7 +217,7 @@ dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 
 After ALL phases complete, provide this summary:
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║                    TURBO FIX COMPLETE                        ║
 ╠══════════════════════════════════════════════════════════════╣

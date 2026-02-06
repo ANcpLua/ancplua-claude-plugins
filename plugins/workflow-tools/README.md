@@ -82,7 +82,9 @@ Multi-agent workflow orchestration with configurable parallelism, adversarial re
 | **quick** | 6 | Fast health check, CI integration |
 | **focused** | 8 | Deep dive on specific concern |
 
-**Auditors:** Architecture, Security, Performance, Tests, Code Quality, Error Handling, API, Dependencies, Configuration, Documentation, Consistency, Bug Hunter.
+**Auditors:** Architecture, Security, Performance, Tests, Code Quality,
+Error Handling, API, Dependencies, Configuration, Documentation,
+Consistency, Bug Hunter.
 
 ---
 
