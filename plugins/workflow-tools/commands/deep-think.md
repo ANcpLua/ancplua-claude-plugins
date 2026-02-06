@@ -22,14 +22,14 @@ Extended multi-perspective reasoning before action.
 4. DO NOT ask for confirmation between phases
 5. Only stop at the end with the final recommendation
 
-**YOUR NEXT MESSAGE: Launch 3 Task tool calls for Phase 1. NOTHING ELSE.**
+**YOUR NEXT MESSAGE: Launch 2 Task tool calls for Phase 1. NOTHING ELSE.**
 </CRITICAL_EXECUTION_REQUIREMENT>
 
 ---
 
-## Phase 1: Problem Understanding (3 Parallel Agents)
+## Phase 1: Problem Understanding (2 Parallel Agents)
 
-Launch ALL 3 agents in PARALLEL using a single message with multiple Task tool calls:
+Launch ALL 2 agents in PARALLEL using a single message with multiple Task tool calls:
 
 ### Perspective 1: Debugger Mindset
 ```yaml
@@ -70,24 +70,6 @@ prompt: |
   5. Is this a local issue or systemic?
 
   Output: Architectural context and implications
-```
-
-### Perspective 3: Explorer Mindset
-```yaml
-subagent_type: feature-dev:code-explorer
-description: "Code explorer analysis"
-prompt: |
-  PROBLEM: [insert $1 here]
-  CONTEXT: [insert $2 here, default .]
-
-  EXPLORE THE CODEBASE:
-  1. Find all code related to this problem
-  2. How is this pattern used elsewhere?
-  3. What's the history of this code?
-  4. What tests exist for this area?
-  5. Similar problems solved before?
-
-  Output: Relevant code map with file:line references
 ```
 
 **→ IMMEDIATELY proceed to Phase 2 when agents complete. DO NOT STOP.**
