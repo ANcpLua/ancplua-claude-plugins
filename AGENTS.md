@@ -1,8 +1,9 @@
 # AGENTS.md
 
-> Compressed context for autonomous agents. Always loaded, always present.
+> **Audience:** Codex, Gemini, and humans. NOT auto-loaded by Claude Code.
+> Claude's context is in CLAUDE.md (auto-loaded) and skill description frontmatter.
 >
-> **IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning.**
+> **Prefer retrieval-led reasoning over pre-training-led reasoning.**
 > Always read the relevant SKILL.md before implementing. Skills are deep docs.
 
 ## Repository
