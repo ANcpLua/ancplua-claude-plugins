@@ -1,0 +1,24 @@
+{
+  "name": "hades",
+  "version": "1.0.0",
+  "description": "Unified enforcement engine. 2 commands: judge (evaluate all rules, PROCEED/HALT verdict) and enforce (fix all violations, iterate until clean). The rules enforcer to Exodia's creation.",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "enforcement",
+    "rules",
+    "judgment",
+    "verification",
+    "integrity",
+    "ci",
+    "architecture-lint",
+    "competitive-review",
+    "cleanup",
+    "gate"
+  ],
+  "skills": "./skills"
+}
