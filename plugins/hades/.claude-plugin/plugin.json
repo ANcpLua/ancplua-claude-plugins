@@ -1,7 +1,7 @@
 {
   "name": "hades",
-  "version": "1.0.0",
-  "description": "Unified enforcement engine. 2 commands: judge (evaluate all rules, PROCEED/HALT verdict) and enforce (fix all violations, iterate until clean). The rules enforcer to Exodia's creation.",
+  "version": "2.0.0",
+  "description": "Unified enforcement engine. 3 phases: judge (4 debating auditors), enforce (4 eliminators with file ownership), verify (4 cross-checking verifiers + challenger). 12 teammates total. Railway-oriented pipeline.",
   "author": {
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"
