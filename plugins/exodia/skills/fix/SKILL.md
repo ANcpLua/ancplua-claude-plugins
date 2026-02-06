@@ -1,6 +1,6 @@
 ---
 name: fix
-description: "Unified fix pipeline - configurable parallelism for issue resolution. Usage: /fix [issue] [severity:P1] [parallelism:standard] [mode:balanced] [quick:false]"
+description: "Use for any bug fix (P1-P3). 8 agents, 4 gated phases: analysis->design->implement->verify. For P0 critical -> use turbo-fix. From audit findings -> use fix-pipeline."
 allowed-tools: Task, Bash, TodoWrite
 ---
 

@@ -6,6 +6,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **exodia — skill descriptions rewritten as routing triggers (2026-02-06):**
+  - Applied Vercel AGENTS.md pattern: descriptions now encode WHEN to use each skill + cross-references
+  - Shifted from WHAT-focused ("Unified fix pipeline...") to WHEN-focused ("Use for any bug fix P1-P3...")
+  - All 8 skill descriptions include routing hints to sibling skills (e.g., "For P0 -> use turbo-fix")
+  - Deleted AGENTS.md — Claude Code does not auto-load it from plugins, making it dead weight
+  - Routing intelligence now lives in skill `description` frontmatter (passive context)
+
 ### Added
 
 - **dotnet-architecture-lint v1.0.2 — context-aware hooks (2026-02-05):**

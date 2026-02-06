@@ -1,6 +1,6 @@
 ---
 name: turbo-fix
-description: "Maximum parallelism fix pipeline - 16 agents across 4 phases for fastest resolution. Usage: /turbo-fix [issue] [severity:P0] [context:.]"
+description: "Use for P0 critical bugs needing fastest resolution. 16 agents, 4 phases. For P1-P3 -> use fix instead."
 allowed-tools: Task, Bash, TodoWrite
 ---
 

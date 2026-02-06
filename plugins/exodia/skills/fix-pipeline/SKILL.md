@@ -1,6 +1,6 @@
 ---
 name: fix-pipeline
-description: "Systematic fix pipeline - takes audit findings through deep analysis, planning, implementation, and verification. Usage: /fix-pipeline [issue] [severity:P1] [context:.]"
+description: "Use when fixing issues found by mega-swarm audit. 7 agents, systematic analysis->design->implement->verify. For ad-hoc bugs -> use fix."
 allowed-tools: Task, Bash, TodoWrite
 ---
 

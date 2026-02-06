@@ -1,6 +1,6 @@
 ---
 name: mega-swarm
-description: "Maximum parallel audit - configurable agent count for codebase analysis. Usage: /mega-swarm [scope:full] [focus] [mode:full] [quick:false]"
+description: "Use for codebase audit or release readiness check. 6-12 agents scan in parallel. Full(12), quick(6), or focused(8) mode. Feed findings into fix-pipeline."
 allowed-tools: Task, TodoWrite
 ---
 

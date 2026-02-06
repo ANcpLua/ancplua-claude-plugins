@@ -1,6 +1,6 @@
 ---
 name: tournament
-description: "Competitive coding tournament with penalty scoring - N agents compete, judge picks winner. Usage: /tournament [task] [competitors:5]"
+description: "Use when multiple valid approaches exist and you need the best one. N agents compete, judge picks winner. For complex trade-offs without competition -> use deep-think."
 allowed-tools: Task, Bash, TodoWrite
 ---
 
