@@ -8,8 +8,13 @@
 #   - authoritative: External source, never question
 #   - verified: Tested, high confidence
 #   - tentative: Working hypothesis, may change
+#
+# Last updated: 2026-02-06 (Opus 4.6 February learnings)
 # =============================================================================
 
+# =============================================================================
+# RUNTIME VERSIONS
+# =============================================================================
 runtime:
   dotnet:
     value: "10.0"
@@ -30,7 +35,65 @@ runtime:
     authority: authoritative
     source: "https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14"
 
-# Universal banned APIs (apply to all .NET projects)
+# =============================================================================
+# CLAUDE MODEL FAMILY (February 2026)
+# =============================================================================
+claude_models:
+  family: "4.5/4.6"
+  authority: authoritative
+  models:
+    opus:
+      id: "claude-opus-4-6"
+      note: "Most capable. Use for deep reasoning."
+    sonnet:
+      id: "claude-sonnet-4-5-20250929"
+      note: "Balanced speed/quality."
+    haiku:
+      id: "claude-haiku-4-5-20251001"
+      note: "Fastest. Use for quick tasks."
+  danger_patterns:
+    - "claude-3"
+    - "opus-3"
+    - "sonnet-3.5"
+    - "haiku-3"
+  correction: "Claude 4.5/4.6 is current. Use claude-opus-4-6, claude-sonnet-4-5, or claude-haiku-4-5."
+
+# =============================================================================
+# CLAUDE CODE PLUGIN CONVENTIONS (February 2026)
+# =============================================================================
+claude_code:
+  passive_context_sources:
+    authority: authoritative
+    source: "https://code.claude.com/docs/en/plugins"
+    auto_loaded:
+      - "CLAUDE.md (user ~/.claude/ and project .claude/)"
+      - "Skill description frontmatter (always visible in skill list)"
+      - "SessionStart hook output (injected at session start)"
+      - "hooks/hooks.json (auto-discovered, do NOT declare in plugin.json)"
+    not_auto_loaded:
+      - "AGENTS.md (just a file, no special meaning in Claude Code)"
+      - "README.md (not loaded unless explicitly read)"
+      - "Any .yaml/.json config files"
+
+  anti_patterns:
+    agents_md_in_plugins:
+      authority: authoritative
+      reason: "AGENTS.md is NOT auto-loaded by Claude Code. Dead weight in plugins."
+      correction: "Encode routing in skill description frontmatter (passive context)."
+    hooks_in_plugin_json:
+      authority: authoritative
+      reason: "hooks/hooks.json is auto-discovered since v2.1. Declaring it causes duplicate load error."
+      correction: "Remove 'hooks' field from plugin.json."
+
+  vercel_pattern:
+    authority: verified
+    source: "Vercel AGENTS.md research, February 2026"
+    finding: "Passive context achieves 100% routing accuracy vs 53% for skills alone."
+    implication: "Encode routing intelligence in skill descriptions, not separate files."
+
+# =============================================================================
+# BANNED APIS (apply to all .NET projects, code files only)
+# =============================================================================
 banned_apis:
   datetime_now:
     pattern: "DateTime\\.Now|DateTime\\.UtcNow"

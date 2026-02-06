@@ -8,6 +8,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- **metacognitive-guard — February 2026 Opus 4.6 learnings (2026-02-06):**
+  - assertions.yaml: added Claude model family (Opus 4.6, Sonnet 4.5, Haiku 4.5), plugin conventions
+  - assertions.yaml: added Claude Code anti-patterns (AGENTS.md in plugins, hooks in plugin.json)
+  - assertions.yaml: added Vercel passive context pattern as verified finding
+  - epistemic-guard.sh: blocks AGENTS.md creation inside plugin directories (not auto-loaded)
+  - epistemic-guard.sh: skips banned API checks on docs files (.md, .yaml, .json) — fixes false positives
+  - epistemic-guard.sh: fully exempts assertions.yaml (source of truth, not code)
+  - truth-beacon.sh: injects Claude Code conventions at session start (passive context rules)
+
 - **exodia — skill descriptions rewritten as routing triggers (2026-02-06):**
   - Applied Vercel AGENTS.md pattern: descriptions now encode WHEN to use each skill + cross-references
   - Shifted from WHAT-focused ("Unified fix pipeline...") to WHEN-focused ("Use for any bug fix P1-P3...")
