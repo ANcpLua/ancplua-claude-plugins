@@ -18,16 +18,43 @@ PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"
 INPUT=$(cat 2>/dev/null || true)
 [[ -z "$INPUT" ]] && exit 0
 
-# Extract content being written/edited
-# Try jq first, fall back to grep/sed if jq unavailable
+# Extract file path and content being written/edited
 if command -v jq &>/dev/null; then
+    FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // .tool_input.file // empty' 2>/dev/null || true)
     CONTENT=$(echo "$INPUT" | jq -r '.tool_input.content // .tool_input.new_string // empty' 2>/dev/null || true)
 else
-    # Fallback: extract content/new_string using grep/sed (less reliable but works)
-    # Note: This fallback won't handle escaped quotes or JSON string unescaping
+    FILE_PATH=$(printf '%s' "$INPUT" | grep -oE '"file_path"\s*:\s*"[^"]*"' | head -1 | sed 's/.*: *"\([^"]*\)".*/\1/' || true)
     CONTENT=$(printf '%s' "$INPUT" | grep -oE '"(content|new_string)"\s*:\s*"[^"]*"' | head -1 | sed 's/.*: *"\([^"]*\)".*/\1/' || true)
 fi
 [[ -z "$CONTENT" ]] && exit 0
+
+# =============================================================================
+# STRUCTURAL ANTI-PATTERN DETECTION (file path checks)
+# =============================================================================
+
+# Block AGENTS.md inside plugin directories (not auto-loaded, dead weight)
+if [[ "$FILE_PATH" == */plugins/*/AGENTS.md ]]; then
+    cat << 'EOF'
+{
+  "decision": "block",
+  "reason": "EPISTEMIC GUARD: Anti-pattern - AGENTS.md in plugin directory",
+  "message": "AGENTS.md is NOT auto-loaded by Claude Code plugins.\n\nRouting intelligence belongs in skill description frontmatter (passive context).\nUse the Vercel pattern: encode WHEN to use each skill in the description field.\n\nIf you need human documentation, use README.md instead."
+}
+EOF
+    exit 0
+fi
+
+# Skip ALL checks for assertion config files (they ARE the source of truth)
+case "$FILE_PATH" in
+    */assertions.yaml|*/assertions.yml) exit 0 ;;
+esac
+
+# Skip banned-API checks for documentation files (.md, .yaml, .yml, .json)
+# These files legitimately reference banned patterns in tables/examples
+IS_DOCS=false
+case "$FILE_PATH" in
+    *.md|*.yaml|*.yml|*.json|*.txt) IS_DOCS=true ;;
+esac
 
 # =============================================================================
 # DANGER PATTERN DETECTION
@@ -44,6 +71,9 @@ if echo "$CONTENT" | grep -qiE "\.NET 10.*(preview|not.*(released|LTS|available)
 EOF
     exit 0
 fi
+
+# Banned API checks only for code files (skip docs to avoid false positives)
+if [[ "$IS_DOCS" == false ]]; then
 
 # DateTime.Now/UtcNow (banned API)
 if echo "$CONTENT" | grep -qE 'DateTime\.(Now|UtcNow)|DateTimeOffset\.(Now|UtcNow)'; then
@@ -79,6 +109,8 @@ if echo "$CONTENT" | grep -qE 'Newtonsoft\.Json|JsonConvert\.'; then
 }
 EOF
     exit 0
+fi
+
 fi
 
 # No violations found - allow

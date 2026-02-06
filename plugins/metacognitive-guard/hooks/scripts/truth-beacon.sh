@@ -60,6 +60,11 @@ BANNED APIS:
 - object _lock -> use Lock _lock = new()
 - Newtonsoft.Json -> use System.Text.Json
 
+CLAUDE CODE CONVENTIONS:
+- AGENTS.md is NOT auto-loaded by plugins (dead weight - use skill descriptions)
+- hooks/hooks.json auto-loads by convention (do NOT declare in plugin.json)
+- Passive context = CLAUDE.md + skill description frontmatter + SessionStart hooks
+
 If uncertain about versions/APIs:
 - WebSearch to verify current state
 - Do NOT rely on training priors for version info
