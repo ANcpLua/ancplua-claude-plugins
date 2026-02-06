@@ -1,6 +1,6 @@
 ---
 name: enforce
-description: "Takes judge findings and fixes ALL violations. Iterates until clean. No mercy, no shortcuts, no technical debt tolerance. Runs judge -> fix -> judge loop until PROCEED."
+description: "Takes judge findings and fixes ALL violations. Spawns 4 Agent Team teammates to fix in parallel. Iterates judge->fix->judge until PROCEED. No mercy, no shortcuts."
 allowed-tools: Task, Bash, TodoWrite
 ---
 
@@ -21,6 +21,26 @@ If max iterations hit and still HALT: escalate to user. Something is structurall
 
 ---
 
+## AGENT TEAMS — HOW THIS WORKS
+
+You spawn 4 teammates for fixing. Each teammate:
+- Gets CLAUDE.md automatically (project conventions, banned APIs, boundaries)
+- Does NOT get this conversation history
+- Needs ALL context in the spawn prompt: what violations to fix, which files they own, rules
+- Owns SPECIFIC FILES — no two teammates touch the same file (prevents overwrites)
+
+### Limitations You Must Account For
+
+- **No session resumption with teammates:** If session is resumed, old teammates are gone. Spawn new ones.
+- **Task status can lag:** If a teammate appears stuck, check if work is actually done. Nudge or update manually.
+- **Shutdown is slow:** Teammates finish current request before stopping. Wait patiently.
+- **One team per session:** Clean up current team before starting a new one.
+- **No nested teams:** Teammates cannot spawn their own teammates. Only you (lead) manage the team.
+- **Lead is fixed:** You are lead for this session's lifetime. Cannot transfer.
+- **Permissions set at spawn:** Teammates inherit your permission mode. Can change after spawn.
+
+---
+
 ## EXECUTION INSTRUCTIONS
 
 <CRITICAL_EXECUTION_REQUIREMENT>
@@ -28,10 +48,11 @@ If max iterations hit and still HALT: escalate to user. Something is structurall
 
 1. Run judge (or use provided findings from $1)
 2. If PROCEED: done, report clean
-3. If HALT: fix all violations in parallel
-4. Re-run judge
-5. Repeat until PROCEED or max iterations ($2)
-6. Only stop for: unresolvable conflicts, max iterations, or user escalation
+3. If HALT: assign file ownership, spawn 4 fixer teammates
+4. Wait for all fixers to complete
+5. Re-run judge (quick — just build/test + spot-check)
+6. Repeat until PROCEED or max iterations ($2)
+7. Only stop for: unresolvable conflicts, max iterations, or user escalation
 
 **HADES FOLLOWS THE RULES. ELSE WE CAN'T PLAY GAMES.**
 </CRITICAL_EXECUTION_REQUIREMENT>
@@ -41,203 +62,166 @@ If max iterations hit and still HALT: escalate to user. Something is structurall
 ## ITERATION 1: INITIAL JUDGMENT
 
 If $1 contains specific findings, use those.
-Otherwise, run the judge first:
-
-### Run Judge
-```
-Invoke /hades:judge internally (same logic):
-- Determine scope from git diff
-- Launch 6 enforcement agents in parallel
-- Collect findings
-- Produce verdict
-```
+Otherwise, run `/hades:judge` first to get the violation list.
 
 If PROCEED: skip to FINAL REPORT (clean codebase).
 If HALT: continue to FIX phase.
 
 ---
 
-## FIX PHASE: PARALLEL REMEDIATION
+## FILE OWNERSHIP PROTOCOL
 
-Group violations by domain and fix in parallel (LAW 3).
-Each fixer agent owns a DIFFERENT set of files to avoid overwrites.
-
-### File Ownership Protocol
-
-CRITICAL: Two agents editing the same file = overwrites. Before launching fixers:
+CRITICAL: Two teammates editing the same file = overwrites. Before spawning fixers:
 
 1. Map each violation to its file
 2. Group violations by file
-3. Assign each FILE to exactly ONE fixer agent
-4. If a file has violations from multiple domains, ONE agent handles all of them
+3. Assign each FILE to exactly ONE teammate
+4. If a file has violations from multiple domains, ONE teammate handles all of them
 
-### Launch Fixers
-
-Based on what judge found, launch the relevant fixers in ONE message:
-
-#### Fixer A: Architecture & Boundaries (if arch violations found)
-```yaml
-subagent_type: feature-dev:code-architect
-description: "Fix architecture violations"
-prompt: |
-  HADES ENFORCEMENT — FIX ARCHITECTURE
-
-  You own these files exclusively: [list files]
-  No other agent will touch these files.
-
-  FIX THESE VIOLATIONS:
-  [paste architecture violations with file:line and rule]
-
-  RULES:
-  - Fix the actual issue. Do not suppress warnings.
-  - Follow existing patterns in the codebase.
-  - Minimal change. Fix the violation, nothing else.
-  - If a dependency boundary is violated, move the code or use the correct reference pattern.
-  - If SOLID is violated, refactor to comply.
-
-  AFTER FIXING:
-  - Run: dotnet build
-  - Verify no new warnings introduced
-  - List every file you changed
-
-  Output: Files changed + build result
+Example assignment:
+```
+Teammate A owns: src/Foo.cs, src/Bar.cs (arch + impl violations in these files)
+Teammate B owns: src/Baz.cs, tests/BazTests.cs (integrity violations)
+Teammate C owns: Directory.Packages.props, src/Qux.csproj (MSBuild violations)
+Teammate D owns: src/Service.cs, src/Handler.cs (cleanup violations)
 ```
 
-#### Fixer B: Implementation & Banned APIs (if impl violations found)
-```yaml
-subagent_type: feature-dev:code-architect
-description: "Fix implementation violations"
-prompt: |
-  HADES ENFORCEMENT — FIX IMPLEMENTATION
+---
 
-  You own these files exclusively: [list files]
-  No other agent will touch these files.
+## FIX PHASE: SPAWN 4 TEAMMATES
 
-  FIX THESE VIOLATIONS:
-  [paste implementation violations with file:line and rule]
+### Teammate 1: Architecture & Boundary Fixer
 
-  BANNED API REPLACEMENTS:
-  Check CLAUDE.md and project rules for the full banned API list and their replacements.
-  Common replacements include using TimeProvider instead of direct current-time calls,
-  Lock instead of object-typed locks, and System.Text.Json instead of Newtonsoft.
+```
+You are a Hades enforcement fixer — ARCHITECTURE domain.
 
-  RULES:
-  - Replace banned APIs with correct alternatives
-  - Fix security issues properly (not with suppressions)
-  - Update version mismatches
-  - Minimal change. Fix the violation, nothing else.
+You own these files EXCLUSIVELY (no other agent will touch them):
+[list files assigned to this teammate]
 
-  AFTER FIXING:
-  - Run: dotnet build
-  - Verify no new warnings introduced
-  - List every file you changed
+FIX THESE VIOLATIONS:
+[paste architecture violations with file:line and rule]
 
-  Output: Files changed + build result
+RULES:
+- Fix the actual issue. Do NOT suppress warnings.
+- Follow existing patterns in the codebase (read CLAUDE.md).
+- Minimal change. Fix the violation, nothing else.
+- If a dependency boundary is violated, move code or use the correct reference pattern.
+- If SOLID is violated, refactor to comply.
+
+AFTER FIXING:
+- Run: dotnet build
+- Verify no new warnings introduced
+- List every file you changed and what you changed
+
+Output: Files changed + build result
 ```
 
-#### Fixer C: Integrity Violations (if integrity violations found)
-```yaml
-subagent_type: cleanup-specialist
-description: "Fix integrity violations"
-prompt: |
-  HADES ENFORCEMENT — FIX INTEGRITY
+### Teammate 2: Implementation & API Fixer
 
-  You own these files exclusively: [list files]
-  No other agent will touch these files.
+```
+You are a Hades enforcement fixer — IMPLEMENTATION domain.
 
-  FIX THESE VIOLATIONS:
-  [paste integrity violations with file:line and pattern]
+You own these files EXCLUSIVELY (no other agent will touch them):
+[list files assigned to this teammate]
 
-  FIX STRATEGY:
-  - Warning suppression (#pragma warning disable): FIX THE UNDERLYING WARNING. Do not just remove the suppression — fix what caused it.
-  - Commented-out tests: UNCOMMENT and fix them, or DELETE if truly obsolete.
-  - Deleted assertions: RESTORE them. If the assertion was wrong, fix the assertion, do not delete it.
-  - Empty catch blocks: Add proper logging or re-throw.
-  - Fresh TODOs: Either do the TODO now, or create a GitHub issue and reference it.
-  - Debugging leftover: Remove all Console.WriteLine, Debug.WriteLine, debugger statements.
+FIX THESE VIOLATIONS:
+[paste implementation violations with file:line and rule]
 
-  RULES:
-  - NEVER suppress a warning to "fix" it. That is what got us here.
-  - NEVER comment out a test. Fix it or delete it with justification.
-  - NEVER add empty catch blocks.
+BANNED API REPLACEMENTS (read CLAUDE.md for the complete list):
+- DateTime current-time properties -> TimeProvider.System.GetUtcNow()
+- object-typed lock fields -> Lock _lock = new()
+- lock(obj) blocks -> using (_lock.EnterScope())
+- Newtonsoft/JsonConvert -> System.Text.Json / JsonSerializer
 
-  AFTER FIXING:
-  - Run: dotnet build && dotnet test
-  - Verify all tests pass
-  - List every file you changed
+RULES:
+- Replace banned APIs with correct alternatives
+- Fix security issues properly (not with suppressions)
+- Update version mismatches
+- Minimal change. Fix the violation, nothing else.
 
-  Output: Files changed + build/test result
+AFTER FIXING:
+- Run: dotnet build
+- Verify no new warnings introduced
+- List every file you changed and what you changed
+
+Output: Files changed + build result
 ```
 
-#### Fixer D: MSBuild/CPM (if lint violations found)
-```yaml
-subagent_type: msbuild-expert
-description: "Fix MSBuild/CPM violations"
-prompt: |
-  HADES ENFORCEMENT — FIX MSBUILD
+### Teammate 3: Integrity & Cleanup Fixer
 
-  You own these files exclusively: [list files]
-  No other agent will touch these files.
+```
+You are a Hades enforcement fixer — INTEGRITY & CLEANUP domain.
 
-  FIX THESE VIOLATIONS:
-  [paste MSBuild violations with file:line and rule]
+You own these files EXCLUSIVELY (no other agent will touch them):
+[list files assigned to this teammate]
 
-  FIX STRATEGY:
-  - Rule A (hardcoded version): Move to Version.props as $(PackageNameVersion) variable
-  - Rule B (wrong import): Move import to correct file per allowed owners list
-  - Rule G (inline Version on PackageReference): Move version to Directory.Packages.props, remove from .csproj
+FIX THESE VIOLATIONS:
+[paste integrity + cleanup violations with file:line and pattern]
 
-  VERSION VARIABLE NAMING:
-  Package.Name -> $(PackageNameVersion)
-  Remove dots/dashes, append "Version"
+FIX STRATEGY:
+- Warning suppression: FIX THE UNDERLYING WARNING. Do not just remove the pragma — fix what caused it.
+- Commented-out tests: UNCOMMENT and fix, or DELETE if truly obsolete.
+- Deleted assertions: RESTORE them. Fix the assertion if wrong, do not delete it.
+- Empty catch blocks: Add proper logging or re-throw.
+- Fresh TODOs: Either do the work now, or create a GitHub issue and reference it.
+- Dead code: DELETE IT. No commenting out. No _unused prefix.
+- Duplication: Extract to shared method. Follow DRY.
+- Stale comments: Delete or update to match current code.
+- Debugging leftover: Remove all Console.WriteLine, Debug.WriteLine, debugger.
 
-  AFTER FIXING:
-  - Run: dotnet restore && dotnet build
-  - Verify packages resolve correctly
+RULES:
+- NEVER suppress a warning to "fix" it.
+- NEVER comment out a test.
+- NEVER add empty catch blocks.
 
-  Output: Files changed + restore/build result
+AFTER FIXING:
+- Run: dotnet build && dotnet test
+- Verify all tests pass
+- List every file you changed and what you changed
+
+Output: Files changed + build/test result
 ```
 
-#### Fixer E: Cleanup Debt (if cleanup violations found)
-```yaml
-subagent_type: cleanup-specialist
-description: "Fix cleanup debt"
-prompt: |
-  HADES ENFORCEMENT — FIX CLEANUP
+### Teammate 4: MSBuild & Build Config Fixer
 
-  You own these files exclusively: [list files]
-  No other agent will touch these files.
+```
+You are a Hades enforcement fixer — MSBUILD & BUILD CONFIG domain.
 
-  FIX THESE VIOLATIONS:
-  [paste cleanup violations with file:line and type]
+You own these files EXCLUSIVELY (no other agent will touch them):
+[list files assigned to this teammate]
 
-  FIX STRATEGY:
-  - Dead code: DELETE IT. No commenting out. No _unused prefix. Delete.
-  - Duplication: Extract to shared method/class. Follow DRY.
-  - Stale comments: Delete or update to match current code.
-  - Unnecessary complexity: Simplify. Three similar lines > premature abstraction.
+FIX THESE VIOLATIONS:
+[paste MSBuild/CPM + build violations with file:line and rule]
 
-  RULES:
-  - If not sure something is unused, trace all callers first.
-  - If removing dead code breaks a build, it was not dead. Restore and reclassify.
+FIX STRATEGY:
+- Rule A (hardcoded version in props): Move to Version.props as $(PackageNameVersion) variable
+- Rule G (inline Version on PackageReference in csproj): Move version to Directory.Packages.props, remove Version= from csproj
+- Build warnings: Fix the underlying cause, do not suppress
+- Format violations: Run dotnet format on affected files
 
-  AFTER FIXING:
-  - Run: dotnet build && dotnet test
-  - Verify nothing broke
+VERSION VARIABLE NAMING:
+Some.Package.Name -> $(SomePackageNameVersion)
+Remove dots/dashes from package name, append "Version"
 
-  Output: Files changed + build/test result
+AFTER FIXING:
+- Run: dotnet restore && dotnet build
+- Verify packages resolve correctly
+- Run: dotnet format --verify-no-changes
+- List every file you changed and what you changed
+
+Output: Files changed + restore/build/format result
 ```
 
 ---
 
 ## GATE: FIX COMPLETION
 
-After ALL fixers complete:
+After ALL 4 teammates complete:
 
 ```
 FIX GATE:
 +--------------------------------------------+
-| Fixers Completed: [X/Y]                   |
+| Teammates Completed: [X/4]                 |
 | Files Changed: [count]                     |
 | Build After Fix: [PASS/FAIL]              |
 | Tests After Fix: [PASS/FAIL]              |
@@ -249,18 +233,25 @@ FIX GATE:
 
 If build or tests fail after fixes:
 1. Diagnose what broke
-2. Launch a targeted fixer for the broken area
+2. Message the responsible teammate to fix
 3. Re-verify
 
 ---
 
 ## RE-JUDGE
 
-Run the judge again (quick mode for speed):
+Run verification yourself (as lead):
 
-- If PROCEED: done. Report clean.
-- If HALT: increment iteration counter.
-  - If < max iterations: go back to FIX phase
+```bash
+dotnet build --no-incremental 2>&1
+dotnet test 2>&1
+```
+
+Spot-check a few of the originally violated files.
+
+- If clean: done. Report PROCEED.
+- If new violations: increment iteration counter.
+  - If < max iterations: spawn new fixers for remaining issues
   - If >= max iterations: escalate
 
 ---
@@ -302,9 +293,9 @@ If max iterations hit and still HALT:
 | Remaining: [count]                                                  |
 +====================================================================+
 | ITERATION LOG                                                       |
-|  Round 1: [X] violations found -> [Y] fixed                        |
-|  Round 2: [X] violations found -> [Y] fixed                        |
-|  Round N: [X] violations found -> PROCEED                          |
+|  Round 1: [X] violations -> 4 teammates -> [Y] fixed               |
+|  Round 2: [X] violations -> 4 teammates -> [Y] fixed               |
+|  Round N: [X] violations -> PROCEED                                |
 +====================================================================+
 | FILES CHANGED                                                       |
 | [list all files modified across all iterations]                     |
@@ -328,7 +319,8 @@ Without Exodia, Hades has nothing to judge.
 
 The loop:
 ```
-Exodia builds -> Hades judges -> HALT? -> Hades enforces -> Hades re-judges -> PROCEED -> Ship
+Exodia builds -> Hades judges (4 teammates) -> HALT?
+    -> Hades enforces (4 teammates) -> Hades re-judges -> PROCEED -> Ship
 ```
 
 This is LAW 2 made concrete.
