@@ -8,6 +8,14 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **Hades god mode — active deletion permit bypasses ALL blocking hooks (2026-02-06):**
+  - `hookify/core/rule_engine.py`: checks `.smart/delete-permit.json` before evaluating rules
+  - `metacognitive-guard/hooks/scripts/epistemic-guard.sh`: exits early with active permit
+  - `dotnet-architecture-lint/scripts/precheck-dotnet.py`: exits early with active permit
+  - Permit must be `status: active` AND not expired (`expires_epoch > now`)
+  - Hades is exempt from: delete-guard, epistemic-guard, dotnet-lint, all hookify rules
+  - Non-hades sessions are unaffected — no permit = normal enforcement
+
 - **CLAUDE.md — Task Routing section with IF/THEN decision trees (2026-02-06):**
   - New Section 4: passive context routing (Vercel pattern — 100% pass rate)
   - Hades routing: `IF cleanup/elimination/dead code THEN exodia/hades`

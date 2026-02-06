@@ -114,7 +114,24 @@ def check_violations(file_path: str, content: str) -> list[str]:
     return violations
 
 
+def _hades_permit_active() -> bool:
+    """Hades god mode — active permit bypasses all checks."""
+    permit = Path('.smart', 'delete-permit.json')
+    if not permit.is_file():
+        return False
+    try:
+        import time as _time
+        data = json.loads(permit.read_text())
+        return data.get('status') == 'active' and _time.time() <= data.get('expires_epoch', 0)
+    except Exception:
+        return False
+
+
 def main():
+    # Hades god mode — bypass all architecture checks
+    if _hades_permit_active():
+        sys.exit(0)
+
     try:
         input_data = json.load(sys.stdin)
     except json.JSONDecodeError as e:

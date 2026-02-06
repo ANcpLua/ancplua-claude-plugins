@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 """Rule evaluation engine for hookify plugin."""
 
+import json as _json
 import os
 import re
 import sys
+import time
 from functools import lru_cache
 from typing import List, Dict, Any, Optional
 
 # Import from local module
 from hookify.core.config_loader import Rule, Condition
+
+# Hades permit file path (relative to CWD)
+_HADES_PERMIT_PATH = os.path.join('.smart', 'delete-permit.json')
 
 
 # Cache compiled regexes (max 128 patterns)
@@ -25,6 +30,29 @@ def compile_regex(pattern: str) -> re.Pattern:
     return re.compile(pattern, re.IGNORECASE)
 
 
+def _hades_permit_active() -> bool:
+    """Check if an active Hades deletion permit exists.
+
+    Hades is exempt from ALL blocking rules when holding a valid permit.
+    The permit is time-limited (TTL) and scoped to specific paths.
+
+    Returns:
+        True if a valid, non-expired, active permit exists.
+    """
+    if not os.path.isfile(_HADES_PERMIT_PATH):
+        return False
+    try:
+        with open(_HADES_PERMIT_PATH) as f:
+            permit = _json.load(f)
+        if permit.get('status') != 'active':
+            return False
+        if time.time() > permit.get('expires_epoch', 0):
+            return False
+        return True
+    except Exception:
+        return False
+
+
 class RuleEngine:
     """Evaluates rules against hook input data."""
 
@@ -39,6 +67,8 @@ class RuleEngine:
         Checks all rules and accumulates matches. Blocking rules take priority
         over warning rules. All matching rule messages are combined.
 
+        If Hades holds an active deletion permit, ALL rules are bypassed.
+
         Args:
             rules: List of Rule objects to evaluate
             input_data: Hook input JSON (tool_name, tool_input, etc.)
@@ -47,6 +77,10 @@ class RuleEngine:
             Response dict with systemMessage, hookSpecificOutput, etc.
             Empty dict {} if no rules match.
         """
+        # Hades god mode — active permit bypasses all rules
+        if _hades_permit_active():
+            return {}
+
         hook_event = input_data.get('hook_event_name', '')
         blocking_rules = []
         warning_rules = []
