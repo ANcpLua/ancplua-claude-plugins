@@ -49,12 +49,17 @@ create() {
   done
   paths_json+="]"
 
-  # Atomic write with flock to prevent race conditions
-  (
-    flock -x 200
+  # Atomic write (flock if available, direct write otherwise)
+  if command -v flock &>/dev/null; then
+    (
+      flock -x 200
+      printf '{"smart_id":"%s","created_at":"%s","expires_at":"%s","ttl":%d,"expires_epoch":%d,"paths":%s,"status":"active"}\n' \
+        "$smart_id" "$created_iso" "$expires_iso" "$ttl" "$expires_at" "$paths_json" > "$PERMIT_FILE"
+    ) 200>"${PERMIT_FILE}.lock"
+  else
     printf '{"smart_id":"%s","created_at":"%s","expires_at":"%s","ttl":%d,"expires_epoch":%d,"paths":%s,"status":"active"}\n' \
       "$smart_id" "$created_iso" "$expires_iso" "$ttl" "$expires_at" "$paths_json" > "$PERMIT_FILE"
-  ) 200>"${PERMIT_FILE}.lock"
+  fi
 
   echo "Permit created: ${smart_id} (TTL: ${ttl}s, paths: ${#paths[@]})"
 }
@@ -118,15 +123,23 @@ revoke() {
     echo "No active permit to revoke."
     return
   fi
-  # Atomic revoke with flock
-  (
-    flock -x 200
+  # Atomic revoke (flock if available)
+  if command -v flock &>/dev/null; then
+    (
+      flock -x 200
+      if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' 's/"status":"active"/"status":"revoked"/' "$PERMIT_FILE"
+      else
+        sed -i 's/"status":"active"/"status":"revoked"/' "$PERMIT_FILE"
+      fi
+    ) 200>"${PERMIT_FILE}.lock"
+  else
     if [[ "$OSTYPE" == "darwin"* ]]; then
       sed -i '' 's/"status":"active"/"status":"revoked"/' "$PERMIT_FILE"
     else
       sed -i 's/"status":"active"/"status":"revoked"/' "$PERMIT_FILE"
     fi
-  ) 200>"${PERMIT_FILE}.lock"
+  fi
   echo "Permit revoked."
 }
 

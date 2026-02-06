@@ -6,6 +6,14 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+
+- **Hades god mode review fixes (2026-02-06):**
+  - `permit.sh`: flock fallback for macOS (flock not pre-installed, was hard-failing with `set -euo pipefail`)
+  - `rule_engine.py`: removed TOCTOU race (`isfile()` before `try/except`), added `encoding='utf-8'`
+  - `precheck-dotnet.py`: removed TOCTOU race (`is_file()` before `try/except`), added `encoding='utf-8'`
+  - `hades/SKILL.md`: added missing `expires_epoch` to permit format docs
+
 ### Added
 
 - **Hades god mode — active deletion permit bypasses ALL blocking hooks (2026-02-06):**
