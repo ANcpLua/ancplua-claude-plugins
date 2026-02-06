@@ -19,25 +19,50 @@ The loop: JUDGE -> FIX -> JUDGE. Repeat until PROCEED or max iterations hit.
 
 If max iterations hit and still HALT: escalate to user. Something is structurally wrong.
 
+**Delegate mode:** You operate as a coordinator. Zero implementation yourself. You create teams, assign file ownership, review teammate plans, approve/reject, collect results. Your teammates do all the actual fixing.
+
 ---
 
 ## AGENT TEAMS — HOW THIS WORKS
 
 You spawn 4 teammates for fixing. Each teammate:
 - Gets CLAUDE.md automatically (project conventions, banned APIs, boundaries)
-- Does NOT get this conversation history
-- Needs ALL context in the spawn prompt: what violations to fix, which files they own, rules
+- Does NOT get this conversation history — include ALL context in the spawn prompt
+- Communicates via SendMessage (DM to lead or other teammates)
+- Claims tasks via TaskUpdate with `owner` parameter (file-lock based, no race conditions)
 - Owns SPECIFIC FILES — no two teammates touch the same file (prevents overwrites)
+
+### Plan Approval Flow
+
+Enforce teammates should plan before implementing. This prevents wasted effort on wrong fixes:
+
+1. Teammate reads violations and affected files
+2. Teammate sends plan to lead via SendMessage: "Here's my fix plan for [files]: [approach]"
+3. Lead reviews plan — approve via SendMessage or reject with feedback
+4. Only after approval: teammate implements the fix
+5. Teammate runs build/test, reports results via SendMessage
+
+This is optional for trivial fixes (single-line banned API replacements) but mandatory for structural changes (refactoring, moving code across boundaries).
+
+### Task Coordination
+
+1. Create team with TeamCreate
+2. Create 4 tasks with TaskCreate (one per fixer domain)
+3. Spawn 4 teammates with Task tool (`team_name` parameter joins them to the team)
+4. Assign tasks via TaskUpdate (`owner` = teammate name)
+5. Teammates mark tasks completed via TaskUpdate when done
+6. Messages from teammates are delivered automatically — no polling needed
 
 ### Limitations You Must Account For
 
-- **No session resumption with teammates:** If session is resumed, old teammates are gone. Spawn new ones.
-- **Task status can lag:** If a teammate appears stuck, check if work is actually done. Nudge or update manually.
+- **No session resumption:** If session resumes, old teammates are gone. Spawn new ones with full context.
+- **Task status can lag:** If a teammate appears stuck, check if work is actually done. Nudge via SendMessage.
 - **Shutdown is slow:** Teammates finish current request before stopping. Wait patiently.
-- **One team per session:** Clean up current team before starting a new one.
+- **One team per session:** Clean up current team (TeamDelete) before starting a new one.
 - **No nested teams:** Teammates cannot spawn their own teammates. Only you (lead) manage the team.
 - **Lead is fixed:** You are lead for this session's lifetime. Cannot transfer.
-- **Permissions set at spawn:** Teammates inherit your permission mode. Can change after spawn.
+- **Permissions propagate:** Teammates inherit your permission mode at spawn time.
+- **Iteration 2+ needs new team:** If re-running fixers after re-judge, shutdown old team, TeamDelete, create fresh team with remaining violations as context.
 
 ---
 
@@ -48,11 +73,12 @@ You spawn 4 teammates for fixing. Each teammate:
 
 1. Run judge (or use provided findings from $1)
 2. If PROCEED: done, report clean
-3. If HALT: assign file ownership, spawn 4 fixer teammates
-4. Wait for all fixers to complete
-5. Re-run judge (quick — just build/test + spot-check)
-6. Repeat until PROCEED or max iterations ($2)
-7. Only stop for: unresolvable conflicts, max iterations, or user escalation
+3. If HALT: assign file ownership, TeamCreate, spawn 4 fixer teammates
+4. Wait for all fixers to complete (messages arrive automatically)
+5. Shutdown teammates, TeamDelete
+6. Re-run judge yourself (build/test + spot-check changed files)
+7. Repeat until PROCEED or max iterations ($2) — fresh team each iteration
+8. Only stop for: unresolvable conflicts, max iterations, or user escalation
 
 **HADES FOLLOWS THE RULES. ELSE WE CAN'T PLAY GAMES.**
 </CRITICAL_EXECUTION_REQUIREMENT>
@@ -216,7 +242,7 @@ Output: Files changed + restore/build/format result
 
 ## GATE: FIX COMPLETION
 
-After ALL 4 teammates complete:
+After ALL 4 teammates complete (check TaskList — all 4 tasks status: completed):
 
 ```
 FIX GATE:
@@ -233,12 +259,15 @@ FIX GATE:
 
 If build or tests fail after fixes:
 1. Diagnose what broke
-2. Message the responsible teammate to fix
-3. Re-verify
+2. SendMessage to the responsible teammate with the error and which file caused it
+3. Wait for teammate to fix and re-report
+4. Re-verify
 
 ---
 
 ## RE-JUDGE
+
+Shutdown all teammates (SendMessage type: shutdown_request), then TeamDelete to clean up.
 
 Run verification yourself (as lead):
 
@@ -251,7 +280,7 @@ Spot-check a few of the originally violated files.
 
 - If clean: done. Report PROCEED.
 - If new violations: increment iteration counter.
-  - If < max iterations: spawn new fixers for remaining issues
+  - If < max iterations: fresh TeamCreate, spawn new fixers for remaining issues only
   - If >= max iterations: escalate
 
 ---
