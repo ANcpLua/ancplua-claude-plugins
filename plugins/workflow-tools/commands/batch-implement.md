@@ -18,10 +18,12 @@ Parallel implementation of similar items with shared patterns.
 
 CRITICAL INSTRUCTIONS:
 1. Execute ALL phases (1->2->3->4) in sequence WITHOUT pausing
-2. For Phase 2, launch ONE agent PER ITEM in PARALLEL
-3. Use TodoWrite: one todo per item, mark complete as each finishes
-4. Only stop if: build fails, tests fail, or unrecoverable error
-5. At the end, provide the summary table
+2. For Phase 2, launch ONE agent PER ITEM in PARALLEL (max 6 items for total 8 agents)
+3. Maximum 8 total agents (1 extractor + 6 implementers + 1 reviewer = 8)
+4. If more than 6 items requested, batch them into groups of 6
+5. Use TodoWrite: one todo per item, mark complete as each finishes
+6. Only stop if: build fails, tests fail, or unrecoverable error
+7. At the end, provide the summary table
 
 **YOUR NEXT MESSAGE: Launch 1 Task tool call for Phase 1 pattern extraction.**
 

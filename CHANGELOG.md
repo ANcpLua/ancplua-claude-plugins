@@ -32,6 +32,18 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **cleanup-specialist deprecated in favor of exodia/hades (2026-02-06):**
   - agents/cleanup-specialist/README.md updated with deprecation notice pointing to smart-hades
 
+- **workflow-tools — Agent count constraints (2026-02-06):**
+  - All commands now constrained to maximum 8 or 4 agents (never more or less)
+  - `/fix`: Standard=4 agents (2→1→1→0), Maximum=8 agents (4→2→1→1)
+  - `/turbo-fix`: Reduced from 16 to 8 agents (4→2→1→1)
+  - `/mega-swarm`: Full=8 agents, Quick=4 agents, Focused=8 agents (down from 12/6/8)
+  - `/deep-think`: Reduced from 5 to 4 agents (2→2)
+  - `/tournament`: Default 4 competitors, max 6 (for total 8 with judge+implementer)
+  - `/batch-implement`: Max 6 items (1 extractor + 6 implementers + 1 reviewer = 8)
+  - `/red-blue-review`: 3 Red + max 4 Blue + 1 Red re-attack = 8 agents
+  - `/fix-pipeline`: Reduced from 6 to 4 agents (2→1→1)
+  - **exodia skills remain unrestricted** - can launch unlimited parallel agents
+
 - **metacognitive-guard — February 2026 Opus 4.6 learnings (2026-02-06):**
   - assertions.yaml: added Claude model family (Opus 4.6, Sonnet 4.5, Haiku 4.5), plugin conventions
   - assertions.yaml: added Claude Code anti-patterns (AGENTS.md in plugins, hooks in plugin.json)
