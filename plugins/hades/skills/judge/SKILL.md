@@ -21,25 +21,36 @@ Your job: spawn 4 teammates, each enforcing a different domain. Collect their fi
 
 You are the LEAD. You do NOT review code yourself. You orchestrate.
 
+**Delegate mode:** You operate as a coordinator. Zero implementation. You create teams, create tasks, assign work, collect results, synthesize verdicts. Your teammates do all the actual code reading and analysis.
+
 ---
 
 ## AGENT TEAMS — HOW THIS WORKS
 
 You spawn 4 teammates. Each teammate:
 - Gets CLAUDE.md automatically (project conventions, banned APIs, boundaries)
-- Does NOT get this conversation history
-- Needs ALL task context in the spawn prompt
-- Owns specific files (no two teammates touch the same file)
+- Does NOT get this conversation history — include ALL context in the spawn prompt
+- Communicates via SendMessage (DM to lead or other teammates)
+- Claims tasks via TaskUpdate with `owner` parameter (file-lock based, no race conditions)
+
+### Task Coordination
+
+1. Create team with TeamCreate
+2. Create 4 tasks with TaskCreate (one per enforcement domain)
+3. Spawn 4 teammates with Task tool (`team_name` parameter joins them to the team)
+4. Assign tasks via TaskUpdate (`owner` = teammate name)
+5. Teammates mark tasks completed via TaskUpdate when done
+6. Messages from teammates are delivered automatically — no polling needed
 
 ### Limitations You Must Account For
 
-- **No session resumption with teammates:** If session is resumed, old teammates are gone. Spawn new ones.
-- **Task status can lag:** If a teammate appears stuck, check if work is actually done. Nudge or update manually.
+- **No session resumption:** If session resumes, old teammates are gone. Spawn new ones.
+- **Task status can lag:** If a teammate appears stuck, check if work is actually done. Nudge via SendMessage.
 - **Shutdown is slow:** Teammates finish current request before stopping. Wait patiently.
-- **One team per session:** Clean up current team before starting a new one.
+- **One team per session:** Clean up current team (TeamDelete) before starting a new one.
 - **No nested teams:** Teammates cannot spawn their own teammates. Only you (lead) manage the team.
 - **Lead is fixed:** You are lead for this session's lifetime. Cannot transfer.
-- **Permissions set at spawn:** Teammates inherit your permission mode. Can change after spawn.
+- **Permissions propagate:** Teammates inherit your permission mode at spawn time.
 
 ---
 
@@ -49,11 +60,14 @@ You spawn 4 teammates. Each teammate:
 **SPAWN 4 TEAMMATES. WAIT FOR ALL. SYNTHESIZE VERDICT.**
 
 1. Determine scope (Step 0)
-2. Create 4 tasks on the shared task list
-3. Spawn 4 teammates — one per enforcement domain
-4. Each teammate prompt MUST include: scope, file list, enforcement rules, what to output
-5. Wait for all 4 to complete
-6. Collect findings, deduplicate, verdict
+2. TeamCreate to set up the team
+3. Create 4 tasks on the shared task list (TaskCreate)
+4. Spawn 4 teammates — one per enforcement domain (Task tool with team_name)
+5. Assign tasks via TaskUpdate (owner = teammate name)
+6. Wait for all 4 to complete (messages arrive automatically)
+7. Collect findings, deduplicate, verdict
+8. Shutdown teammates (SendMessage type: shutdown_request)
+9. TeamDelete to clean up
 
 **HADES FOLLOWS THE RULES. ELSE WE CAN'T PLAY GAMES.**
 </CRITICAL_EXECUTION_REQUIREMENT>
@@ -232,11 +246,15 @@ Output: Full results with PASS/FAIL for each category.
 
 ## STEP 3: WAIT & COLLECT
 
-Monitor task list. When all 4 teammates complete:
+Teammates send findings via SendMessage when done. Messages arrive automatically.
 
-1. Collect all findings
+When all 4 teammates complete (check TaskList — all 4 tasks status: completed):
+
+1. Collect all findings from teammate messages
 2. Deduplicate (same file:line, same issue = merge, take higher severity)
 3. Sort by severity (P0 first)
+4. Shutdown all teammates (SendMessage type: shutdown_request to each)
+5. TeamDelete to clean up
 
 ---
 
