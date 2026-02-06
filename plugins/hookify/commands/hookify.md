@@ -31,7 +31,7 @@ You will help the user create hookify rules to prevent unwanted behaviors. Follo
 **To analyze conversation:**
 Use the Task tool to launch conversation-analyzer agent:
 
-```
+```json
 {
   "subagent_type": "general-purpose",
   "description": "Analyze conversation for unwanted behaviors",
@@ -148,7 +148,7 @@ Use the current working directory (where Claude Code was started) as the base pa
 
 3. Show user what was created:
 
-   ```
+   ```text
    Created 3 hookify rules:
    - .claude/hookify.dangerous-rm.local.md
    - .claude/hookify.console-log.local.md
