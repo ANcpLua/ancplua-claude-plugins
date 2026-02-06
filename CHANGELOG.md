@@ -8,6 +8,13 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **CLAUDE.md — Task Routing section with IF/THEN decision trees (2026-02-06):**
+  - New Section 4: passive context routing (Vercel pattern — 100% pass rate)
+  - Hades routing: `IF cleanup/elimination/dead code THEN exodia/hades`
+  - Full exodia skills routing index with agent counts
+  - Deprecated cleanup-specialist in target architecture
+  - Renumbered sections 4→5 through 17→18
+
 - **exodia/hades — Smart-Hades: audited cleanup with Smart IDs (2026-02-06):**
   - New exodia skill: `plugins/exodia/skills/hades/SKILL.md` — 3-phase x 4-teammate pipeline
   - Smart infrastructure scripts: `smart-id.sh` (timestamped ID generator), `ledger.sh` (append-only audit),

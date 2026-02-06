@@ -126,7 +126,7 @@ ancplua-claude-plugins/
 │   └── exodia/                  # Skills-standard workflow orchestration
 │
 ├── agents/
-│   ├── cleanup-specialist/      # Zero-tolerance cleanup agent
+│   ├── cleanup-specialist/      # Deprecated (use exodia/hades)
 │   └── repo-reviewer-agent/     # Repository health reviewer
 │
 ├── docs/
@@ -155,11 +155,91 @@ When actual structure differs, move toward this incrementally.
 
 ---
 
-## 4. Mandatory Workflow (NOT Optional)
+## 4. Task Routing (IF/THEN Decision Trees)
+
+**IMPORTANT:** This section implements the Vercel research pattern showing passive context (100% pass rate) outperforms active retrieval (53-79% for skills alone). These decision trees are ALWAYS loaded and guide your task selection.
+
+### Core Routing Logic
+
+Use this decision tree to route tasks to the correct skill or agent:
+
+```text
+IF struggling > 2 min
+  → read metacognitive-guard skill, escalate to deep-think-partner agent
+
+IF claiming done/complete/fixed/works
+  → read verification-before-completion skill (run build+tests, show output)
+
+IF version/date/status question
+  → read epistemic-checkpoint skill (check assertions.yaml, then WebSearch)
+
+IF code review needed
+  → read competitive-review skill (spawns arch-reviewer + impl-reviewer)
+
+IF building a new feature
+  → use feature-dev plugin (code-architect → code-explorer → code-reviewer)
+
+IF writing telemetry/observability code
+  → read otel-expert skill, spawn otel-guide agent
+
+IF CI verification before merge
+  → read autonomous-ci skill
+
+IF creating hookify rules
+  → read writing-rules skill
+
+IF .NET MSBuild/CPM patterns
+  → read dotnet-architecture-lint skill
+
+IF about to commit with suppressions/shortcuts
+  → completion-integrity blocks it automatically
+
+IF cleanup/elimination/dead code/suppressions/duplication needed
+  → exodia/hades skill (Smart cleanup with audit trail, 3 phases x 4 teammates)
+
+IF multi-agent orchestration needed
+  → exodia skills (UNRESTRICTED - unlimited parallel agents):
+    fix                - P1/P2/P3 bugs (8 std, 16 max agents)
+    mega-swarm         - codebase audit (6/8/12 agents by mode)
+    deep-think         - multi-perspective analysis (5 agents)
+    tournament         - competitive solutions (N+2 agents)
+    batch-implement    - parallel similar items (1+N+1 agents)
+    red-blue-review    - adversarial security (3+N+1 agents)
+    hades              - audited cleanup (3 phases x 4 teammates)
+
+  → workflow-tools commands (4/8 agent limits):
+    /fix, /mega-swarm, /red-blue-review, /deep-think, /tournament, /batch-implement
+
+IF zero-tolerance cleanup needed
+  → exodia/hades skill (replaces deprecated cleanup-specialist agent)
+```
+
+### Exodia Skills Detailed Routing
+
+When multi-agent orchestration is needed, use these IF/THEN patterns:
+
+- **IF fixing P1/P2/P3 bug** THEN use `fix` skill (8 agents standard, 16 maximum)
+- **IF need multiple solution perspectives** THEN use `tournament` skill (N competitors)
+- **IF complex debugging first** THEN use `deep-think` skill before fix
+- **IF implementing multiple similar items** THEN use `batch-implement` skill (diagnostics, tests, endpoints, features, fixes, migrations)
+- **IF need adversarial security/quality review** THEN use `red-blue-review` skill (Red attacks, Blue defends)
+- **IF comprehensive codebase audit** THEN use `mega-swarm` skill (12 agents full, 6 quick, 8 focused)
+- **IF cleanup/elimination/dead code/suppressions** THEN use `hades` skill (Smart IDs, deletion permits, audit ledger)
+
+### Priority and Composition
+
+1. **Check routing tree FIRST** - before searching for skills manually
+2. **Skill descriptions are loaded** - they contain additional IF/THEN routing logic
+3. **Compose skills** - some workflows chain multiple skills (e.g., mega-swarm → hades)
+4. **AGENTS.md is for other AIs** - Codex, Gemini, humans read it, NOT you
+
+---
+
+## 5. Mandatory Workflow (NOT Optional)
 
 **This workflow is ENFORCED, not suggested.** Skipping steps is a failure.
 
-### 4.0 Session Start (EVERY TIME)
+### 5.0 Session Start (EVERY TIME)
 
 ```bash
 # 1. Confirm location
@@ -174,7 +254,7 @@ cat CLAUDE.md        # This file
 cat docs/ARCHITECTURE.md
 ```
 
-### 4.1 Skill Check (MANDATORY)
+### 5.1 Skill Check (MANDATORY)
 
 **BEFORE starting any task:**
 
@@ -194,7 +274,7 @@ cat docs/ARCHITECTURE.md
 
 **Rationalization is forbidden.** "I don't need the skill because..." = FAILURE.
 
-### 4.2 Brainstorm FIRST (For New Features)
+### 5.2 Brainstorm FIRST (For New Features)
 
 **DO NOT write code before brainstorming is complete.**
 
@@ -206,7 +286,7 @@ If Superpowers `brainstorming` skill is available:
 4. Present design in sections for validation
 5. Save design document to `docs/designs/`
 
-### 4.3 Plan BEFORE Implementation
+### 5.3 Plan BEFORE Implementation
 
 If Superpowers `writing-plans` skill is available:
 
@@ -219,7 +299,7 @@ If Superpowers `writing-plans` skill is available:
 
 Use `TodoWrite` for simple tasks.
 
-### 4.4 TDD Implementation (MANDATORY for code)
+### 5.4 TDD Implementation (MANDATORY for code)
 
 **The RED-GREEN-REFACTOR cycle is not optional.**
 
@@ -238,7 +318,7 @@ Use `TodoWrite` for simple tasks.
 
 **Code written before tests MUST be deleted and rewritten.**
 
-### 4.5 Code Review (BEFORE Claiming Done)
+### 5.5 Code Review (BEFORE Claiming Done)
 
 Use the `requesting-code-review` skill if available, OR:
 
@@ -255,7 +335,7 @@ Use the `requesting-code-review` skill if available, OR:
 3. Fix High issues before proceeding
 4. Document Medium/Low issues for future
 
-### 4.5.1 Quad-AI Autonomous Agent System
+### 5.5.1 Quad-AI Autonomous Agent System
 
 <EXTREMELY_IMPORTANT>
 
@@ -346,7 +426,7 @@ AIs coordinate through **shared files**, NOT real-time communication:
 
 </EXTREMELY_IMPORTANT>
 
-### 4.6 Validation (MANDATORY)
+### 5.6 Validation (MANDATORY)
 
 ```bash
 ./tooling/scripts/weave-validate.sh
@@ -356,7 +436,7 @@ AIs coordinate through **shared files**, NOT real-time communication:
 - Fix failures and re-run until clean
 - Show the output in your report
 
-### 4.7 Documentation (MANDATORY)
+### 5.7 Documentation (MANDATORY)
 
 For EVERY non-trivial change:
 
@@ -398,7 +478,7 @@ For EVERY non-trivial change:
 
 </EXTREMELY_IMPORTANT>
 
-### 4.8 Final Report (MANDATORY)
+### 5.8 Final Report (MANDATORY)
 
 Your completion message MUST include:
 
@@ -413,7 +493,7 @@ Your completion message MUST include:
 
 ---
 
-## 5. Plugins & Marketplace
+## 6. Plugins & Marketplace
 
 ### Marketplace Manifest
 
@@ -488,7 +568,7 @@ description: What this skill does and when to use it  # Required: max 1024 chars
 
 ---
 
-## 6. Superpowers Integration
+## 7. Superpowers Integration
 
 This repo is designed to **compose with** the Superpowers framework.
 
@@ -525,7 +605,7 @@ You MUST NOT:
 
 ---
 
-## 7. CI & Validation
+## 8. CI & Validation
 
 ### CI Jobs (`.github/workflows/ci.yml`)
 
@@ -546,7 +626,7 @@ Single entrypoint:
 
 ---
 
-## 8. Specs & ADRs
+## 9. Specs & ADRs
 
 ### Specs (docs/specs/)
 
@@ -584,7 +664,7 @@ ls docs/decisions/ADR-*.md | sort | tail -1
 
 ---
 
-## 9. MCP Integration (Type T Consumption)
+## 10. MCP Integration (Type T Consumption)
 
 This repo creates **Type A** artifacts (Skills/Plugins) that consume **Type T** tools (from `ancplua-mcp`).
 
@@ -596,7 +676,7 @@ Instead:
 2. Create a Skill in `plugins/<name>/skills/` that **calls** the MCP tools.
 3. Document the dependency in the plugin's `README.md`.
 
-### 9.1 Dual-Repo Workflow
+### 10.1 Dual-Repo Workflow
 
 Both repos often need synchronized changes (e.g., CI workflows, shared configs).
 
@@ -636,7 +716,7 @@ When changes affect both repos (e.g., workflow updates):
 
 ---
 
-## 10. Interaction Principles
+## 11. Interaction Principles
 
 ### Be Explicit
 
@@ -664,7 +744,7 @@ When changes affect both repos (e.g., workflow updates):
 
 ---
 
-## 11. Quick Reference
+## 12. Quick Reference
 
 ### Session Start
 
@@ -698,7 +778,7 @@ claude plugin validate .
 
 ---
 
-## 12. Failure Conditions
+## 13. Failure Conditions
 
 You have FAILED your task if:
 
@@ -712,7 +792,7 @@ You have FAILED your task if:
 
 ---
 
-## 13. Success Conditions
+## 14. Success Conditions
 
 You have SUCCEEDED when:
 
@@ -725,7 +805,7 @@ You have SUCCEEDED when:
 
 ---
 
-## 14. SOLID Principles for Plugins
+## 15. SOLID Principles for Plugins
 
 Apply these principles when designing or modifying plugins:
 
@@ -778,7 +858,7 @@ Plugins depend on abstractions (Skills), not concrete implementations:
 
 ---
 
-## 15. Thought Transparency (Agent Behavior)
+## 16. Thought Transparency (Agent Behavior)
 
 ### Observable Decision Making
 
@@ -822,7 +902,7 @@ Track internal state explicitly:
 
 ---
 
-## 16. DevOps Excellence (CALMS Framework)
+## 17. DevOps Excellence (CALMS Framework)
 
 ### Culture
 
@@ -861,7 +941,7 @@ Track these DORA-inspired metrics:
 
 ---
 
-## 17. Error Handling Conventions
+## 18. Error Handling Conventions
 
 ### Standardized Error Responses
 
