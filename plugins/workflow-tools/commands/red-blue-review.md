@@ -53,10 +53,12 @@ An adversarial security/quality review pattern where:
 **THIS IS AN ADVERSARIAL EXERCISE.**
 
 1. Phase 1: Launch ALL 3 Red Team agents in ONE message
-2. Collect and validate findings
-3. Phase 2: Launch ONE Blue Team defender per valid finding
-4. Phase 3: Red re-attacks each fix
+2. Collect and validate findings (max 4 critical/high findings processed)
+3. Phase 2: Launch ONE Blue Team defender per valid finding (max 4 defenders)
+4. Phase 3: Launch 1 Red re-attack agent to verify all fixes
 5. Generate release recommendation
+
+**Maximum 8 total agents:** 3 Red + 4 Blue + 1 Red re-attack
 
 **YOUR NEXT MESSAGE: Launch 3 Red Team Task tool calls. NOTHING ELSE.**
 </CRITICAL_EXECUTION_REQUIREMENT>
@@ -233,7 +235,7 @@ RED TEAM FINDINGS:
 
 ## PHASE 2: BLUE TEAM DEFENSE
 
-For EACH valid Red Team finding, launch ONE Blue Team defender:
+For EACH valid Red Team finding (max 4), launch ONE Blue Team defender in PARALLEL:
 
 ### BLUE-N Template (One per finding)
 ```yaml
@@ -284,26 +286,29 @@ prompt: |
 
 ## PHASE 3: RED RE-ATTACK (Verification)
 
-For EACH Blue Team fix, Red Team attempts to bypass:
+Launch ONE Red re-attack agent to verify ALL Blue Team fixes:
 
-### RED Re-Attack Template
+### RED Re-Attack Agent
 ```yaml
 subagent_type: deep-debugger
-description: "Red Re-Attack: [BLUE-ID]"
+description: "Red Re-Attack all fixes"
 prompt: |
-  🔴 RED TEAM - Re-Attack
+  🔴 RED TEAM - Re-Attack ALL Fixes
 
-  Blue Team proposed this fix for [RED-ID]:
+  Blue Team proposed fixes for all findings:
 
-  [PASTE BLUE TEAM FIX HERE]
+  [PASTE ALL BLUE TEAM FIXES HERE]
 
   ## Your Mission
+  For EACH fix:
   1. Try to BYPASS the fix
   2. Find edge cases the fix misses
   3. Check for regressions introduced by fix
   4. Verify fix actually addresses root cause
 
-  ## Output - Choose ONE:
+  ## Output Format - For EACH Fix:
+
+  **Fix [N]: DEFEATED / BYPASSED / INCOMPLETE**
 
   **DEFEATED** - Fix works, cannot bypass
   ```

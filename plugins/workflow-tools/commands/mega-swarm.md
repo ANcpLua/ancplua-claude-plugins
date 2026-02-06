@@ -16,14 +16,14 @@ allowed-tools: Task, TodoWrite
 
 | Mode | Agents | Best For |
 |------|--------|----------|
-| **full** | 12 | Complete codebase audit, release readiness |
-| **quick** | 6 | Fast health check, CI integration |
+| **full** | 8 | Complete codebase audit, release readiness |
+| **quick** | 4 | Fast health check, CI integration |
 | **focused** | 8 | Deep dive on specific concern area |
 
 ### Agent Selection by Mode
 
-**Full Mode (12 agents):** All auditors
-**Quick Mode (6 agents):** Security, Performance, Tests, Code Quality, Bugs, Architecture
+**Full Mode (8 agents):** Security, Performance, Tests, Code Quality, Bugs, Architecture, Error Handling, API Contract
+**Quick Mode (4 agents):** Security, Performance, Tests, Code Quality
 **Focused Mode (8 agents):** Based on $2 focus area + related auditors
 
 ---
@@ -33,8 +33,8 @@ allowed-tools: Task, TodoWrite
 **YOU MUST USE THE TASK TOOL TO LAUNCH PARALLEL AGENTS.**
 
 REQUIRED BEHAVIOR:
-- Full mode ($3 = full or unspecified): Launch 12 agents
-- Quick mode ($3 = quick OR $4 = true): Launch 6 agents
+- Full mode ($3 = full or unspecified): Launch 8 agents
+- Quick mode ($3 = quick OR $4 = true): Launch 4 agents
 - Focused mode ($3 = focused): Launch 8 agents relevant to focus area
 - Use the Task tool with subagent_type parameter
 - Launch ALL agents in ONE message
@@ -63,20 +63,18 @@ AUDIT GATE:
 
 ---
 
-## QUICK MODE AGENTS (6 Essential Auditors)
+## QUICK MODE AGENTS (4 Essential Auditors)
 
-Use if $3 = quick OR $4 = true. Launch ALL 6 in ONE message:
+Use if $3 = quick OR $4 = true. Launch ALL 4 in ONE message:
 
-1. **Architecture Auditor** - SOLID, coupling, design
-2. **Security Auditor** - OWASP, injection, auth
-3. **Performance Auditor** - N+1, memory, blocking
-4. **Test Coverage Auditor** - Gaps, quality, flaky
-5. **Code Quality Auditor** - Dead code, duplication
-6. **Bug Hunter** - Null refs, race conditions
+1. **Security Auditor** - OWASP, injection, auth
+2. **Performance Auditor** - N+1, memory, blocking
+3. **Test Coverage Auditor** - Gaps, quality, flaky
+4. **Code Quality Auditor** - Dead code, duplication
 
 ---
 
-## THE SWARM - FULL MODE (12 Parallel Agents)
+## THE SWARM - FULL MODE (8 Parallel Agents)
 
 Launch ALL in ONE message. For each agent, use the Task tool with the specified subagent_type and adapt the prompt to include the user's scope ($1) and focus ($2).
 
@@ -213,83 +211,7 @@ prompt: |
   Output: API issues with severity
 ```
 
-### Agent 8: Dependency Auditor
-```yaml
-subagent_type: Explore
-description: "Audit dependencies"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Dependencies
-
-  1. Outdated packages?
-  2. Security vulnerabilities?
-  3. License issues?
-  4. Unnecessary dependencies?
-  5. Version conflicts?
-
-  Output: Dependency issues with severity
-```
-
-### Agent 9: Configuration Auditor
-```yaml
-subagent_type: Explore
-description: "Audit configuration"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Configuration
-
-  1. Hardcoded values?
-  2. Missing env vars?
-  3. Config validation?
-  4. Secrets management?
-  5. Environment parity?
-
-  Output: Config issues with severity
-```
-
-### Agent 10: Documentation Auditor
-```yaml
-subagent_type: Explore
-description: "Audit documentation"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Documentation
-
-  1. Outdated docs?
-  2. Missing docs?
-  3. Code comments?
-  4. README accuracy?
-  5. API documentation?
-
-  Output: Doc issues with severity
-```
-
-### Agent 11: Consistency Auditor
-```yaml
-subagent_type: feature-dev:code-reviewer
-description: "Audit consistency"
-prompt: |
-  SCOPE: [insert $1 here, default: full]
-  FOCUS: [insert $2 here if provided]
-
-  AUDIT: Consistency
-
-  1. Naming conventions?
-  2. Code style violations?
-  3. Pattern inconsistencies?
-  4. File organization?
-  5. Import ordering?
-
-  Output: Consistency issues with severity
-```
-
-### Agent 12: Bug Hunter
+### Agent 8: Bug Hunter
 ```yaml
 subagent_type: deep-debugger
 model: opus
@@ -319,7 +241,7 @@ After ALL 12 agents complete, synthesize results:
 ╔══════════════════════════════════════════════════════════════════╗
 ║                    MEGA SWARM REPORT                             ║
 ╠══════════════════════════════════════════════════════════════════╣
-║ Agents Deployed: 12          Time: [X min]                       ║
+║ Agents Deployed: 8           Time: [X min]                       ║
 ╠══════════════════════════════════════════════════════════════════╣
 ║                     ISSUES BY SEVERITY                           ║
 ║  P0 (Critical):  [count]                                         ║
@@ -331,9 +253,7 @@ After ALL 12 agents complete, synthesize results:
 ║  Security:       [count]  │  Performance:    [count]             ║
 ║  Architecture:   [count]  │  Tests:          [count]             ║
 ║  Code Quality:   [count]  │  Errors:         [count]             ║
-║  API:            [count]  │  Dependencies:   [count]             ║
-║  Config:         [count]  │  Docs:           [count]             ║
-║  Consistency:    [count]  │  Bugs:           [count]             ║
+║  API:            [count]  │  Bugs:           [count]             ║
 ╚══════════════════════════════════════════════════════════════════╝
 ```
 

@@ -1,12 +1,12 @@
 ---
-description: "Competitive coding tournament with penalty scoring - N agents compete, judge picks winner. Usage: /tournament [task] [competitors:5]"
+description: "Competitive coding tournament with penalty scoring - N agents compete, judge picks winner. Usage: /tournament [task] [competitors:4]"
 allowed-tools: Task, Bash, TodoWrite
 ---
 
 # TOURNAMENT MODE 🏆
 
 **Task:** $1
-**Competitors:** $2 (default: 5)
+**Competitors:** $2 (default: 4, max: 6 for total of 8 agents with judge + implementer)
 
 ---
 
@@ -44,13 +44,14 @@ If two competitors have equal scores:
 - YOU ONLY: launch agents, evaluate results, pick winner
 
 ✅ TOURNAMENT RULES:
-1. Parse $2 for number of competitors (default 5 if not specified)
-2. Launch that many competing agents in ONE message using Task tool
-3. Each agent works INDEPENDENTLY on the SAME task
-4. Agents DO NOT know about each other
-5. Competitors see scoring rubric UPFRONT (transparency)
-6. After all complete, launch a Judge agent to score solutions
-7. WINNER's code gets committed
+1. Parse $2 for number of competitors (default 4 if not specified, max 6)
+2. Maximum 8 total agents (N competitors + judge + implementer ≤ 8)
+3. Launch that many competing agents in ONE message using Task tool
+4. Each agent works INDEPENDENTLY on the SAME task
+5. Agents DO NOT know about each other
+6. Competitors see scoring rubric UPFRONT (transparency)
+7. After all complete, launch a Judge agent to score solutions
+8. WINNER's code gets committed
 
 **YOUR NEXT MESSAGE: Launch N Task tool calls (one per competitor). NOTHING ELSE.**
 </CRITICAL_EXECUTION_REQUIREMENT>

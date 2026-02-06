@@ -28,14 +28,14 @@ FORBIDDEN:
 - Pausing between phases
 - Asking clarifying questions (make reasonable assumptions)
 
-**YOUR NEXT MESSAGE: Launch 3 Task tool calls for Phase 1. NOTHING ELSE.**
+**YOUR NEXT MESSAGE: Launch 2 Task tool calls for Phase 1. NOTHING ELSE.**
 </CRITICAL_EXECUTION_REQUIREMENT>
 
 ---
 
-## Phase 1: Deep Analysis (3 Parallel Agents)
+## Phase 1: Deep Analysis (2 Parallel Agents)
 
-Launch ALL THREE agents in parallel using a single message with multiple Task tool calls:
+Launch ALL TWO agents in parallel using a single message with multiple Task tool calls:
 
 ### Agent 1: Root Cause Analysis
 ```yaml
@@ -75,29 +75,13 @@ prompt: |
   Output: Impact map with risk levels
 ```
 
-### Agent 3: Codebase Context
-```yaml
-subagent_type: feature-dev:code-explorer
-prompt: |
-  ISSUE: [insert $1 here]
-  CONTEXT: [insert $3 here, default .]
-
-  GATHER CONTEXT:
-  1. Find all relevant code paths
-  2. How is this pattern used elsewhere?
-  3. What tests cover this area?
-  4. Any recent changes to this code?
-
-  Output: Relevant code locations and patterns
-```
-
 **→ IMMEDIATELY proceed to Phase 2 after agents complete. DO NOT STOP.**
 
 ---
 
-## Phase 2: Solution Design (2 Parallel Agents)
+## Phase 2: Solution Design (1 Agent)
 
-Launch BOTH agents in parallel:
+Launch the solution architect agent:
 
 ### Agent 4: Solution Architect
 ```yaml
@@ -116,20 +100,6 @@ prompt: |
   RANK by: confidence × impact / complexity
 
   Output: Top 3 solutions with implementation plans
-```
-
-### Agent 5: Devil's Advocate
-```yaml
-subagent_type: feature-dev:code-reviewer
-prompt: |
-  CHALLENGE each proposed solution:
-
-  1. What could go wrong?
-  2. What assumptions are we making?
-  3. Edge cases that break this?
-  4. Better alternatives we're missing?
-
-  Output: Risk analysis and counterarguments
 ```
 
 **→ Select the highest-ranked solution and IMMEDIATELY proceed to Phase 3. DO NOT STOP.**

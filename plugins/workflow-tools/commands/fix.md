@@ -17,8 +17,8 @@ allowed-tools: Task, Bash, TodoWrite
 
 | Parallelism | Agents | Phases | Best For |
 |-------------|--------|--------|----------|
-| **maximum** | 16 | 6→4→3→3 | P0 critical bugs, complex issues |
-| **standard** | 8 | 3→2→1→1 | P1/P2 bugs, focused changes |
+| **maximum** | 8 | 4→2→1→1 | P0/P1 critical bugs, complex issues |
+| **standard** | 4 | 2→1→1→0 | P2/P3 bugs, focused changes |
 
 ## MODE CONFIGURATIONS
 
@@ -47,8 +47,8 @@ allowed-tools: Task, Bash, TodoWrite
 
 ## PHASE 1: ANALYSIS SWARM
 
-**Maximum parallelism (6 agents) - Use if $3 = maximum**
-**Standard parallelism (3 agents) - Use if $3 = standard or not specified**
+**Maximum parallelism (4 agents) - Use if $3 = maximum**
+**Standard parallelism (2 agents) - Use if $3 = standard or not specified**
 
 ### GATE 1: Analysis Validation
 
@@ -72,9 +72,9 @@ If HALT: Report findings and stop. Do not proceed with incomplete analysis.
 
 ---
 
-### Standard Analysis (3 Agents)
+### Standard Analysis (2 Agents)
 
-Launch ALL 3 agents in ONE message:
+Launch ALL 2 agents in ONE message:
 
 #### Agent 1: Root Cause Analysis
 ```yaml
@@ -112,27 +112,11 @@ prompt: |
   Output: Impact map with risk levels
 ```
 
-#### Agent 3: Codebase Context
-```yaml
-subagent_type: feature-dev:code-explorer
-description: "Find relevant code"
-prompt: |
-  ISSUE: [insert $1 here]
-
-  GATHER CONTEXT:
-  1. Find all relevant code paths
-  2. How is this pattern used elsewhere?
-  3. What tests cover this area?
-  4. Recent changes to this code?
-
-  Output: Relevant code locations with file:line references
-```
-
 ---
 
-### Maximum Analysis (6 Agents) - Only if $3 = maximum
+### Maximum Analysis (4 Agents) - Only if $3 = maximum
 
-Launch ALL 6 agents in ONE message:
+Launch ALL 4 agents in ONE message:
 
 #### Agent 1: Root Cause Hunter
 ```yaml
@@ -204,49 +188,15 @@ prompt: |
   Output: Timeline of changes
 ```
 
-#### Agent 5: Pattern Matcher
-```yaml
-subagent_type: feature-dev:code-explorer
-description: "Find similar bugs"
-prompt: |
-  ISSUE: [insert $1 here]
-
-  MISSION: Find SIMILAR bugs.
-
-  1. Same pattern elsewhere in codebase?
-  2. Similar bugs fixed before?
-  3. Common anti-patterns?
-  4. Systemic issues?
-
-  Output: Similar code locations that might have same bug
-```
-
-#### Agent 6: Test Analyzer
-```yaml
-subagent_type: feature-dev:code-reviewer
-description: "Analyze test gaps"
-prompt: |
-  ISSUE: [insert $1 here]
-
-  MISSION: Analyze TEST coverage.
-
-  1. What tests exist for this area?
-  2. Why didn't tests catch this?
-  3. What tests are missing?
-  4. Test quality issues?
-
-  Output: Test gap analysis
-```
-
 **→ VALIDATE GATE 1, then proceed to Phase 2.**
 
 ---
 
 ## PHASE 2: SOLUTION DESIGN
 
-**Maximum parallelism (4 agents): 3 architects + devil's advocate**
-**Standard parallelism (2 agents): 1 architect + devil's advocate**
-**Quick mode ($5 = true): Skip devil's advocate**
+**Maximum parallelism (2 agents): 1 architect + devil's advocate**
+**Standard parallelism (1 agent): 1 architect only**
+**Quick mode ($5 = true): Skip devil's advocate (standard becomes 1 agent)**
 
 ### GATE 2: Solution Validation
 
@@ -268,7 +218,7 @@ GATE 2 CHECKPOINT:
 
 ---
 
-### Standard Design (2 Agents)
+### Standard Design (1 Agent)
 
 #### Agent: Solution Architect
 ```yaml
@@ -290,26 +240,9 @@ prompt: |
   Output: Top 3 solutions with implementation plans
 ```
 
-#### Agent: Devil's Advocate (Skip if $5 = true)
-```yaml
-subagent_type: feature-dev:code-reviewer
-description: "Attack all solutions"
-prompt: |
-  CHALLENGE each proposed solution:
-
-  1. What could go wrong?
-  2. Hidden assumptions?
-  3. Edge cases that break this?
-  4. Better alternatives we're missing?
-
-  Be HARSH. Find problems.
-
-  Output: Risk analysis and counterarguments
-```
-
 ---
 
-### Maximum Design (4 Agents) - Only if $3 = maximum
+### Maximum Design (2 Agents) - Only if $3 = maximum
 
 #### Agent 7: Solution Architect A
 ```yaml
@@ -329,43 +262,7 @@ prompt: |
   Output: Solution A with implementation plan
 ```
 
-#### Agent 8: Solution Architect B
-```yaml
-subagent_type: feature-dev:code-architect
-model: opus
-description: "Design robust solution"
-prompt: |
-  Given Phase 1 analysis, design Solution B.
-
-  Focus: ROBUST LONG-TERM approach
-
-  1. Fix + prevent future issues
-  2. Refactoring if needed
-  3. Better abstractions
-  4. Implementation steps
-
-  Output: Solution B with implementation plan
-```
-
-#### Agent 9: Solution Architect C
-```yaml
-subagent_type: dotnet-mtp-advisor
-model: opus
-description: "Design alternative solution"
-prompt: |
-  Given Phase 1 analysis, design Solution C.
-
-  Focus: ALTERNATIVE APPROACH
-
-  1. Different paradigm/pattern
-  2. What if we redesign this part?
-  3. Unconventional solutions
-  4. Trade-offs
-
-  Output: Solution C with implementation plan
-```
-
-#### Agent 10: Devil's Advocate (Skip if $5 = true)
+#### Agent 8: Devil's Advocate (Skip if $5 = true)
 ```yaml
 subagent_type: feature-dev:code-reviewer
 description: "Attack all solutions"
@@ -389,7 +286,7 @@ prompt: |
 
 ## PHASE 3: IMPLEMENTATION
 
-**Maximum parallelism (3 agents): Test writer + coder + docs**
+**Maximum parallelism (1 agent): Single TDD implementer**
 **Standard parallelism (1 agent): Single TDD implementer**
 
 ### GATE 3: Implementation Validation
@@ -435,58 +332,6 @@ prompt: |
   - [ ] No regressions
 
   Output: Files changed + verification results
-```
-
----
-
-### Maximum Implementation (3 Agents) - Only if $3 = maximum
-
-#### Agent 11: Test Writer
-```yaml
-subagent_type: feature-dev:code-architect
-description: "Write tests first"
-prompt: |
-  WRITE TESTS FIRST.
-
-  Based on selected solution:
-  1. Write failing unit test
-  2. Write edge case tests
-  3. Write regression test
-
-  DO NOT implement the fix yet.
-
-  Output: Test files with paths
-```
-
-#### Agent 12: Implementation Coder
-```yaml
-subagent_type: feature-dev:code-architect
-model: opus
-description: "Implement the fix"
-prompt: |
-  IMPLEMENT the selected solution.
-
-  1. Make the minimal code change
-  2. Follow existing patterns
-  3. No unnecessary refactoring
-  4. Add comments only if complex
-
-  Output: Changed files with diffs
-```
-
-#### Agent 13: Documentation Updater
-```yaml
-subagent_type: Explore
-description: "Check docs needed"
-prompt: |
-  CHECK what docs need updating:
-
-  1. README changes needed?
-  2. API docs affected?
-  3. CHANGELOG entry?
-  4. Comments in code?
-
-  Output: Documentation updates needed
 ```
 
 **→ VALIDATE GATE 3, proceed to Phase 4.**
