@@ -29,6 +29,7 @@ claude plugin install ancplua-project-routing@ancplua-claude-plugins
 ## How It Works
 
 A SessionStart hook runs `project-routing.sh` which:
+
 1. Checks `$PWD` for known project patterns
 2. Injects routing context into the session
 3. Shows which Task agents and Skills to use
@@ -36,7 +37,8 @@ A SessionStart hook runs `project-routing.sh` which:
 ## Cross-Repo Work
 
 For work spanning multiple repos, use:
-```
+
+```text
 Skill → /ancplua-ecosystem
 ```
 

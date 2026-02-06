@@ -18,13 +18,16 @@ Spawn 4 verifiers who CHALLENGE each other's claims.
 Three produce evidence. One (the challenger) attacks their evidence.
 Only unanimous confirmation = COMPLETE.
 
-**Delegate mode:** You operate as a coordinator. Zero verification yourself. You create teams, assign work, collect results, synthesize final verdict. Your teammates do all the actual checking.
+**Delegate mode:** You operate as a coordinator. Zero verification yourself.
+You create teams, assign work, collect results, synthesize final verdict.
+Your teammates do all the actual checking.
 
 ---
 
 ## AGENT TEAMS
 
 You spawn 4 teammates. Each teammate:
+
 - Gets CLAUDE.md automatically (project conventions, boundaries)
 - Does NOT get this conversation history — include ALL context in the spawn prompt
 - Communicates via SendMessage (DM to lead or other teammates)
@@ -204,12 +207,14 @@ Output: confirmation table with CONFIRMED/CHALLENGED per claim + evidence
 Messages arrive automatically from teammates.
 
 Monitor the flow:
+
 1. Build/test/grep verifiers send results to challenger via SendMessage
 2. Challenger sends challenges back via SendMessage
 3. Verifiers respond with additional evidence
 4. Challenger makes final determination and sends to lead
 
 Cross-examination is done when:
+
 - All 4 verification tasks show completed (TaskList)
 - Challenger has issued CONFIRMED or CHALLENGED for every claim
 
@@ -236,12 +241,14 @@ GATE 2: VERIFICATION → [status]
 ```
 
 **COMPLETE conditions (ALL must be true):**
+
 - Build: zero warnings, zero errors (all configs)
 - Tests: all pass, zero skipped, zero deleted
 - Suppressions: zero remaining
 - Challenger: all claims CONFIRMED
 
 **ITERATE conditions (ANY triggers iteration):**
+
 - Remaining suppressions > 0
 - Build warnings > 0
 - Tests failing or skipped > 0

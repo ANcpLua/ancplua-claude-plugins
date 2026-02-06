@@ -21,13 +21,16 @@ file ownership and resolve cross-domain dependencies.
 
 You coordinate. You never edit files yourself.
 
-**Delegate mode:** You operate as a coordinator. Zero implementation yourself. You create teams, assign file ownership, review teammate plans, approve/reject, collect results. Your teammates do all the actual fixing.
+**Delegate mode:** You operate as a coordinator. Zero implementation yourself.
+You create teams, assign file ownership, review teammate plans, approve/reject,
+collect results. Your teammates do all the actual fixing.
 
 ---
 
 ## AGENT TEAMS
 
 You spawn 4 teammates. Each teammate:
+
 - Gets CLAUDE.md automatically (project conventions, boundaries)
 - Does NOT get this conversation history — include ALL context in the spawn prompt
 - Communicates via SendMessage (DM to lead or other teammates)
@@ -257,6 +260,7 @@ Output: files changed + build result + tasks completed count
 ## MONITORING
 
 While eliminators work:
+
 - Messages arrive automatically from teammates
 - Watch for ownership conflict requests — decide which teammate proceeds
 - Watch for plan approval requests — review and approve/reject

@@ -28,6 +28,7 @@ allowed-tools: Task, Bash, TodoWrite
 ### Tiebreaker Rules
 
 If two competitors have equal scores:
+
 1. Higher Correctness score wins
 2. If still tied: Higher Performance score wins
 3. If still tied: First submitted solution wins
@@ -38,12 +39,14 @@ If two competitors have equal scores:
 **THIS IS A COMPETITION. YOU ORCHESTRATE, AGENTS COMPETE.**
 
 ⚠️ YOU ARE THE JUDGE, NOT A COMPETITOR:
+
 - DO NOT read files yourself
 - DO NOT write code yourself
 - DO NOT fix issues yourself
 - YOU ONLY: launch agents, evaluate results, pick winner
 
 ✅ TOURNAMENT RULES:
+
 1. Parse $2 for number of competitors (default 4 if not specified, max 6)
 2. Maximum 8 total agents (N competitors + judge + implementer ≤ 8)
 3. Launch that many competing agents in ONE message using Task tool
@@ -204,7 +207,7 @@ dotnet test 2>&1 || npm test 2>&1 || make test 2>&1
 
 After completion, output:
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════════╗
 ║                    🏆 TOURNAMENT RESULTS 🏆                       ║
 ╠══════════════════════════════════════════════════════════════════╣

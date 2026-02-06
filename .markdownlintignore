@@ -1,0 +1,8 @@
+# Upstream synced content — lint violations are from source repos, not ours
+plugins/otelwiki/docs/
+
+# Append-only history — reformatting past entries has no value
+CHANGELOG.md
+
+# Node modules
+node_modules/

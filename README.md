@@ -1,50 +1,59 @@
 # ancplua-claude-plugins
 
-Claude Code plugin marketplace. 10 plugins for CI, code review, cognitive amplification, and workflows.
+Claude Code plugin marketplace. 12 plugins for CI, code review, cognitive amplification,
+multi-agent orchestration, and audited cleanup.
 
 ## Plugins
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| **metacognitive-guard** | 0.2.4 | Detects Claude struggling, escalates to deep-thinking agents |
-| **workflow-tools** | 2.0.0 | Parallel workflows: fix, red-blue-review, tournament, mega-swarm |
-| **otelwiki** | 1.0.5 | OpenTelemetry docs with auto-sync |
+| **exodia** | 1.1.0 | Multi-agent orchestration as skills: fix, turbo-fix, tournament, mega-swarm, deep-think, batch-implement, red-blue-review |
+| **hades** | 2.0.0 | Unified enforcement: judge (4 auditors), enforce (4 eliminators), verify (4 verifiers). 12 teammates. |
+| **metacognitive-guard** | 0.2.6 | Cognitive amplification: epistemic hooks, competitive review, fact-checking, deep-thinking agents |
+| **workflow-tools** | 2.0.0 | Multi-agent commands: /fix, /red-blue-review, /tournament, /mega-swarm, /deep-think, /batch-implement |
+| **otelwiki** | 1.0.6 | OpenTelemetry docs with auto-sync and semantic convention validation |
+| **hookify** | 0.2.0 | User-configurable hooks from .local.md files |
+| **feature-dev** | 1.0.0 | Guided feature development with codebase understanding |
+| **dotnet-architecture-lint** | 1.0.2 | .NET build pattern enforcement (CPM, Version.props, symlinks) |
+| **completion-integrity** | 1.0.0 | Blocks commits with warning suppressions, commented tests, deleted assertions |
 | **code-review** | 0.1.0 | Security, style, performance analysis |
 | **autonomous-ci** | 0.1.0 | CI verification and monitoring |
-| **dotnet-architecture-lint** | 1.0.0 | .NET build pattern enforcement |
-| **completion-integrity** | 1.0.0 | Prevents task shortcuts |
-| **hookify** | 0.2.0 | User-configurable hooks from .local.md |
-| **feature-dev** | 0.1.0 | Guided feature development |
-| **ancplua-project-routing** | 1.0.1 | Auto-routes to specialist agents by project |
+| **ancplua-project-routing** | 1.0.1 | Auto-routes to specialist agents by project directory |
 
 ## Install
 
 ```bash
+claude plugin install exodia@ancplua-claude-plugins
 claude plugin install metacognitive-guard@ancplua-claude-plugins
 claude plugin install workflow-tools@ancplua-claude-plugins
 ```
 
 ## Architecture
 
-**Type A** repo - plugins, skills, hooks. No MCP servers (those live in `ancplua-mcp`).
+**Type A** repo — plugins, skills, hooks. No MCP servers (those live in `ancplua-mcp`).
+
+Quad-AI review system: Claude, Copilot, Gemini, CodeRabbit all review PRs independently.
 
 ```text
 plugins/
-├── metacognitive-guard/   # struggle detection + deep-think agents
-├── workflow-tools/        # fix, red-blue-review, tournament, mega-swarm
-├── otelwiki/              # OTel docs + sync
-├── code-review/
-├── autonomous-ci/
-├── dotnet-architecture-lint/
-├── completion-integrity/
-├── hookify/               # user-configurable hooks
-├── feature-dev/           # guided feature development
+├── exodia/                  # multi-agent orchestration skills
+├── hades/                   # unified enforcement engine (judge/enforce/verify)
+├── metacognitive-guard/     # struggle detection + deep-think agents
+├── workflow-tools/          # multi-agent commands (4/8 agent limits)
+├── otelwiki/                # OTel docs + sync
+├── hookify/                 # user-configurable hooks
+├── feature-dev/             # guided feature development
+├── dotnet-architecture-lint/# .NET build pattern enforcement
+├── completion-integrity/    # prevents task shortcuts
+├── code-review/             # security, style, performance
+├── autonomous-ci/           # CI verification
 └── ancplua-project-routing/ # project-aware agent routing
 ```
 
 ## Links
 
 - [CHANGELOG](CHANGELOG.md)
+- [Architecture](docs/ARCHITECTURE.md)
 - [Claude Code Plugins docs](https://docs.anthropic.com/en/docs/claude-code/plugins)
 
 ## License

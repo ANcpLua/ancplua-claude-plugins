@@ -1,6 +1,8 @@
 # metacognitive-guard
 
-A cognitive amplification stack for Claude Code that prevents hallucinations, improves reasoning quality, and escalates complex problems to specialized deep-thinking agents.
+A cognitive amplification stack for Claude Code that prevents hallucinations,
+improves reasoning quality, and escalates complex problems to specialized
+deep-thinking agents.
 
 ## The Problem
 
@@ -83,6 +85,7 @@ The `struggle-detector.sh` hook analyzes responses for uncertainty signals:
 | Tool use | "let me read/search/check..." | -5 (negative) |
 
 **Trigger conditions:**
+
 - Single response score > 25
 - OR 2+ consecutive responses with score > 10
 
@@ -237,12 +240,14 @@ metacognitive-guard/
 ## Results
 
 **Before (typical complex question):**
+
 - 80-120k tokens
 - Multiple back-and-forth exchanges
 - Gradually improving but unfocused answers
 - Wrong version assumptions go undetected
 
 **After (with metacognitive-guard):**
+
 - 30-40k tokens
 - Single deep analysis with verified facts
 - Structured, actionable recommendations
@@ -252,7 +257,8 @@ metacognitive-guard/
 
 ## Why This Works
 
-1. **External detection beats self-assessment** - Claude's metacognition is imperfect. External pattern matching catches struggle Claude does not notice.
+1. **External detection beats self-assessment** - Claude's metacognition is imperfect.
+   External pattern matching catches struggle Claude does not notice.
 
 2. **Proactive injection beats reactive correction** - The truth beacon establishes facts BEFORE wrong beliefs form.
 

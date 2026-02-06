@@ -19,6 +19,7 @@ You're running the full test suite. If previous tests failed, run only failing t
 ## xUnit v3 + MTP v2 Filter Syntax
 
 **Simple filters (recommended):**
+
 ```bash
 # Run specific test method (wildcards supported)
 dotnet test --filter-method "Namespace.Class.MethodName"
@@ -37,6 +38,7 @@ dotnet test --filter-method "*Test1" --filter-method "*Test2"
 ```
 
 **Query-based filters (advanced):**
+
 ```bash
 # Exact match
 dotnet test --filter-query "name = FailingTest"

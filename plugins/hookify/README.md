@@ -6,9 +6,13 @@ Easily create custom hooks to prevent unwanted behaviors by analyzing conversati
 
 ## Overview
 
-The hookify plugin makes it simple to create hooks without editing complex `hooks.json` files. Instead, you create lightweight markdown configuration files that define patterns to watch for and messages to show when those patterns match.
+The hookify plugin makes it simple to create hooks without editing complex
+`hooks.json` files. Instead, you create lightweight markdown configuration
+files that define patterns to watch for and messages to show when those
+patterns match.
 
 **Key features:**
+
 - 🎯 Analyze conversations to find unwanted behaviors automatically
 - 📝 Simple markdown configuration files with YAML frontmatter
 - 🔍 Regex pattern matching for powerful rules
@@ -31,6 +35,7 @@ This analyzes your request and creates `.claude/hookify.warn-rm.local.md`.
 **No restart needed!** Rules take effect on the very next tool use.
 
 Ask Claude to run a command that should trigger the rule:
+
 ```text
 Run rm -rf /tmp/test
 ```
@@ -44,15 +49,17 @@ This fork adds support for **global rules** that apply to all repositories witho
 ### Setup
 
 1. Create the global rules directory:
+
 ```bash
 mkdir -p ~/.claude/global-rules
 ```
 
-2. Add rules to `~/.claude/global-rules/hookify.*.local.md`
+1. Add rules to `~/.claude/global-rules/hookify.*.local.md`
 
 ### How It Works
 
 Rules are loaded from two locations (in order):
+
 1. `.claude/hookify.*.local.md` - **Project rules** (higher priority)
 2. `~/.claude/global-rules/hookify.*.local.md` - **Global rules**
 
@@ -61,6 +68,7 @@ Project rules with the same name override global rules.
 ### Example: MTP Smart Test Filtering
 
 `~/.claude/global-rules/hookify.mtp-smart-test.local.md`:
+
 ```markdown
 ---
 name: mtp-smart-test-filtering
@@ -90,32 +98,40 @@ This rule applies to ALL .NET repos automatically!
 ### Main Command: /hookify
 
 **With arguments:**
-```
+
+```text
 /hookify Don't use console.log in TypeScript files
 ```
+
 Creates a rule from your explicit instructions.
 
 **Without arguments:**
-```
+
+```text
 /hookify
 ```
+
 Analyzes recent conversation to find behaviors you've corrected or been frustrated by.
 
 ### Helper Commands
 
 **List all rules:**
-```
+
+```text
 /hookify:list
 ```
 
 **Configure rules interactively:**
-```
+
+```text
 /hookify:configure
 ```
+
 Enable/disable existing rules through an interactive interface.
 
 **Get help:**
-```
+
+```text
 /hookify:help
 ```
 
@@ -124,6 +140,7 @@ Enable/disable existing rules through an interactive interface.
 ### Simple Rule (Single Pattern)
 
 `.claude/hookify.dangerous-rm.local.md`:
+
 ```markdown
 ---
 name: block-dangerous-rm
@@ -142,12 +159,14 @@ This command could delete important files. Please:
 ```
 
 **Action field:**
+
 - `warn`: Shows warning but allows operation (default)
 - `block`: Prevents operation from executing (PreToolUse) or stops session (Stop events)
 
 ### Advanced Rule (Multiple Conditions)
 
 `.claude/hookify.sensitive-files.local.md`:
+
 ```markdown
 ---
 name: warn-sensitive-files
@@ -191,6 +210,7 @@ Use Python regex syntax:
 | `chmod\s+777` | chmod 777 | chmod 777 file.txt |
 
 **Tips:**
+
 - Use `\s` for whitespace
 - Escape special chars: `\.` for literal dot
 - Use `|` for OR: `(foo|bar)`
@@ -256,7 +276,8 @@ conditions:
 Before stopping, please run tests to verify your changes work correctly.
 ```
 
-**This blocks Claude from stopping** if no test commands appear in the session transcript. Enable only when you want strict enforcement.
+**This blocks Claude from stopping** if no test commands appear in the
+session transcript. Enable only when you want strict enforcement.
 
 ## Advanced Usage
 
@@ -295,18 +316,22 @@ Use environment variables instead of hardcoded values.
 ### Field Reference
 
 **For bash events:**
+
 - `command`: The bash command string
 
 **For file events:**
+
 - `file_path`: Path to file being edited
 - `new_text`: New content being added (Edit, Write)
 - `old_text`: Old content being replaced (Edit only)
 - `content`: File content (Write only)
 
 **For prompt events:**
+
 - `user_prompt`: The user's submitted prompt text
 
 **For stop events:**
+
 - Use general matching on session state
 
 ## Management
@@ -320,20 +345,22 @@ Edit the `.local.md` file and set `enabled: false`
 Set `enabled: true`
 
 **Or use interactive tool:**
-```
+
+```text
 /hookify:configure
 ```
 
 ### Delete Rules
 
 Simply delete the `.local.md` file:
+
 ```bash
 rm .claude/hookify.my-rule.local.md
 ```
 
 ### View All Rules
 
-```
+```text
 /hookify:list
 ```
 
@@ -342,6 +369,7 @@ rm .claude/hookify.my-rule.local.md
 This plugin is part of the Claude Code Marketplace. It should be auto-discovered when the marketplace is installed.
 
 **Manual testing:**
+
 ```bash
 cc --plugin-dir /path/to/hookify
 ```
@@ -354,6 +382,7 @@ cc --plugin-dir /path/to/hookify
 ## Troubleshooting
 
 **Rule not triggering:**
+
 1. Check rule file exists in `.claude/` directory (in project root, not plugin directory)
 2. Verify `enabled: true` in frontmatter
 3. Test regex pattern separately
@@ -361,15 +390,18 @@ cc --plugin-dir /path/to/hookify
 5. Try `/hookify:list` to see if rule is loaded
 
 **Import errors:**
+
 - Ensure Python 3 is available: `python3 --version`
 - Check hookify plugin is installed
 
 **Pattern not matching:**
+
 - Test regex: `python3 -c "import re; print(re.search(r'pattern', 'text'))"`
 - Use unquoted patterns in YAML to avoid escaping issues
 - Start simple, then add complexity
 
 **Hook seems slow:**
+
 - Keep patterns simple (avoid complex regex)
 - Use specific event types (bash, file) instead of "all"
 - Limit number of active rules

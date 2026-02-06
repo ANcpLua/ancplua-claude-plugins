@@ -92,7 +92,8 @@ Launch ALL 3 in ONE message.
 > RED TEAM — Security Attacker. TARGET: $1 | SCOPE: $2
 >
 > Find SECURITY vulnerabilities:
-> Injection (SQL/command/code), path traversal, data exposure, unsafe deserialization, missing validation, hardcoded secrets, SSRF/CSRF.
+> Injection (SQL/command/code), path traversal, data exposure,
+> unsafe deserialization, missing validation, hardcoded secrets, SSRF/CSRF.
 >
 > Per vuln: malicious input, vulnerable code path, exploitation method, impact.
 > Format: SEC-001: [title] | Severity | Attack Input | Exploitation | Impact
@@ -106,7 +107,8 @@ Launch ALL 3 in ONE message.
 > RED TEAM — API Breaker. TARGET: $1 | SCOPE: $2
 >
 > Find ways to BREAK the API contract:
-> Behavior ≠ docs, edge cases, missing validation, bypass restrictions, inconsistencies, breaking changes, null/empty handling, async violations.
+> Behavior != docs, edge cases, missing validation, bypass restrictions,
+> inconsistencies, breaking changes, null/empty handling, async violations.
 >
 > Per break: documented vs actual behavior, proof code, consumer impact.
 > Format: BREAK-001: [title] | Severity | Documented | Actual | Proof

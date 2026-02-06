@@ -157,7 +157,9 @@ When actual structure differs, move toward this incrementally.
 
 ## 4. Task Routing (IF/THEN Decision Trees)
 
-**IMPORTANT:** This section implements the Vercel research pattern showing passive context (100% pass rate) outperforms active retrieval (53-79% for skills alone). These decision trees are ALWAYS loaded and guide your task selection.
+**IMPORTANT:** This section implements the Vercel research pattern showing passive context
+(100% pass rate) outperforms active retrieval (53-79% for skills alone).
+These decision trees are ALWAYS loaded and guide your task selection.
 
 ### Core Routing Logic
 
@@ -221,7 +223,8 @@ When multi-agent orchestration is needed, use these IF/THEN patterns:
 - **IF fixing P1/P2/P3 bug** THEN use `fix` skill (8 agents standard, 16 maximum)
 - **IF need multiple solution perspectives** THEN use `tournament` skill (N competitors)
 - **IF complex debugging first** THEN use `deep-think` skill before fix
-- **IF implementing multiple similar items** THEN use `batch-implement` skill (diagnostics, tests, endpoints, features, fixes, migrations)
+- **IF implementing multiple similar items** THEN use `batch-implement` skill
+  (diagnostics, tests, endpoints, features, fixes, migrations)
 - **IF need adversarial security/quality review** THEN use `red-blue-review` skill (Red attacks, Blue defends)
 - **IF comprehensive codebase audit** THEN use `mega-swarm` skill (12 agents full, 6 quick, 8 focused)
 - **IF cleanup/elimination/dead code/suppressions** THEN use `hades` skill (Smart IDs, deletion permits, audit ledger)
@@ -564,7 +567,9 @@ description: What this skill does and when to use it  # Required: max 1024 chars
 
 **Optional frontmatter:** `allowed-tools` to restrict which tools Claude can use.
 
-**Note:** Our internal skills may include additional sections (MANDATORY ACTIVATION, WORKFLOW, FAILURE CONDITIONS) as team standards, but only `name` and `description` are required by Claude Code.
+**Note:** Our internal skills may include additional sections
+(MANDATORY ACTIVATION, WORKFLOW, FAILURE CONDITIONS) as team standards,
+but only `name` and `description` are required by Claude Code.
 
 ---
 
@@ -681,6 +686,7 @@ Instead:
 Both repos often need synchronized changes (e.g., CI workflows, shared configs).
 
 **Repository Locations:**
+
 ```bash
 # Type A (Application) - Claude plugins/skills
 ~/WebstormProjects/ancplua-claude-plugins
@@ -690,6 +696,7 @@ Both repos often need synchronized changes (e.g., CI workflows, shared configs).
 ```
 
 **Sync Both Repos:**
+
 ```bash
 # After merging PRs in both repos
 cd ~/WebstormProjects/ancplua-claude-plugins && git fetch origin && git reset --hard origin/main
@@ -697,6 +704,7 @@ cd ~/ancplua-mcp && git fetch origin && git reset --hard origin/main
 ```
 
 **Validate Both Repos:**
+
 ```bash
 # Run validation on both
 ~/WebstormProjects/ancplua-claude-plugins/tooling/scripts/weave-validate.sh
@@ -708,6 +716,7 @@ cd ~/ancplua-mcp && git fetch origin && git reset --hard origin/main
 
 **Create Matching PRs:**
 When changes affect both repos (e.g., workflow updates):
+
 1. Create branch with same name in both repos
 2. Make changes in both
 3. Create PRs in both

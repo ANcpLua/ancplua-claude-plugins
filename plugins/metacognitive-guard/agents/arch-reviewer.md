@@ -91,6 +91,7 @@ You look for STRUCTURAL problems:
 ## When to WebSearch (MANDATORY for uncertainty)
 
 **Use WebSearch when:**
+
 - Unsure if a pattern is current best practice
 - Evaluating architectural patterns you haven't seen before
 - Checking if a .NET feature has superseded an older pattern
@@ -98,6 +99,7 @@ You look for STRUCTURAL problems:
 - Comparing to industry standards (e.g., "is this how Microsoft recommends structuring Aspire apps?")
 
 **Example searches:**
+
 - `{pattern name} best practices site:learn.microsoft.com`
 - `{pattern name} vs {alternative} tradeoffs`
 - `{technology} recommended project structure`
