@@ -13,11 +13,12 @@ allowed-tools: Task, Bash, TodoWrite
 ## OVERVIEW
 
 An adversarial security/quality review pattern where:
+
 - **Red Team** (3 agents): Actively tries to BREAK the code
 - **Blue Team** (1 agent per finding): Defends and proposes fixes
 - **Verification**: Red re-attacks to validate fixes
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                 ADVERSARIAL REVIEW FLOW                     │
 ├─────────────────────────────────────────────────────────────┤
@@ -70,7 +71,8 @@ An adversarial security/quality review pattern where:
 Launch ALL Red Team agents in ONE message:
 
 ### RED-1: Crash Hunter
-```yaml
+
+````yaml
 subagent_type: deep-debugger
 model: opus
 description: "Red Team: Hunt crashes"
@@ -99,21 +101,25 @@ prompt: |
 
   ## Output Format
   ```
-  ### CRASH-001: [Title]
+
+### CRASH-001: [Title]
+
   **Severity:** Critical/High/Medium
   **Reproduction:**
   [Code or steps to trigger]
   **Expected:** [What should happen]
   **Actual:** [What does happen]
   **Location:** [file:line]
+
   ```
 
   Find as many crashes as possible. Each crash = points for Red Team.
   Be AGGRESSIVE. Real bugs only - false alarms cost you -5 points.
-```
+````
 
 ### RED-2: Security Attacker
-```yaml
+
+````yaml
 subagent_type: feature-dev:code-reviewer
 model: opus
 description: "Red Team: Hunt security vulns"
@@ -144,7 +150,9 @@ prompt: |
 
   ## Output Format
   ```
-  ### SEC-001: [Vulnerability Title]
+
+### SEC-001: [Vulnerability Title]
+
   **Severity:** Critical/High/Medium
   **Attack Input:**
   [Malicious payload]
@@ -154,14 +162,16 @@ prompt: |
   [How an attacker exploits this]
   **Impact:**
   [What damage is possible]
+
   ```
 
   Real exploits only. Theoretical issues without proof = 0 points.
   False security alarms = -5 points. Be certain.
-```
+````
 
 ### RED-3: API Breaker
-```yaml
+
+````yaml
 subagent_type: feature-dev:code-explorer
 description: "Red Team: Break API contracts"
 prompt: |
@@ -189,7 +199,9 @@ prompt: |
 
   ## Output Format
   ```
-  ### BREAK-001: [Title]
+
+### BREAK-001: [Title]
+
   **Severity:** Critical/High/Medium
   **Documented Behavior:**
   [What the API claims to do]
@@ -199,10 +211,11 @@ prompt: |
   [Code demonstrating the break]
   **Consumer Impact:**
   [How this affects API users]
+
   ```
 
   Focus on REAL contract violations, not style preferences.
-```
+````
 
 **→ WAIT for all 3 Red Team agents, validate findings, then proceed to Phase 2.**
 
@@ -212,7 +225,7 @@ prompt: |
 
 Before Phase 2, validate each finding:
 
-```
+```text
 RED TEAM FINDINGS:
 ┌────────────────────────────────────────────────────────────┐
 │ RED-1 (Crash Hunter):                                      │
@@ -238,7 +251,8 @@ RED TEAM FINDINGS:
 For EACH valid Red Team finding (max 4), launch ONE Blue Team defender in PARALLEL:
 
 ### BLUE-N Template (One per finding)
-```yaml
+
+````yaml
 subagent_type: feature-dev:code-architect
 model: opus
 description: "Blue Team: Defend [RED-ID]"
@@ -258,6 +272,7 @@ prompt: |
 
   ## Output Format
   ```
+
   ### Defense for [RED-ID]
 
   **Finding Valid:** Yes/No/Partial
@@ -269,16 +284,18 @@ prompt: |
   [Code showing the fix]
 
   **Regression Check:**
+
   - [x] Existing tests still pass
   - [x] New test covers this case
   - [x] No performance impact
 
   **Test Case:**
   [Test code that proves fix works]
+
   ```
 
   If finding is INVALID, explain why with evidence.
-```
+````
 
 **→ Collect all Blue Team fixes, then proceed to Phase 3.**
 
@@ -289,7 +306,8 @@ prompt: |
 Launch ONE Red re-attack agent to verify ALL Blue Team fixes:
 
 ### RED Re-Attack Agent
-```yaml
+
+````yaml
 subagent_type: deep-debugger
 description: "Red Re-Attack all fixes"
 prompt: |
@@ -312,28 +330,37 @@ prompt: |
 
   **DEFEATED** - Fix works, cannot bypass
   ```
+
   The fix successfully addresses [RED-ID].
+
   - Tested: [what you tried]
   - Result: Fix holds
   - Blue Team awarded +5 points
+
   ```
 
   **BYPASSED** - Found way around fix
   ```
+
   The fix can be bypassed:
+
   - Bypass method: [how to circumvent]
   - Proof: [code/steps]
   - Red Team awarded +3 points, Blue Team -3
+
   ```
 
   **INCOMPLETE** - Fix partially works
   ```
+
   Fix addresses main case but misses:
+
   - Gap 1: [what's missing]
   - Gap 2: [what's missing]
   - Recommendation: [what Blue needs to add]
+
   ```
-```
+````
 
 ---
 
@@ -341,7 +368,7 @@ prompt: |
 
 After all phases complete:
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════════╗
 ║              🔴 RED TEAM vs BLUE TEAM 🔵 RESULTS                 ║
 ╠══════════════════════════════════════════════════════════════════╣

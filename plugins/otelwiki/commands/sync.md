@@ -32,7 +32,7 @@ Sync the bundled OpenTelemetry documentation from upstream repositories.
 
 Spawn the otel-librarian agent to perform the sync:
 
-```
+```text
 Task(
   subagent_type="otelwiki:otel-librarian",
   prompt="Sync OTel docs from upstream repositories. Force sync: $ARGUMENTS"
@@ -45,7 +45,7 @@ Task(
 
 ## Examples
 
-```
+```text
 /otelwiki:sync           # Normal sync (skips if fresh)
 /otelwiki:sync force     # Force sync regardless of freshness
 ```

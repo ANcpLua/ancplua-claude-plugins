@@ -240,6 +240,7 @@ Standard: 1 TDD implementer. Maximum: 3 agents.
 > subagent: feature-dev:code-architect | model: opus
 >
 > IMPLEMENT the approved solution. TDD:
+>
 > 1. Write failing test → 2. Minimal fix → 3. Verify pass → 4. Refactor
 >
 > Output: Files changed + verification results

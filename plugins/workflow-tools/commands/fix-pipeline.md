@@ -15,6 +15,7 @@ allowed-tools: Task, Bash, TodoWrite
 **YOU MUST RUN ALL PHASES WITHOUT STOPPING.**
 
 CRITICAL INSTRUCTIONS:
+
 1. Execute ALL phases (1→2→3→4) in sequence WITHOUT pausing for user input
 2. DO NOT ask "should I continue?" - just continue
 3. DO NOT wait for confirmation between phases
@@ -23,6 +24,7 @@ CRITICAL INSTRUCTIONS:
 6. At the end, provide a SINGLE summary of everything done
 
 FORBIDDEN:
+
 - Stopping to ask "proceed?"
 - Waiting for user acknowledgment
 - Pausing between phases
@@ -38,6 +40,7 @@ FORBIDDEN:
 Launch ALL TWO agents in parallel using a single message with multiple Task tool calls:
 
 ### Agent 1: Root Cause Analysis
+
 ```yaml
 subagent_type: deep-debugger
 model: opus
@@ -60,6 +63,7 @@ prompt: |
 ```
 
 ### Agent 2: Impact Assessment
+
 ```yaml
 subagent_type: metacognitive-guard:arch-reviewer
 prompt: |
@@ -84,6 +88,7 @@ prompt: |
 Launch the solution architect agent:
 
 ### Agent 4: Solution Architect
+
 ```yaml
 subagent_type: feature-dev:code-architect
 model: opus
@@ -111,6 +116,7 @@ prompt: |
 **Execute the top-ranked solution directly. No user approval needed.**
 
 ### Implementation Agent
+
 ```yaml
 subagent_type: feature-dev:code-architect
 prompt: |

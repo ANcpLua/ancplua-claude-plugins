@@ -5,13 +5,22 @@ argument-hint: Optional feature description
 
 # Feature Development
 
-You are helping a developer implement a new feature. Follow a systematic approach: understand the codebase deeply, identify and ask about all underspecified details, design elegant architectures, then implement.
+You are helping a developer implement a new feature. Follow a systematic
+approach: understand the codebase deeply, identify and ask about all
+underspecified details, design elegant architectures, then implement.
 
 ## Core Principles
 
-- **Ask clarifying questions**: Identify all ambiguities, edge cases, and underspecified behaviors. Ask specific, concrete questions rather than making assumptions. Wait for user answers before proceeding with implementation. Ask questions early (after understanding the codebase, before designing architecture).
+- **Ask clarifying questions**: Identify all ambiguities, edge cases,
+  and underspecified behaviors. Ask specific, concrete questions rather
+  than making assumptions. Wait for user answers before proceeding with
+  implementation. Ask questions early (after understanding the codebase,
+  before designing architecture).
 - **Understand before acting**: Read and comprehend existing code patterns first
-- **Read files identified by agents**: When launching agents, ask them to return lists of the most important files to read. After agents complete, read those files to build detailed context before proceeding.
+- **Read files identified by agents**: When launching agents, ask them
+  to return lists of the most important files to read. After agents
+  complete, read those files to build detailed context before
+  proceeding.
 - **Simple and elegant**: Prioritize readable, maintainable, architecturally sound code
 - **Use TodoWrite**: Track all progress throughout
 
@@ -24,6 +33,7 @@ You are helping a developer implement a new feature. Follow a systematic approac
 Initial request: $ARGUMENTS
 
 **Actions**:
+
 1. Create todo list with all phases
 2. If feature unclear, ask user for:
    - What problem are they solving?
@@ -38,9 +48,14 @@ Initial request: $ARGUMENTS
 **Goal**: Understand relevant existing code and patterns at both high and low levels
 
 **Actions**:
+
 1. Launch 2-3 code-explorer agents in parallel. Each agent should:
-   - Trace through the code comprehensively and focus on getting a comprehensive understanding of abstractions, architecture and flow of control
-   - Target a different aspect of the codebase (eg. similar features, high level understanding, architectural understanding, user experience, etc)
+   - Trace through the code comprehensively and focus on getting a
+     comprehensive understanding of abstractions, architecture and
+     flow of control
+   - Target a different aspect of the codebase (eg. similar features,
+     high level understanding, architectural understanding, user
+     experience, etc)
    - Include a list of 5-10 key files to read
 
    **Example agent prompts**:
@@ -61,8 +76,11 @@ Initial request: $ARGUMENTS
 **CRITICAL**: This is one of the most important phases. DO NOT SKIP.
 
 **Actions**:
+
 1. Review the codebase findings and original feature request
-2. Identify underspecified aspects: edge cases, error handling, integration points, scope boundaries, design preferences, backward compatibility, performance needs
+2. Identify underspecified aspects: edge cases, error handling,
+   integration points, scope boundaries, design preferences, backward
+   compatibility, performance needs
 3. **Present all questions to the user in a clear, organized list**
 4. **Wait for answers before proceeding to architecture design**
 
@@ -75,7 +93,10 @@ If the user says "whatever you think is best", provide your recommendation and g
 **Goal**: Design a clean, maintainable architecture
 
 **Actions**:
-1. Launch code-architect agent with focus on: clean architecture (maintainability, elegant abstractions, proper separation of concerns, extensibility)
+
+1. Launch code-architect agent with focus on: clean architecture
+   (maintainability, elegant abstractions, proper separation of
+   concerns, extensibility)
 2. Design for long-term maintainability - no shortcuts, no minimal patches, no quick fixes
 3. Present the architecture design to user with implementation details
 4. Proceed with the clean architecture approach (no alternative approaches - always choose quality)
@@ -86,9 +107,10 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 **Goal**: Build the feature
 
-**DO NOT START WITHOUT USER APPROVAL**
+### DO NOT START WITHOUT USER APPROVAL
 
 **Actions**:
+
 1. Wait for explicit user approval
 2. Read all relevant files identified in previous phases
 3. Implement following chosen architecture
@@ -103,7 +125,10 @@ If the user says "whatever you think is best", provide your recommendation and g
 **Goal**: Ensure code is simple, DRY, elegant, easy to read, and functionally correct
 
 **Actions**:
-1. Launch 3 code-reviewer agents in parallel with different focuses: simplicity/DRY/elegance, bugs/functional correctness, project conventions/abstractions
+
+1. Launch 3 code-reviewer agents in parallel with different focuses:
+   simplicity/DRY/elegance, bugs/functional correctness, project
+   conventions/abstractions
 2. Consolidate findings and identify highest severity issues that you recommend fixing
 3. **Present findings to user and ask what they want to do** (fix now, fix later, or proceed as-is)
 4. Address issues based on user decision
@@ -115,6 +140,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 **Goal**: Document what was accomplished
 
 **Actions**:
+
 1. Mark all todos complete
 2. Summarize:
    - What was built

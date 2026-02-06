@@ -36,7 +36,8 @@ Skills-standard counterpart to `workflow-tools`. Same workflows, discoverable as
 | Invoked via `/workflow-tools:fix` | Discovered via skill matching |
 | No passive context | Routing embedded in skill descriptions |
 
-Both contain identical workflow specifications. Use `workflow-tools` for explicit slash-command invocation, `exodia` for skill-based discovery.
+Both contain identical workflow specifications. Use `workflow-tools` for explicit
+slash-command invocation, `exodia` for skill-based discovery.
 
 ## Installation
 

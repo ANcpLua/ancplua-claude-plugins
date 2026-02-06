@@ -33,6 +33,7 @@ allowed-tools: Task, TodoWrite
 **YOU MUST USE THE TASK TOOL TO LAUNCH PARALLEL AGENTS.**
 
 REQUIRED BEHAVIOR:
+
 - Full mode ($3 = full or unspecified): Launch 8 agents
 - Quick mode ($3 = quick OR $4 = true): Launch 4 agents
 - Focused mode ($3 = focused): Launch 8 agents relevant to focus area
@@ -49,7 +50,7 @@ REQUIRED BEHAVIOR:
 
 After agents complete, validate results:
 
-```
+```text
 AUDIT GATE:
 ┌────────────────────────────────────────────────────────────┐
 │ Mode: [full/quick/focused]                                 │
@@ -76,9 +77,11 @@ Use if $3 = quick OR $4 = true. Launch ALL 4 in ONE message:
 
 ## THE SWARM - FULL MODE (8 Parallel Agents)
 
-Launch ALL in ONE message. For each agent, use the Task tool with the specified subagent_type and adapt the prompt to include the user's scope ($1) and focus ($2).
+Launch ALL in ONE message. For each agent, use the Task tool with the specified
+subagent_type and adapt the prompt to include the user's scope ($1) and focus ($2).
 
 ### Agent 1: Architecture Auditor
+
 ```yaml
 subagent_type: metacognitive-guard:arch-reviewer
 model: opus
@@ -98,6 +101,7 @@ prompt: |
 ```
 
 ### Agent 2: Security Auditor
+
 ```yaml
 subagent_type: feature-dev:code-reviewer
 description: "Audit security"
@@ -117,6 +121,7 @@ prompt: |
 ```
 
 ### Agent 3: Performance Auditor
+
 ```yaml
 subagent_type: feature-dev:code-explorer
 description: "Audit performance"
@@ -136,6 +141,7 @@ prompt: |
 ```
 
 ### Agent 4: Test Coverage Auditor
+
 ```yaml
 subagent_type: feature-dev:code-reviewer
 description: "Audit test coverage"
@@ -155,6 +161,7 @@ prompt: |
 ```
 
 ### Agent 5: Code Quality Auditor
+
 ```yaml
 subagent_type: feature-dev:code-reviewer
 description: "Audit code quality"
@@ -174,6 +181,7 @@ prompt: |
 ```
 
 ### Agent 6: Error Handling Auditor
+
 ```yaml
 subagent_type: deep-debugger
 description: "Audit error handling"
@@ -193,6 +201,7 @@ prompt: |
 ```
 
 ### Agent 7: API Contract Auditor
+
 ```yaml
 subagent_type: feature-dev:code-explorer
 description: "Audit API contracts"
@@ -212,6 +221,7 @@ prompt: |
 ```
 
 ### Agent 8: Bug Hunter
+
 ```yaml
 subagent_type: deep-debugger
 model: opus
@@ -237,7 +247,7 @@ prompt: |
 
 After ALL 12 agents complete, synthesize results:
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════════╗
 ║                    MEGA SWARM REPORT                             ║
 ╠══════════════════════════════════════════════════════════════════╣
@@ -258,21 +268,25 @@ After ALL 12 agents complete, synthesize results:
 ```
 
 ### P0 Issues (Fix Immediately)
+
 | # | Category | Issue | Location |
 |---|----------|-------|----------|
 | 1 | [cat] | [description] | [file:line] |
 
 ### P1 Issues (Fix Soon)
+
 | # | Category | Issue | Location |
 |---|----------|-------|----------|
 | 1 | [cat] | [description] | [file:line] |
 
 ### Recommended Fix Order
+
 1. [Most critical issue]
 2. [Second most critical]
 3. [Third most critical]
 
 **Next Command:**
-```
+
+```bash
 /turbo-fix issue="[P0 issue description]" severity=P0
 ```

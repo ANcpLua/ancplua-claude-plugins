@@ -22,7 +22,7 @@ This plugin provides Claude with comprehensive OpenTelemetry knowledge:
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │ User working on telemetry code                          │
 └─────────────────────────────────────────────────────────┘
@@ -64,13 +64,15 @@ This plugin provides Claude with comprehensive OpenTelemetry knowledge:
 ## Usage
 
 The skill auto-triggers when you:
+
 - Work with `ActivitySource`, `Meter`, or OTel APIs
 - Ask about semantic conventions or attributes
 - Configure the OTel Collector
 - Implement tracing, metrics, or logging
 
 To manually sync documentation:
-```
+
+```text
 /otelwiki:sync
 ```
 

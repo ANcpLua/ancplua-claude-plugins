@@ -53,11 +53,12 @@ allowed-tools: Task, Bash, TodoWrite
 ### GATE 1: Analysis Validation
 
 Before proceeding to Phase 2, verify:
+
 - ≥80% of analysis agents completed successfully
 - At least ONE root cause identified with >60% confidence
 - Impact assessment completed
 
-```
+```text
 GATE 1 CHECKPOINT:
 ┌────────────────────────────────────────────┐
 │ Analysis Agents: [X/Y] completed           │
@@ -77,6 +78,7 @@ If HALT: Report findings and stop. Do not proceed with incomplete analysis.
 Launch ALL 2 agents in ONE message:
 
 #### Agent 1: Root Cause Analysis
+
 ```yaml
 subagent_type: deep-debugger
 model: opus
@@ -96,6 +98,7 @@ prompt: |
 ```
 
 #### Agent 2: Impact Assessment
+
 ```yaml
 subagent_type: metacognitive-guard:arch-reviewer
 model: opus
@@ -119,6 +122,7 @@ prompt: |
 Launch ALL 4 agents in ONE message:
 
 #### Agent 1: Root Cause Hunter
+
 ```yaml
 subagent_type: deep-debugger
 model: opus
@@ -137,6 +141,7 @@ prompt: |
 ```
 
 #### Agent 2: System Architect
+
 ```yaml
 subagent_type: metacognitive-guard:arch-reviewer
 model: opus
@@ -155,6 +160,7 @@ prompt: |
 ```
 
 #### Agent 3: Code Explorer
+
 ```yaml
 subagent_type: feature-dev:code-explorer
 description: "Find relevant code"
@@ -172,6 +178,7 @@ prompt: |
 ```
 
 #### Agent 4: History Detective
+
 ```yaml
 subagent_type: Explore
 description: "Find change history"
@@ -201,11 +208,12 @@ prompt: |
 ### GATE 2: Solution Validation
 
 Before proceeding to Phase 3, verify:
+
 - At least 2 viable solutions proposed (or 1 if quick mode)
 - Solutions have implementation plans
 - Risk assessment completed
 
-```
+```text
 GATE 2 CHECKPOINT:
 ┌────────────────────────────────────────────┐
 │ Solutions Proposed: [X]                    │
@@ -221,6 +229,7 @@ GATE 2 CHECKPOINT:
 ### Standard Design (1 Agent)
 
 #### Agent: Solution Architect
+
 ```yaml
 subagent_type: feature-dev:code-architect
 model: opus
@@ -245,6 +254,7 @@ prompt: |
 ### Maximum Design (2 Agents) - Only if $3 = maximum
 
 #### Agent 7: Solution Architect A
+
 ```yaml
 subagent_type: feature-dev:code-architect
 model: opus
@@ -263,6 +273,7 @@ prompt: |
 ```
 
 #### Agent 8: Devil's Advocate (Skip if $5 = true)
+
 ```yaml
 subagent_type: feature-dev:code-reviewer
 description: "Attack all solutions"
@@ -292,11 +303,12 @@ prompt: |
 ### GATE 3: Implementation Validation
 
 Before proceeding to Phase 4, verify:
+
 - Implementation compiles
 - Tests exist (failing initially, then passing)
 - No obvious regressions introduced
 
-```
+```text
 GATE 3 CHECKPOINT:
 ┌────────────────────────────────────────────┐
 │ Implementation: [COMPLETE/INCOMPLETE]      │
@@ -312,6 +324,7 @@ GATE 3 CHECKPOINT:
 ### Standard Implementation (1 Agent)
 
 #### Implementation Agent
+
 ```yaml
 subagent_type: feature-dev:code-architect
 model: opus
@@ -355,7 +368,7 @@ dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 
 ### FINAL GATE: Verification Results
 
-```
+```text
 FINAL GATE:
 ┌────────────────────────────────────────────┐
 │ Build: [PASS/FAIL]                         │
@@ -372,7 +385,7 @@ FINAL GATE:
 
 After ALL phases complete:
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════╗
 ║                      FIX COMPLETE                            ║
 ╠══════════════════════════════════════════════════════════════╣

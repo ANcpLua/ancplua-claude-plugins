@@ -83,6 +83,7 @@ Parse $2 (comma-separated). Launch ONE agent PER ITEM in ONE message.
 > IMPLEMENT: [ITEM_NAME from $2] | TYPE: $1
 >
 > Using template from Phase 1. Follow TDD:
+>
 > 1. Write failing test → 2. Implement → 3. Verify pass
 >
 > Checklist: follows pattern, unit test, implementation, registered/wired, no copy-paste errors.
@@ -111,6 +112,7 @@ BATCH GATE:
 > subagent: feature-dev:code-reviewer
 >
 > REVIEW all new implementations for consistency:
+>
 > 1. Consistent naming across all items
 > 2. No conflicts between items
 > 3. All registrations complete

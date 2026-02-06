@@ -169,6 +169,7 @@ Select highest-ranked solution. Proceed.
 > subagent: feature-dev:code-architect | model: opus
 >
 > IMPLEMENT the approved solution. TDD:
+>
 > 1. Write failing test → 2. Minimal fix → 3. Verify pass → 4. Refactor
 >
 > Checklist: test written, fix implemented, test passing, no regressions.

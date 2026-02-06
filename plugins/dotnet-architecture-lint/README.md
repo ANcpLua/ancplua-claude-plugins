@@ -5,6 +5,7 @@ Enforces .NET build patterns for centralized version management.
 ## Problem
 
 AI agents lose context and break centralized version management:
+
 - Hardcode versions instead of using `$(VariableName)`
 - Import Version.props from wrong locations
 - Replace symlinks with regular files
@@ -13,6 +14,7 @@ AI agents lose context and break centralized version management:
 ## Solution
 
 Hybrid approach:
+
 - **Deterministic script** detects violations (no false positives)
 - **PreToolUse hook** blocks violations BEFORE writes happen
 - **Python validator** checks proposed content against rules A, B, G
@@ -31,13 +33,14 @@ Hybrid approach:
 
 ### On-Demand
 
-```
+```text
 /lint-dotnet
 ```
 
 ### Automatic
 
 The PreToolUse hook blocks violations when you edit:
+
 - `*.props`
 - `*.targets`
 - `*.csproj`
@@ -46,7 +49,7 @@ The PreToolUse hook blocks violations when you edit:
 
 ## Multi-Repo Pattern
 
-```
+```text
 ANcpLua.NET.Sdk/src/common/Version.props  <- Source of truth
     ^ symlink
 ANcpLua.Analyzers/Version.props

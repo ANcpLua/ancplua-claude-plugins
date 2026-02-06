@@ -15,7 +15,7 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/lint-dotnet.sh" .
 
 ## Output Format
 
-```
+```text
 RULE_X|file
   line_number: violation details
 ```
@@ -42,7 +42,7 @@ All other files importing Version.props = violation.
 
 ## Clean Output
 
-```
+```text
 CLEAN|All rules passed
 ```
 
@@ -51,5 +51,6 @@ No violations found. Safe to proceed.
 ## Variable Naming Convention
 
 For unknown packages, generate variable name:
+
 - `Some.Package.Name` -> `SomePackageNameVersion`
 - Remove dots and dashes, append "Version"

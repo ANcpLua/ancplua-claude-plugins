@@ -32,6 +32,7 @@ Extended multi-perspective reasoning before action.
 Launch ALL 2 agents in PARALLEL using a single message with multiple Task tool calls:
 
 ### Perspective 1: Debugger Mindset
+
 ```yaml
 subagent_type: deep-debugger
 model: opus
@@ -54,6 +55,7 @@ prompt: |
 ```
 
 ### Perspective 2: Architect Mindset
+
 ```yaml
 subagent_type: metacognitive-guard:arch-reviewer
 model: opus
@@ -81,6 +83,7 @@ prompt: |
 Launch BOTH agents in PARALLEL:
 
 ### Solution Designer
+
 ```yaml
 subagent_type: dotnet-mtp-advisor
 model: opus
@@ -104,6 +107,7 @@ prompt: |
 ```
 
 ### Devil's Advocate
+
 ```yaml
 subagent_type: feature-dev:code-reviewer
 description: "Devil's advocate review"
@@ -129,6 +133,7 @@ prompt: |
 Present the final consolidated output:
 
 ### Summary
+
 | Solution | Confidence | Risk | Complexity |
 |----------|------------|------|------------|
 | Option A | X% | Low/Med/High | 1-10 |
@@ -136,6 +141,7 @@ Present the final consolidated output:
 | Option C | X% | Low/Med/High | 1-10 |
 
 ### Recommendation
+
 **Recommended:** [Option X]
 **Reasoning:** [Why this is best given trade-offs]
 **Next Steps:** [Concrete actions to take]

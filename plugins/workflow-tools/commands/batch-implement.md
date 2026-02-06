@@ -17,6 +17,7 @@ Parallel implementation of similar items with shared patterns.
 **RUN ALL PHASES WITHOUT STOPPING.**
 
 CRITICAL INSTRUCTIONS:
+
 1. Execute ALL phases (1->2->3->4) in sequence WITHOUT pausing
 2. For Phase 2, launch ONE agent PER ITEM in PARALLEL (max 6 items for total 8 agents)
 3. Maximum 8 total agents (1 extractor + 6 implementers + 1 reviewer = 8)
@@ -32,6 +33,7 @@ CRITICAL INSTRUCTIONS:
 ## Phase 1: Pattern Analysis
 
 ### Template Extractor
+
 ```yaml
 subagent_type: feature-dev:code-explorer
 description: "Extract implementation pattern"
@@ -68,6 +70,7 @@ prompt: |
 Parse the items from $2 (comma-separated) and create one agent per item:
 
 ### Implementation Agent (create one per item)
+
 ```yaml
 subagent_type: feature-dev:code-architect
 description: "Implement [ITEM_NAME]"
@@ -100,6 +103,7 @@ prompt: |
 ## Phase 3: Integration Review
 
 ### Consistency Reviewer
+
 ```yaml
 subagent_type: feature-dev:code-reviewer
 description: "Review consistency"
@@ -142,7 +146,9 @@ dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 Based on the type ($1), follow these patterns:
 
 ### diagnostics
+
 For each diagnostic:
+
 1. Add descriptor to `Descriptors.cs`
 2. Add analysis logic to analyzer
 3. Add to `SupportedDiagnostics`
@@ -150,7 +156,9 @@ For each diagnostic:
 5. Write test for code fix if applicable
 
 ### tests
+
 For each test area:
+
 1. Identify untested code paths
 2. Write unit tests for happy path
 3. Write tests for edge cases
@@ -158,7 +166,9 @@ For each test area:
 5. Verify coverage increase
 
 ### endpoints
+
 For each endpoint:
+
 1. Define route and HTTP method
 2. Add request/response DTOs
 3. Implement handler logic
@@ -167,7 +177,9 @@ For each endpoint:
 6. Write integration test
 
 ### fixes
+
 For each fix:
+
 1. Locate the issue
 2. Write regression test (failing)
 3. Implement minimal fix
@@ -175,7 +187,9 @@ For each fix:
 5. Check for similar issues
 
 ### migrations
+
 For each migration:
+
 1. Identify source pattern
 2. Identify target pattern
 3. Write transformation

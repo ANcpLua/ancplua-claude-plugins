@@ -14,6 +14,7 @@ conditions:
 Before stopping, please run tests to verify your changes work correctly.
 
 Look for test commands like:
+
 - `npm test`
 - `pytest`
 - `cargo test`

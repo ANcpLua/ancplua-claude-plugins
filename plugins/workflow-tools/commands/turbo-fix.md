@@ -16,12 +16,14 @@ allowed-tools: Task, Bash, TodoWrite
 **YOU MUST USE THE TASK TOOL TO LAUNCH AGENTS. YOU ORCHESTRATE, AGENTS FIX.**
 
 REQUIRED BEHAVIOR:
+
 - Phase 1: Launch 4 Task tools in ONE message
 - Phase 2: Launch 2 Task tools in ONE message
 - Phase 3: Launch 1 Task tool
 - Phase 4: Run verification commands
 
 EACH TASK MUST USE:
+
 - subagent_type: (from the yaml blocks below)
 - prompt: (the full prompt text with user's issue/context inserted)
 - description: (short 3-5 word summary)
@@ -35,6 +37,7 @@ EACH TASK MUST USE:
 Launch ALL 4 agents in ONE message. Insert the user's issue ($1) and context ($3) into each prompt.
 
 ### Agent 1: Root Cause Hunter
+
 ```yaml
 subagent_type: deep-debugger
 model: opus
@@ -54,6 +57,7 @@ prompt: |
 ```
 
 ### Agent 2: System Architect
+
 ```yaml
 subagent_type: metacognitive-guard:arch-reviewer
 model: opus
@@ -73,6 +77,7 @@ prompt: |
 ```
 
 ### Agent 3: Code Explorer
+
 ```yaml
 subagent_type: feature-dev:code-explorer
 description: "Find relevant code"
@@ -91,6 +96,7 @@ prompt: |
 ```
 
 ### Agent 4: History Detective
+
 ```yaml
 subagent_type: Explore
 description: "Find change history"
@@ -117,6 +123,7 @@ prompt: |
 Launch ALL 2 agents in ONE message:
 
 ### Agent 7: Solution Architect A
+
 ```yaml
 subagent_type: feature-dev:code-architect
 model: opus
@@ -135,6 +142,7 @@ prompt: |
 ```
 
 ### Agent 8: Devil's Advocate
+
 ```yaml
 subagent_type: feature-dev:code-reviewer
 description: "Attack all solutions"
@@ -161,6 +169,7 @@ prompt: |
 Launch the implementation agent:
 
 ### Agent 9: Implementation with TDD
+
 ```yaml
 subagent_type: feature-dev:code-architect
 model: opus

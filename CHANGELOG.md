@@ -8,6 +8,18 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **README.md and marketplace.json fully updated to match current state:**
+  - Plugin count 10→12, added exodia (v1.1.0) and hades (v2.0.0) — both missing
+  - Added hades to marketplace.json (plugin existed on disk, passed validation, but wasn't registered)
+  - Fixed 4 stale versions: metacognitive-guard 0.2.4→0.2.6, otelwiki 1.0.5→1.0.6,
+    dotnet-architecture-lint 1.0.0→1.0.2, feature-dev 0.1.0→1.0.0
+  - Updated all plugin descriptions and architecture tree to include all 12 plugins
+  - Added Quad-AI review system mention and Architecture doc link
+  - Created `.markdownlintignore` to exclude upstream otelwiki docs and CHANGELOG
+  - Fixed ~1,500+ markdown lint errors across all owned files (MD040, MD013, MD031, MD036)
+
+### Fixed
+
 - **Hades god mode review fixes (2026-02-06):**
   - `permit.sh`: flock fallback for macOS (flock not pre-installed, was hard-failing with `set -euo pipefail`)
   - `rule_engine.py`: removed TOCTOU race (`isfile()` before `try/except`), added `encoding='utf-8'`

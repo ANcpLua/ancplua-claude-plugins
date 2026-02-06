@@ -5,6 +5,7 @@ Prevents Claude from taking shortcuts to finish tasks.
 ## Problem
 
 Claude sometimes:
+
 - Suppresses warnings instead of fixing them
 - Comments out failing tests
 - Deletes assertions that fail
@@ -50,6 +51,7 @@ bash scripts/integrity-check.sh
 ## Excluded Files
 
 To avoid false positives, these are excluded from scanning:
+
 - `*.md` (documentation may contain examples)
 - `**/scripts/*.sh` (utility scripts)
 - `**/*.test.*` / `**/*.spec.*` (test fixtures)

@@ -20,13 +20,16 @@ Spawn 4 auditors. Each scans the full scope through their lens.
 They MESSAGE each other to challenge findings before finalizing.
 You coordinate. You never audit yourself.
 
-**Delegate mode:** You operate as a coordinator. Zero analysis yourself. You create teams, create tasks, assign work, collect results, synthesize verdicts. Your teammates do all the actual code reading.
+**Delegate mode:** You operate as a coordinator. Zero analysis yourself.
+You create teams, create tasks, assign work, collect results, synthesize verdicts.
+Your teammates do all the actual code reading.
 
 ---
 
 ## AGENT TEAMS
 
 You spawn 4 teammates. Each teammate:
+
 - Gets CLAUDE.md automatically (project conventions, boundaries)
 - Does NOT get this conversation history — include ALL context in the spawn prompt
 - Communicates via SendMessage (DM to lead or other teammates)
@@ -224,11 +227,13 @@ Output: numbered list with file:line, issue type, fix action.
 Teammates send findings and challenges via SendMessage. Messages arrive automatically.
 
 The debate is done when:
+
 - All 4 audit tasks show status: completed (check TaskList)
 - No new messages arriving
 - All challenges have been resolved
 
-Resolve ownership conflicts: if two auditors claim the same file:line, assign to the auditor whose domain is primary for that issue.
+Resolve ownership conflicts: if two auditors claim the same file:line,
+assign to the auditor whose domain is primary for that issue.
 
 ---
 
