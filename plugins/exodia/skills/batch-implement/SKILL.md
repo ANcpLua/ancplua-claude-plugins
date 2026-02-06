@@ -1,6 +1,6 @@
 ---
 name: batch-implement
-description: "Use when implementing multiple similar items (endpoints, tests, migrations). Pattern->parallel implement->review. One agent per item."
+description: "IF implementing multiple similar items (diagnostics, tests, endpoints, features) THEN use this (1 pattern + N parallel + 1 review). IF single item THEN fix. IF from mega-swarm finding repeated patterns THEN this. IF unsure of pattern THEN deep-think first. Types: diagnostics, tests, endpoints, features, fixes, migrations."
 allowed-tools: Task, Bash, TodoWrite
 ---
 

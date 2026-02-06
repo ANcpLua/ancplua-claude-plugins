@@ -17,12 +17,16 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - epistemic-guard.sh: fully exempts assertions.yaml (source of truth, not code)
   - truth-beacon.sh: injects Claude Code conventions at session start (passive context rules)
 
-- **exodia — skill descriptions rewritten as routing triggers (2026-02-06):**
-  - Applied Vercel AGENTS.md pattern: descriptions now encode WHEN to use each skill + cross-references
-  - Shifted from WHAT-focused ("Unified fix pipeline...") to WHEN-focused ("Use for any bug fix P1-P3...")
-  - All 8 skill descriptions include routing hints to sibling skills (e.g., "For P0 -> use turbo-fix")
-  - Deleted AGENTS.md — Claude Code does not auto-load it from plugins, making it dead weight
-  - Routing intelligence now lives in skill `description` frontmatter (passive context)
+- **exodia + AGENTS.md — IF/THEN decision trees + Vercel passive context (2026-02-06):**
+  - Skill descriptions rewritten as explicit IF/THEN decision trees for routing
+  - Pattern: "IF [condition] THEN use this. IF [alternative] THEN [other skill]."
+  - All 8 exodia skills updated: fix, turbo-fix, fix-pipeline, mega-swarm, deep-think, tournament, batch-implement, red-blue-review
+  - Cross-references between skills enable seamless agent routing
+  - **No agent caps enforced** - exodia remains unrestricted for unlimited parallelism
+  - AGENTS.md updated with compressed routing index (Vercel pattern: passive context beats skills 100% vs 53-79%)
+  - Key instruction: "Prefer retrieval-led reasoning over pre-training-led reasoning"
+  - Marked workflow-tools commands as DEPRECATED - use exodia skills instead
+  - Research: Vercel found passive context (AGENTS.md) outperforms on-demand retrieval (skills)
 
 ### Added
 

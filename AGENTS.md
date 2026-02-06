@@ -45,13 +45,18 @@ IF about to commit with suppressions/shortcuts
   → completion-integrity blocks it automatically
 
 IF multi-agent orchestration needed
-  → workflow-tools commands:
-    /fix [issue]              - unified fix pipeline (configurable parallelism)
-    /mega-swarm [scope]       - parallel codebase audit (6-12 agents)
-    /red-blue-review [target] - adversarial security review
-    /deep-think [problem]     - extended multi-perspective reasoning
-    /tournament [task]        - competitive coding (N agents compete)
-    /batch-implement [items]  - parallel similar implementations
+  → exodia skills (UNRESTRICTED - unlimited parallel agents):
+    fix                - P1/P2/P3 bugs (8 std, 16 max agents)
+    turbo-fix          - P0 critical emergency (16 agents, fastest)
+    fix-pipeline       - audit-driven systematic fixes (6 agents)
+    mega-swarm         - codebase audit (6/8/12 agents by mode)
+    deep-think         - multi-perspective analysis (5 agents)
+    tournament         - competitive solutions (N+2 agents)
+    batch-implement    - parallel similar items (1+N+1 agents)
+    red-blue-review    - adversarial security (3+N+1 agents)
+
+  → workflow-tools commands (DEPRECATED - use exodia skills):
+    /fix, /mega-swarm, /red-blue-review, /deep-think, /tournament, /batch-implement
 
 IF zero-tolerance cleanup needed
   → cleanup-specialist agent (agents/cleanup-specialist/)
@@ -80,10 +85,16 @@ IF zero-tolerance cleanup needed
 |feature-dev/agents:{code-architect.md,code-explorer.md,code-reviewer.md}
 |hookify/agents:{conversation-analyzer.md}
 
+[Exodia Skills]|root: ./plugins/exodia/skills
+|PREFERRED: Use skills, not commands. Unlimited parallelism.
+|{fix,turbo-fix,fix-pipeline,mega-swarm,deep-think,tournament,batch-implement,red-blue-review}
+|Decision Tree: See IF/THEN patterns in each SKILL.md description frontmatter
+|Key: P0→turbo-fix, P1-P3→fix, audit→mega-swarm, systematic→fix-pipeline
+
 [Commands]|root: ./plugins/workflow-tools/commands
-|Invoke via /workflow-tools:<name>
+|DEPRECATED: Use exodia skills instead
 |{fix.md,mega-swarm.md,red-blue-review.md,deep-think.md,tournament.md,batch-implement.md}
-|DEPRECATED:{turbo-fix.md→/fix parallelism=maximum,fix-pipeline.md→/fix}
+|turbo-fix.md,fix-pipeline.md also deprecated
 
 [Standalone Agents]|root: ./agents
 |cleanup-specialist:{prompts/,config/}

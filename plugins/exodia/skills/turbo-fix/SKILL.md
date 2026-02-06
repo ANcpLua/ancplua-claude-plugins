@@ -1,6 +1,6 @@
 ---
 name: turbo-fix
-description: "Use for P0 critical bugs needing fastest resolution. 16 agents, 4 phases. For P1-P3 -> use fix instead."
+description: "IF P0 critical emergency requiring fastest resolution THEN use this (16 agents, 6→4→3→3). IF P1/P2/P3 bugs THEN fix. IF systematic approach needed THEN fix-pipeline. IF from mega-swarm audit THEN route P0 here, others to fix. Maximum parallelism, no restrictions."
 allowed-tools: Task, Bash, TodoWrite
 ---
 

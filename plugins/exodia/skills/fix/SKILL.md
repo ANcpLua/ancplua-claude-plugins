@@ -1,6 +1,6 @@
 ---
 name: fix
-description: "Use for any bug fix (P1-P3). 8 agents, 4 gated phases: analysis->design->implement->verify. For P0 critical -> use turbo-fix. From audit findings -> use fix-pipeline."
+description: "IF fixing P1/P2/P3 bug THEN use this (8 agents standard, 16 maximum). IF P0 critical emergency THEN turbo-fix. IF systematic audit-driven fix THEN fix-pipeline. IF need multiple solution perspectives THEN tournament. IF complex debugging first THEN deep-think. Configurable: standard (8) or maximum (16) parallelism."
 allowed-tools: Task, Bash, TodoWrite
 ---
 

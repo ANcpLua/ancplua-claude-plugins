@@ -1,6 +1,6 @@
 ---
 name: mega-swarm
-description: "Use for codebase audit or release readiness check. 6-12 agents scan in parallel. Full(12), quick(6), or focused(8) mode. Feed findings into fix-pipeline."
+description: "IF need comprehensive codebase audit THEN use this (12 agents full, 6 quick, 8 focused). IF already know specific issue THEN skip to fix/turbo-fix. AFTER audit completion → route P0 to turbo-fix, P1-P3 to fix-pipeline for systematic fixing, or batch-implement for multiple similar items. Use BEFORE release, major refactor, or pre-ship validation."
 allowed-tools: Task, TodoWrite
 ---
 

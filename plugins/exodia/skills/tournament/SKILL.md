@@ -1,6 +1,6 @@
 ---
 name: tournament
-description: "Use when multiple valid approaches exist and you need the best one. N agents compete, judge picks winner. For complex trade-offs without competition -> use deep-think."
+description: "IF need multiple competing solutions with objective judging THEN use this (N competitors + judge + implementer, default 5). IF single solution sufficient THEN fix. IF architecture decision first THEN deep-think before this. IF critical P0 THEN turbo-fix. Competitive scoring: correctness (40pts) + elegance (25pts) + performance (20pts) + completeness (15pts)."
 allowed-tools: Task, Bash, TodoWrite
 ---
 

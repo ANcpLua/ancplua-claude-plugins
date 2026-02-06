@@ -1,6 +1,6 @@
 ---
 name: red-blue-review
-description: "Use for adversarial security/quality review before release. Red team attacks, Blue team defends. For broad audit -> use mega-swarm."
+description: "IF need adversarial security/quality review THEN use this (3 Red attackers + N Blue defenders + verification). IF standard code review THEN fix pipeline. IF pre-release security validation THEN this. IF found security issues in mega-swarm THEN this. Attacks: crashes, security vulns, API contract violations. Use BEFORE production deployments."
 allowed-tools: Task, Bash, TodoWrite
 ---
 

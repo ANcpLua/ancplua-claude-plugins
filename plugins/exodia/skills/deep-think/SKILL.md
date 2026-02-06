@@ -1,6 +1,6 @@
 ---
 name: deep-think
-description: "Use before action on complex problems needing multi-perspective analysis. 5 agents, 3 phases. For competing implementations -> use tournament instead."
+description: "IF complex problem requiring multiple perspectives THEN use this (5 agents: debugger + architect + explorer → solution + devil's advocate). IF architectural decision needed THEN this. IF straightforward bug THEN fix. IF need competitive solutions THEN tournament. Use BEFORE major design decisions, complex debugging, or architectural changes."
 allowed-tools: Task, TodoWrite
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: fix-pipeline
-description: "Use when fixing issues found by mega-swarm audit. 7 agents, systematic analysis->design->implement->verify. For ad-hoc bugs -> use fix."
+description: "IF fixing issues from mega-swarm audit findings THEN use this (systematic 6-agent pipeline). IF ad-hoc bug discovered THEN fix. IF P0 critical THEN turbo-fix. IF need deep analysis before deciding THEN deep-think first. Pipeline: 3 analysis → 2 design → 1 implement."
 allowed-tools: Task, Bash, TodoWrite
 ---
 
