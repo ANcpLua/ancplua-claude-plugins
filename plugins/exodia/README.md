@@ -34,7 +34,7 @@ Skills-standard counterpart to `workflow-tools`. Same workflows, discoverable as
 |---------------|--------|
 | `commands/*.md` (slash commands) | `skills/*/SKILL.md` (skills standard) |
 | Invoked via `/workflow-tools:fix` | Discovered via skill matching |
-| No passive context | AGENTS.md decision tree |
+| No passive context | Routing embedded in skill descriptions |
 
 Both contain identical workflow specifications. Use `workflow-tools` for explicit slash-command invocation, `exodia` for skill-based discovery.
 

@@ -1,6 +1,6 @@
 ---
 name: red-blue-review
-description: "Adversarial Red Team / Blue Team review - Red attacks, Blue defends, verify fixes. Usage: /red-blue-review [target] [scope:full]"
+description: "Use for adversarial security/quality review before release. Red team attacks, Blue team defends. For broad audit -> use mega-swarm."
 allowed-tools: Task, Bash, TodoWrite
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: deep-think
-description: "Extended reasoning with multiple perspectives for complex problems. Usage: /deep-think [problem] [context:.] [mode:debug]"
+description: "Use before action on complex problems needing multi-perspective analysis. 5 agents, 3 phases. For competing implementations -> use tournament instead."
 allowed-tools: Task, TodoWrite
 ---
 

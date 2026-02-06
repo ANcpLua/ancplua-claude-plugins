@@ -1,6 +1,6 @@
 ---
 name: batch-implement
-description: "Parallel implementation of multiple similar items using shared patterns. Usage: /batch-implement [type] [items]"
+description: "Use when implementing multiple similar items (endpoints, tests, migrations). Pattern->parallel implement->review. One agent per item."
 allowed-tools: Task, Bash, TodoWrite
 ---
 
