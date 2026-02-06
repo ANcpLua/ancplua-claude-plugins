@@ -39,10 +39,8 @@ def _hades_permit_active() -> bool:
     Returns:
         True if a valid, non-expired, active permit exists.
     """
-    if not os.path.isfile(_HADES_PERMIT_PATH):
-        return False
     try:
-        with open(_HADES_PERMIT_PATH) as f:
+        with open(_HADES_PERMIT_PATH, encoding='utf-8') as f:
             permit = _json.load(f)
         if permit.get('status') != 'active':
             return False

@@ -55,7 +55,7 @@ plugins/exodia/scripts/smart/    ← checked-in tooling
 
 **Smart ID format:** `SMART-YYYY-MM-DD-<10-digit-epoch><20-char-random>`
 **Ledger entry:** `{"ts","smart_id","action","path","reason","agent","git_sha"}`
-**Permit:** `{"smart_id","created_at","expires_at","ttl","paths","status"}`
+**Permit:** `{"smart_id","created_at","expires_at","ttl","expires_epoch","paths","status"}`
 
 ---
 
