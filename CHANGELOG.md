@@ -6,7 +6,20 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **exodia/hades — Smart-Hades: audited cleanup with Smart IDs (2026-02-06):**
+  - New exodia skill: `plugins/exodia/skills/hades/SKILL.md` — 3-phase x 4-teammate pipeline
+  - Smart infrastructure scripts: `smart-id.sh` (ULID generator), `ledger.sh` (append-only audit),
+    `permit.sh` (TTL-based deletion permits)
+  - Hookify guard templates: `delete-guard` (blocks raw `rm`/`git rm`), `stop-guard` (opt-in completion check)
+  - Every deletion gets a Smart ID, deletion permit, and ledger entry — full audit trail
+  - `.smart/` runtime directory added to `.gitignore`
+
 ### Changed
+
+- **cleanup-specialist deprecated in favor of exodia/hades (2026-02-06):**
+  - agents/cleanup-specialist/README.md updated with deprecation notice pointing to smart-hades
 
 - **metacognitive-guard — February 2026 Opus 4.6 learnings (2026-02-06):**
   - assertions.yaml: added Claude model family (Opus 4.6, Sonnet 4.5, Haiku 4.5), plugin conventions

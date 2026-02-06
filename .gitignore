@@ -39,6 +39,9 @@ obj/
 .claude-cache/
 .claude/settings.local.json
 
+# --- Smart-Hades runtime ---
+.smart/
+
 # --- Existing .NET-specific entries (kept) ---
 [Dd]ebug/
 [Dd]ebugPublic/
