@@ -16,6 +16,14 @@ allowed-tools: Task, Bash, TodoWrite
 
 **Smart Infrastructure:** `plugins/exodia/scripts/smart/`
 
+**Hookify guards (optional):** Copy from `plugins/exodia/scripts/smart/hookify-rules/` to your project:
+
+```bash
+cp plugins/exodia/scripts/smart/hookify-rules/*.local.md .
+# delete-guard: blocks raw rm/git rm (enabled by default)
+# stop-guard: requires cleanup report before stopping (opt-in)
+```
+
 ---
 
 ## IDENTITY
@@ -45,7 +53,7 @@ plugins/exodia/scripts/smart/    ← checked-in tooling
     └── hookify.smart-hades-stop-guard.local.md     ← opt-in completion guard
 ```
 
-**Smart ID format:** `SMART-YYYY-MM-DD-<13-digit-timestamp><20-char-random>`
+**Smart ID format:** `SMART-YYYY-MM-DD-<10-digit-epoch><20-char-random>`
 **Ledger entry:** `{"ts","smart_id","action","path","reason","agent","git_sha"}`
 **Permit:** `{"smart_id","created_at","expires_at","ttl","paths","status"}`
 
@@ -132,7 +140,7 @@ plugins/exodia/scripts/smart/ledger.sh count
 ```
 
 **Fallback:** If Agent Teams unavailable, use Task tool with
-`subagent_type: cleanup-specialist`, `model: opus`, 4 agents per phase.
+`subagent_type: general-purpose`, `model: opus`, 4 agents per phase.
 
 **YOUR NEXT ACTION: Run Step 0 (Smart Init), then create team and spawn Phase 0.**
 

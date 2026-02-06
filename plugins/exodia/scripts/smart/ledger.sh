@@ -6,6 +6,9 @@ set -euo pipefail
 SMART_DIR="${SMART_DIR:-.smart}"
 LEDGER_FILE="${SMART_DIR}/delete-ledger.jsonl"
 
+# Escape characters that break JSON strings
+json_escape() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g'; }
+
 init() {
   mkdir -p "$SMART_DIR"
   touch "$LEDGER_FILE"
@@ -28,9 +31,17 @@ append() {
 
   ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-  # Build JSON without jq (pure bash)
-  printf '{"ts":"%s","smart_id":"%s","action":"%s","path":"%s","reason":"%s","agent":"%s","git_sha":"%s"}\n' \
-    "$ts" "$smart_id" "$action" "$path" "$reason" "$agent" "$git_sha" >> "$LEDGER_FILE"
+  # Escape user-supplied values to prevent JSON corruption
+  path="$(json_escape "$path")"
+  reason="$(json_escape "$reason")"
+  agent="$(json_escape "$agent")"
+
+  # Atomic append with flock to prevent interleaved writes from parallel teammates
+  (
+    flock -x 200
+    printf '{"ts":"%s","smart_id":"%s","action":"%s","path":"%s","reason":"%s","agent":"%s","git_sha":"%s"}\n' \
+      "$ts" "$smart_id" "$action" "$path" "$reason" "$agent" "$git_sha" >> "$LEDGER_FILE"
+  ) 200>"${LEDGER_FILE}.lock"
 }
 
 query() {

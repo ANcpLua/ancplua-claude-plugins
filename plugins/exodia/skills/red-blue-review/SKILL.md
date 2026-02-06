@@ -1,347 +1,199 @@
 ---
 name: red-blue-review
-description: "Use for adversarial security/quality review before release. Red team attacks, Blue team defends. For broad audit -> use mega-swarm."
+description: "IF adversarial security/quality review needed THEN use this. Red team attacks, Blue team defends, Red re-attacks. Scored. Release recommendation. For broad audit → mega-swarm."
 allowed-tools: Task, Bash, TodoWrite
 ---
 
-# RED TEAM / BLUE TEAM ADVERSARIAL REVIEW
+# RED BLUE REVIEW — Adversarial Attack/Defense with Scoring
+
+> Red breaks. Blue fixes. Red re-attacks. Points decide.
 
 **Target:** $1 (default: staged changes)
-**Scope:** $2 (default: full, options: full|security|api|performance)
+**Scope:** $2 (default: full | full|security|api|performance)
 
 ---
 
-## OVERVIEW
+## SCORING
 
-An adversarial security/quality review pattern where:
-- **Red Team** (3 agents): Actively tries to BREAK the code
-- **Blue Team** (1 agent per finding): Defends and proposes fixes
-- **Verification**: Red re-attacks to validate fixes
+| Event | Red | Blue |
+|-------|-----|------|
+| Valid critical finding | +10 | — |
+| Valid high finding | +5 | — |
+| Valid medium finding | +2 | — |
+| Invalid/false finding | -5 | — |
+| Fix verified (no bypass) | — | +5 |
+| Fix bypassed by Red | +3 | -3 |
+| Test case accepted | — | +2 |
 
+---
+
+## TEAM ARCHITECTURE
+
+```text
+REVIEW LEAD (You — Orchestrator)
+│
+├─ Phase 1: RED ATTACK (3 agents parallel)
+│  ├── red-crash-hunter
+│  ├── red-security-attacker
+│  └── red-api-breaker
+│  └── GATE → validate findings
+│
+├─ Phase 2: BLUE DEFENSE (1 agent per valid finding)
+│  └── blue-defender-N (one per RED finding)
+│  └── GATE → fixes collected
+│
+├─ Phase 3: RED RE-ATTACK (1 agent per fix)
+│  └── red-reattacker-N (one per BLUE fix)
+│  └── VERDICT: DEFEATED / BYPASSED / INCOMPLETE
+│
+└─ RELEASE: SAFE / BLOCK
 ```
-+-------------------------------------------------------------+
-|                 ADVERSARIAL REVIEW FLOW                     |
-+-------------------------------------------------------------+
-|  Phase 1: RED TEAM ATTACK (3 parallel agents)               |
-|           |                                                 |
-|  Phase 2: BLUE TEAM DEFENSE (1 per finding)                 |
-|           |                                                 |
-|  Phase 3: RED RE-ATTACK (verification)                      |
-|           |                                                 |
-|  RELEASE RECOMMENDATION: SAFE / BLOCK                       |
-+-------------------------------------------------------------+
-```
 
 ---
-
-## SCORING SYSTEM
-
-| Event | Red Points | Blue Points |
-|-------|-----------|-------------|
-| Valid critical finding | +10 | - |
-| Valid high finding | +5 | - |
-| Valid medium finding | +2 | - |
-| Invalid/false finding | -5 | - |
-| Fix verified (no bypass) | - | +5 |
-| Fix bypassed | +3 | -3 |
-| Test case accepted | - | +2 |
-
----
-
-## EXECUTION INSTRUCTIONS
 
 <CRITICAL_EXECUTION_REQUIREMENT>
+
 **THIS IS AN ADVERSARIAL EXERCISE.**
 
-1. Phase 1: Launch ALL 3 Red Team agents in ONE message
-2. Collect and validate findings
-3. Phase 2: Launch ONE Blue Team defender per valid finding
-4. Phase 3: Red re-attacks each fix
-5. Generate release recommendation
+1. Launch 3 Red Team agents in ONE message
+2. Validate findings (reject false positives)
+3. Launch 1 Blue defender per valid finding
+4. Launch 1 Red re-attacker per Blue fix
+5. Score and generate release recommendation
 
-**YOUR NEXT MESSAGE: Launch 3 Red Team Task tool calls. NOTHING ELSE.**
+**YOUR NEXT MESSAGE: 3 Red Team Task tool calls. NOTHING ELSE.**
+
 </CRITICAL_EXECUTION_REQUIREMENT>
 
 ---
 
-## PHASE 1: RED TEAM ATTACK (3 Parallel Agents)
+## PHASE 1: RED ATTACK — 3 Agents
 
-Launch ALL Red Team agents in ONE message:
+Launch ALL 3 in ONE message.
 
-### RED-1: Crash Hunter
-```yaml
-subagent_type: deep-debugger
-model: opus
-description: "Red Team: Hunt crashes"
-prompt: |
-  RED TEAM AGENT - Crash Hunter
+### red-crash-hunter
 
-  TARGET: [insert $1 here, default: staged changes]
-  SCOPE: [insert $2 here, default: full]
+> subagent: deep-debugger | model: opus
+>
+> RED TEAM — Crash Hunter. TARGET: $1 | SCOPE: $2
+>
+> Find ways to CRASH the code:
+> Null refs, invalid input, resource exhaustion, circular refs, race conditions, exception gaps, loop edge cases, overflow.
+>
+> Per crash: reproduction code, expected vs actual, severity (Critical/High/Medium).
+> Format: CRASH-001: [title] | Severity | Reproduction | Location
+>
+> Real bugs only — false alarms cost -5 points.
 
-  YOUR MISSION: Find ways to CRASH the code.
+### red-security-attacker
 
-  ## Attack Vectors
-  1. Null reference paths
-  2. Invalid input handling
-  3. Resource exhaustion
-  4. Circular references
-  5. Race conditions
-  6. Exception handling gaps
-  7. Edge cases in loops
-  8. Integer overflow/underflow
+> subagent: feature-dev:code-reviewer | model: opus
+>
+> RED TEAM — Security Attacker. TARGET: $1 | SCOPE: $2
+>
+> Find SECURITY vulnerabilities:
+> Injection (SQL/command/code), path traversal, data exposure, unsafe deserialization, missing validation, hardcoded secrets, SSRF/CSRF.
+>
+> Per vuln: malicious input, vulnerable code path, exploitation method, impact.
+> Format: SEC-001: [title] | Severity | Attack Input | Exploitation | Impact
+>
+> Proof of concept required. Theoretical issues = 0 points.
 
-  ## For Each Crash Found
-  - Minimal reproduction code
-  - Expected vs actual behavior
-  - Severity assessment (Critical/High/Medium)
+### red-api-breaker
 
-  ## Output Format
-  ### CRASH-001: [Title]
-  **Severity:** Critical/High/Medium
-  **Reproduction:** [Code or steps to trigger]
-  **Expected:** [What should happen]
-  **Actual:** [What does happen]
-  **Location:** [file:line]
-
-  Find as many crashes as possible. Each crash = points for Red Team.
-  Be AGGRESSIVE. Real bugs only - false alarms cost you -5 points.
-```
-
-### RED-2: Security Attacker
-```yaml
-subagent_type: feature-dev:code-reviewer
-model: opus
-description: "Red Team: Hunt security vulns"
-prompt: |
-  RED TEAM AGENT - Security Attacker
-
-  TARGET: [insert $1 here, default: staged changes]
-  SCOPE: [insert $2 here, default: full]
-
-  YOUR MISSION: Find SECURITY vulnerabilities.
-
-  ## Attack Vectors
-  1. Injection vulnerabilities (SQL, command, code)
-  2. Path traversal
-  3. Sensitive data exposure
-  4. Unsafe deserialization
-  5. Missing input validation
-  6. Hardcoded secrets/credentials
-  7. Insecure string operations
-  8. SSRF/CSRF opportunities
-
-  ## Proof of Concept Required
-  For each vulnerability, show:
-  1. Malicious input
-  2. Vulnerable code path
-  3. Exploitation method
-  4. Impact assessment
-
-  ## Output Format
-  ### SEC-001: [Vulnerability Title]
-  **Severity:** Critical/High/Medium
-  **Attack Input:** [Malicious payload]
-  **Vulnerable Code:** [file:line with vulnerable code]
-  **Exploitation:** [How an attacker exploits this]
-  **Impact:** [What damage is possible]
-
-  Real exploits only. Theoretical issues without proof = 0 points.
-  False security alarms = -5 points. Be certain.
-```
-
-### RED-3: API Breaker
-```yaml
-subagent_type: feature-dev:code-explorer
-description: "Red Team: Break API contracts"
-prompt: |
-  RED TEAM AGENT - API Breaker
-
-  TARGET: [insert $1 here, default: staged changes]
-  SCOPE: [insert $2 here, default: full]
-
-  YOUR MISSION: Find ways to BREAK the public API contract.
-
-  ## Attack Vectors
-  1. Behavior differs from documentation
-  2. Edge cases with unexpected behavior
-  3. Missing validation allowing invalid state
-  4. Ways to bypass intended restrictions
-  5. Inconsistencies between similar APIs
-  6. Breaking changes from previous versions
-  7. Null/empty handling inconsistencies
-  8. Threading/async contract violations
-
-  ## For Each Break Found
-  - Code demonstrating the break
-  - Expected vs actual behavior
-  - Impact on consumers
-
-  ## Output Format
-  ### BREAK-001: [Title]
-  **Severity:** Critical/High/Medium
-  **Documented Behavior:** [What the API claims to do]
-  **Actual Behavior:** [What it actually does]
-  **Proof:** [Code demonstrating the break]
-  **Consumer Impact:** [How this affects API users]
-
-  Focus on REAL contract violations, not style preferences.
-```
-
-**-> WAIT for all 3 Red Team agents, validate findings, then proceed to Phase 2.**
+> subagent: feature-dev:code-explorer
+>
+> RED TEAM — API Breaker. TARGET: $1 | SCOPE: $2
+>
+> Find ways to BREAK the API contract:
+> Behavior ≠ docs, edge cases, missing validation, bypass restrictions, inconsistencies, breaking changes, null/empty handling, async violations.
+>
+> Per break: documented vs actual behavior, proof code, consumer impact.
+> Format: BREAK-001: [title] | Severity | Documented | Actual | Proof
+>
+> Real contract violations only, not style preferences.
 
 ---
 
-## GATE: Red Team Findings Validation
+## GATE: Red Findings Validation
 
-Before Phase 2, validate each finding:
-
-```
+```text
 RED TEAM FINDINGS:
 +------------------------------------------------------------+
-| RED-1 (Crash Hunter):                                      |
-|   - CRASH-001: [title] - VALID/INVALID                     |
-|                                                            |
-| RED-2 (Security Attacker):                                 |
-|   - SEC-001: [title] - VALID/INVALID                       |
-|                                                            |
-| RED-3 (API Breaker):                                       |
-|   - BREAK-001: [title] - VALID/INVALID                     |
+| RED-1 Crash Hunter:     [findings] — VALID/INVALID each   |
+| RED-2 Security Attacker: [findings] — VALID/INVALID each  |
+| RED-3 API Breaker:      [findings] — VALID/INVALID each   |
 +------------------------------------------------------------+
-| VALID FINDINGS: [count]                                    |
-| INVALID (rejected): [count]                                |
-| RED TEAM SCORE: [points]                                   |
+| Valid: [count] | Rejected: [count] | Red Score: [points]   |
 +------------------------------------------------------------+
 ```
 
 ---
 
-## PHASE 2: BLUE TEAM DEFENSE
+## PHASE 2: BLUE DEFENSE
 
-For EACH valid Red Team finding, launch ONE Blue Team defender:
+Launch ONE defender per valid Red finding:
 
-### BLUE-N Template (One per finding)
-```yaml
-subagent_type: feature-dev:code-architect
-model: opus
-description: "Blue Team: Defend [RED-ID]"
-prompt: |
-  BLUE TEAM AGENT - Defender
+### blue-defender-N (one per finding)
 
-  You must defend against this Red Team finding:
-
-  [PASTE THE SPECIFIC RED TEAM FINDING HERE]
-
-  ## Your Mission
-  1. **Verify**: Is the finding real? (not a false alarm)
-  2. **Analyze**: Why does this vulnerability/bug exist?
-  3. **Fix**: Design a fix that resolves the issue
-  4. **Protect**: Ensure fix doesn't introduce regressions
-  5. **Test**: Write test case that would catch this
-
-  ## Output Format
-  ### Defense for [RED-ID]
-
-  **Finding Valid:** Yes/No/Partial
-
-  **Root Cause:** [Why this vulnerability/bug exists]
-
-  **Proposed Fix:** [Code showing the fix]
-
-  **Regression Check:**
-  - [x] Existing tests still pass
-  - [x] New test covers this case
-  - [x] No performance impact
-
-  **Test Case:** [Test code that proves fix works]
-
-  If finding is INVALID, explain why with evidence.
-```
-
-**-> Collect all Blue Team fixes, then proceed to Phase 3.**
+> subagent: feature-dev:code-architect | model: opus
+>
+> BLUE TEAM — Defend against: [PASTE RED FINDING]
+>
+> 1. Verify: Is finding real?
+> 2. Analyze: Why does this exist?
+> 3. Fix: Design a fix
+> 4. Protect: No regressions
+> 5. Test: Write test case
+>
+> Output: Finding valid? Root cause. Proposed fix code. Regression check. Test case.
+> If INVALID, explain why with evidence.
 
 ---
 
-## PHASE 3: RED RE-ATTACK (Verification)
+## PHASE 3: RED RE-ATTACK
 
-For EACH Blue Team fix, Red Team attempts to bypass:
+Launch ONE re-attacker per Blue fix:
 
-### RED Re-Attack Template
-```yaml
-subagent_type: deep-debugger
-description: "Red Re-Attack: [BLUE-ID]"
-prompt: |
-  RED TEAM - Re-Attack
+### red-reattacker-N (one per fix)
 
-  Blue Team proposed this fix for [RED-ID]:
-
-  [PASTE BLUE TEAM FIX HERE]
-
-  ## Your Mission
-  1. Try to BYPASS the fix
-  2. Find edge cases the fix misses
-  3. Check for regressions introduced by fix
-  4. Verify fix actually addresses root cause
-
-  ## Output - Choose ONE:
-
-  **DEFEATED** - Fix works, cannot bypass
-  The fix successfully addresses [RED-ID].
-  - Tested: [what you tried]
-  - Result: Fix holds
-  - Blue Team awarded +5 points
-
-  **BYPASSED** - Found way around fix
-  The fix can be bypassed:
-  - Bypass method: [how to circumvent]
-  - Proof: [code/steps]
-  - Red Team awarded +3 points, Blue Team -3
-
-  **INCOMPLETE** - Fix partially works
-  Fix addresses main case but misses:
-  - Gap 1: [what's missing]
-  - Gap 2: [what's missing]
-  - Recommendation: [what Blue needs to add]
-```
+> subagent: deep-debugger
+>
+> RED RE-ATTACK — Try to bypass: [PASTE BLUE FIX]
+>
+> 1. Bypass the fix
+> 2. Find edge cases it misses
+> 3. Check for regressions
+> 4. Verify root cause addressed
+>
+> VERDICT (choose one):
+> **DEFEATED** — Fix holds. Blue +5 pts.
+> **BYPASSED** — Found way around. Red +3, Blue -3. Show bypass method.
+> **INCOMPLETE** — Partially works. List gaps.
 
 ---
 
 ## FINAL REPORT
 
-After all phases complete:
-
-```
+```text
 +====================================================================+
-|              RED TEAM vs BLUE TEAM RESULTS                          |
+|              RED vs BLUE RESULTS                                    |
 +====================================================================+
-|                         SCOREBOARD                                  |
-|  Red Team:  [X] points                                              |
-|  Blue Team: [Y] points                                              |
-|  Winner: [RED/BLUE] TEAM                                            |
-+====================================================================+
-|                    FINDINGS SUMMARY                                 |
-|  Critical: [count] found, [count] fixed                             |
-|  High:     [count] found, [count] fixed                             |
-|  Medium:   [count] found, [count] fixed                             |
-+====================================================================+
-|                 RELEASE RECOMMENDATION                              |
-|  [ ] SAFE TO RELEASE - All critical/high fixed                      |
-|  [ ] BLOCK RELEASE - Outstanding critical issues                    |
+| Red Team:  [X] points                                               |
+| Blue Team: [Y] points                                               |
+| Winner: [RED/BLUE] TEAM                                             |
++--------------------------------------------------------------------+
+| Critical: [found]/[fixed] | High: [found]/[fixed]                   |
+| Medium: [found]/[fixed]                                             |
++--------------------------------------------------------------------+
+| RELEASE: [ ] SAFE — all critical/high fixed                         |
+|          [ ] BLOCK — outstanding critical issues                     |
 +====================================================================+
 ```
-
-### All Findings
 
 | ID | Category | Severity | Status | Points |
 |----|----------|----------|--------|--------|
 | CRASH-001 | Crash | Critical | Fixed/Open | +10 |
 | SEC-001 | Security | High | Fixed/Bypassed | +5/-3 |
-| BREAK-001 | API | Medium | Disputed | 0 |
 
-### Outstanding Issues
-
-[Any issues still open after all rounds - MUST be fixed before release if Critical/High]
-
-### Lessons Learned
-
-[Patterns that should be prevented in future code]
+**Outstanding Issues:** [any open critical/high — MUST fix before release]

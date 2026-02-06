@@ -10,11 +10,22 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - **exodia/hades — Smart-Hades: audited cleanup with Smart IDs (2026-02-06):**
   - New exodia skill: `plugins/exodia/skills/hades/SKILL.md` — 3-phase x 4-teammate pipeline
-  - Smart infrastructure scripts: `smart-id.sh` (ULID generator), `ledger.sh` (append-only audit),
+  - Smart infrastructure scripts: `smart-id.sh` (timestamped ID generator), `ledger.sh` (append-only audit),
     `permit.sh` (TTL-based deletion permits)
   - Hookify guard templates: `delete-guard` (blocks raw `rm`/`git rm`), `stop-guard` (opt-in completion check)
   - Every deletion gets a Smart ID, deletion permit, and ledger entry — full audit trail
   - `.smart/` runtime directory added to `.gitignore`
+
+### Fixed
+
+- **exodia/hades — review round fixes (2026-02-06):**
+  - `smart-id.sh`: removed misleading "ULID" claim, use raw epoch (not fake ms), fix SIGPIPE risk
+  - `ledger.sh`: added JSON escaping for user-supplied values, atomic writes via `flock`
+  - `permit.sh`: added JSON escaping, atomic writes via `flock`, directory-boundary-aware path matching
+  - Hookify rules rewritten to correct format (`event: bash`/`event: stop` with proper conditions schema)
+  - SKILL.md: updated smart ID format description, fixed deprecated fallback reference, added hookify install instructions
+  - `docs/AGENTS.md`: marked `cleanup-specialist` as deprecated
+  - Bumped exodia to v1.1.0 with hades in description
 
 ### Changed
 
@@ -36,6 +47,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - All 8 skill descriptions include routing hints to sibling skills (e.g., "For P0 -> use turbo-fix")
   - Deleted AGENTS.md — Claude Code does not auto-load it from plugins, making it dead weight
   - Routing intelligence now lives in skill `description` frontmatter (passive context)
+
+- **exodia — all 8 skills rewritten to match hades pattern (2026-02-06):**
+  - Replaced verbose yaml code blocks with blockquote teammate prompts (`> subagent: ... | model: ...`)
+  - Added team architecture ASCII diagrams to every skill
+  - Consolidated execution requirements (removed per-phase boilerplate)
+  - Teammate names as kebab-case headings with clear role assignment
+  - Tighter gates with consistent format across all skills
+  - Skills affected: fix, turbo-fix, fix-pipeline, tournament, deep-think, mega-swarm, red-blue-review, batch-implement
+  - Average compression: ~35% fewer lines while preserving all agent types and phase structure
 
 ### Added
 

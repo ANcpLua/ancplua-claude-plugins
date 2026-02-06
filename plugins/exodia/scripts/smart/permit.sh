@@ -6,6 +6,9 @@ set -euo pipefail
 SMART_DIR="${SMART_DIR:-.smart}"
 PERMIT_FILE="${SMART_DIR}/delete-permit.json"
 
+# Escape characters that break JSON strings
+json_escape() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g'; }
+
 create() {
   local smart_id="${1:?Usage: permit.sh create <smart-id> <paths...> [--ttl=300]}"
   shift
@@ -33,7 +36,7 @@ create() {
   created_iso="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   expires_iso="$(date -u -r "$expires_at" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -d "@$expires_at" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo "unknown")"
 
-  # Build paths JSON array
+  # Build paths JSON array with escaped values
   local paths_json="["
   local first=true
   for p in "${paths[@]}"; do
@@ -42,12 +45,16 @@ create() {
     else
       paths_json+=","
     fi
-    paths_json+="\"${p}\""
+    paths_json+="\"$(json_escape "$p")\""
   done
   paths_json+="]"
 
-  printf '{"smart_id":"%s","created_at":"%s","expires_at":"%s","ttl":%d,"expires_epoch":%d,"paths":%s,"status":"active"}\n' \
-    "$smart_id" "$created_iso" "$expires_iso" "$ttl" "$expires_at" "$paths_json" > "$PERMIT_FILE"
+  # Atomic write with flock to prevent race conditions
+  (
+    flock -x 200
+    printf '{"smart_id":"%s","created_at":"%s","expires_at":"%s","ttl":%d,"expires_epoch":%d,"paths":%s,"status":"active"}\n' \
+      "$smart_id" "$created_iso" "$expires_iso" "$ttl" "$expires_at" "$paths_json" > "$PERMIT_FILE"
+  ) 200>"${PERMIT_FILE}.lock"
 
   echo "Permit created: ${smart_id} (TTL: ${ttl}s, paths: ${#paths[@]})"
 }
@@ -85,11 +92,13 @@ validate() {
   # Check if a parent directory is covered (permit for "src/" covers "src/foo.cs")
   local permit_paths
   permit_paths="$(grep -o '"paths":\[[^]]*\]' "$PERMIT_FILE")"
-  # Simple prefix match: if any permitted path is a prefix of the requested path
+  # Directory-boundary-aware prefix match
   local found=false
   while IFS= read -r pp; do
     pp="${pp//\"/}"
-    if [[ "$path" == "$pp"* ]]; then
+    [ -z "$pp" ] && continue
+    # Exact match, or pp ends with / (directory scope), or path starts with pp/
+    if [[ "$path" == "$pp" ]] || [[ "$pp" == */ && "$path" == "$pp"* ]] || [[ "$path" == "$pp/"* ]]; then
       found=true
       break
     fi
@@ -109,12 +118,15 @@ revoke() {
     echo "No active permit to revoke."
     return
   fi
-  # Replace status
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' 's/"status":"active"/"status":"revoked"/' "$PERMIT_FILE"
-  else
-    sed -i 's/"status":"active"/"status":"revoked"/' "$PERMIT_FILE"
-  fi
+  # Atomic revoke with flock
+  (
+    flock -x 200
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      sed -i '' 's/"status":"active"/"status":"revoked"/' "$PERMIT_FILE"
+    else
+      sed -i 's/"status":"active"/"status":"revoked"/' "$PERMIT_FILE"
+    fi
+  ) 200>"${PERMIT_FILE}.lock"
   echo "Permit revoked."
 }
 
