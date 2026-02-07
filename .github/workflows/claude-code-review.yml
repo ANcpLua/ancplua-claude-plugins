@@ -135,7 +135,7 @@ jobs:
             ```bash
             gh pr review ${{ github.event.pull_request.number || inputs.pr_number }} \
               --approve|--request-changes|--comment \
-              --body "## Claude Code Review (Opus 6)
+              --body "## Claude Code Review (Opus 4.6)
 
             **Verdict:** ✅ APPROVED | ⚠️ CHANGES REQUESTED | 💬 COMMENT
 
@@ -149,7 +149,7 @@ jobs:
             [What was done well]
 
             ---
-            *Autonomous review by Claude Opus 6 (Type A repo)*"
+            *Autonomous review by Claude Opus 4.6 (Type A repo)*"
             ```
 
             **Decision Guide:**
@@ -157,7 +157,7 @@ jobs:
             - `--request-changes`: Invalid JSON, broken tool references, or Type T violations
             - `--comment`: Suggestions only, nothing blocking
 
-          claude_args: '--model claude-opus-4-5-20251101 --allowed-tools "Bash(gh pr merge:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr edit:*),Bash(gh pr ready:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh search:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(jq:*),Bash(yq:*)"'
+          claude_args: '--model claude-opus-4-6 --allowed-tools "Bash(gh pr merge:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr edit:*),Bash(gh pr ready:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh search:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(jq:*),Bash(yq:*)"'
 
   # Graceful skip notification - runs when Claude skips self-review
   skip-notification:
