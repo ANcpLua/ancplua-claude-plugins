@@ -42,6 +42,9 @@ obj/
 # --- Smart-Hades runtime ---
 .smart/
 
+# --- Metacognitive-guard runtime state ---
+.blackboard/
+
 # --- Existing .NET-specific entries (kept) ---
 [Dd]ebug/
 [Dd]ebugPublic/

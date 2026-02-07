@@ -53,7 +53,7 @@ ancplua-claude-plugins/
 │   ├── autonomous-ci/
 │   ├── code-review/
 │   ├── metacognitive-guard/
-│   └── ... (10 plugins total)
+│   └── ... (12 plugins total)
 │
 ├── agents/                      # Agent SDK projects
 │
@@ -275,8 +275,7 @@ Plugins orchestrate via Skills. Skills define contracts. MCP servers implement.
 
 ## 10. Compliance Status
 
-**Last Verified:** 2025-11-25
-**Score:** 96/100
+**Last Verified:** 2026-02-07
 
-All components pass Anthropic Claude Code specification requirements.
-See Section 8 of CLAUDE.md for detailed compliance matrix.
+All components pass `claude plugin validate .` and `weave-validate.sh` checks.
+See CLAUDE.md Section 8 (CI & Validation) for the validation pipeline.

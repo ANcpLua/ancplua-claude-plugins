@@ -8,7 +8,7 @@
 
 ## Repository
 
-ancplua-claude-plugins | Type A (Brain) | 11 plugins, 10 skills, 11 agents, 8 commands.
+ancplua-claude-plugins | Type A (Brain) | 12 plugins, 19 skills, 11 agents, 8 commands.
 Consumes MCP tools from ancplua-mcp (Type T/Hands). No C# or .NET code here.
 
 ## Decision Tree
@@ -54,7 +54,14 @@ IF multi-agent orchestration needed
     /batch-implement [items]  - parallel similar implementations
 
 IF zero-tolerance cleanup needed
-  → cleanup-specialist agent (agents/cleanup-specialist/)
+  → exodia/hades skill (Smart cleanup with audit trail)
+
+IF multi-agent orchestration as skills (unlimited agents)
+  → exodia skills: fix, turbo-fix, fix-pipeline, tournament, mega-swarm,
+    deep-think, batch-implement, red-blue-review, hades
+
+IF enforcement/judgment needed
+  → hades plugin: judge (4 auditors) → enforce (4 eliminators) → verify (4 verifiers)
 ```
 
 ## Compressed Docs Index
@@ -66,6 +73,8 @@ IF zero-tolerance cleanup needed
 |code-review/skills/code-review:{SKILL.md,references/common-patterns.md}
 |completion-integrity/skills/completion-integrity:{SKILL.md}
 |dotnet-architecture-lint/skills/dotnet-architecture-lint:{SKILL.md}
+|exodia/skills:{turbo-fix,fix,fix-pipeline,tournament,mega-swarm,deep-think,batch-implement,red-blue-review,hades}/SKILL.md
+|hades/skills:{judge,enforce,verify}/SKILL.md
 |hookify/skills/writing-rules:{SKILL.md,references/patterns-and-examples.md}
 |metacognitive-guard/skills/metacognitive-guard:{SKILL.md}
 |metacognitive-guard/skills/competitive-review:{SKILL.md}
