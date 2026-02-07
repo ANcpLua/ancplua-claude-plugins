@@ -8,7 +8,7 @@
 
 ## Repository
 
-ancplua-claude-plugins | Type A (Brain) | 12 plugins, 19 skills, 11 agents, 8 commands.
+ancplua-claude-plugins | Type A (Brain) | 12 plugins, 22 skills, 11 agents, 8 commands.
 Consumes MCP tools from ancplua-mcp (Type T/Hands). No C# or .NET code here.
 
 ## Decision Tree
