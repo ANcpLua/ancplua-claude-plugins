@@ -1,6 +1,6 @@
 # code-review
 
-Structured code review guidance. Provides a manual checklist workflow, NOT automated scanning.
+Automated code review with security scanning, style checking, and improvement suggestions.
 
 ## Files
 
@@ -21,5 +21,5 @@ Structured code review guidance. Provides a manual checklist workflow, NOT autom
 
 ## Notes
 
-- This is GUIDANCE, not automation. The SKILL.md provides a checklist that Claude follows manually.
+- Claude follows the SKILL.md checklist automatically when invoked.
 - The `/review` command supports: uncommitted changes, specific file, directory, staged, branch.

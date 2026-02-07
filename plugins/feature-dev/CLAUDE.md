@@ -24,5 +24,5 @@ Guided feature development with 3 specialized agents and a 7-phase workflow comm
 ## Notes
 
 - Origin: Sid Bidasaria (Anthropic). Maintained as-is.
-- Agents use sonnet model, read-only tools (Glob, Grep, Read, WebSearch).
+- Agents use sonnet model with tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput.
 - No hooks or skills. Command + agents only.
