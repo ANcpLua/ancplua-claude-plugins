@@ -28,8 +28,10 @@ echo ""
 case $PROJECT_TYPE in
   dotnet)
     echo "📦 Building .NET solution..."
-    if compgen -G "*.sln" > /dev/null; then
-      dotnet build -- *.sln --configuration Release
+    if compgen -G "*.slnx" > /dev/null; then
+      dotnet build --solution *.slnx --configuration Release
+    elif compgen -G "*.sln" > /dev/null; then
+      dotnet build --solution *.sln --configuration Release
     else
       dotnet build --configuration Release
     fi
@@ -37,8 +39,10 @@ case $PROJECT_TYPE in
     echo ""
 
     echo "🧪 Running .NET tests..."
-    if compgen -G "*.sln" > /dev/null; then
-      dotnet test -- *.sln --no-build --configuration Release --verbosity normal
+    if compgen -G "*.slnx" > /dev/null; then
+      dotnet test --solution *.slnx --no-build --configuration Release --verbosity normal
+    elif compgen -G "*.sln" > /dev/null; then
+      dotnet test --solution *.sln --no-build --configuration Release --verbosity normal
     else
       dotnet test --no-build --configuration Release --verbosity normal
     fi

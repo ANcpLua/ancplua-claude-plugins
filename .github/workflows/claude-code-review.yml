@@ -78,7 +78,7 @@ jobs:
             actions: read
 
           prompt: |
-            # Code Review Task (Type A Repository)
+            # Code Review Task
 
             **Repository:** ${{ github.repository }}
             **PR Number:** ${{ github.event.pull_request.number || inputs.pr_number }}
@@ -87,16 +87,15 @@ jobs:
 
             ## Repository Context
 
-            This is a **Type A Repository** (brain/orchestration layer):
-            - Contains: SKILL.md files, plugin.json, .mcp.json configs, shell scripts, YAML workflows
-            - Consumes: MCP tools from ancplua-mcp (Type T)
-            - **FORBIDDEN:** C#/.NET code, tool implementations
+            This is a **Claude Code plugin marketplace**:
+            - Contains: SKILL.md files, plugin.json, shell scripts, YAML workflows
+            - **FORBIDDEN:** C#/.NET code
 
             ## Review Checklist
 
             1. **SKILL.md Quality**
                - Clear step-by-step workflows
-               - Proper MCP tool references (tools must exist in ancplua-mcp)
+               - No phantom tool references
                - No vague instructions like "do something"
                - Actionable, specific guidance
 
@@ -118,10 +117,10 @@ jobs:
             5. **CHANGELOG.md**
                - Updated for any user-facing changes
 
-            6. **Type T Violations (CRITICAL)**
+            6. **Content Violations (CRITICAL)**
                - NO C# code (.cs files)
                - NO .NET project files (.csproj)
-               - This repo is orchestration only!
+               - This repo contains plugins only!
 
             ## Steps
 
@@ -149,12 +148,12 @@ jobs:
             [What was done well]
 
             ---
-            *Autonomous review by Claude Opus 4.6 (Type A repo)*"
+            *Autonomous review by Claude Opus 4.6*"
             ```
 
             **Decision Guide:**
             - `--approve`: No blocking issues, plugin config is valid
-            - `--request-changes`: Invalid JSON, broken tool references, or Type T violations
+            - `--request-changes`: Invalid JSON or broken references
             - `--comment`: Suggestions only, nothing blocking
 
           claude_args: '--model claude-opus-4-6 --allowed-tools "Bash(gh pr merge:*),Bash(gh pr review:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr edit:*),Bash(gh pr ready:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh search:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(jq:*),Bash(yq:*)"'

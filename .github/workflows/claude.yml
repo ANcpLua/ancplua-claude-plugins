@@ -49,5 +49,5 @@ jobs:
             actions: read
 
           # Full autonomous tool access for @claude mentions
-          # Type A repo - includes JSON/YAML tools, no dotnet
+          # Plugin repo - includes JSON/YAML tools, no dotnet
           claude_args: '--model claude-opus-4-6 --allowed-tools "Bash(gh pr merge:*),Bash(gh pr review:*),Bash(gh pr approve:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh pr edit:*),Bash(gh pr ready:*),Bash(gh pr checkout:*),Bash(gh pr close:*),Bash(gh pr reopen:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh issue edit:*),Bash(gh issue comment:*),Bash(gh issue close:*),Bash(gh search:*),Bash(gh run view:*),Bash(gh run list:*),Bash(git:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(grep:*),Bash(find:*),Bash(ls:*),Bash(wc:*),Bash(jq:*),Bash(yq:*)"'

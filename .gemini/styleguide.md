@@ -2,15 +2,13 @@
 
 ## Repository Identity
 
-**Type A Repository**: Brain/orchestration layer containing Skills, Plugins, Agent configurations, and workflow definitions.
-
-**Sister Repository**: `ancplua-mcp` (Type T) contains actual tool implementations in .NET/C#.
+**Repository**: Claude Code plugin marketplace — Skills, Plugins, Agent configurations, and workflow definitions.
 
 ## Critical Rules
 
 ### FORBIDDEN in This Repository
 
-- **NO C#/.NET code** - `.cs`, `.csproj`, `.sln` files belong in `ancplua-mcp`
+- **NO C#/.NET code** - `.cs`, `.csproj`, `.sln` files do not belong in this repository
 - **NO absolute user paths** - `/Users/...`, `/home/...`, `C:\Users\...`
 - **NO secrets or tokens** - API keys, OAuth tokens, credentials
 - **NO hardcoded environment-specific values**
@@ -131,7 +129,7 @@ plugins/<name>/
 
 ## Multi-AI Review System
 
-This repository uses **Claude, Copilot, Gemini, and CodeRabbit** for comprehensive PR reviews.
+This repository uses **Claude, Copilot, and CodeRabbit** for comprehensive PR reviews.
 
 ### All AIs Review the SAME Things
 
@@ -149,7 +147,7 @@ AIs coordinate through shared files, NOT real-time communication:
 |------|---------|
 | `CHANGELOG.md` | What has been done - read to avoid duplicate work |
 | `CLAUDE.md` | Project rules and workflows |
-| `GEMINI.md` | Gemini operational constitution |
+| `.claude/rules/` | Auto-loaded modular rules |
 | `AGENTS.md` | Agent routing index |
 
 ### FORBIDDEN in Reviews

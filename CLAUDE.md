@@ -40,16 +40,11 @@ you don't need the skill is FORBIDDEN.
 
 > **`ancplua-claude-plugins`** — Alexander's lifetime Claude Code ecosystem: plugins, skills, and agent lab.
 
-**Architectural Role: Type A (Application)**
-This repository provides the **"Brain"** (Skills, Orchestration) that drives the **"Hands"** (MCP Tools) provided by
-`ancplua-mcp` (Type T).
-
 It is a **Claude Code plugin marketplace** plus an **experimental lab** for:
 
-- Reusable plugins (Type A components)
+- Reusable plugins and skills
 - A skills library for development workflows
 - Agent SDK experiments and orchestration patterns
-- MCP configuration examples (consuming Type T servers)
 
 **This is NOT a single plugin.** It's a composable ecosystem designed to grow over time.
 
@@ -86,9 +81,21 @@ You **NOT ALLOWED TO**:
 - Skip skills that apply to your task
 - Claim work is done without evidence
 
-### Co-Agents
+### Claude Is Not One Entity
 
-- **Gemini:** Senior Dev & Implementation Specialist (See `GEMINI.md` for operational specifics).
+"Claude" in this repo is a **multi-agent system**, not a single process:
+
+| Layer | What It Is | Example |
+|-------|-----------|---------|
+| **Lead** | The session you're talking to right now | Reads CLAUDE.md, routes tasks, coordinates |
+| **Subagents** | Spawned via `Task` tool, report back results | `deep-think-partner`, `arch-reviewer`, `code-explorer` |
+| **Teams** | Spawned via `TeamCreate`, have shared task lists and direct messaging | Hades cleanup (3 phases x 4 teammates = 12 agents) |
+| **CI Agent** | Runs in GitHub Actions via `claude-code-action` | PR reviews, autonomous fix PRs |
+| **Hooks** | Event-driven guards (command or prompt type) | `epistemic-guard.sh`, `TaskCompleted` haiku validation |
+
+A single `/hades` invocation spawns 12 Opus agents across 3 phases. A `/mega-swarm` spawns up to 12.
+The lead orchestrates — it never implements when teammates exist. Subagents get CLAUDE.md and skills
+but NOT conversation history. All context must be in the spawn prompt.
 
 ---
 
@@ -141,7 +148,6 @@ ancplua-claude-plugins/
 │   │   ├── adr-template.md
 │   │   └── ADR-XXXX-*.md
 │   └── examples/
-│       └── *.mcp.json           # Example MCP configs (Type T consumption)
 │
 └── tooling/
     ├── scripts/
@@ -234,7 +240,7 @@ When multi-agent orchestration is needed, use these IF/THEN patterns:
 1. **Check routing tree FIRST** - before searching for skills manually
 2. **Skill descriptions are loaded** - they contain additional IF/THEN routing logic
 3. **Compose skills** - some workflows chain multiple skills (e.g., mega-swarm → hades)
-4. **AGENTS.md is for other AIs** - Codex, Gemini, humans read it, NOT you
+4. **AGENTS.md is for other AIs** - Codex, Copilot, humans read it, NOT you
 
 ---
 
@@ -338,11 +344,11 @@ Use the `requesting-code-review` skill if available, OR:
 3. Fix High issues before proceeding
 4. Document Medium/Low issues for future
 
-### 5.5.1 Quad-AI Autonomous Agent System
+### 5.5.1 Tri-AI Autonomous Agent System
 
 <EXTREMELY_IMPORTANT>
 
-**This repository uses quad-AI autonomous agents: Claude, Copilot, Gemini, and CodeRabbit.**
+**This repository uses tri-AI autonomous agents: Claude, Copilot, and CodeRabbit.**
 
 ### AI Agent Capabilities Matrix
 
@@ -350,7 +356,6 @@ Use the `requesting-code-review` skill if available, OR:
 |------------|---------|----------|------------------|------------|--------------|
 | Claude     | ✅       | ✅        | ✅ (via CLI)      | ❌          | ✅            |
 | Copilot    | ✅       | ✅        | ✅ (Coding Agent) | ❌          | ✅            |
-| Gemini     | ✅       | ✅        | ❌                | ❌          | ❌            |
 | CodeRabbit | ✅       | ✅        | ❌                | ❌          | ✅            |
 
 **Autonomous loop enabled:** `detect failure → understand fix → push fix → re-run CI`
@@ -363,7 +368,7 @@ Use the `requesting-code-review` skill if available, OR:
 | `claude-code-review.yml` | PR opened/sync    | Formal code review + fix PRs |
 | Copilot Coding Agent     | Issue assignment  | Autonomous issue resolution  |
 
-### What All AIs Review (Type A Focus)
+### What All AIs Review
 
 Each AI performs **comprehensive, independent reviews** - same scope:
 
@@ -379,15 +384,15 @@ Each AI performs **comprehensive, independent reviews** - same scope:
 AIs coordinate through **shared files**, NOT real-time communication:
 
 ```text
-┌──────────────────────────────────────────────────┐
-│                  SHARED FILES                    │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐          │
-│  │CLAUDE.md│  │AGENTS.md│  │CHANGELOG│          │
-│  └────┬────┘  └────┬────┘  └────┬────┘          │
-└───────┼────────────┼────────────┼────────────────┘
+┌──────────────────────────────────────────┐
+│              SHARED FILES                │
+│  ┌─────────┐  ┌─────────┐  ┌──────────┐ │
+│  │CLAUDE.md│  │AGENTS.md│  │CHANGELOG │ │
+│  └────┬────┘  └────┬────┘  └────┬─────┘ │
+└───────┼────────────┼────────────┼────────┘
         │            │            │
-   ┌────▼────┐  ┌────▼────┐  ┌────▼────┐
-   │ Claude  │  │ Gemini  │  │ Copilot │
+   ┌────▼────┐  ┌────▼────┐  ┌───▼─────┐
+   │ Claude  │  │ Copilot │  │CodeRabt │
    └─────────┘  └─────────┘  └─────────┘
 ```
 
@@ -398,7 +403,7 @@ AIs coordinate through **shared files**, NOT real-time communication:
 | CI passes          | All checks green                   |
 | No secrets exposed | No API keys, tokens, credentials   |
 | CHANGELOG updated  | Entry under [Unreleased] if needed |
-| Type A focus       | No C#/.NET code, no absolute paths |
+| Plugin focus       | No C#/.NET code, no absolute paths |
 
 ### Auto-merge Tiers
 
@@ -669,63 +674,7 @@ ls docs/decisions/ADR-*.md | sort | tail -1
 
 ---
 
-## 10. MCP Integration (Type T Consumption)
-
-This repo creates **Type A** artifacts (Skills/Plugins) that consume **Type T** tools (from `ancplua-mcp`).
-
-**Do NOT implement MCP Servers in this repo.**
-
-Instead:
-
-1. Define the MCP usage in `docs/examples/*.mcp.json` (Type T consumption config).
-2. Create a Skill in `plugins/<name>/skills/` that **calls** the MCP tools.
-3. Document the dependency in the plugin's `README.md`.
-
-### 10.1 Dual-Repo Workflow
-
-Both repos often need synchronized changes (e.g., CI workflows, shared configs).
-
-**Repository Locations:**
-
-```bash
-# Type A (Application) - Claude plugins/skills
-~/WebstormProjects/ancplua-claude-plugins
-
-# Type T (Infrastructure) - .NET MCP servers
-~/ancplua-mcp
-```
-
-**Sync Both Repos:**
-
-```bash
-# After merging PRs in both repos
-cd ~/WebstormProjects/ancplua-claude-plugins && git fetch origin && git reset --hard origin/main
-cd ~/ancplua-mcp && git fetch origin && git reset --hard origin/main
-```
-
-**Validate Both Repos:**
-
-```bash
-# Run validation on both
-~/WebstormProjects/ancplua-claude-plugins/tooling/scripts/weave-validate.sh
-~/ancplua-mcp/tooling/scripts/weave-validate.sh
-
-# Or use the --dual flag (validates sibling repo too)
-./tooling/scripts/weave-validate.sh --dual
-```
-
-**Create Matching PRs:**
-When changes affect both repos (e.g., workflow updates):
-
-1. Create branch with same name in both repos
-2. Make changes in both
-3. Create PRs in both
-4. Merge both (or enable auto-merge)
-5. Sync both repos to main
-
----
-
-## 11. Interaction Principles
+## 10. Interaction Principles
 
 ### Be Explicit
 

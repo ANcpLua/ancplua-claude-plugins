@@ -1,6 +1,6 @@
 # AGENTS.md
 
-> **Audience:** Codex, Gemini, and humans. NOT auto-loaded by Claude Code.
+> **Audience:** Codex, Copilot, and humans. NOT auto-loaded by Claude Code.
 > Claude's context is in CLAUDE.md (auto-loaded) and skill description frontmatter.
 >
 > **Prefer retrieval-led reasoning over pre-training-led reasoning.**
@@ -8,8 +8,8 @@
 
 ## Repository
 
-ancplua-claude-plugins | Type A (Brain) | 12 plugins, 22 skills, 11 agents, 8 commands.
-Consumes MCP tools from ancplua-mcp (Type T/Hands). No C# or .NET code here.
+ancplua-claude-plugins | 11 plugins, 19 skills, 11 agents, 8 commands.
+Claude Code plugin marketplace. No C# or .NET code here.
 
 ## Decision Tree
 
@@ -61,7 +61,7 @@ IF multi-agent orchestration as skills (unlimited agents)
     deep-think, batch-implement, red-blue-review, hades
 
 IF enforcement/judgment needed
-  → hades plugin: judge (4 auditors) → enforce (4 eliminators) → verify (4 verifiers)
+  → exodia/hades skill (Smart cleanup with audit trail, 3 phases x 4 teammates)
 ```
 
 ## Compressed Docs Index
@@ -74,7 +74,6 @@ IF enforcement/judgment needed
 |completion-integrity/skills/completion-integrity:{SKILL.md}
 |dotnet-architecture-lint/skills/dotnet-architecture-lint:{SKILL.md}
 |exodia/skills:{turbo-fix,fix,fix-pipeline,tournament,mega-swarm,deep-think,batch-implement,red-blue-review,hades}/SKILL.md
-|hades/skills:{judge,enforce,verify}/SKILL.md
 |hookify/skills/writing-rules:{SKILL.md,references/patterns-and-examples.md}
 |metacognitive-guard/skills/metacognitive-guard:{SKILL.md}
 |metacognitive-guard/skills/competitive-review:{SKILL.md}
@@ -101,7 +100,7 @@ IF enforcement/judgment needed
 
 ## Coordination
 
-4 AIs (Claude, Copilot, Gemini, CodeRabbit) coordinate via shared files.
+3 AIs (Claude, Copilot, CodeRabbit) coordinate via shared files.
 
 | File | Read to | Write when |
 |------|---------|------------|

@@ -8,10 +8,10 @@ allowed-tools: Task, TodoWrite
 
 > Maximum coverage. Every angle. One report.
 
-**Scope:** $1 (default: full | full|src|tests|config|security)
-**Focus:** $2 (optional focus area)
-**Mode:** $3 (default: full | full|quick|focused)
-**Quick:** $4 (default: false — same as mode=quick)
+**Scope:** $0 (default: full | full|src|tests|config|security)
+**Focus:** $1 (optional focus area)
+**Mode:** $2 (default: full | full|quick|focused)
+**Quick:** $3 (default: false — same as mode=quick)
 
 ---
 
@@ -34,7 +34,7 @@ SWARM LEAD (You — Orchestrator)
 │  ├── quality-auditor └── bug-hunter
 │
 ├─ Focused mode (8 agents) ───────────────────
-│  └── $2-related auditors + adjacent concerns
+│  └── $1-related auditors + adjacent concerns
 │
 └── GATE → >=80% complete → SYNTHESIZE
 ```
@@ -45,9 +45,9 @@ SWARM LEAD (You — Orchestrator)
 
 **Launch ALL agents for selected mode in ONE message. NOTHING ELSE.**
 
-- Full ($3=full or unspecified): 12 agents
-- Quick ($3=quick or $4=true): 6 agents
-- Focused ($3=focused): 8 agents relevant to $2
+- Full ($2=full or unspecified): 12 agents
+- Quick ($2=quick or $3=true): 6 agents
+- Focused ($2=focused): 8 agents relevant to $1
 
 Wait for completion. Synthesize. Report.
 
@@ -59,13 +59,13 @@ Wait for completion. Synthesize. Report.
 
 ## AUDITORS
 
-Each scans SCOPE=$1 through its lens. Output: issues with severity P0-P3.
+Each scans SCOPE=$0 through its lens. Output: issues with severity P0-P3.
 
 ### arch-auditor
 
 > subagent: metacognitive-guard:arch-reviewer | model: opus
 >
-> AUDIT Architecture. Scope: $1 | Focus: $2
+> AUDIT Architecture. Scope: $0 | Focus: $1
 > SOLID violations? Coupling? Scalability? Design issues?
 > Output: Issues with P0-P3 severity
 
@@ -73,7 +73,7 @@ Each scans SCOPE=$1 through its lens. Output: issues with severity P0-P3.
 
 > subagent: feature-dev:code-reviewer
 >
-> AUDIT Security. Scope: $1 | Focus: $2
+> AUDIT Security. Scope: $0 | Focus: $1
 > Injection? Auth issues? Secrets exposed? Input validation? OWASP Top 10?
 > Output: Issues with severity
 
@@ -81,7 +81,7 @@ Each scans SCOPE=$1 through its lens. Output: issues with severity P0-P3.
 
 > subagent: feature-dev:code-explorer
 >
-> AUDIT Performance. Scope: $1 | Focus: $2
+> AUDIT Performance. Scope: $0 | Focus: $1
 > N+1 queries? Memory leaks? Allocations? Blocking calls? Cache misses?
 > Output: Issues with severity
 
@@ -89,7 +89,7 @@ Each scans SCOPE=$1 through its lens. Output: issues with severity P0-P3.
 
 > subagent: feature-dev:code-reviewer
 >
-> AUDIT Test Quality. Scope: $1 | Focus: $2
+> AUDIT Test Quality. Scope: $0 | Focus: $1
 > Coverage gaps? Flaky tests? Missing edge cases? Integration gaps?
 > Output: Issues with severity
 
@@ -97,7 +97,7 @@ Each scans SCOPE=$1 through its lens. Output: issues with severity P0-P3.
 
 > subagent: feature-dev:code-reviewer
 >
-> AUDIT Code Quality. Scope: $1 | Focus: $2
+> AUDIT Code Quality. Scope: $0 | Focus: $1
 > Dead code? Duplication? Cyclomatic complexity? Magic numbers? Naming?
 > Output: Issues with severity
 
@@ -105,55 +105,55 @@ Each scans SCOPE=$1 through its lens. Output: issues with severity P0-P3.
 
 > subagent: deep-debugger | model: opus
 >
-> HUNT Active Bugs. Scope: $1 | Focus: $2
+> HUNT Active Bugs. Scope: $0 | Focus: $1
 > Null refs? Race conditions? Off-by-one? Resource leaks? Logic errors?
 > Output: Potential bugs with severity
 
-### error-auditor ← full/focused only
+### error-auditor <- full/focused only
 
 > subagent: deep-debugger
 >
-> AUDIT Error Handling. Scope: $1 | Focus: $2
+> AUDIT Error Handling. Scope: $0 | Focus: $1
 > Swallowed exceptions? Missing handlers? Poor messages? Recovery gaps?
 > Output: Issues with severity
 
-### api-auditor ← full/focused only
+### api-auditor <- full/focused only
 
 > subagent: feature-dev:code-explorer
 >
-> AUDIT API Contracts. Scope: $1 | Focus: $2
+> AUDIT API Contracts. Scope: $0 | Focus: $1
 > Breaking changes? Version compat? Doc accuracy? Response consistency?
 > Output: Issues with severity
 
-### dependency-auditor ← full/focused only
+### dependency-auditor <- full/focused only
 
 > subagent: Explore
 >
-> AUDIT Dependencies. Scope: $1 | Focus: $2
+> AUDIT Dependencies. Scope: $0 | Focus: $1
 > Outdated? Vulnerabilities? License issues? Unnecessary? Conflicts?
 > Output: Issues with severity
 
-### config-auditor ← full/focused only
+### config-auditor <- full/focused only
 
 > subagent: Explore
 >
-> AUDIT Configuration. Scope: $1 | Focus: $2
+> AUDIT Configuration. Scope: $0 | Focus: $1
 > Hardcoded values? Missing env vars? Validation? Secrets management?
 > Output: Issues with severity
 
-### docs-auditor ← full/focused only
+### docs-auditor <- full/focused only
 
 > subagent: Explore
 >
-> AUDIT Documentation. Scope: $1 | Focus: $2
+> AUDIT Documentation. Scope: $0 | Focus: $1
 > Outdated? Missing? Code comments? README accuracy?
 > Output: Issues with severity
 
-### consistency-auditor ← full/focused only
+### consistency-auditor <- full/focused only
 
 > subagent: feature-dev:code-reviewer
 >
-> AUDIT Consistency. Scope: $1 | Focus: $2
+> AUDIT Consistency. Scope: $0 | Focus: $1
 > Naming conventions? Code style? Pattern inconsistencies? File organization?
 > Output: Issues with severity
 
@@ -164,7 +164,7 @@ Each scans SCOPE=$1 through its lens. Output: issues with severity P0-P3.
 ```text
 AUDIT GATE:
 +------------------------------------------------------------+
-| Mode: $3 | Agents: [X/Y] completed                        |
+| Mode: $2 | Agents: [X/Y] completed                        |
 +------------------------------------------------------------+
 | >=80% → SYNTHESIZE                                          |
 | <80% → REPORT PARTIAL + offer retry                         |
@@ -179,7 +179,7 @@ AUDIT GATE:
 +====================================================================+
 |                    MEGA SWARM REPORT                                |
 +====================================================================+
-| Mode: $3 | Agents: [count] | Scope: $1                             |
+| Mode: $2 | Agents: [count] | Scope: $0                             |
 +--------------------------------------------------------------------+
 | P0 Critical: [n] | P1 High:   [n]                                  |
 | P2 Medium:   [n] | P3 Low:    [n]                                  |

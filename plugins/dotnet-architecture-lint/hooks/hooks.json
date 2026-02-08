@@ -6,7 +6,7 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/inject-dotnet-rules.sh",
-            "timeout": 5000,
+            "timeout": 5,
             "statusMessage": "Loading .NET architecture rules..."
           }
         ]
@@ -19,7 +19,7 @@
           {
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/precheck-dotnet.py",
-            "timeout": 5000,
+            "timeout": 5,
             "statusMessage": "Checking .NET architecture constraints..."
           }
         ]

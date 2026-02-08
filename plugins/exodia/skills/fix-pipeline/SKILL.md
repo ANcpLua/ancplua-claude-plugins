@@ -8,9 +8,9 @@ allowed-tools: Task, Bash, TodoWrite
 
 > Audit found it. Pipeline fixes it. Every phase gated.
 
-**Issue:** $1
-**Severity:** $2 (default: P1)
-**Context:** $3 (default: .)
+**Issue:** $0
+**Severity:** $1 (default: P1)
+**Context:** $2 (default: .)
 
 ---
 
@@ -65,7 +65,7 @@ Launch ALL 3 in ONE message.
 > subagent: deep-debugger | model: opus
 >
 > You are root-cause-analyst. Find the root cause, not symptoms.
-> ISSUE: $1 | SEVERITY: $2 | CONTEXT: $3
+> ISSUE: $0 | SEVERITY: $1 | CONTEXT: $2
 >
 > 1. Exact failure mode
 > 2. ALL possible causes
@@ -79,7 +79,7 @@ Launch ALL 3 in ONE message.
 > subagent: metacognitive-guard:arch-reviewer
 >
 > You are impact-assessor. Assess IMPACT.
-> ISSUE: $1 | CONTEXT: $3
+> ISSUE: $0 | CONTEXT: $2
 >
 > 1. What depends on broken code?
 > 2. What breaks if we change it?
@@ -93,7 +93,7 @@ Launch ALL 3 in ONE message.
 > subagent: feature-dev:code-explorer
 >
 > You are context-gatherer. Gather CONTEXT.
-> ISSUE: $1 | CONTEXT: $3
+> ISSUE: $0 | CONTEXT: $2
 >
 > 1. All relevant code paths
 > 2. Pattern used elsewhere?
@@ -213,4 +213,4 @@ dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 | 3. Implementation | PASS/FAIL | [Files changed] |
 | 4. Verification | PASS/FAIL | [Build/Test/Lint] |
 
-**Issue:** $1 | **Status:** FIXED / BLOCKED | **Next Steps:** [if any]
+**Issue:** $0 | **Status:** FIXED / BLOCKED | **Next Steps:** [if any]

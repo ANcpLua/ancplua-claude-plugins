@@ -19,8 +19,7 @@ SessionStart hook that auto-routes Claude to specialist agents based on `$PWD`.
 | ANcpLua.Roslyn.Utilities | (caution: shared dependency) |
 | qyl | qyl-observability-specialist, servicedefaults-specialist |
 | Template | template-clean-arch-specialist |
-| ancplua-claude-plugins | Type A rules (no C#, skills only) |
-| ancplua-mcp | Type T rules (.NET implementation) |
+| ancplua-claude-plugins | Plugin rules (no C#, skills only) |
 
 ## Notes
 

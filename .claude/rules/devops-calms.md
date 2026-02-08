@@ -3,7 +3,7 @@
 ## Culture
 
 - **Blameless post-mortems:** When things fail, focus on systemic improvements
-- **Shared ownership:** All agents (Claude, Copilot, Codex, Jules, Gemini, CodeRabbit) share responsibility
+- **Shared ownership:** All agents (Claude, Copilot, CodeRabbit) share responsibility
 - **Fast feedback:** Validate early and often
 
 ## Automation
@@ -32,5 +32,5 @@ Track these DORA-inspired metrics:
 ## Sharing
 
 - **Document decisions:** ADRs for architecture, specs for features
-- **Cross-agent communication:** AGENTS.md, CLAUDE.md, GEMINI.md
+- **Cross-agent communication:** AGENTS.md, CLAUDE.md, copilot-instructions.md
 - **Knowledge transfer:** Skills encode reusable workflows

@@ -8,11 +8,11 @@ allowed-tools: Task, Bash, TodoWrite
 
 > Execute → Evaluate → Decide. Every phase a gate. Every gate a verdict.
 
-**Issue:** $1
-**Severity:** $2 (default: P1 | P0|P1|P2|P3)
-**Parallelism:** $3 (default: standard | maximum|standard)
-**Mode:** $4 (default: balanced | aggressive|balanced|conservative)
-**Quick:** $5 (default: false — skip devil's advocate)
+**Issue:** $0
+**Severity:** $1 (default: P1 | P0|P1|P2|P3)
+**Parallelism:** $2 (default: standard | maximum|standard)
+**Mode:** $3 (default: balanced | aggressive|balanced|conservative)
+**Quick:** $4 (default: false — skip devil's advocate)
 
 ---
 
@@ -32,7 +32,7 @@ FIX LEAD (You — Orchestrator)
 │
 ├─ Phase 2: DESIGN (standard: 2, maximum: 4)
 │  ├── solution-architect[-a/-b/-c]
-│  └── devils-advocate         ← skip if $5=true
+│  └── devils-advocate         ← skip if $4=true
 │  └── GATE 2 → PROCEED | HALT
 │
 ├─ Phase 3: IMPLEMENTATION (standard: 1, maximum: 3)
@@ -69,14 +69,14 @@ FIX LEAD (You — Orchestrator)
 
 ## PHASE 1: ANALYSIS
 
-Standard: 3 agents. Maximum ($3=maximum): all 6. Launch ALL in ONE message.
+Standard: 3 agents. Maximum ($2=maximum): all 6. Launch ALL in ONE message.
 
 ### root-cause-hunter
 
 > subagent: deep-debugger | model: opus
 >
 > You are root-cause-hunter. Find the ROOT CAUSE.
-> ISSUE: $1 | SEVERITY: $2
+> ISSUE: $0 | SEVERITY: $1
 >
 > 1. Exact failure mode
 > 2. ALL possible causes (5+)
@@ -90,7 +90,7 @@ Standard: 3 agents. Maximum ($3=maximum): all 6. Launch ALL in ONE message.
 > subagent: metacognitive-guard:arch-reviewer | model: opus
 >
 > You are impact-assessor. Map system IMPACT.
-> ISSUE: $1
+> ISSUE: $0
 >
 > 1. What depends on broken code?
 > 2. Ripple effects of changes?
@@ -104,7 +104,7 @@ Standard: 3 agents. Maximum ($3=maximum): all 6. Launch ALL in ONE message.
 > subagent: feature-dev:code-explorer
 >
 > You are code-explorer. Find ALL relevant code.
-> ISSUE: $1
+> ISSUE: $0
 >
 > 1. All code paths involved
 > 2. Similar patterns elsewhere
@@ -113,12 +113,12 @@ Standard: 3 agents. Maximum ($3=maximum): all 6. Launch ALL in ONE message.
 >
 > Output: File:line map of relevant code
 
-### history-detective ← maximum only
+### history-detective <- maximum only
 
 > subagent: Explore
 >
 > You are history-detective. Find the HISTORY.
-> ISSUE: $1
+> ISSUE: $0
 >
 > 1. When did this break? (git blame/log)
 > 2. What commit introduced it?
@@ -127,12 +127,12 @@ Standard: 3 agents. Maximum ($3=maximum): all 6. Launch ALL in ONE message.
 >
 > Output: Timeline of changes
 
-### pattern-matcher ← maximum only
+### pattern-matcher <- maximum only
 
 > subagent: feature-dev:code-explorer
 >
 > You are pattern-matcher. Find SIMILAR bugs.
-> ISSUE: $1
+> ISSUE: $0
 >
 > 1. Same pattern elsewhere?
 > 2. Similar bugs fixed before?
@@ -140,12 +140,12 @@ Standard: 3 agents. Maximum ($3=maximum): all 6. Launch ALL in ONE message.
 >
 > Output: Similar locations with same bug pattern
 
-### test-analyzer ← maximum only
+### test-analyzer <- maximum only
 
 > subagent: feature-dev:code-reviewer
 >
 > You are test-analyzer. Analyze TEST coverage gaps.
-> ISSUE: $1
+> ISSUE: $0
 >
 > 1. What tests exist for this area?
 > 2. Why didn't tests catch this?
@@ -174,7 +174,7 @@ GATE 1: ANALYSIS → [status]
 ## PHASE 2: DESIGN
 
 Standard: 1 architect + devil's advocate. Maximum: 3 architects + devil's advocate.
-Skip devil's advocate if $5=true.
+Skip devil's advocate if $4=true.
 
 ### solution-architect (standard) / solution-architect-a (maximum: MINIMAL CHANGE)
 
@@ -187,7 +187,7 @@ Skip devil's advocate if $5=true.
 >
 > Output: Top 3 solutions with implementation plans
 
-### solution-architect-b ← maximum only
+### solution-architect-b <- maximum only
 
 > subagent: feature-dev:code-architect | model: opus
 >
@@ -195,7 +195,7 @@ Skip devil's advocate if $5=true.
 > Fix + prevent future issues. Better abstractions.
 > Output: Solution B with implementation plan
 
-### solution-architect-c ← maximum only
+### solution-architect-c <- maximum only
 
 > subagent: feature-dev:code-architect | model: opus
 >
@@ -203,7 +203,7 @@ Skip devil's advocate if $5=true.
 > Different paradigm/pattern. Unconventional angles.
 > Output: Solution C with implementation plan
 
-### devils-advocate ← skip if $5=true
+### devils-advocate <- skip if $4=true
 
 > subagent: feature-dev:code-reviewer
 >
@@ -245,14 +245,14 @@ Standard: 1 TDD implementer. Maximum: 3 agents.
 >
 > Output: Files changed + verification results
 
-### test-writer ← maximum only
+### test-writer <- maximum only
 
 > subagent: feature-dev:code-architect
 >
 > WRITE TESTS FIRST: failing unit test, edge cases, regression test.
 > DO NOT implement the fix. Output: Test files with paths
 
-### docs-updater ← maximum only
+### docs-updater <- maximum only
 
 > subagent: Explore
 >
@@ -295,7 +295,7 @@ dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 +==============================================================+
 |                      FIX COMPLETE                            |
 +==============================================================+
-| Issue: $1 | Severity: $2 | Parallelism: $3 | Mode: $4        |
+| Issue: $0 | Severity: $1 | Parallelism: $2 | Mode: $3        |
 +--------------------------------------------------------------+
 | Phase 1 Analysis:   [X/Y] agents | Root cause: [summary]     |
 | Phase 2 Design:     [X/Y] agents | Solution: [name]          |

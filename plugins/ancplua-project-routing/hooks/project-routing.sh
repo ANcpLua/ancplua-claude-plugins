@@ -1,6 +1,18 @@
 #!/bin/bash
 # Global project routing hook - checks PWD and injects appropriate context
 
+# Helper: emit valid JSON with properly escaped multiline context
+emit_routing() {
+  local context="$1"
+  if command -v jq &>/dev/null; then
+    jq -n --arg ctx "$context" '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":$ctx}}'
+  else
+    local escaped
+    escaped=$(printf '%s' "$context" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+    echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$escaped\"}}"
+  fi
+}
+
 # Check which project we're in and inject routing
 if [[ "$PWD" == *"ErrorOrX"* ]]; then
   CONTEXT='<ERROROR_ROUTING>
@@ -26,7 +38,7 @@ Minimal Interface: Use only IsError/Errors/Value from ErrorOr
 
 </ERROROR_ROUTING>'
 
-  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$CONTEXT\"}}"
+  emit_routing "$CONTEXT"
 
 elif [[ "$PWD" == *"ANcpLua.Analyzers"* ]]; then
   CONTEXT='<ANALYZERS_ROUTING>
@@ -50,7 +62,7 @@ You are working in ANcpLua.Analyzers (44 Roslyn diagnostics).
 
 </ANALYZERS_ROUTING>'
 
-  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$CONTEXT\"}}"
+  emit_routing "$CONTEXT"
 
 elif [[ "$PWD" == *"ANcpLua.NET.Sdk"* ]]; then
   CONTEXT='<SDK_ROUTING>
@@ -74,7 +86,7 @@ You are working in ANcpLua.NET.Sdk (opinionated MSBuild SDK).
 
 </SDK_ROUTING>'
 
-  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$CONTEXT\"}}"
+  emit_routing "$CONTEXT"
 
 elif [[ "$PWD" == *"ANcpLua.Roslyn.Utilities"* ]]; then
   CONTEXT='<ROSLYN_UTILITIES_ROUTING>
@@ -100,7 +112,7 @@ ErrorOrX, ANcpLua.Analyzers, qyl generators
 
 </ROSLYN_UTILITIES_ROUTING>'
 
-  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$CONTEXT\"}}"
+  emit_routing "$CONTEXT"
 
 elif [[ "$PWD" == *"qyl"* ]]; then
   CONTEXT='<QYL_ROUTING>
@@ -128,7 +140,7 @@ You are working in qyl AI observability platform (includes servicedefaults).
 
 </QYL_ROUTING>'
 
-  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$CONTEXT\"}}"
+  emit_routing "$CONTEXT"
 
 elif [[ "$PWD" == *"Template"* ]]; then
   CONTEXT='<TEMPLATE_ROUTING>
@@ -152,12 +164,12 @@ You are working in Template (Clean Architecture ASP.NET Core).
 
 </TEMPLATE_ROUTING>'
 
-  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$CONTEXT\"}}"
+  emit_routing "$CONTEXT"
 
 elif [[ "$PWD" == *"ancplua-claude-plugins"* ]]; then
   CONTEXT='<PLUGINS_ROUTING>
 
-You are working in ancplua-claude-plugins (Type A - Brain/Orchestration).
+You are working in ancplua-claude-plugins.
 
 ## MANDATORY Routing
 
@@ -167,11 +179,10 @@ You are working in ancplua-claude-plugins (Type A - Brain/Orchestration).
 | Validation | claude plugin validate . |
 | Before done | Validation must pass |
 
-## Type A Rules
+## Rules
 - NO C# code
 - NO .NET projects
 - Skills, hooks, agents only
-- Consumes MCP from ancplua-mcp
 
 ## Key Files
 - .claude-plugin/marketplace.json
@@ -179,28 +190,7 @@ You are working in ancplua-claude-plugins (Type A - Brain/Orchestration).
 
 </PLUGINS_ROUTING>'
 
-  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$CONTEXT\"}}"
-
-elif [[ "$PWD" == *"ancplua-mcp"* ]]; then
-  CONTEXT='<MCP_ROUTING>
-
-You are working in ancplua-mcp (Type T - Tools/Infrastructure).
-
-## MANDATORY Routing
-
-| Task | Use |
-|------|-----|
-| MCP servers | .NET implementation |
-| Before done | dotnet build + dotnet test (show output) |
-
-## Type T Rules
-- MCP server implementations
-- .NET code lives here
-- Consumed by ancplua-claude-plugins
-
-</MCP_ROUTING>'
-
-  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$CONTEXT\"}}"
+  emit_routing "$CONTEXT"
 
 else
   # Not in a known project - no special routing

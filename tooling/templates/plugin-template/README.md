@@ -58,12 +58,6 @@ plugins/<plugin-name>/
 |----------|----------|-------------|
 | `VAR_NAME` | Yes/No | What it's for |
 
-### MCP Tools (if applicable)
-
-This plugin uses tools from `ancplua-mcp`:
-
-- `ToolName` - What it does
-
 ## Usage Examples
 
 ### Example 1: Basic Usage
