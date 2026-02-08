@@ -6,35 +6,11 @@ The goals are:
 
 - One repo, many **plugins**, **Skills**, and (later) **agents**
 - Explicit, inspectable **architecture**
-- Clear integration points with **MCP servers** (from `ancplua-mcp`)
 - Deterministic behavior backed by **validation** and **docs**
 
 ---
 
-## 1. Architectural Separation (Type A vs Type T)
-
-This ecosystem follows a strict separation of concerns:
-
-### Type A: Application (This Repo)
-
-- **Role:** The "Brain"
-- **Components:** Plugins, Skills, Agents, Prompts, Orchestration
-- **Language:** TypeScript, Bash, Markdown/YAML
-- **Responsibility:** Consumes tools to execute workflows.
-
-### Type T: Technology (External Repo: `ancplua-mcp`)
-
-- **Role:** The "Hands"
-- **Components:** MCP Servers, Low-level Tools, Sensors
-- **Language:** C# / .NET
-- **Responsibility:** Exposes raw capabilities (file system, CI control, etc.).
-
-**Rule:** This repo (`ancplua-claude-plugins`) NEVER contains MCP server implementations. It only contains the
-**configuration** to connect to them.
-
----
-
-## 2. Top-level layout
+## 1. Top-level layout
 
 ```text
 ancplua-claude-plugins/
@@ -61,7 +37,6 @@ ancplua-claude-plugins/
 │
 ├── docs/
 │   ├── ARCHITECTURE.md
-│   ├── examples/                # MCP Connection Configs (Type T consumption)
 │   └── specs/
 │
 └── tooling/
@@ -74,7 +49,7 @@ it.
 
 ---
 
-## 3. Marketplace model
+## 2. Marketplace model
 
 This repo is a **Claude Code marketplace**:
 
@@ -93,7 +68,7 @@ The marketplace manifest is the **single source of truth** for what this repo ex
 
 ---
 
-## 4. Plugin structure (Type A)
+## 3. Plugin structure
 
 Each plugin under `plugins/<plugin-name>/` follows this pattern:
 
@@ -128,34 +103,7 @@ Detailed rules live in `docs/PLUGINS.md`.
 
 ---
 
-## 5. MCP integration (Type T Consumption)
-
-To connect Claude to the Type T servers (in `ancplua-mcp`), this repo provides **example configuration files** under:
-
-```text
-docs/examples/
-└── *.mcp.json
-```
-
-These files are **examples only**:
-
-- They show how to configure MCP clients (Claude Code, IDEs) to connect to the C# servers.
-- They do **not** run by themselves.
-
-Typical examples:
-
-- `docs/examples/ancplua-mcp-stdio.mcp.json` – connect to the workstation server via stdio.
-- `docs/examples/ancplua-mcp-http.mcp.json` – connect to the HTTP server.
-
-Any time a plugin adds or changes MCP usage:
-
-1. Update the plugin’s `README.md` with the MCP dependency and configuration hints.
-2. Add or update an example under `docs/examples/*.mcp.json`.
-3. Update `CHANGELOG.md`.
-
----
-
-## 6. Validation and quality gates
+## 4. Validation and quality gates
 
 Local and CI validation are aligned:
 
@@ -180,30 +128,7 @@ Rules:
 
 ---
 
-## 7. Relationship to ancplua-mcp
-
-The two repos are intentionally decoupled:
-
-- **ancplua-claude-plugins (Type A)**
-  - "The Brain"
-  - Plugins, Skills, Agents
-  - Orchestrates workflows
-
-- **ancplua-mcp (Type T)**
-  - "The Hands"
-  - C# MCP server implementations
-  - Exposes raw tools
-
-Integration happens via:
-
-1. **Configuration:** `docs/examples/*.mcp.json`
-2. **Orchestration:** Skills in this repo calling tools from that repo.
-
-No business logic is duplicated between the repos: **plugins orchestrate, MCP servers execute.**
-
----
-
-## 8. Design Principles (SOLID for Plugins)
+## 5. Design Principles (SOLID for Plugins)
 
 ### Single Responsibility
 
@@ -239,11 +164,11 @@ Not all plugins need all features:
 
 ### Dependency Inversion
 
-Plugins orchestrate via Skills. Skills define contracts. MCP servers implement.
+Plugins orchestrate via Skills. Skills define contracts.
 
 ---
 
-## 9. DevOps Integration (CALMS)
+## 6. DevOps Integration (CALMS)
 
 ### Automation Touchpoints
 
@@ -273,7 +198,7 @@ Plugins orchestrate via Skills. Skills define contracts. MCP servers implement.
 
 ---
 
-## 10. Compliance Status
+## 7. Compliance Status
 
 **Last Verified:** 2026-02-07
 

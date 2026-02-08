@@ -26,8 +26,20 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Standalone hades plugin** (`plugins/hades/`): Redundant with `plugins/exodia/skills/hades/`
 - **GEMINI.md**: Gemini removed as co-agent
 - **Quad-AI references**: Downgraded to tri-AI (Claude, Copilot, CodeRabbit) across all files
-- **Type A/Type T architecture**: Removed ancplua-mcp dual-repo references, Section 10 MCP Integration, and Type A/T terminology. ancplua-mcp project is discontinued
+- **Type A/Type T architecture**: Removed all Type A/Type T terminology and ancplua-mcp references across 15 files. ancplua-mcp project is discontinued
 - **CLAUDE.md Section 10**: Removed entire MCP Integration / Dual-Repo Workflow section
+- **copilot-instructions.md Section 3**: Removed entire "Type A vs Type T separation" section
+- **docs/ARCHITECTURE.md**: Removed Sections 1 (Type A vs T), 5 (MCP integration), 7 (Relationship to ancplua-mcp); renumbered remaining sections
+- **docs/PLUGINS.md**: Removed Type A/MCP paragraph
+- **docs/AGENTS.md**: Removed ancplua-mcp MCP servers reference
+- **spec-0003-cross-repo-contracts.md**: Deprecated — ancplua-mcp project discontinued
+- **claude-code-review.yml**: Removed Type A/T references from review prompt
+- **claude.yml**: Removed Type A comment
+- **.gemini/styleguide.md**: Removed Type A/T identity and sister repo reference
+- **.gemini/config.yaml**: Removed Type A comment
+- **ancplua-project-routing**: Removed Type A/T labels, removed ancplua-mcp routing block from hook script, CLAUDE.md, README.md
+- **weave-validate.sh**: Removed dual-repo mode (`--dual` flag, `SIBLING_REPO`, sibling validation)
+- **plugin-template/README.md**: Removed MCP tools section referencing ancplua-mcp
 
 ### Added
 

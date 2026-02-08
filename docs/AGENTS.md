@@ -51,4 +51,3 @@ The separation of concerns:
 
 - **Plugins** encode reusable behavior and Skills
 - **Agents** orchestrate plugins and execute workflows
-- **MCP servers** (in `ancplua-mcp`) expose tools for agents to call

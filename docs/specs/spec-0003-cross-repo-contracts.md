@@ -1,11 +1,14 @@
 ---
-status: accepted
+status: deprecated
 contact: "Alexander Nachtmann"
 date: "2025-11-25"
 deciders: "Alexander Nachtmann"
 consulted: "ancplua-mcp CLAUDE.md, Claude Code docs"
 informed: "Contributors to both repositories, Claude sessions working on either repo"
 ---
+
+> **DEPRECATED**: This spec is deprecated. The ancplua-mcp project has been discontinued.
+> Type A/Type T architecture separation is no longer in use. Retained for historical reference only.
 
 # spec-0003: Cross-Repository Contract Coordination
 

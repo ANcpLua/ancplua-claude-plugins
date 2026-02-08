@@ -2,15 +2,13 @@
 
 ## Repository Identity
 
-**Type A Repository**: Brain/orchestration layer containing Skills, Plugins, Agent configurations, and workflow definitions.
-
-**Sister Repository**: `ancplua-mcp` (Type T) contains actual tool implementations in .NET/C#.
+**Repository**: Claude Code plugin marketplace — Skills, Plugins, Agent configurations, and workflow definitions.
 
 ## Critical Rules
 
 ### FORBIDDEN in This Repository
 
-- **NO C#/.NET code** - `.cs`, `.csproj`, `.sln` files belong in `ancplua-mcp`
+- **NO C#/.NET code** - `.cs`, `.csproj`, `.sln` files do not belong in this repository
 - **NO absolute user paths** - `/Users/...`, `/home/...`, `C:\Users\...`
 - **NO secrets or tokens** - API keys, OAuth tokens, credentials
 - **NO hardcoded environment-specific values**

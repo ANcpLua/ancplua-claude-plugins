@@ -15,6 +15,4 @@
 5. Update `CHANGELOG.md` for any user-visible change.
 6. Run `./tooling/scripts/weave-validate.sh`.
 
-This is a **Type A** repository. Plugins orchestrate via Skills and consume MCP tools
-from `ancplua-mcp` (Type T). Do NOT implement MCP servers here. Reference example
-configs at `docs/examples/*.mcp.json` instead.
+Plugins orchestrate behavior via Skills. No C# or .NET code belongs in this repository.

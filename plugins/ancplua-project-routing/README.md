@@ -17,8 +17,7 @@ context about which specialist agents to use for that project.
 | `ANcpLua.Roslyn.Utilities` | (careful!) | Shared Roslyn helpers |
 | `qyl` | qyl-observability-specialist, servicedefaults-specialist | AI observability + OTel instrumentation |
 | `Template` | template-clean-arch-specialist | Clean Architecture |
-| `ancplua-claude-plugins` | (Type A rules) | Plugin development |
-| `ancplua-mcp` | (Type T rules) | MCP servers |
+| `ancplua-claude-plugins` | (Plugin rules) | Plugin development |
 
 ## Install
 
@@ -33,13 +32,3 @@ A SessionStart hook runs `project-routing.sh` which:
 1. Checks `$PWD` for known project patterns
 2. Injects routing context into the session
 3. Shows which Task agents and Skills to use
-
-## Cross-Repo Work
-
-For work spanning multiple repos, use:
-
-```text
-Skill → /ancplua-ecosystem
-```
-
-This loads the full ecosystem context with dependency hierarchy and source-of-truth locations.

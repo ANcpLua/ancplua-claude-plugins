@@ -4,8 +4,7 @@ This file defines how GitHub Copilot should work in this repository.
 
 > **Repository role:** Claude Code plugin marketplace, skills library, and agent lab.
 
-This repo is about **Claude Code plugins only** (Type A). It does not contain MCP server implementations; those live in
-`ancplua-mcp` (Type T) and are consumed via `.mcp.json`.
+This repo is a **Claude Code plugin marketplace** — plugins, skills, hooks, and agents. No C# or .NET code.
 
 ---
 
@@ -103,8 +102,6 @@ ancplua-claude-plugins/
 │   ├── decisions/
 │   │   ├── adr-template.md
 │   │   └── ADR-XXXX-*.md
-│   └── examples/
-│       └── *.mcp.json           # MCP consumption configs
 │
 └── tooling/
     ├── scripts/
@@ -118,41 +115,7 @@ When suggesting changes, maintain this structure.
 
 ---
 
-## 3. Type A vs Type T separation
-
-### 3.1 Type A (This Repository)
-
-This repository provides the **"Brain"** (Skills, Prompts, Orchestration):
-
-- Plugin manifests (`plugin.json`, `marketplace.json`)
-- SKILL.md files (workflow definitions)
-- Commands (slash commands for Claude Code)
-- Hooks (event-based automation)
-- Shell scripts (validation, sync utilities)
-
-### 3.2 Type T (External: ancplua-mcp)
-
-The MCP servers live in `ancplua-mcp` and provide the **"Hands"** (Tools):
-
-- C# MCP server implementations
-- Low-level system access tools
-- `[McpServerTool]` decorated methods
-
-**FORBIDDEN in this repository:**
-
-- ❌ C# / .NET code (.sln, .csproj, .cs files)
-- ❌ MCP server implementations
-- ❌ `ModelContextProtocol` package references
-
-**ALLOWED in this repository:**
-
-- ✅ `.mcp.json` configuration files (consuming Type T servers)
-- ✅ Documentation referencing MCP tools
-- ✅ Skills that orchestrate MCP tool usage
-
----
-
-## 4. Plugin structure
+## 3. Plugin structure
 
 Each plugin under `plugins/<name>/` follows:
 
@@ -416,7 +379,7 @@ AIs coordinate through **shared files**, not real-time communication:
 
 Each AI does its own complete review. Overlapping findings indicate high confidence issues.
 
-### 9.6 Type A Review Scope
+### 9.6 Plugin Review Scope
 
 All AIs review the same things in this repo:
 
@@ -426,7 +389,7 @@ All AIs review the same things in this repo:
 4. **YAML Workflows** - actionlint compliance, permissions, triggers
 5. **Security** - No secrets in files, no absolute paths, input validation
 6. **Documentation** - CHANGELOG.md updates, README accuracy, usage instructions
-7. **Type A/T Separation** - No C# code, no MCP server implementations
+7. **No C# code** - No MCP server implementations
 
 ### 9.7 Auto-Merge Tiers
 
@@ -490,7 +453,7 @@ Don't force plugins to implement unused features:
 Plugins depend on abstractions (Skills), not concrete implementations:
 
 - Skills define the contract
-- MCP servers provide the implementation (in ancplua-mcp)
+- Plugins orchestrate behavior through Skills
 - Plugins orchestrate, never implement low-level operations
 
 ---

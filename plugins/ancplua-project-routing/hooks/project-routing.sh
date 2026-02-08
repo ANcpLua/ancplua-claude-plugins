@@ -169,7 +169,7 @@ You are working in Template (Clean Architecture ASP.NET Core).
 elif [[ "$PWD" == *"ancplua-claude-plugins"* ]]; then
   CONTEXT='<PLUGINS_ROUTING>
 
-You are working in ancplua-claude-plugins (Type A - Brain/Orchestration).
+You are working in ancplua-claude-plugins.
 
 ## MANDATORY Routing
 
@@ -179,38 +179,16 @@ You are working in ancplua-claude-plugins (Type A - Brain/Orchestration).
 | Validation | claude plugin validate . |
 | Before done | Validation must pass |
 
-## Type A Rules
+## Rules
 - NO C# code
 - NO .NET projects
 - Skills, hooks, agents only
-- Consumes MCP from ancplua-mcp
 
 ## Key Files
 - .claude-plugin/marketplace.json
 - CHANGELOG.md (always update!)
 
 </PLUGINS_ROUTING>'
-
-  emit_routing "$CONTEXT"
-
-elif [[ "$PWD" == *"ancplua-mcp"* ]]; then
-  CONTEXT='<MCP_ROUTING>
-
-You are working in ancplua-mcp (Type T - Tools/Infrastructure).
-
-## MANDATORY Routing
-
-| Task | Use |
-|------|-----|
-| MCP servers | .NET implementation |
-| Before done | dotnet build + dotnet test (show output) |
-
-## Type T Rules
-- MCP server implementations
-- .NET code lives here
-- Consumed by ancplua-claude-plugins
-
-</MCP_ROUTING>'
 
   emit_routing "$CONTEXT"
 

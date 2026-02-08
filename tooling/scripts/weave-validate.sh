@@ -7,16 +7,8 @@ set -euo pipefail
 # Hard failures (block merge):  plugin validate, shellcheck, actionlint, JSON syntax
 # Soft warnings (informational): markdownlint, SKILL.md count, CHANGELOG existence
 
-DUAL_MODE=false
-SIBLING_REPO="$HOME/ancplua-mcp"
 HARD_FAILURES=0
 SOFT_WARNINGS=0
-
-for arg in "$@"; do
-  case $arg in
-    --dual) DUAL_MODE=true; shift ;;
-  esac
-done
 
 hard_fail() { echo "  FAIL: $1"; HARD_FAILURES=$((HARD_FAILURES + 1)); }
 soft_warn() { echo "  WARN: $1"; SOFT_WARNINGS=$((SOFT_WARNINGS + 1)); }
@@ -158,20 +150,6 @@ if [ "$HARD_FAILURES" -gt 0 ]; then
 else
   echo "PASSED: 0 failures, $SOFT_WARNINGS warning(s)"
   EXIT_CODE=0
-fi
-
-# ── Dual-repo mode ──────────────────────────────────────────────────────────
-if [ "$DUAL_MODE" = true ]; then
-  echo ""
-  echo "=== Dual-repo: validating $SIBLING_REPO ==="
-  if [ -d "$SIBLING_REPO" ] && [ -x "$SIBLING_REPO/tooling/scripts/local-validate.sh" ]; then
-    if ! "$SIBLING_REPO/tooling/scripts/local-validate.sh"; then
-      echo "FAILED: sibling repo validation failed"
-      EXIT_CODE=1
-    fi
-  else
-    echo "SKIP: sibling repo not found at $SIBLING_REPO"
-  fi
 fi
 
 exit "$EXIT_CODE"
