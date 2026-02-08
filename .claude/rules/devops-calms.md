@@ -3,7 +3,7 @@
 ## Culture
 
 - **Blameless post-mortems:** When things fail, focus on systemic improvements
-- **Shared ownership:** All agents (Claude, Copilot, Gemini, CodeRabbit) share responsibility
+- **Shared ownership:** All agents (Claude, Copilot, Codex, Jules, Gemini, CodeRabbit) share responsibility
 - **Fast feedback:** Validate early and often
 
 ## Automation
