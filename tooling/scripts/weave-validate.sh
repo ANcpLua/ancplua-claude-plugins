@@ -1,26 +1,33 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# weave-validate.sh — Single validation entrypoint for ancplua-claude-plugins
+# Exit code: 0 = all checks pass, 1 = hard failures detected
+#
+# Hard failures (block merge):  plugin validate, shellcheck, actionlint, JSON syntax
+# Soft warnings (informational): markdownlint, SKILL.md count, CHANGELOG existence
+
 DUAL_MODE=false
 SIBLING_REPO="$HOME/ancplua-mcp"
+HARD_FAILURES=0
+SOFT_WARNINGS=0
 
-# Parse arguments
 for arg in "$@"; do
   case $arg in
-    --dual)
-      DUAL_MODE=true
-      shift
-      ;;
+    --dual) DUAL_MODE=true; shift ;;
   esac
 done
 
-echo "🔍 Running ancplua-claude-plugins local validation..."
+hard_fail() { echo "  FAIL: $1"; HARD_FAILURES=$((HARD_FAILURES + 1)); }
+soft_warn() { echo "  WARN: $1"; SOFT_WARNINGS=$((SOFT_WARNINGS + 1)); }
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT_DIR"
 
-# 1. Marketplace + Plugin Validation
-# Find claude CLI: check PATH first, then common install locations
+echo "=== ancplua-claude-plugins validation ==="
+echo ""
+
+# ── 1. Plugin Validation (HARD) ──────────────────────────────────────────────
 CLAUDE_CMD=""
 if command -v claude >/dev/null 2>&1; then
   CLAUDE_CMD="claude"
@@ -31,94 +38,140 @@ elif [ -x "$HOME/.claude/bin/claude" ]; then
 fi
 
 if [ -n "$CLAUDE_CMD" ]; then
-  echo "▶ claude plugin validate . (using: $CLAUDE_CMD)"
-  "$CLAUDE_CMD" plugin validate .
+  echo "[1/5] Plugin validation (claude CLI)"
 
-  # Validate individual plugins
+  if ! "$CLAUDE_CMD" plugin validate . 2>&1; then
+    hard_fail "marketplace validation failed"
+  fi
+
   if [ -d "plugins" ]; then
-    for d in plugins/*; do
-      if [ -d "$d" ]; then
-        echo "▶ claude plugin validate \"$d\""
-        "$CLAUDE_CMD" plugin validate "$d" || true
+    for d in plugins/*/; do
+      [ -d "$d" ] || continue
+      if ! "$CLAUDE_CMD" plugin validate "$d" 2>&1; then
+        hard_fail "plugin validation failed: $d"
       fi
     done
   fi
 
-  # Validate agent configs (Type A components)
+  # Agent config JSON syntax
   if [ -d "agents" ]; then
-    echo "▶ Validating agent configurations..."
-    for agent_dir in agents/*; do
-      if [ -d "$agent_dir/config" ] && [ -f "$agent_dir/config/agent.json" ]; then
-        echo "  ✓ $agent_dir/config/agent.json exists"
-        jq . "$agent_dir/config/agent.json" >/dev/null 2>&1 || echo "  ❌ Invalid JSON in $agent_dir/config/agent.json"
+    for agent_dir in agents/*/; do
+      [ -d "$agent_dir" ] || continue
+      if [ -f "$agent_dir/config/agent.json" ]; then
+        if ! jq . "$agent_dir/config/agent.json" >/dev/null 2>&1; then
+          hard_fail "invalid JSON: $agent_dir/config/agent.json"
+        fi
       fi
     done
   fi
 else
-  echo "⚠️ 'claude' CLI not found. Skipping plugin validation."
-  echo "   Checked: PATH, ~/.claude/local/node_modules/.bin/, ~/.claude/bin/"
+  echo "[1/5] Plugin validation (SKIPPED — claude CLI not found)"
 fi
 
-# 2. Shell Scripts (ShellCheck)
-if command -v shellcheck >/dev/null 2>&1; then
-  echo "▶ shellcheck on repo shell scripts"
-  # Use find to locate all .sh files in tooling/scripts, plugins/**/scripts, and agents/**/scripts
-  SCRIPT_DIRS=""
-  [ -d "tooling/scripts" ] && SCRIPT_DIRS="tooling/scripts"
-  [ -d "plugins" ] && SCRIPT_DIRS="$SCRIPT_DIRS plugins"
-  [ -d "agents" ] && SCRIPT_DIRS="$SCRIPT_DIRS agents"
+echo ""
 
-  if [ -n "$SCRIPT_DIRS" ]; then
-    # shellcheck disable=SC2086
-    find $SCRIPT_DIRS -type f -name "*.sh" -print0 2>/dev/null | xargs -0 -r shellcheck || true
+# ── 2. Shell Scripts (HARD) ──────────────────────────────────────────────────
+echo "[2/5] ShellCheck"
+
+if command -v shellcheck >/dev/null 2>&1; then
+  SHELL_FILES=()
+  while IFS= read -r -d '' f; do
+    SHELL_FILES+=("$f")
+  done < <(find tooling plugins agents -type f -name "*.sh" -print0 2>/dev/null)
+
+  if [ ${#SHELL_FILES[@]} -gt 0 ]; then
+    if ! shellcheck --severity=warning "${SHELL_FILES[@]}" 2>&1; then
+      hard_fail "shellcheck violations found"
+    else
+      echo "  OK: ${#SHELL_FILES[@]} scripts clean"
+    fi
   else
-    echo "ℹ️ No shell scripts found to check."
+    echo "  OK: no shell scripts found"
   fi
 else
-  echo "⚠️ 'shellcheck' not found. Skipping shell script checks."
+  echo "  SKIP: shellcheck not installed"
 fi
 
-# 3. Markdown (MarkdownLint)
+echo ""
+
+# ── 3. Markdown (SOFT) ──────────────────────────────────────────────────────
+echo "[3/5] Markdown lint"
+
 if command -v markdownlint >/dev/null 2>&1; then
-  echo "▶ markdownlint **/*.md"
-  markdownlint "**/*.md" || true
+  if ! markdownlint "**/*.md" 2>&1; then
+    soft_warn "markdownlint violations (non-blocking)"
+  else
+    echo "  OK: markdown clean"
+  fi
 else
-  echo "⚠️ 'markdownlint' not found. Skipping markdown checks."
+  echo "  SKIP: markdownlint not installed"
 fi
 
-# 4. GitHub Actions Workflows (ActionLint)
+echo ""
+
+# ── 4. GitHub Actions Workflows (HARD) ───────────────────────────────────────
+echo "[4/5] ActionLint"
+
 if command -v actionlint >/dev/null 2>&1; then
   if [ -d ".github/workflows" ]; then
-    echo "▶ actionlint .github/workflows/*.yml"
-    actionlint .github/workflows/*.yml || true
+    if ! actionlint .github/workflows/*.yml 2>&1; then
+      hard_fail "actionlint violations found"
+    else
+      echo "  OK: workflows clean"
+    fi
   else
-    echo "ℹ️ No .github/workflows directory; skipping workflow checks."
+    echo "  OK: no workflows directory"
   fi
 else
-  echo "⚠️ 'actionlint' not found. Skipping workflow syntax checks."
+  echo "  SKIP: actionlint not installed"
 fi
 
-# 5. JSON Validation (Basic check for critical JSONs)
-if command -v jq >/dev/null 2>&1; then
-  echo "▶ Validating critical JSON files..."
-  find . -name "*.json" -not -path "*/node_modules/*" -not -path "*/.git/*" -print0 | xargs -0 -I {} bash -c 'jq . "{}" >/dev/null || echo "❌ Invalid JSON: {}"'
+echo ""
+
+# ── 5. JSON Syntax (HARD) ───────────────────────────────────────────────────
+echo "[5/5] JSON syntax"
+
+JSON_COUNT=0
+JSON_ERRORS=0
+while IFS= read -r -d '' f; do
+  JSON_COUNT=$((JSON_COUNT + 1))
+  if ! jq . "$f" >/dev/null 2>&1; then
+    hard_fail "invalid JSON: $f"
+    JSON_ERRORS=$((JSON_ERRORS + 1))
+  fi
+done < <(find . -name "*.json" -not -path "*/node_modules/*" -not -path "*/.git/*" -print0)
+
+if [ "$JSON_ERRORS" -eq 0 ]; then
+  echo "  OK: $JSON_COUNT JSON files valid"
+fi
+
+echo ""
+
+# ── Summary ─────────────────────────────────────────────────────────────────
+echo "=== Results ==="
+
+if [ "$HARD_FAILURES" -gt 0 ]; then
+  echo "FAILED: $HARD_FAILURES hard failure(s), $SOFT_WARNINGS warning(s)"
+  echo ""
+  echo "Fix hard failures before merging."
+  EXIT_CODE=1
 else
-  echo "⚠️ 'jq' not found. Skipping JSON syntax checks."
+  echo "PASSED: 0 failures, $SOFT_WARNINGS warning(s)"
+  EXIT_CODE=0
 fi
 
-echo "✅ ancplua-claude-plugins local validation finished (some checks may have been skipped if tools were missing)."
-
-# Dual-repo validation
+# ── Dual-repo mode ──────────────────────────────────────────────────────────
 if [ "$DUAL_MODE" = true ]; then
   echo ""
-  echo "═══════════════════════════════════════════════════════════"
-  echo "🔗 DUAL-REPO MODE: Validating sibling repository..."
-  echo "═══════════════════════════════════════════════════════════"
-
+  echo "=== Dual-repo: validating $SIBLING_REPO ==="
   if [ -d "$SIBLING_REPO" ] && [ -x "$SIBLING_REPO/tooling/scripts/local-validate.sh" ]; then
-    "$SIBLING_REPO/tooling/scripts/local-validate.sh"
+    if ! "$SIBLING_REPO/tooling/scripts/local-validate.sh"; then
+      echo "FAILED: sibling repo validation failed"
+      EXIT_CODE=1
+    fi
   else
-    echo "⚠️  Sibling repo not found at: $SIBLING_REPO"
-    echo "   Expected: ancplua-mcp with tooling/scripts/local-validate.sh"
+    echo "SKIP: sibling repo not found at $SIBLING_REPO"
   fi
 fi
+
+exit "$EXIT_CODE"

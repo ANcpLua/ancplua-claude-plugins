@@ -15,7 +15,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 
 - **Claude multi-entity documentation**: CLAUDE.md section 2 now explains that "Claude" is a multi-agent system (lead, subagents, teams, CI agent, hooks) — not a single process
-
+- **CCC tagline**: README now opens with "Claude, Copilot, CodeRabbit — the holy trinity"
 - **Hades teammate prompt templates**: Extracted Phase 0/1/2 teammate prompts into supporting files at `plugins/exodia/skills/hades/templates/` (auditors.md, eliminators.md, verifiers.md) — follows 4.6 supporting files pattern
 - **Hades skill hooks**: `TeammateIdle` (command hook, blocks eliminators from going idle without ledger entries) and `TaskCompleted` (prompt hook with haiku, validates task completion legitimacy)
 - **Modular rule files**: Extracted CLAUDE.md sections 15-18 into `.claude/rules/` auto-loaded files: `solid-principles.md`, `thought-transparency.md`, `devops-calms.md`, `error-handling.md`
@@ -31,6 +31,8 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **hookify hooks.json**: Added `async: true` to PostToolUse hook (non-blocking post-action checks)
 - **arch-reviewer & impl-reviewer agents**: Added `memory: user` for cross-session persistent learning
 - **docs/ARCHITECTURE.md**: Plugin count 12 → 11
+- **weave-validate.sh**: Rewritten — tracks hard failures (exit 1) vs soft warnings, shellcheck at warning severity, numbered steps, proper exit codes
+- **ci.yml**: Rewritten — 4 jobs (plugin-validation, shell-scripts, markdown-lint, actionlint). Plugin validation now checks plugin.json required fields, marketplace.json structure, source directory existence, and SKILL.md frontmatter. Only markdownlint is non-blocking
 
 ## [1.0.0] - 2026-02-07
 

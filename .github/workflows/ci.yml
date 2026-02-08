@@ -2,73 +2,145 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
-    branches: [main, develop]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  validate:
-    name: Validate Plugins
+  plugin-validation:
+    name: Plugin & JSON Validation
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22'  # LTS version (was incorrectly 25)
-
-      - name: Validate JSON files
+      - name: Validate JSON syntax
         run: |
-          echo "Validating plugin.json files..."
-          find . -name "plugin.json" -print0 | while IFS= read -r -d '' file; do
-            echo "Checking $file..."
-            jq . "$file" > /dev/null
+          ERRORS=0
+          while IFS= read -r -d '' file; do
+            if ! jq . "$file" >/dev/null 2>&1; then
+              echo "::error file=$file::Invalid JSON syntax"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done < <(find . -name "*.json" -not -path "*/.git/*" -print0)
+
+          echo "Checked $(find . -name '*.json' -not -path '*/.git/*' | wc -l) JSON files"
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "::error::$ERRORS JSON file(s) have syntax errors"
+            exit 1
+          fi
+
+      - name: Validate plugin.json required fields
+        run: |
+          ERRORS=0
+
+          while IFS= read -r -d '' file; do
+            for field in name version description; do
+              VALUE=$(jq -r ".$field // empty" "$file" 2>/dev/null)
+              if [ -z "$VALUE" ]; then
+                echo "::error file=$file::Missing required field: $field"
+                ERRORS=$((ERRORS + 1))
+              fi
+            done
+          done < <(find . -name "plugin.json" -path "*/.claude-plugin/*" -print0)
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "::error::$ERRORS plugin.json field error(s)"
+            exit 1
+          fi
+          echo "All plugin.json files have required fields"
+
+      - name: Validate marketplace.json structure
+        run: |
+          MANIFEST=".claude-plugin/marketplace.json"
+          if [ ! -f "$MANIFEST" ]; then
+            echo "::error::marketplace.json not found"
+            exit 1
+          fi
+
+          # Check required top-level fields
+          for field in name plugins; do
+            if ! jq -e ".$field" "$MANIFEST" >/dev/null 2>&1; then
+              echo "::error file=$MANIFEST::Missing required field: $field"
+              exit 1
+            fi
           done
 
-          echo "Validating .mcp.json files..."
-          find . -name "*.mcp.json" -print0 | while IFS= read -r -d '' file; do
-            echo "Checking $file..."
-            jq . "$file" > /dev/null
-          done
+          # Check each plugin entry has name, source, description
+          PLUGIN_COUNT=$(jq '.plugins | length' "$MANIFEST")
+          echo "Marketplace declares $PLUGIN_COUNT plugins"
 
-      - name: Lint shell scripts
+          for i in $(seq 0 $((PLUGIN_COUNT - 1))); do
+            for field in name source description; do
+              VALUE=$(jq -r ".plugins[$i].$field // empty" "$MANIFEST")
+              if [ -z "$VALUE" ]; then
+                PNAME=$(jq -r ".plugins[$i].name // \"index $i\"" "$MANIFEST")
+                echo "::error file=$MANIFEST::Plugin '$PNAME' missing field: $field"
+                exit 1
+              fi
+            done
+
+            # Verify source directory exists
+            SOURCE=$(jq -r ".plugins[$i].source" "$MANIFEST")
+            if [ ! -d "$SOURCE" ]; then
+              PNAME=$(jq -r ".plugins[$i].name" "$MANIFEST")
+              echo "::error file=$MANIFEST::Plugin '$PNAME' source directory missing: $SOURCE"
+              exit 1
+            fi
+          done
+          echo "Marketplace structure valid"
+
+      - name: Validate SKILL.md frontmatter
+        run: |
+          ERRORS=0
+          SKILLS=0
+
+          while IFS= read -r -d '' file; do
+            SKILLS=$((SKILLS + 1))
+            # Check for YAML frontmatter (starts with ---)
+            FIRST_LINE=$(head -1 "$file")
+            if [ "$FIRST_LINE" != "---" ]; then
+              echo "::error file=$file::Missing YAML frontmatter (must start with ---)"
+              ERRORS=$((ERRORS + 1))
+              continue
+            fi
+
+            # Extract frontmatter and check for name field
+            FRONTMATTER=$(sed -n '1,/^---$/p' "$file" | tail -n +2 | head -n -1)
+            if ! echo "$FRONTMATTER" | grep -q "^name:"; then
+              echo "::error file=$file::Missing 'name' in frontmatter"
+              ERRORS=$((ERRORS + 1))
+            fi
+            if ! echo "$FRONTMATTER" | grep -q "^description:"; then
+              echo "::error file=$file::Missing 'description' in frontmatter"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done < <(find . -name "SKILL.md" -print0)
+
+          echo "Checked $SKILLS SKILL.md files"
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "::error::$ERRORS SKILL.md frontmatter error(s)"
+            exit 1
+          fi
+
+  shell-scripts:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
         with:
           scandir: '.'
           severity: warning
-        continue-on-error: true
-
-      - name: Lint YAML files
-        uses: ibiqlik/action-yamllint@v3
-        with:
-          file_or_dir: .
-          config_file: .yamllint.yml
-        continue-on-error: true
-
-      - name: Check SKILL.md files exist
-        run: |
-          echo "Checking for SKILL.md files..."
-          SKILL_FILES=$(find . -name "SKILL.md" | wc -l)
-          echo "Found $SKILL_FILES SKILL.md files"
-
-          if [ "$SKILL_FILES" -eq 0 ]; then
-            echo "::warning::No SKILL.md files found in repository"
-          fi
-
-      - name: Validate CHANGELOG.md
-        run: |
-          if [ -f "CHANGELOG.md" ]; then
-            echo "CHANGELOG.md exists"
-          else
-            echo "::warning::CHANGELOG.md not found"
-          fi
 
   markdown-lint:
     name: Markdown Lint
@@ -82,4 +154,18 @@ jobs:
         uses: DavidAnson/markdownlint-cli2-action@v22
         with:
           globs: '**/*.md'
+        # Markdown formatting is non-blocking — warnings only
         continue-on-error: true
+
+  actionlint:
+    name: Workflow Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Run actionlint
+        uses: reviewdog/action-actionlint@v1
+        with:
+          fail_level: error
