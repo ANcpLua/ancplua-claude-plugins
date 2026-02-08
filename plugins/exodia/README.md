@@ -1,4 +1,4 @@
-# exodia v1.0.0
+# exodia v1.1.0
 
 Multi-agent workflow orchestration as skills (skills.sh open standard).
 
