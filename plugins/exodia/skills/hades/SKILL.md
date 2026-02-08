@@ -118,6 +118,21 @@ plugins/exodia/scripts/smart/permit.sh create "$SMART_ID" "$1" --ttl=3600
 
 Store `$SMART_ID` — pass it to every teammate prompt.
 
+**STEP 0b — Determine Scope:**
+
+```bash
+# Staged + unstaged changes
+git diff --cached --name-only
+git diff --name-only
+
+# If nothing changed, check last commit
+git diff HEAD~1 --name-only
+
+# If $1 is a path, scope to that path
+```
+
+Produce a file list. This goes into EVERY teammate's prompt.
+
 **STEPS 1-8 — Team Execution:**
 
 1. Create agent team: `Create an agent team for codebase cleanup`
@@ -263,6 +278,26 @@ SMART_ID: [value]
 
 Shut down all Phase 0 teammates. Spawn 4 new teammates.
 Each claims tasks from the shared list created during Phase 0.
+
+**File Ownership Protocol (CRITICAL — prevents overwrites):**
+
+Before spawning eliminators, map files to owners:
+
+1. Read all tasks from Phase 0 audit (TaskList)
+2. Map each task to its file(s)
+3. Group files by primary domain:
+   - Files with suppressions → smart-elim-suppressions
+   - Files with dead code only → smart-elim-deadcode
+   - Files in duplication clusters → smart-elim-duplication
+   - Files with import issues only → smart-elim-imports
+4. If a file has issues from multiple domains → assign to the domain with MORE issues
+5. List ownership explicitly in each eliminator's spawn prompt
+
+Plan approval: mandatory for structural changes (extracting utilities, moving code).
+Optional for trivial fixes (single-line replacements). Teammates send plan to lead,
+wait for approval, then implement.
+
+Iteration 2+: shutdown, TeamDelete, fresh TeamCreate with remaining violations.
 
 **Every eliminator MUST log deletions to the ledger:**
 
@@ -430,6 +465,8 @@ Shut down Phase 1 teammates. Spawn 4 verifiers who CHALLENGE each other.
 >   Directory.Build.props too?"
 > - "Ledger complete? Does entry count match the number of changes
 >   in `git diff --stat`?"
+>
+> Pick ONE claim and independently verify it by running the command yourself.
 >
 > Report: confirmed claims, challenged claims with evidence.
 

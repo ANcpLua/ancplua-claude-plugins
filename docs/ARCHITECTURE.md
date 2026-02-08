@@ -53,7 +53,7 @@ ancplua-claude-plugins/
 │   ├── autonomous-ci/
 │   ├── code-review/
 │   ├── metacognitive-guard/
-│   └── ... (12 plugins total)
+│   └── ... (11 plugins total)
 │
 ├── agents/                      # Agent SDK projects
 │

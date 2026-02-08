@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Removed
+
+- **Standalone hades plugin** (`plugins/hades/`): Redundant with `plugins/exodia/skills/hades/`. Standalone was disabled, depended on exodia's smart infrastructure, and had ~90% identical content. Removed from marketplace.json
+
+### Changed
+
+- **Exodia hades skill**: Merged useful content from standalone hades — scope determination via git diff, file ownership protocol for Phase 1 eliminators, independent verification for Phase 2 challenger
+- **docs/ARCHITECTURE.md**: Plugin count 12 → 11
+
 ## [1.0.0] - 2026-02-07
 
 Launch release for Claude Opus 4.6. Full repository audit and cleanup.
