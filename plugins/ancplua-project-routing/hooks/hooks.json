@@ -6,7 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/project-routing.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/project-routing.sh",
+            "statusMessage": "Routing to project specialist..."
           }
         ]
       }

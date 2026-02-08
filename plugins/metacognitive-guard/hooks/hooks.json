@@ -6,29 +6,21 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/truth-beacon.sh",
-            "timeout": 5000
+            "timeout": 5000,
+            "statusMessage": "Loading authoritative facts..."
           }
         ]
       }
     ],
     "PreToolUse": [
       {
-        "matcher": "Write",
+        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/epistemic-guard.sh",
-            "timeout": 5000
-          }
-        ]
-      },
-      {
-        "matcher": "Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/epistemic-guard.sh",
-            "timeout": 5000
+            "timeout": 5000,
+            "statusMessage": "Checking epistemic constraints..."
           }
         ]
       }
@@ -40,7 +32,8 @@
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/struggle-detector.sh",
             "stdin": "response",
-            "timeout": 5000
+            "timeout": 5000,
+            "statusMessage": "Evaluating response quality..."
           }
         ]
       }
