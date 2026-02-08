@@ -8,8 +8,8 @@ allowed-tools: Task, Bash, TodoWrite
 
 > Red breaks. Blue fixes. Red re-attacks. Points decide.
 
-**Target:** $1 (default: staged changes)
-**Scope:** $2 (default: full | full|security|api|performance)
+**Target:** $0 (default: staged changes)
+**Scope:** $1 (default: full | full|security|api|performance)
 
 ---
 
@@ -75,7 +75,7 @@ Launch ALL 3 in ONE message.
 
 > subagent: deep-debugger | model: opus
 >
-> RED TEAM — Crash Hunter. TARGET: $1 | SCOPE: $2
+> RED TEAM — Crash Hunter. TARGET: $0 | SCOPE: $1
 >
 > Find ways to CRASH the code:
 > Null refs, invalid input, resource exhaustion, circular refs, race conditions, exception gaps, loop edge cases, overflow.
@@ -89,7 +89,7 @@ Launch ALL 3 in ONE message.
 
 > subagent: feature-dev:code-reviewer | model: opus
 >
-> RED TEAM — Security Attacker. TARGET: $1 | SCOPE: $2
+> RED TEAM — Security Attacker. TARGET: $0 | SCOPE: $1
 >
 > Find SECURITY vulnerabilities:
 > Injection (SQL/command/code), path traversal, data exposure,
@@ -104,7 +104,7 @@ Launch ALL 3 in ONE message.
 
 > subagent: feature-dev:code-explorer
 >
-> RED TEAM — API Breaker. TARGET: $1 | SCOPE: $2
+> RED TEAM — API Breaker. TARGET: $0 | SCOPE: $1
 >
 > Find ways to BREAK the API contract:
 > Behavior != docs, edge cases, missing validation, bypass restrictions,

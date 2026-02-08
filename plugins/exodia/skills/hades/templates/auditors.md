@@ -10,7 +10,7 @@ They MESSAGE each other to challenge findings before finalizing.
 > You are smart-audit-suppressions. Find EVERY warning suppression in scope.
 > SESSION: SMART_ID=[insert Smart ID]
 >
-> SCOPE: [insert $1]
+> SCOPE: [insert $0]
 >
 > Patterns: `#pragma warning disable`, `// ReSharper disable`,
 > `[SuppressMessage]`, `<NoWarn>`, `dotnet_diagnostic severity=none`,
@@ -30,7 +30,7 @@ They MESSAGE each other to challenge findings before finalizing.
 > You are smart-audit-deadcode. Find ALL dead code in scope.
 > SESSION: SMART_ID=[insert Smart ID]
 >
-> SCOPE: [insert $1]
+> SCOPE: [insert $0]
 >
 > Find: unused imports, unreachable code, commented blocks >3 lines,
 > dead methods/classes (zero references), orphan files, unused exports.
@@ -48,7 +48,7 @@ They MESSAGE each other to challenge findings before finalizing.
 > You are smart-audit-duplication. Find ALL duplication in scope.
 > SESSION: SMART_ID=[insert Smart ID]
 >
-> SCOPE: [insert $1]
+> SCOPE: [insert $0]
 >
 > Find: copy-pasted code, similar implementations to unify,
 > repeated patterns, local reimplementations of shared library helpers.
@@ -64,7 +64,7 @@ They MESSAGE each other to challenge findings before finalizing.
 > You are smart-audit-imports. Find ALL import/dependency issues in scope.
 > SESSION: SMART_ID=[insert Smart ID]
 >
-> SCOPE: [insert $1]
+> SCOPE: [insert $0]
 >
 > Find: unused imports, circular dependencies, wrong import paths,
 > overly broad imports (import \* when only one symbol used),

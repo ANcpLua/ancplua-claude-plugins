@@ -25,9 +25,9 @@ hooks:
 > Every gate is a pure predicate: state -> PROCEED | HALT.
 > Every deletion is permitted, logged, and auditable.
 
-**Scope:** $1 (default: . — file path | directory | repo | cross-repo)
-**Focus:** $2 (default: all — all|suppressions|dead-code|duplication|imports)
-**Intensity:** $3 (default: full — full|scan-only)
+**Scope:** $0 (default: . — file path | directory | repo | cross-repo)
+**Focus:** $1 (default: all — all|suppressions|dead-code|duplication|imports)
+**Intensity:** $2 (default: full — full|scan-only)
 
 **Smart Infrastructure:** `plugins/exodia/scripts/smart/`
 
@@ -134,7 +134,7 @@ SMART_ID="$(plugins/exodia/scripts/smart/smart-id.sh generate)"
 plugins/exodia/scripts/smart/ledger.sh init
 
 # Create deletion permit for scope (auto-revoked at cleanup)
-plugins/exodia/scripts/smart/permit.sh create "$SMART_ID" "$1" --ttl=3600
+plugins/exodia/scripts/smart/permit.sh create "$SMART_ID" "$0" --ttl=3600
 ```
 
 Store `$SMART_ID` — pass it to every teammate prompt.
@@ -149,7 +149,7 @@ git diff --name-only
 # If nothing changed, check last commit
 git diff HEAD~1 --name-only
 
-# If $1 is a path, scope to that path
+# If $0 is a path, scope to that path
 ```
 
 Produce a file list. This goes into EVERY teammate's prompt.
@@ -207,7 +207,7 @@ SMART_ID: [value]
 +------------------------------------------------------------+
 ```
 
-- $3 = scan-only -> SCAN_COMPLETE. Present report. Revoke permit. Shut down. Done.
+- $2 = scan-only -> SCAN_COMPLETE. Present report. Revoke permit. Shut down. Done.
 - Zero findings -> HALT. Nothing to clean. Revoke permit. Shut down. Done.
 - Findings exist -> PROCEED. Shut down Phase 0. Spawn Phase 1.
 
@@ -280,8 +280,8 @@ SMART_ID: [value]
 |                    HADES CLEANUP REPORT                            |
 +====================================================================+
 | Smart ID: [SMART-YYYY-MM-DD-...]                                   |
-| Scope: $1                                                          |
-| Intensity: $3                                                      |
+| Scope: $0                                                          |
+| Intensity: $2                                                      |
 | Phases: 3 x 4 teammates = 12 total spawned                        |
 +====================================================================+
 |                   BEFORE -> AFTER                                  |

@@ -8,8 +8,8 @@ allowed-tools: Task, Bash, TodoWrite
 
 > Extract pattern. Parallelize. Review consistency. Verify.
 
-**Type:** $1 (diagnostics|tests|endpoints|features|fixes|migrations)
-**Items:** $2 (comma-separated list)
+**Type:** $0 (diagnostics|tests|endpoints|features|fixes|migrations)
+**Items:** $1 (comma-separated list)
 
 ---
 
@@ -63,7 +63,7 @@ Use TodoWrite: one todo per item, mark complete as each finishes.
 > subagent: feature-dev:code-explorer
 >
 > You are template-extractor. Extract the implementation pattern.
-> TYPE: $1 | ITEMS: $2
+> TYPE: $0 | ITEMS: $1
 >
 > Find: existing implementations of this type, common structure, required boilerplate, test patterns, registration/wiring.
 >
@@ -74,13 +74,13 @@ Use TodoWrite: one todo per item, mark complete as each finishes.
 
 ## PHASE 2: PARALLEL IMPLEMENTATION
 
-Parse $2 (comma-separated). Launch ONE agent PER ITEM in ONE message.
+Parse $1 (comma-separated). Launch ONE agent PER ITEM in ONE message.
 
 ### implementer-item-N (one per item)
 
 > subagent: feature-dev:code-architect
 >
-> IMPLEMENT: [ITEM_NAME from $2] | TYPE: $1
+> IMPLEMENT: [ITEM_NAME from $1] | TYPE: $0
 >
 > Using template from Phase 1. Follow TDD:
 >

@@ -55,4 +55,10 @@ Use skill: /lint-dotnet (runs lint-dotnet.sh on current directory)
 
 </DOTNET_ARCHITECTURE_RULES>'
 
-echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$CONTEXT\"}}"
+# Escape the multiline context for valid JSON string embedding
+if command -v jq &>/dev/null; then
+  jq -n --arg ctx "$CONTEXT" '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":$ctx}}'
+else
+  ESCAPED_CONTEXT=$(printf '%s' "$CONTEXT" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$ESCAPED_CONTEXT\"}}"
+fi

@@ -6,7 +6,7 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/truth-beacon.sh",
-            "timeout": 5000,
+            "timeout": 5,
             "statusMessage": "Loading authoritative facts..."
           }
         ]
@@ -19,7 +19,7 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/epistemic-guard.sh",
-            "timeout": 5000,
+            "timeout": 5,
             "statusMessage": "Checking epistemic constraints..."
           }
         ]
@@ -31,8 +31,7 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/struggle-detector.sh",
-            "stdin": "response",
-            "timeout": 5000,
+            "timeout": 5,
             "statusMessage": "Evaluating response quality..."
           }
         ]

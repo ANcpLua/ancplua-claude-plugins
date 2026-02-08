@@ -6,33 +6,49 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+
+- **Hook timeout units**: Changed `timeout: 5000` (83 minutes) to `timeout: 5` (5 seconds) across metacognitive-guard, otelwiki, dotnet-architecture-lint hooks.json (6 occurrences)
+- **Invalid `"stdin": "response"` field**: Removed from metacognitive-guard Stop hook — not a valid hook property, was silently ignored
+- **Skill $N indexing**: Fixed 1-based to 0-based indexing across all 9 exodia skills (133 references). `$1`→`$0`, `$2`→`$1`, etc. per Claude Code spec
+- **SessionStart hooks invalid JSON**: Fixed 3 scripts that embedded raw newlines in JSON string values — `inject-dotnet-rules.sh`, `truth-beacon.sh`, `project-routing.sh`. Now use `jq` when available, with `printf`/`sed` escaping fallback
+- **dotnet CLI syntax**: Removed erroneous `--` separator and added `.slnx` preference in `verify-local.sh`
+- **macOS flock compatibility**: Added `command -v flock` guard in `ledger.sh` matching the existing pattern in sibling `permit.sh`
+- **README.md hades ghost**: Removed deleted hades plugin from plugin table and install commands
+- **AGENTS.md false counts**: Fixed "12 plugins, 22 skills" → "11 plugins, 19 skills"
+- **AGENTS.md stale hades routing**: Removed references to non-existent `hades/skills:{judge,enforce,verify}` and updated decision tree
+- **copilot-instructions.md Quad-AI**: Was not updated in previous pass — now correctly says "Tri-AI" and "three AI agents"
+- **CLAUDE.md Quad-AI heading**: Section 5.5.1 heading contradicted its own body — fixed to "Tri-AI"
+- **README.md stale docs URL**: Updated from `docs.anthropic.com` to `code.claude.com/docs/en/plugins`
+
 ### Removed
 
-- **Standalone hades plugin** (`plugins/hades/`): Redundant with `plugins/exodia/skills/hades/`. Standalone was disabled, depended on exodia's smart infrastructure, and had ~90% identical content. Removed from marketplace.json
-- **GEMINI.md**: Gemini removed as co-agent. Copilot Coding Agent runs Opus — Claude is the sole operational AI. Gemini/Codex remain only as external GitHub review agents
-- **Quad-AI references**: Downgraded to tri-AI (Claude, Copilot, CodeRabbit) across CLAUDE.md, AGENTS.md, README.md, copilot-instructions.md, .gemini/styleguide.md
+- **Standalone hades plugin** (`plugins/hades/`): Redundant with `plugins/exodia/skills/hades/`
+- **GEMINI.md**: Gemini removed as co-agent
+- **Quad-AI references**: Downgraded to tri-AI (Claude, Copilot, CodeRabbit) across all files
+- **Type A/Type T architecture**: Removed ancplua-mcp dual-repo references, Section 10 MCP Integration, and Type A/T terminology. ancplua-mcp project is discontinued
+- **CLAUDE.md Section 10**: Removed entire MCP Integration / Dual-Repo Workflow section
 
 ### Added
 
-- **Claude multi-entity documentation**: CLAUDE.md section 2 now explains that "Claude" is a multi-agent system (lead, subagents, teams, CI agent, hooks) — not a single process
+- **Mega-swarm backlog**: `docs/mega-swarm-backlog.md` — P2/P3 issues for follow-up (18 medium, 14 low)
+- **Claude multi-entity documentation**: CLAUDE.md section 2 now explains Claude as a multi-agent system
 - **CCC tagline**: README now opens with "Claude, Copilot, CodeRabbit — the holy trinity"
-- **Hades teammate prompt templates**: Extracted Phase 0/1/2 teammate prompts into supporting files at `plugins/exodia/skills/hades/templates/` (auditors.md, eliminators.md, verifiers.md) — follows 4.6 supporting files pattern
-- **Hades skill hooks**: `TeammateIdle` (command hook, blocks eliminators from going idle without ledger entries) and `TaskCompleted` (prompt hook with haiku, validates task completion legitimacy)
-- **Modular rule files**: Extracted CLAUDE.md sections 15-18 into `.claude/rules/` auto-loaded files: `solid-principles.md`, `thought-transparency.md`, `devops-calms.md`, `error-handling.md`
+- **Hades teammate prompt templates**: Extracted into `plugins/exodia/skills/hades/templates/`
+- **Hades skill hooks**: `TeammateIdle` (command) and `TaskCompleted` (prompt/haiku)
+- **Modular rule files**: `.claude/rules/` auto-loaded files
 
 ### Changed
 
-- **Exodia hades skill**: Merged useful content from standalone hades — scope determination via git diff, file ownership protocol for Phase 1 eliminators, independent verification for Phase 2 challenger
-- **Exodia hades SKILL.md**: Refactored from 555 to ~280 lines (under 500-line recommendation). Added `argument-hint` frontmatter, lifecycle hooks, template references
-- **CLAUDE.md**: Replaced sections 15-18 (~180 lines) with reference to `.claude/rules/` modular rule files (8 lines)
-- **All hooks.json files**: Added `statusMessage` for spinner UX across all 5 plugins with hooks (metacognitive-guard, hookify, otelwiki, ancplua-project-routing, dotnet-architecture-lint)
-- **metacognitive-guard hooks.json**: Combined duplicate `Write` + `Edit` PreToolUse matchers into `Write|Edit` regex
-- **dotnet-architecture-lint hooks.json**: Combined duplicate `Write` + `Edit` PreToolUse matchers into `Write|Edit` regex
-- **hookify hooks.json**: Added `async: true` to PostToolUse hook (non-blocking post-action checks)
-- **arch-reviewer & impl-reviewer agents**: Added `memory: user` for cross-session persistent learning
-- **docs/ARCHITECTURE.md**: Plugin count 12 → 11
-- **weave-validate.sh**: Rewritten — tracks hard failures (exit 1) vs soft warnings, shellcheck at warning severity, numbered steps, proper exit codes
-- **ci.yml**: Rewritten — 4 jobs (plugin-validation, shell-scripts, markdown-lint, actionlint). Plugin validation now checks plugin.json required fields, marketplace.json structure, source directory existence, and SKILL.md frontmatter. Only markdownlint is non-blocking
+- **Exodia hades skill**: Merged content from standalone hades, refactored to ~280 lines
+- **CLAUDE.md**: Replaced sections 15-18 with `.claude/rules/` references
+- **All hooks.json files**: Added `statusMessage` for spinner UX
+- **metacognitive-guard hooks.json**: Combined `Write` + `Edit` into `Write|Edit` regex
+- **dotnet-architecture-lint hooks.json**: Combined `Write` + `Edit` into `Write|Edit` regex
+- **hookify hooks.json**: Added `async: true` to PostToolUse hook
+- **arch-reviewer & impl-reviewer agents**: Added `memory: user`
+- **weave-validate.sh**: Rewritten with hard failures vs soft warnings, proper exit codes
+- **ci.yml**: Rewritten with 4 parallel jobs and real validation checks
 
 ## [1.0.0] - 2026-02-07
 

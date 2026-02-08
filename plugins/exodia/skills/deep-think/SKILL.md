@@ -8,9 +8,9 @@ allowed-tools: Task, TodoWrite
 
 > Three perspectives. One synthesis. No implementation — just understanding.
 
-**Problem:** $1
-**Context:** $2 (default: .)
-**Mode:** $3 (default: debug | debug|architecture|refactor|decision)
+**Problem:** $0
+**Context:** $1 (default: .)
+**Mode:** $2 (default: debug | debug|architecture|refactor|decision)
 
 ---
 
@@ -60,7 +60,7 @@ Launch ALL 3 in ONE message.
 > subagent: deep-debugger | model: opus
 >
 > You are debugger-mind. THINK AS A DEBUGGER.
-> PROBLEM: $1 | CONTEXT: $2
+> PROBLEM: $0 | CONTEXT: $1
 >
 > 1. Actual problem vs perceived problem?
 > 2. ALL possible root causes (5+)
@@ -76,7 +76,7 @@ Launch ALL 3 in ONE message.
 > subagent: metacognitive-guard:arch-reviewer | model: opus
 >
 > You are architect-mind. THINK AS AN ARCHITECT.
-> PROBLEM: $1 | CONTEXT: $2
+> PROBLEM: $0 | CONTEXT: $1
 >
 > 1. Where does this fit in the system?
 > 2. Boundaries and interfaces?
@@ -91,7 +91,7 @@ Launch ALL 3 in ONE message.
 > subagent: feature-dev:code-explorer
 >
 > You are explorer-mind. EXPLORE THE CODEBASE.
-> PROBLEM: $1 | CONTEXT: $2
+> PROBLEM: $0 | CONTEXT: $1
 >
 > 1. All code related to this problem
 > 2. Pattern used elsewhere?

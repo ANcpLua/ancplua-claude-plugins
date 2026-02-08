@@ -42,11 +42,7 @@ CSHARP_VERSION=$(grep -A2 "csharp:" "$ASSERTIONS" | grep "value:" | head -1 | se
 # INJECT AUTHORITATIVE FACTS (the "beacon")
 # =============================================================================
 
-cat << EOF
-{
-  "hookSpecificOutput": {
-    "hookEventName": "SessionStart",
-    "additionalContext": "<ground-truth source=\\"metacognitive-guard\\">
+CONTEXT="<ground-truth source=\"metacognitive-guard\">
 
 AUTHORITATIVE FACTS (override training priors):
 
@@ -70,6 +66,11 @@ If uncertain about versions/APIs:
 - Do NOT rely on training priors for version info
 
 </ground-truth>"
-  }
-}
-EOF
+
+# Escape the multiline context for valid JSON string embedding
+if command -v jq &>/dev/null; then
+  jq -n --arg ctx "$CONTEXT" '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":$ctx}}'
+else
+  ESCAPED_CONTEXT=$(printf '%s' "$CONTEXT" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+  echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$ESCAPED_CONTEXT\"}}"
+fi

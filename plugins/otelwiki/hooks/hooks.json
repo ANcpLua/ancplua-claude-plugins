@@ -11,7 +11,7 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/session-prompt.sh",
-            "timeout": 5000,
+            "timeout": 5,
             "statusMessage": "Loading OTel session context..."
           }
         ]

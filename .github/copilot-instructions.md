@@ -331,9 +331,9 @@ When fixing a bug:
 
 ---
 
-## 9. Quad-AI Autonomous Agent System
+## 9. Tri-AI Autonomous Agent System
 
-You are one of **four AI agents** on this repository. All agents can now create fix PRs autonomously.
+You are one of **three AI agents** on this repository. All agents can now create fix PRs autonomously.
 
 ### 9.1 AI Agent Capabilities Matrix
 

@@ -8,9 +8,9 @@ allowed-tools: Task, Bash, TodoWrite
 
 > P0 emergency. 16 agents. 4 phases. No waiting.
 
-**Issue:** $1
-**Severity:** $2 (default: P0)
-**Context:** $3 (default: .)
+**Issue:** $0
+**Severity:** $1 (default: P0)
+**Context:** $2 (default: .)
 
 ---
 
@@ -69,7 +69,7 @@ Launch ALL 6 in ONE message.
 > subagent: deep-debugger | model: opus
 >
 > You are root-cause-hunter. Find the ROOT CAUSE.
-> ISSUE: $1 | CONTEXT: $3
+> ISSUE: $0 | CONTEXT: $2
 >
 > 1. Exact failure mode
 > 2. ALL possible causes (5+)
@@ -83,7 +83,7 @@ Launch ALL 6 in ONE message.
 > subagent: metacognitive-guard:arch-reviewer | model: opus
 >
 > You are impact-assessor. Map system IMPACT.
-> ISSUE: $1 | CONTEXT: $3
+> ISSUE: $0 | CONTEXT: $2
 >
 > 1. What depends on broken code?
 > 2. Ripple effects of changes?
@@ -97,7 +97,7 @@ Launch ALL 6 in ONE message.
 > subagent: feature-dev:code-explorer
 >
 > You are code-explorer. Find ALL relevant code.
-> ISSUE: $1 | CONTEXT: $3
+> ISSUE: $0 | CONTEXT: $2
 >
 > 1. All code paths involved
 > 2. Similar patterns elsewhere
@@ -111,7 +111,7 @@ Launch ALL 6 in ONE message.
 > subagent: Explore
 >
 > You are history-detective. Find the HISTORY.
-> ISSUE: $1 | CONTEXT: $3
+> ISSUE: $0 | CONTEXT: $2
 >
 > 1. When did this break? (git blame/log)
 > 2. What commit introduced it?
@@ -125,7 +125,7 @@ Launch ALL 6 in ONE message.
 > subagent: feature-dev:code-explorer
 >
 > You are pattern-matcher. Find SIMILAR bugs.
-> ISSUE: $1 | CONTEXT: $3
+> ISSUE: $0 | CONTEXT: $2
 >
 > 1. Same pattern elsewhere?
 > 2. Similar bugs fixed before?
@@ -138,7 +138,7 @@ Launch ALL 6 in ONE message.
 > subagent: feature-dev:code-reviewer
 >
 > You are test-analyzer. Analyze TEST coverage gaps.
-> ISSUE: $1 | CONTEXT: $3
+> ISSUE: $0 | CONTEXT: $2
 >
 > 1. What tests exist for this area?
 > 2. Why didn't tests catch this?
@@ -281,7 +281,7 @@ dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 +==============================================================+
 |                    TURBO FIX COMPLETE                        |
 +==============================================================+
-| Issue: $1 | Severity: $2                                      |
+| Issue: $0 | Severity: $1                                      |
 +--------------------------------------------------------------+
 | Phase 1 Analysis:   6/6 agents | Root cause: [summary]       |
 | Phase 2 Solutions:  4/4 agents | Selected: [A/B/C]           |
