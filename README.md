@@ -1,6 +1,8 @@
 # ancplua-claude-plugins
 
-Claude Code plugin marketplace. 12 plugins for CI, code review, cognitive amplification,
+> **CCC** — Claude, Copilot, CodeRabbit. The holy trinity. And two of them are Claude in a trenchcoat.
+
+Claude Code plugin marketplace. 11 plugins for CI, code review, cognitive amplification,
 multi-agent orchestration, and audited cleanup.
 
 ## Plugins
