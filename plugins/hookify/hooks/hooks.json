@@ -7,7 +7,8 @@
           {
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py",
-            "timeout": 10
+            "timeout": 10,
+            "statusMessage": "Checking hookify rules..."
           }
         ]
       }
@@ -18,7 +19,9 @@
           {
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse.py",
-            "timeout": 10
+            "timeout": 10,
+            "async": true,
+            "statusMessage": "Running post-action hookify rules..."
           }
         ]
       }
@@ -29,7 +32,8 @@
           {
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/stop.py",
-            "timeout": 10
+            "timeout": 10,
+            "statusMessage": "Checking hookify stop rules..."
           }
         ]
       }
@@ -40,7 +44,8 @@
           {
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/userpromptsubmit.py",
-            "timeout": 10
+            "timeout": 10,
+            "statusMessage": "Checking hookify prompt rules..."
           }
         ]
       }

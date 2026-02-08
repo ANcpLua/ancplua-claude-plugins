@@ -5,6 +5,7 @@ description: >-
   version mismatches, wrong assumptions, and fact-checks claims using WebSearch.
   Competes with arch-reviewer - whoever finds more valid issues gets promoted.
 model: opus
+memory: user
 tools:
   - Read
   - Grep

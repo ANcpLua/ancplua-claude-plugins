@@ -5,6 +5,7 @@ description: >-
   SSOT violations, layer boundary issues, coupling problems, and SOLID principle violations.
   Competes with impl-reviewer - whoever finds more valid issues gets promoted.
 model: opus
+memory: user
 tools:
   - Read
   - Grep

@@ -5,12 +5,14 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/check-freshness.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/check-freshness.sh",
+            "statusMessage": "Checking OTel docs freshness..."
           },
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/session-prompt.sh",
-            "timeout": 5000
+            "timeout": 5000,
+            "statusMessage": "Loading OTel session context..."
           }
         ]
       }

@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Removed
+
+- **Standalone hades plugin** (`plugins/hades/`): Redundant with `plugins/exodia/skills/hades/`. Standalone was disabled, depended on exodia's smart infrastructure, and had ~90% identical content. Removed from marketplace.json
+
+### Added
+
+- **Hades teammate prompt templates**: Extracted Phase 0/1/2 teammate prompts into supporting files at `plugins/exodia/skills/hades/templates/` (auditors.md, eliminators.md, verifiers.md) — follows 4.6 supporting files pattern
+- **Hades skill hooks**: `TeammateIdle` (command hook, blocks eliminators from going idle without ledger entries) and `TaskCompleted` (prompt hook with haiku, validates task completion legitimacy)
+- **Modular rule files**: Extracted CLAUDE.md sections 15-18 into `.claude/rules/` auto-loaded files: `solid-principles.md`, `thought-transparency.md`, `devops-calms.md`, `error-handling.md`
+
+### Changed
+
+- **Exodia hades skill**: Merged useful content from standalone hades — scope determination via git diff, file ownership protocol for Phase 1 eliminators, independent verification for Phase 2 challenger
+- **Exodia hades SKILL.md**: Refactored from 555 to ~280 lines (under 500-line recommendation). Added `argument-hint` frontmatter, lifecycle hooks, template references
+- **CLAUDE.md**: Replaced sections 15-18 (~180 lines) with reference to `.claude/rules/` modular rule files (8 lines)
+- **All hooks.json files**: Added `statusMessage` for spinner UX across all 5 plugins with hooks (metacognitive-guard, hookify, otelwiki, ancplua-project-routing, dotnet-architecture-lint)
+- **metacognitive-guard hooks.json**: Combined duplicate `Write` + `Edit` PreToolUse matchers into `Write|Edit` regex
+- **dotnet-architecture-lint hooks.json**: Combined duplicate `Write` + `Edit` PreToolUse matchers into `Write|Edit` regex
+- **hookify hooks.json**: Added `async: true` to PostToolUse hook (non-blocking post-action checks)
+- **arch-reviewer & impl-reviewer agents**: Added `memory: user` for cross-session persistent learning
+- **docs/ARCHITECTURE.md**: Plugin count 12 → 11
+
 ## [1.0.0] - 2026-02-07
 
 Launch release for Claude Opus 4.6. Full repository audit and cleanup.
