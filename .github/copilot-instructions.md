@@ -56,7 +56,7 @@ This repo follows this structure:
 ancplua-claude-plugins/
 ├── README.md
 ├── CLAUDE.md                    # Claude operational spec
-├── GEMINI.md                    # Gemini operational spec
+├── .claude/rules/               # Auto-loaded modular rules
 ├── AGENTS.md                    # Agent coordination rules
 ├── CHANGELOG.md
 ├── .gitignore
@@ -341,7 +341,6 @@ You are one of **four AI agents** on this repository. All agents can now create 
 |----------------|---------|----------|------------------|------------|--------------|
 | **Claude**     | ✅       | ✅        | ✅ (via CLI)      | ❌          | ✅            |
 | **Copilot**    | ✅       | ✅        | ✅ (Coding Agent) | ❌          | ✅            |
-| **Gemini**     | ✅       | ✅        | ❌                | ❌          | ❌            |
 | **CodeRabbit** | ✅       | ✅        | ❌                | ❌          | ✅            |
 
 ### 9.2 Enabling Maximum Autonomy
@@ -497,4 +496,4 @@ Plugins depend on abstractions (Skills), not concrete implementations:
 ---
 
 This file helps GitHub Copilot understand the conventions and structure of this repository. For detailed operational
-instructions for Claude Code, see `CLAUDE.md`. For Gemini, see `GEMINI.md`.
+instructions for Claude Code, see `CLAUDE.md`.

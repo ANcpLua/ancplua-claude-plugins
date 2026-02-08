@@ -33,12 +33,11 @@ claude plugin install workflow-tools@ancplua-claude-plugins
 
 **Type A** repo — plugins, skills, hooks. No MCP servers (those live in `ancplua-mcp`).
 
-Quad-AI review system: Claude, Copilot, Gemini, CodeRabbit all review PRs independently.
+Tri-AI review system: Claude, Copilot, CodeRabbit all review PRs independently.
 
 ```text
 plugins/
-├── exodia/                  # multi-agent orchestration skills
-├── hades/                   # unified enforcement engine (judge/enforce/verify)
+├── exodia/                  # multi-agent orchestration (9 skills incl. hades cleanup)
 ├── metacognitive-guard/     # struggle detection + deep-think agents
 ├── workflow-tools/          # multi-agent commands (4/8 agent limits)
 ├── otelwiki/                # OTel docs + sync

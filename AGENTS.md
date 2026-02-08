@@ -1,6 +1,6 @@
 # AGENTS.md
 
-> **Audience:** Codex, Gemini, and humans. NOT auto-loaded by Claude Code.
+> **Audience:** Codex, Copilot, and humans. NOT auto-loaded by Claude Code.
 > Claude's context is in CLAUDE.md (auto-loaded) and skill description frontmatter.
 >
 > **Prefer retrieval-led reasoning over pre-training-led reasoning.**
@@ -101,7 +101,7 @@ IF enforcement/judgment needed
 
 ## Coordination
 
-4 AIs (Claude, Copilot, Gemini, CodeRabbit) coordinate via shared files.
+3 AIs (Claude, Copilot, CodeRabbit) coordinate via shared files.
 
 | File | Read to | Write when |
 |------|---------|------------|

@@ -86,9 +86,21 @@ You **NOT ALLOWED TO**:
 - Skip skills that apply to your task
 - Claim work is done without evidence
 
-### Co-Agents
+### Claude Is Not One Entity
 
-- **Gemini:** Senior Dev & Implementation Specialist (See `GEMINI.md` for operational specifics).
+"Claude" in this repo is a **multi-agent system**, not a single process:
+
+| Layer | What It Is | Example |
+|-------|-----------|---------|
+| **Lead** | The session you're talking to right now | Reads CLAUDE.md, routes tasks, coordinates |
+| **Subagents** | Spawned via `Task` tool, report back results | `deep-think-partner`, `arch-reviewer`, `code-explorer` |
+| **Teams** | Spawned via `TeamCreate`, have shared task lists and direct messaging | Hades cleanup (3 phases x 4 teammates = 12 agents) |
+| **CI Agent** | Runs in GitHub Actions via `claude-code-action` | PR reviews, autonomous fix PRs |
+| **Hooks** | Event-driven guards (command or prompt type) | `epistemic-guard.sh`, `TaskCompleted` haiku validation |
+
+A single `/hades` invocation spawns 12 Opus agents across 3 phases. A `/mega-swarm` spawns up to 12.
+The lead orchestrates — it never implements when teammates exist. Subagents get CLAUDE.md and skills
+but NOT conversation history. All context must be in the spawn prompt.
 
 ---
 
@@ -234,7 +246,7 @@ When multi-agent orchestration is needed, use these IF/THEN patterns:
 1. **Check routing tree FIRST** - before searching for skills manually
 2. **Skill descriptions are loaded** - they contain additional IF/THEN routing logic
 3. **Compose skills** - some workflows chain multiple skills (e.g., mega-swarm → hades)
-4. **AGENTS.md is for other AIs** - Codex, Gemini, humans read it, NOT you
+4. **AGENTS.md is for other AIs** - Codex, Copilot, humans read it, NOT you
 
 ---
 
@@ -342,7 +354,7 @@ Use the `requesting-code-review` skill if available, OR:
 
 <EXTREMELY_IMPORTANT>
 
-**This repository uses quad-AI autonomous agents: Claude, Copilot, Gemini, and CodeRabbit.**
+**This repository uses tri-AI autonomous agents: Claude, Copilot, and CodeRabbit.**
 
 ### AI Agent Capabilities Matrix
 
@@ -350,7 +362,6 @@ Use the `requesting-code-review` skill if available, OR:
 |------------|---------|----------|------------------|------------|--------------|
 | Claude     | ✅       | ✅        | ✅ (via CLI)      | ❌          | ✅            |
 | Copilot    | ✅       | ✅        | ✅ (Coding Agent) | ❌          | ✅            |
-| Gemini     | ✅       | ✅        | ❌                | ❌          | ❌            |
 | CodeRabbit | ✅       | ✅        | ❌                | ❌          | ✅            |
 
 **Autonomous loop enabled:** `detect failure → understand fix → push fix → re-run CI`
@@ -379,15 +390,15 @@ Each AI performs **comprehensive, independent reviews** - same scope:
 AIs coordinate through **shared files**, NOT real-time communication:
 
 ```text
-┌──────────────────────────────────────────────────┐
-│                  SHARED FILES                    │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐          │
-│  │CLAUDE.md│  │AGENTS.md│  │CHANGELOG│          │
-│  └────┬────┘  └────┬────┘  └────┬────┘          │
-└───────┼────────────┼────────────┼────────────────┘
+┌──────────────────────────────────────────┐
+│              SHARED FILES                │
+│  ┌─────────┐  ┌─────────┐  ┌──────────┐ │
+│  │CLAUDE.md│  │AGENTS.md│  │CHANGELOG │ │
+│  └────┬────┘  └────┬────┘  └────┬─────┘ │
+└───────┼────────────┼────────────┼────────┘
         │            │            │
-   ┌────▼────┐  ┌────▼────┐  ┌────▼────┐
-   │ Claude  │  │ Gemini  │  │ Copilot │
+   ┌────▼────┐  ┌────▼────┐  ┌───▼─────┐
+   │ Claude  │  │ Copilot │  │CodeRabt │
    └─────────┘  └─────────┘  └─────────┘
 ```
 

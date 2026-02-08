@@ -131,7 +131,7 @@ plugins/<name>/
 
 ## Multi-AI Review System
 
-This repository uses **Claude, Copilot, Gemini, and CodeRabbit** for comprehensive PR reviews.
+This repository uses **Claude, Copilot, and CodeRabbit** for comprehensive PR reviews.
 
 ### All AIs Review the SAME Things
 
@@ -149,7 +149,7 @@ AIs coordinate through shared files, NOT real-time communication:
 |------|---------|
 | `CHANGELOG.md` | What has been done - read to avoid duplicate work |
 | `CLAUDE.md` | Project rules and workflows |
-| `GEMINI.md` | Gemini operational constitution |
+| `.claude/rules/` | Auto-loaded modular rules |
 | `AGENTS.md` | Agent routing index |
 
 ### FORBIDDEN in Reviews

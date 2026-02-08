@@ -9,8 +9,12 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Removed
 
 - **Standalone hades plugin** (`plugins/hades/`): Redundant with `plugins/exodia/skills/hades/`. Standalone was disabled, depended on exodia's smart infrastructure, and had ~90% identical content. Removed from marketplace.json
+- **GEMINI.md**: Gemini removed as co-agent. Copilot Coding Agent runs Opus — Claude is the sole operational AI. Gemini/Codex remain only as external GitHub review agents
+- **Quad-AI references**: Downgraded to tri-AI (Claude, Copilot, CodeRabbit) across CLAUDE.md, AGENTS.md, README.md, copilot-instructions.md, .gemini/styleguide.md
 
 ### Added
+
+- **Claude multi-entity documentation**: CLAUDE.md section 2 now explains that "Claude" is a multi-agent system (lead, subagents, teams, CI agent, hooks) — not a single process
 
 - **Hades teammate prompt templates**: Extracted Phase 0/1/2 teammate prompts into supporting files at `plugins/exodia/skills/hades/templates/` (auditors.md, eliminators.md, verifiers.md) — follows 4.6 supporting files pattern
 - **Hades skill hooks**: `TeammateIdle` (command hook, blocks eliminators from going idle without ledger entries) and `TaskCompleted` (prompt hook with haiku, validates task completion legitimacy)
