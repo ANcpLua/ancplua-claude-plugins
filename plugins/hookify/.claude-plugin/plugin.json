@@ -15,5 +15,6 @@
     "bash",
     "file",
     "global-rules"
-  ]
+  ],
+  "commands": "./commands"
 }

@@ -8,5 +8,6 @@
   },
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
   "license": "MIT",
-  "commands": "./commands"
+  "commands": "./commands",
+  "skills": "./skills"
 }
