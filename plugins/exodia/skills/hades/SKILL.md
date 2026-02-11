@@ -75,17 +75,38 @@ includes outdated. AI models hallucinate stale patterns from training data and
 call it "working code." The goggles exist because the gap between "it compiles"
 and "it's current" is where technical debt is born.
 
-Flag as rot: Tailwind v3 classes in a v4 project. Utility patterns that were
-idiomatic in 2024 but have cleaner equivalents now. `rounded-lg shadow-md`
-boilerplate when the project defines custom design tokens. `Inter` as a display
-font. Purple-to-blue hero gradients. Centered cards on flat backgrounds. Generic
-component arrangements that any model produces by default.
+Goggles classification table — what to flag and why:
+
+| Pattern | Verdict | Why | Modern replacement |
+|---------|---------|-----|--------------------|
+| `rounded-lg shadow-md` | GENERIC-AI-SLOP | Thoughtless defaults, no hierarchy, no design intent | Semantic `@theme` tokens: `--radius-card`, `--shadow-card` |
+| `Inter` as display font | MISAPPLIED | Fine for body/UI. As hero font it's the #1 AI default | Satoshi, Geist, or expressive variable fonts for display |
+| Purple-to-blue gradient | GENERIC-AI-SLOP | The canonical AI gradient. v4 renamed `bg-gradient-*` → `bg-linear-*` | `bg-radial-[at_25%_25%]/oklch`, mesh/layered gradients, `bg-conic` |
+| Flat centered card | GENERIC-AI-SLOP | The most obvious AI layout pattern | Bento grids, asymmetric layouts, varied card sizes, layered depth |
+| `transition-all` | ANTI-PATTERN | Forces browser to watch every CSS property | `transition-transform`, `transition-colors`, specific props + `transform-gpu` |
+| `outline-none` | HARMFUL | Breaks keyboard nav + invisible in Windows High Contrast Mode | `outline-hidden` (v4) + `focus-visible:outline-2 focus-visible:outline-offset-2` |
+| `tailwind.config.js` | OUTDATED | v4 is CSS-first. `@theme` directive replaces the JS config | `@theme { --color-*: oklch(...); --font-*: ...; --radius-*: ...; }` |
+
+The v4-native pattern all goggles teammates enforce:
+
+```css
+@import "tailwindcss";
+
+@theme {
+  --color-brand-500: oklch(0.72 0.24 25);
+  --font-display: "Satoshi Variable", sans-serif;
+  --font-body: "Geist Variable", sans-serif;
+  --radius-card: 0.75rem;
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.08);
+  --shadow-elevated: 0 10px 25px rgb(0 0 0 / 0.12);
+}
+```
 
 The reason this matters: LLMs reproduce what they trained on. Training data skews
-toward older versions of every framework. Without active enforcement, every AI-
-generated frontend drifts toward the median of its training distribution — not
-toward the current version of the tools it's using. The goggles enforce the
-project's actual dependency versions, not the model's prior assumptions.
+toward older framework versions. Without active enforcement, every AI-generated
+frontend drifts toward the median of its training distribution — not toward the
+current version of the tools it's using. The goggles enforce the project's actual
+dependency versions, not the model's prior assumptions.
 
 **When to equip:** Any cleanup that touches frontend files (.tsx, .jsx, .css, .html).
 **Effect:** +3 goggles teammates in Phase 0. Their findings become elimination tasks.
