@@ -70,18 +70,22 @@ SPEC (mid)        → "Does it meet the bar?"         → ui-ux-pro-max
 COMPLIANCE (ground) → "Did they build it correctly?" → web-design-guidelines
 ```
 
-Hades already sees everything that's broken. The goggles make him see everything
-that's *outdated*. Stale patterns that others call "fine" — Hades calls rot.
+Hades already sees everything that's broken. The goggles raise the bar: broken
+includes outdated. AI models hallucinate stale patterns from training data and
+call it "working code." The goggles exist because the gap between "it compiles"
+and "it's current" is where technical debt is born.
 
-With goggles, Hades catches what makes others question his sanity:
-Tailwind v3 classes in a v4 project. `className` strings that a model hallucinated
-from 2024 training data. `rounded-lg shadow-md` boilerplate when the design system
-uses custom tokens. `Inter` as a hero font. Purple-to-blue gradients. The flat
-centered card that every AI generates by default. Transition: all. Outline: none.
+Flag as rot: Tailwind v3 classes in a v4 project. Utility patterns that were
+idiomatic in 2024 but have cleaner equivalents now. `rounded-lg shadow-md`
+boilerplate when the project defines custom design tokens. `Inter` as a display
+font. Purple-to-blue hero gradients. Centered cards on flat backgrounds. Generic
+component arrangements that any model produces by default.
 
-The goggles are version-aware and modernity-enforcing. They don't add vision —
-they raise the standard from "does it work" to "is it 2026." One codebase,
-one version, cutting edge, no fallback boilerplate. Done right.
+The reason this matters: LLMs reproduce what they trained on. Training data skews
+toward older versions of every framework. Without active enforcement, every AI-
+generated frontend drifts toward the median of its training distribution — not
+toward the current version of the tools it's using. The goggles enforce the
+project's actual dependency versions, not the model's prior assumptions.
 
 **When to equip:** Any cleanup that touches frontend files (.tsx, .jsx, .css, .html).
 **Effect:** +3 goggles teammates in Phase 0. Their findings become elimination tasks.
