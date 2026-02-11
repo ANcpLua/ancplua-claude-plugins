@@ -75,7 +75,7 @@ that's *outdated*. Stale patterns that others call "fine" — Hades calls rot.
 
 With goggles, Hades catches what makes others question his sanity:
 Tailwind v3 classes in a v4 project. `className` strings that a model hallucinated
-from 2023 training data. `rounded-lg shadow-md` boilerplate when the design system
+from 2024 training data. `rounded-lg shadow-md` boilerplate when the design system
 uses custom tokens. `Inter` as a hero font. Purple-to-blue gradients. The flat
 centered card that every AI generates by default. Transition: all. Outline: none.
 
