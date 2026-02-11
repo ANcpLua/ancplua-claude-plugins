@@ -6,7 +6,6 @@ This directory (`agents/`) contains **standalone agents** that consume plugins f
 
 | Agent                 | Description                                           | Status  |
 | --------------------- | ----------------------------------------------------- | ------- |
-| `cleanup-specialist`  | Zero-tolerance cleanup: no suppressions, no shortcuts | Removed (use exodia:hades skill) |
 | `repo-reviewer-agent` | Reviews repository health and structure               | Planned (config only) |
 
 ## Plugin-Hosted Agents
