@@ -70,13 +70,18 @@ SPEC (mid)        → "Does it meet the bar?"         → ui-ux-pro-max
 COMPLIANCE (ground) → "Did they build it correctly?" → web-design-guidelines
 ```
 
-A connoisseur's eye. Apple-like precision. Cutting-edge, lightweight, mobile-first.
-The goggles counteract generic AI slop by embedding semantic design taste — like a
-fashion designer's signature — into Hades' functional destruction pipeline.
+Hades already sees everything that's broken. The goggles make him see everything
+that's *outdated*. Stale patterns that others call "fine" — Hades calls rot.
 
-Without goggles: Hades sees dead code, suppressions, duplication, import rot.
-With goggles: Hades also sees bad typography, timid palettes, broken accessibility,
-layout shift, missing motion, flat backgrounds, and cookie-cutter aesthetics.
+With goggles, Hades catches what makes others question his sanity:
+Tailwind v3 classes in a v4 project. `className` strings that a model hallucinated
+from 2023 training data. `rounded-lg shadow-md` boilerplate when the design system
+uses custom tokens. `Inter` as a hero font. Purple-to-blue gradients. The flat
+centered card that every AI generates by default. Transition: all. Outline: none.
+
+The goggles are version-aware and modernity-enforcing. They don't add vision —
+they raise the standard from "does it work" to "is it 2026." One codebase,
+one version, cutting edge, no fallback boilerplate. Done right.
 
 **When to equip:** Any cleanup that touches frontend files (.tsx, .jsx, .css, .html).
 **Effect:** +3 goggles teammates in Phase 0. Their findings become elimination tasks.
