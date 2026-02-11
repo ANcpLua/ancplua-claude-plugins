@@ -28,7 +28,7 @@ hooks:
 **Scope:** $0 (default: . — file path | directory | repo | cross-repo)
 **Focus:** $1 (default: all — all|suppressions|dead-code|duplication|imports)
 **Intensity:** $2 (default: full — full|scan-only)
-**Goggles:** $3 (default: off — off|--goggles) — equip the Pink Glasses for frontend design judgment
+**Goggles:** $3 (default: auto — [--goggles]) — optional flag to explicitly equip the Pink Glasses for frontend design judgment (otherwise scope-based auto-equip may enable them)
 
 **Smart Infrastructure:** `plugins/exodia/scripts/smart/`
 
@@ -108,7 +108,7 @@ frontend drifts toward the median of its training distribution — not toward th
 current version of the tools it's using. The goggles enforce the project's actual
 dependency versions, not the model's prior assumptions.
 
-**When to equip:** Any cleanup that touches frontend files (.tsx, .jsx, .css, .html).
+**When to equip:** Any cleanup that touches frontend files (.tsx, .jsx, .css, .html, .svelte, .vue).
 **Effect:** +3 goggles teammates in Phase 0. Their findings become elimination tasks.
 
 ---
@@ -180,7 +180,7 @@ HADES (Lead — Delegate Mode — Opus 4.6)
 **Concurrency:** 4 teammates per phase (+3 goggles in Phase 0 when equipped). Shut down before spawning next phase.
 **File ownership:** Each teammate owns disjoint files. Lead resolves conflicts.
 **Task sizing:** 5-6 tasks per teammate. No kanban overflow.
-**Smart targeting:** If scope contains .tsx/.jsx/.css/.html files, auto-equip goggles.
+**Smart targeting:** If scope contains .tsx/.jsx/.css/.html/.svelte/.vue files, auto-equip goggles.
 **Model:** All teammates spawn as Opus 4.6 (`model: opus`).
 
 ---
@@ -217,14 +217,21 @@ git diff HEAD~1 --name-only
 # If $0 is a path, scope to that path
 ```
 
-Produce a file list. This goes into EVERY teammate's prompt.
+Produce a file list and store it:
+
+```bash
+FILE_LIST=$(git diff --cached --name-only; git diff --name-only)
+[ -z "$FILE_LIST" ] && FILE_LIST=$(git diff HEAD~1 --name-only)
+```
+
+This goes into EVERY teammate's prompt.
 
 **Smart Target (auto-equip goggles):**
 
 ```bash
 # Check if scope contains frontend files
-FRONTEND_FILES=$(echo "$FILE_LIST" | grep -E '\.(tsx|jsx|css|html|svelte|vue)$' | wc -l)
-if [ "$FRONTEND_FILES" -gt 0 ] || [ "$3" = "--goggles" ]; then
+FRONTEND_FILES=$(echo "$FILE_LIST" | grep -cE '\.(tsx|jsx|css|html|svelte|vue)$')
+if [ "$FRONTEND_FILES" -gt 0 ] || [ "${3-}" = "--goggles" ]; then
   GOGGLES=true   # Equip the Pink Glasses
 fi
 ```
