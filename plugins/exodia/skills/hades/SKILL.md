@@ -1,7 +1,7 @@
 ---
 name: hades
-description: "IF cleanup/elimination needed THEN use this. IF zero suppressions THEN this. IF dead code THEN this. IF duplication THEN this. Smart-Hades: every session gets a Smart ID, deletion permit, and audit ledger. Team lead skill — spawns 4 debate teammates per phase. Ignores public API, semver, changelog. Pure functional destruction. Idempotent: same input, same output. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1."
-argument-hint: "[scope] [focus] [intensity]"
+description: "IF cleanup/elimination needed THEN use this. IF zero suppressions THEN this. IF dead code THEN this. IF duplication THEN this. IF frontend design quality audit THEN use this with --goggles. Smart-Hades: every session gets a Smart ID, deletion permit, and audit ledger. Team lead skill — spawns 4 debate teammates per phase (+3 goggles teammates when equipped). Ignores public API, semver, changelog. Pure functional destruction. Idempotent: same input, same output. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1."
+argument-hint: "[scope] [focus] [intensity] [--goggles]"
 allowed-tools: Task, Bash, TodoWrite
 hooks:
   TeammateIdle:
@@ -28,6 +28,7 @@ hooks:
 **Scope:** $0 (default: . — file path | directory | repo | cross-repo)
 **Focus:** $1 (default: all — all|suppressions|dead-code|duplication|imports)
 **Intensity:** $2 (default: full — full|scan-only)
+**Goggles:** $3 (default: off — off|--goggles) — equip the Pink Glasses for frontend design judgment
 
 **Smart Infrastructure:** `plugins/exodia/scripts/smart/`
 
@@ -44,6 +45,7 @@ cp plugins/exodia/scripts/smart/hookify-rules/*.local.md .
 - [auditors.md](templates/auditors.md) — Phase 0 audit teammates
 - [eliminators.md](templates/eliminators.md) — Phase 1 elimination teammates
 - [verifiers.md](templates/verifiers.md) — Phase 2 verification teammates
+- [goggles.md](templates/goggles.md) — Frontend design judgment teammates (when --goggles equipped)
 
 ---
 
@@ -55,6 +57,29 @@ Hades ignores: public API, semver, changelog, backwards compat, "someone might u
 Hades enforces: zero suppressions, zero dead code, zero duplication, zero warnings, build passes, tests pass.
 Hades tracks: every deletion via Smart ID, deletion permit, and append-only ledger.
 Hades follows the rules — else we can't play games.
+
+### The Goggles (--goggles)
+
+When Hades equips the Pink Glasses, he sees beauty — and its absence.
+
+The Goggles embed three knowledge layers into Hades' judgment at different altitudes:
+
+```text
+TASTE (high)      → "What should this feel like?"   → frontend-design
+SPEC (mid)        → "Does it meet the bar?"         → ui-ux-pro-max
+COMPLIANCE (ground) → "Did they build it correctly?" → web-design-guidelines
+```
+
+A connoisseur's eye. Apple-like precision. Cutting-edge, lightweight, mobile-first.
+The goggles counteract generic AI slop by embedding semantic design taste — like a
+fashion designer's signature — into Hades' functional destruction pipeline.
+
+Without goggles: Hades sees dead code, suppressions, duplication, import rot.
+With goggles: Hades also sees bad typography, timid palettes, broken accessibility,
+layout shift, missing motion, flat backgrounds, and cookie-cutter aesthetics.
+
+**When to equip:** Any cleanup that touches frontend files (.tsx, .jsx, .css, .html).
+**Effect:** +3 goggles teammates in Phase 0. Their findings become elimination tasks.
 
 ---
 
@@ -83,40 +108,50 @@ plugins/exodia/scripts/smart/    <- checked-in tooling
 ## TEAM ARCHITECTURE
 
 ```text
-HADES (Lead — Delegate Mode)
+HADES (Lead — Delegate Mode — Opus 4.6)
 │
 ├─ INIT: Generate Smart ID, create deletion permit, init ledger
+│        Smart-target: detect frontend files in scope → auto-equip goggles
 │
-├─ Phase 0: AUDIT (4 Debating Auditors) — see templates/auditors.md
+├─ Phase 0: AUDIT (4 Auditors + 3 Goggles if equipped) — see templates/
 │  ├── smart-audit-suppressions
 │  ├── smart-audit-deadcode
 │  ├── smart-audit-duplication
-│  └── smart-audit-imports
+│  ├── smart-audit-imports
 │  │   ↕ debate via messaging ↕
+│  │
+│  ├── [GOGGLES] smart-goggles-taste       ← aesthetic direction judge
+│  ├── [GOGGLES] smart-goggles-spec        ← measurable quality judge
+│  └── [GOGGLES] smart-goggles-compliance  ← implementation rules judge
+│  │   ↕ pipeline: taste → spec → compliance ↕
+│  │   ↕ cross-message with standard auditors ↕
 │  └── GATE 0 -> PROCEED | HALT | SCAN_COMPLETE
 │
-├─ Phase 1: ELIMINATION (4 Debating Eliminators) — see templates/eliminators.md
+├─ Phase 1: ELIMINATION (4 Eliminators + design fixes) — see templates/
 │  ├── smart-elim-suppressions
 │  ├── smart-elim-deadcode
 │  ├── smart-elim-duplication
-│  └── smart-elim-imports
+│  ├── smart-elim-imports
 │  │   ↕ coordinate via messaging ↕
 │  │   ↕ log every deletion to ledger ↕
+│  │   ↕ goggles findings become elimination tasks ↕
 │  └── GATE 1 -> PROCEED | HALT
 │
-└─ Phase 2: VERIFICATION (4 Cross-Checking Verifiers) — see templates/verifiers.md
+└─ Phase 2: VERIFICATION (4 Verifiers + goggles re-check) — see templates/
    ├── smart-verify-build
    ├── smart-verify-tests
-   ├── smart-verify-grep
+   ├── smart-verify-grep     ← also verifies goggles violations resolved
    └── smart-verify-challenger
        ↕ challenge each other's claims ↕
        ↕ verify ledger completeness ↕
    └── GATE 2 -> COMPLETE | ITERATE (back to Phase 1)
 ```
 
-**Concurrency:** 4 teammates per phase. Shut down before spawning next phase.
+**Concurrency:** 4 teammates per phase (+3 goggles in Phase 0 when equipped). Shut down before spawning next phase.
 **File ownership:** Each teammate owns disjoint files. Lead resolves conflicts.
 **Task sizing:** 5-6 tasks per teammate. No kanban overflow.
+**Smart targeting:** If scope contains .tsx/.jsx/.css/.html files, auto-equip goggles.
+**Model:** All teammates spawn as Opus 4.6 (`model: opus`).
 
 ---
 
@@ -139,7 +174,7 @@ plugins/exodia/scripts/smart/permit.sh create "$SMART_ID" "$0" --ttl=3600
 
 Store `$SMART_ID` — pass it to every teammate prompt.
 
-**STEP 0b — Determine Scope:**
+**STEP 0b — Determine Scope + Smart Target:**
 
 ```bash
 # Staged + unstaged changes
@@ -154,15 +189,33 @@ git diff HEAD~1 --name-only
 
 Produce a file list. This goes into EVERY teammate's prompt.
 
+**Smart Target (auto-equip goggles):**
+
+```bash
+# Check if scope contains frontend files
+FRONTEND_FILES=$(echo "$FILE_LIST" | grep -E '\.(tsx|jsx|css|html|svelte|vue)$' | wc -l)
+if [ "$FRONTEND_FILES" -gt 0 ] || [ "$3" = "--goggles" ]; then
+  GOGGLES=true   # Equip the Pink Glasses
+fi
+```
+
+If `$3 = --goggles` OR scope contains frontend files → equip goggles automatically.
+Hades is smart enough to know when he needs his glasses.
+
 **STEPS 1-8 — Team Execution:**
 
 1. Create agent team: `Create an agent team for codebase cleanup`
 2. Enter delegate mode (Shift+Tab) — you coordinate, never implement
-3. Spawn Phase 0 (4 auditors from [templates/auditors.md](templates/auditors.md)), require plan approval before they start
-4. Wait for debate to converge, evaluate GATE 0
+3. Spawn Phase 0:
+   - 4 auditors from [templates/auditors.md](templates/auditors.md)
+   - If GOGGLES: +3 goggles teammates from [templates/goggles.md](templates/goggles.md) (all Opus 4.6)
+   - Require plan approval before they start
+4. Wait for debate to converge (both auditors AND goggles), evaluate GATE 0
 5. Shut down Phase 0 teammates, spawn Phase 1 (4 eliminators from [templates/eliminators.md](templates/eliminators.md))
+   - Goggles findings become elimination tasks alongside standard findings
 6. Wait for elimination, evaluate GATE 1
 7. Shut down Phase 1 teammates, spawn Phase 2 (4 verifiers from [templates/verifiers.md](templates/verifiers.md))
+   - smart-verify-grep also checks goggles violations were resolved
 8. If GATE 2 = ITERATE, repeat Phase 1. If COMPLETE, clean up team.
 
 **STEP 9 — Cleanup (after COMPLETE):**
@@ -189,12 +242,18 @@ plugins/exodia/scripts/smart/ledger.sh count
 ```text
 GATE 0: AUDIT -> [status]
 SMART_ID: [value]
+GOGGLES: [EQUIPPED | OFF]
 
 +------------------------------------------------------------+
 | Suppressions: [count] (fix: [n], false-positive: [n], upstream: [n])
 | Dead Code:    [count] items ([lines] lines)
 | Duplication:  [count] clusters
 | Imports:      [count] issues
++------------------------------------------------------------+
+| GOGGLES (if equipped):                                     |
+|   Taste:      [n] findings (REDESIGN: [n], REFINE: [n])   |
+|   Spec:       [n] violations (P1: [n], P2: [n], P3+: [n]) |
+|   Compliance: [n] issues (CRITICAL: [n], WARNING: [n])     |
 +------------------------------------------------------------+
 | Cross-teammate messages: [count]
 | Challenges resolved:     [count]
@@ -282,7 +341,8 @@ SMART_ID: [value]
 | Smart ID: [SMART-YYYY-MM-DD-...]                                   |
 | Scope: $0                                                          |
 | Intensity: $2                                                      |
-| Phases: 3 x 4 teammates = 12 total spawned                        |
+| Goggles: [EQUIPPED | OFF]                                          |
+| Phases: 3 x [4|7] teammates = [12|15+] total spawned              |
 +====================================================================+
 |                   BEFORE -> AFTER                                  |
 |  Suppressions:    [n] -> 0                                         |
@@ -290,6 +350,12 @@ SMART_ID: [value]
 |  Duplication:     [n] clusters -> 0                                |
 |  Import issues:   [n] -> 0                                         |
 |  Build warnings:  [n] -> 0                                         |
++====================================================================+
+|                   GOGGLES (if equipped)                             |
+|  Taste violations:      [n] -> 0  (REDESIGN: [n], REFINE: [n])    |
+|  Spec violations:       [n] -> 0  (P1: [n], P2: [n], P3+: [n])   |
+|  Compliance violations: [n] -> 0  (CRITICAL: [n], WARNING: [n])   |
+|  Pipeline flow: taste → spec → compliance                          |
 +====================================================================+
 |                   SMART INFRASTRUCTURE                             |
 |  Ledger entries:  [n]                                              |
@@ -317,3 +383,6 @@ SMART_ID: [value]
 | Duplication | X clusters | 0 | [n] | [n] |
 | Imports | X issues | 0 | [n] | [n] |
 | Build warnings | X | 0 | -- | -- |
+| Taste (goggles) | X | 0 | [n] | [n] |
+| Spec (goggles) | X | 0 | [n] | [n] |
+| Compliance (goggles) | X | 0 | [n] | [n] |
