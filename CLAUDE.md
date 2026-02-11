@@ -205,6 +205,10 @@ IF about to commit with suppressions/shortcuts
 IF cleanup/elimination/dead code/suppressions/duplication needed
   → exodia/hades skill (Smart cleanup with audit trail, 3 phases x 4 teammates)
 
+IF frontend design quality audit needed
+  → exodia/hades --goggles (adds 3 design judges: taste + spec + compliance)
+  → auto-equipped when scope contains .tsx/.jsx/.css/.html files
+
 IF multi-agent orchestration needed
   → exodia skills (UNRESTRICTED - unlimited parallel agents):
     fix                - P1/P2/P3 bugs (8 std, 16 max agents)
@@ -213,7 +217,7 @@ IF multi-agent orchestration needed
     tournament         - competitive solutions (N+2 agents)
     batch-implement    - parallel similar items (1+N+1 agents)
     red-blue-review    - adversarial security (3+N+1 agents)
-    hades              - audited cleanup (3 phases x 4 teammates)
+    hades              - audited cleanup (3 phases x 4+3 teammates with goggles)
 
   → workflow-tools commands (4/8 agent limits):
     /fix, /mega-swarm, /red-blue-review, /deep-think, /tournament, /batch-implement
@@ -234,6 +238,7 @@ When multi-agent orchestration is needed, use these IF/THEN patterns:
 - **IF need adversarial security/quality review** THEN use `red-blue-review` skill (Red attacks, Blue defends)
 - **IF comprehensive codebase audit** THEN use `mega-swarm` skill (12 agents full, 6 quick, 8 focused)
 - **IF cleanup/elimination/dead code/suppressions** THEN use `hades` skill (Smart IDs, deletion permits, audit ledger)
+- **IF frontend cleanup + design quality** THEN use `hades --goggles` (Pink Glasses: taste → spec → compliance pipeline)
 
 ### Priority and Composition
 
