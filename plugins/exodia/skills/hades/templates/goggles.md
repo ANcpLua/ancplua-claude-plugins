@@ -25,7 +25,7 @@ Their findings feed into Phase 1 elimination as design-violation tasks.
 > has a clear, intentional design direction — or whether it looks like generic AI slop.
 > SESSION: SMART_ID=[insert Smart ID]
 >
-> SCOPE: [insert scope — .tsx, .jsx, .css, .html files only]
+> SCOPE: [insert scope — frontend UI files, e.g. .tsx, .jsx, .svelte, .vue, .css, .html]
 >
 > Evaluate against these criteria:
 >
@@ -73,7 +73,7 @@ Their findings feed into Phase 1 elimination as design-violation tasks.
 > against concrete, measurable design quality specifications.
 > SESSION: SMART_ID=[insert Smart ID]
 >
-> SCOPE: [insert scope — .tsx, .jsx, .css, .html files only]
+> SCOPE: [insert scope — frontend UI files, e.g. .tsx, .jsx, .svelte, .vue, .css, .html]
 >
 > **Priority evaluation (in order — higher priority items are never sacrificed):**
 >
@@ -134,7 +134,7 @@ Their findings feed into Phase 1 elimination as design-violation tasks.
 > against exhaustive web interface guidelines at the code level.
 > SESSION: SMART_ID=[insert Smart ID]
 >
-> SCOPE: [insert scope — .tsx, .jsx, .css, .html files only]
+> SCOPE: [insert scope — frontend UI files, e.g. .tsx, .jsx, .svelte, .vue, .css, .html]
 >
 > **Scan every file for these anti-patterns (always flag as CRITICAL):**
 >

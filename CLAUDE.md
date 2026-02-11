@@ -207,7 +207,7 @@ IF cleanup/elimination/dead code/suppressions/duplication needed
 
 IF frontend design quality audit needed
   → exodia/hades --goggles (adds 3 design judges: taste + spec + compliance)
-  → auto-equipped when scope contains .tsx/.jsx/.css/.html files
+  → auto-equipped when scope contains .tsx/.jsx/.css/.html/.svelte/.vue files
 
 IF multi-agent orchestration needed
   → exodia skills (UNRESTRICTED - unlimited parallel agents):

@@ -28,7 +28,7 @@ hooks:
 **Scope:** $0 (default: . — file path | directory | repo | cross-repo)
 **Focus:** $1 (default: all — all|suppressions|dead-code|duplication|imports)
 **Intensity:** $2 (default: full — full|scan-only)
-**Goggles:** $3 (default: off — off|--goggles) — equip the Pink Glasses for frontend design judgment
+**Goggles:** $3 (default: auto — [--goggles]) — optional flag to explicitly equip the Pink Glasses for frontend design judgment (otherwise scope-based auto-equip may enable them)
 
 **Smart Infrastructure:** `plugins/exodia/scripts/smart/`
 
@@ -70,15 +70,45 @@ SPEC (mid)        → "Does it meet the bar?"         → ui-ux-pro-max
 COMPLIANCE (ground) → "Did they build it correctly?" → web-design-guidelines
 ```
 
-A connoisseur's eye. Apple-like precision. Cutting-edge, lightweight, mobile-first.
-The goggles counteract generic AI slop by embedding semantic design taste — like a
-fashion designer's signature — into Hades' functional destruction pipeline.
+Hades already sees everything that's broken. The goggles raise the bar: broken
+includes outdated. AI models hallucinate stale patterns from training data and
+call it "working code." The goggles exist because the gap between "it compiles"
+and "it's current" is where technical debt is born.
 
-Without goggles: Hades sees dead code, suppressions, duplication, import rot.
-With goggles: Hades also sees bad typography, timid palettes, broken accessibility,
-layout shift, missing motion, flat backgrounds, and cookie-cutter aesthetics.
+Goggles classification table — what to flag and why:
 
-**When to equip:** Any cleanup that touches frontend files (.tsx, .jsx, .css, .html).
+| Pattern | Verdict | Why | Modern replacement |
+|---------|---------|-----|--------------------|
+| `rounded-lg shadow-md` | GENERIC-AI-SLOP | Thoughtless defaults, no hierarchy, no design intent | Semantic `@theme` tokens: `--radius-card`, `--shadow-card` |
+| `Inter` as display font | MISAPPLIED | Fine for body/UI. As hero font it's the #1 AI default | Satoshi, Geist, or expressive variable fonts for display |
+| Purple-to-blue gradient | GENERIC-AI-SLOP | The canonical AI gradient. v4 renamed `bg-gradient-*` → `bg-linear-*` | `bg-radial-[at_25%_25%]/oklch`, mesh/layered gradients, `bg-conic` |
+| Flat centered card | GENERIC-AI-SLOP | The most obvious AI layout pattern | Bento grids, asymmetric layouts, varied card sizes, layered depth |
+| `transition-all` | ANTI-PATTERN | Forces browser to watch every CSS property | `transition-transform`, `transition-colors`, specific props + `transform-gpu` |
+| `outline-none` | HARMFUL | Breaks keyboard nav + invisible in Windows High Contrast Mode | `outline-hidden` (v4) + `focus-visible:outline-2 focus-visible:outline-offset-2` |
+| `tailwind.config.js` | OUTDATED | v4 is CSS-first. `@theme` directive replaces the JS config | `@theme { --color-*: oklch(...); --font-*: ...; --radius-*: ...; }` |
+
+The v4-native pattern all goggles teammates enforce:
+
+```css
+@import "tailwindcss";
+
+@theme {
+  --color-brand-500: oklch(0.72 0.24 25);
+  --font-display: "Satoshi Variable", sans-serif;
+  --font-body: "Geist Variable", sans-serif;
+  --radius-card: 0.75rem;
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.08);
+  --shadow-elevated: 0 10px 25px rgb(0 0 0 / 0.12);
+}
+```
+
+The reason this matters: LLMs reproduce what they trained on. Training data skews
+toward older framework versions. Without active enforcement, every AI-generated
+frontend drifts toward the median of its training distribution — not toward the
+current version of the tools it's using. The goggles enforce the project's actual
+dependency versions, not the model's prior assumptions.
+
+**When to equip:** Any cleanup that touches frontend files (.tsx, .jsx, .css, .html, .svelte, .vue).
 **Effect:** +3 goggles teammates in Phase 0. Their findings become elimination tasks.
 
 ---
@@ -150,7 +180,7 @@ HADES (Lead — Delegate Mode — Opus 4.6)
 **Concurrency:** 4 teammates per phase (+3 goggles in Phase 0 when equipped). Shut down before spawning next phase.
 **File ownership:** Each teammate owns disjoint files. Lead resolves conflicts.
 **Task sizing:** 5-6 tasks per teammate. No kanban overflow.
-**Smart targeting:** If scope contains .tsx/.jsx/.css/.html files, auto-equip goggles.
+**Smart targeting:** If scope contains .tsx/.jsx/.css/.html/.svelte/.vue files, auto-equip goggles.
 **Model:** All teammates spawn as Opus 4.6 (`model: opus`).
 
 ---
@@ -187,14 +217,21 @@ git diff HEAD~1 --name-only
 # If $0 is a path, scope to that path
 ```
 
-Produce a file list. This goes into EVERY teammate's prompt.
+Produce a file list and store it:
+
+```bash
+FILE_LIST=$(git diff --cached --name-only; git diff --name-only)
+[ -z "$FILE_LIST" ] && FILE_LIST=$(git diff HEAD~1 --name-only)
+```
+
+This goes into EVERY teammate's prompt.
 
 **Smart Target (auto-equip goggles):**
 
 ```bash
 # Check if scope contains frontend files
-FRONTEND_FILES=$(echo "$FILE_LIST" | grep -E '\.(tsx|jsx|css|html|svelte|vue)$' | wc -l)
-if [ "$FRONTEND_FILES" -gt 0 ] || [ "$3" = "--goggles" ]; then
+FRONTEND_FILES=$(echo "$FILE_LIST" | grep -cE '\.(tsx|jsx|css|html|svelte|vue)$')
+if [ "$FRONTEND_FILES" -gt 0 ] || [ "${3-}" = "--goggles" ]; then
   GOGGLES=true   # Equip the Pink Glasses
 fi
 ```

@@ -8,7 +8,11 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- **Hades Goggles (Pink Glasses)**: Frontend design judgment enhancement for Hades cleanup skill. Equip with `--goggles` or auto-equipped when scope contains frontend files (.tsx/.jsx/.css/.html). Adds 3 Opus 4.6 teammates (taste/spec/compliance) to Phase 0 audit alongside standard auditors. Three knowledge layers compose as a pipeline: frontend-design (aesthetic direction) → ui-ux-pro-max (measurable specs) → web-design-guidelines (implementation compliance). Findings feed into Phase 1 elimination as design-violation tasks.
+- **Hades Goggles (Pink Glasses)**: Frontend design judgment enhancement for Hades cleanup skill.
+  - Equip with `--goggles` or auto-equipped when scope contains frontend files (`.tsx`/`.jsx`/`.css`/`.html`/`.svelte`/`.vue`).
+  - Adds 3 Opus 4.6 teammates (taste/spec/compliance) to Phase 0 audit.
+  - Three-layer pipeline: frontend-design (aesthetic direction) → ui-ux-pro-max (measurable specs) → web-design-guidelines (implementation compliance).
+  - Findings feed into Phase 1 elimination as design-violation tasks.
 - **Hades smart targeting**: Auto-detects frontend files in scope and equips goggles without explicit `--goggles` flag
 - **Goggles teammate templates**: `plugins/exodia/skills/hades/templates/goggles.md` — smart-goggles-taste, smart-goggles-spec, smart-goggles-compliance
 - **CLAUDE.md routing**: Added frontend design quality audit routing to Hades --goggles
