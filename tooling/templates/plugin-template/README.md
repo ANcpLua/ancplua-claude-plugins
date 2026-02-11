@@ -16,12 +16,6 @@ This plugin is part of the `ancplua-claude-plugins` marketplace.
 /plugin install <plugin-name>@ancplua-claude-plugins
 ```
 
-## Skills
-
-| Skill | Description |
-|-------|-------------|
-| `skill-name` | What the skill enables Claude to do |
-
 ## Commands
 
 | Command | Description |
@@ -30,45 +24,59 @@ This plugin is part of the `ancplua-claude-plugins` marketplace.
 
 ## Directory Structure
 
-Per [official docs](https://code.claude.com/docs/en/plugins):
-
 ```text
 plugins/<plugin-name>/
 ├── .claude-plugin/
 │   └── plugin.json          # Required: name, description, version, author
+│                             # MUST include "commands": "./commands"
 ├── README.md                 # This file
+├── commands/
+│   └── <command>.md         # Slash commands (required for CLI autocomplete)
 ├── skills/
 │   └── <skill-name>/
-│       └── SKILL.md         # Skill definition (name + description required)
-├── commands/
-│   └── <command>.md         # Slash commands
+│       └── SKILL.md         # Only for skills with hooks or argument-hint
 ├── agents/
-│   └── <agent>/             # Custom agents
+│   └── <agent>.md           # Custom agents (optional)
 ├── hooks/
 │   └── hooks.json           # Lifecycle hooks (optional)
 └── scripts/
     └── <script>.sh          # Helper scripts (optional)
 ```
 
-## Configuration
+### Autocomplete Rule
 
-### Environment Variables
+**Every user-invocable skill MUST have a `commands/<name>.md` file.**
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `VAR_NAME` | Yes/No | What it's for |
+The `commands/` directory is what the CLI indexes for `/` tab-completion.
+`skills/` alone does NOT provide autocomplete. Use `skills/` only when
+a skill needs extra features (hooks, argument-hint) that commands don't support.
+
+If a skill has both `commands/<name>.md` and `skills/<name>/SKILL.md`,
+the command provides autocomplete and the skill provides extended features.
+Use different names to avoid double registration.
+
+### plugin.json
+
+```json
+{
+  "name": "plugin-name",
+  "version": "1.0.0",
+  "description": "What the plugin does.",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "commands": "./commands"
+}
+```
+
+The `"commands": "./commands"` field is **required** for autocomplete.
 
 ## Usage Examples
 
-### Example 1: Basic Usage
-
-```text
-User: Use the <skill-name> skill to do X
-
-Claude: [Uses skill to accomplish X]
-```
-
-### Example 2: With Command
+### Example: With Command
 
 ```text
 User: /<command> argument
@@ -86,6 +94,5 @@ Run local validation before committing:
 
 ## Related
 
-- [SKILL.md](skills/<skill-name>/SKILL.md) - Skill documentation
 - [Plugin Guidelines](../../docs/PLUGINS.md) - Plugin development guide
 - [Official Plugin Docs](https://code.claude.com/docs/en/plugins)

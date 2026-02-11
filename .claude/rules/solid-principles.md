@@ -12,10 +12,9 @@ Each plugin should do ONE thing well:
 - `otelwiki` -> OpenTelemetry documentation only
 - `dotnet-architecture-lint` -> .NET build patterns only
 - `completion-integrity` -> Task completion quality only
-- `workflow-tools` -> Multi-agent orchestration workflows
 - `hookify` -> User-configurable hooks
 - `feature-dev` -> Guided feature development
-- `exodia` -> Skills-standard workflow orchestration
+- `exodia` -> Multi-agent workflow orchestration
 - `ancplua-project-routing` -> Auto-routes to specialist agents
 
 **Anti-pattern:** A plugin that handles CI, commits, AND reviews.

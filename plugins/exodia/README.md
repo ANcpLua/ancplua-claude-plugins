@@ -1,43 +1,36 @@
-# exodia v1.1.0
+# exodia v2.0.0
 
-Multi-agent workflow orchestration as skills (skills.sh open standard).
+Multi-agent workflow orchestration. 8 commands + 1 skill (hades).
 
-Skills-standard counterpart to `workflow-tools`. Same workflows, discoverable as skills instead of slash commands.
+## Commands
 
-## Skills
+| Command | Agents | Pattern | Best For |
+|---------|--------|---------|----------|
+| `/exodia:turbo-fix` | 16 | Phased pipeline | P0 critical bugs |
+| `/exodia:fix` | 8-16 | Configurable pipeline | Any bug fix |
+| `/exodia:fix-pipeline` | 7 | Systematic pipeline | Audit findings |
+| `/exodia:tournament` | N+2 | Competition | Quality optimization |
+| `/exodia:mega-swarm` | 6-12 | All parallel | Codebase audit |
+| `/exodia:deep-think` | 5 | Multi-perspective | Analysis before action |
+| `/exodia:batch-implement` | N+2 | Template + parallel | Similar items |
+| `/exodia:red-blue-review` | 3+N | Adversarial | Security review |
+
+## Skill (uses hooks/argument-hint)
 
 | Skill | Agents | Pattern | Best For |
 |-------|--------|---------|----------|
-| `turbo-fix` | 16 | Phased pipeline | P0 critical bugs |
-| `fix` | 8-16 | Configurable pipeline | Any bug fix |
-| `fix-pipeline` | 7 | Systematic pipeline | Audit findings |
-| `tournament` | N+2 | Competition | Quality optimization |
-| `mega-swarm` | 6-12 | All parallel | Codebase audit |
-| `deep-think` | 5 | Multi-perspective | Analysis before action |
-| `batch-implement` | N+2 | Template + parallel | Similar items |
-| `red-blue-review` | 3+N | Adversarial | Security review |
+| `exodia:hades` | 12 (3x4) | Smart cleanup | Audited elimination |
 
 ## Typical Workflow
 
 ```text
-1. Audit the codebase         → mega-swarm mode=quick
-2. Fix critical issues        → turbo-fix (P0) or fix (P1/P2)
-3. Security review            → red-blue-review scope=security
-4. Architectural decisions    → deep-think mode=architecture
-5. Batch implement features   → batch-implement type=endpoints
-6. Re-audit                   → mega-swarm mode=full
+1. Audit the codebase         → /mega-swarm mode=quick
+2. Fix critical issues        → /turbo-fix (P0) or /fix (P1/P2)
+3. Security review            → /red-blue-review scope=security
+4. Architectural decisions    → /deep-think mode=architecture
+5. Batch implement features   → /batch-implement type=endpoints
+6. Re-audit                   → /mega-swarm mode=full
 ```
-
-## Relationship to workflow-tools
-
-| workflow-tools | exodia |
-|---------------|--------|
-| `commands/*.md` (slash commands) | `skills/*/SKILL.md` (skills standard) |
-| Invoked via `/workflow-tools:fix` | Discovered via skill matching |
-| No passive context | Routing embedded in skill descriptions |
-
-Both contain identical workflow specifications. Use `workflow-tools` for explicit
-slash-command invocation, `exodia` for skill-based discovery.
 
 ## Installation
 

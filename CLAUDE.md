@@ -119,21 +119,19 @@ ancplua-claude-plugins/
 │       ├── ci.yml               # Main CI pipeline
 │       └── dependabot.yml
 │
-├── plugins/                     # 11 plugins
+├── plugins/                     # 10 plugins
 │   ├── autonomous-ci/           # CI verification and monitoring
 │   ├── code-review/             # Security, style, performance analysis
-│   ├── metacognitive-guard/     # Cognitive amplification stack (v0.2.6)
+│   ├── metacognitive-guard/     # Cognitive amplification stack (v0.3.0)
 │   ├── otelwiki/                # OpenTelemetry documentation (v1.0.6)
 │   ├── dotnet-architecture-lint/# .NET build pattern enforcement
 │   ├── completion-integrity/    # Prevents task shortcuts
-│   ├── workflow-tools/          # Multi-agent orchestration (v2.0.0)
 │   ├── hookify/                 # User-configurable hooks
 │   ├── feature-dev/             # Guided feature development
 │   ├── ancplua-project-routing/ # Auto-routes to specialist agents
-│   └── exodia/                  # Skills-standard workflow orchestration
+│   └── exodia/                  # Multi-agent workflow orchestration (v2.0.0)
 │
 ├── agents/
-│   ├── cleanup-specialist/      # Deprecated (use exodia/hades)
 │   └── repo-reviewer-agent/     # Repository health reviewer
 │
 ├── docs/
@@ -210,20 +208,17 @@ IF frontend design quality audit needed
   → auto-equipped when scope contains .tsx/.jsx/.css/.html/.svelte/.vue files
 
 IF multi-agent orchestration needed
-  → exodia skills (UNRESTRICTED - unlimited parallel agents):
-    fix                - P1/P2/P3 bugs (8 std, 16 max agents)
-    mega-swarm         - codebase audit (6/8/12 agents by mode)
-    deep-think         - multi-perspective analysis (5 agents)
-    tournament         - competitive solutions (N+2 agents)
-    batch-implement    - parallel similar items (1+N+1 agents)
-    red-blue-review    - adversarial security (3+N+1 agents)
+  → exodia commands (unlimited parallel agents):
+    /fix               - P1/P2/P3 bugs (8 std, 16 max agents)
+    /mega-swarm        - codebase audit (6/8/12 agents by mode)
+    /deep-think        - multi-perspective analysis (5 agents)
+    /tournament        - competitive solutions (N+2 agents)
+    /batch-implement   - parallel similar items (1+N+1 agents)
+    /red-blue-review   - adversarial security (3+N+1 agents)
     hades              - audited cleanup (3 phases x 4+3 teammates with goggles)
 
-  → workflow-tools commands (4/8 agent limits):
-    /fix, /mega-swarm, /red-blue-review, /deep-think, /tournament, /batch-implement
-
 IF zero-tolerance cleanup needed
-  → exodia/hades skill (replaces deprecated cleanup-specialist agent)
+  → exodia:hades skill (audited cleanup with Smart IDs, deletion permits, audit ledger)
 ```
 
 ### Exodia Skills Detailed Routing

@@ -2,16 +2,15 @@
 
 > **CCC** — Claude, Copilot, CodeRabbit. The holy trinity. And two of them are Claude in a trenchcoat.
 
-Claude Code plugin marketplace. 11 plugins for CI, code review, cognitive amplification,
+Claude Code plugin marketplace. 10 plugins for CI, code review, cognitive amplification,
 multi-agent orchestration, and audited cleanup.
 
 ## Plugins
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| **exodia** | 1.1.0 | Multi-agent orchestration as skills: fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, hades |
-| **metacognitive-guard** | 0.2.6 | Cognitive amplification: epistemic hooks, competitive review, fact-checking, deep-thinking agents |
-| **workflow-tools** | 2.0.0 | Multi-agent commands: /fix, /red-blue-review, /tournament, /mega-swarm, /deep-think, /batch-implement |
+| **exodia** | 2.0.0 | Multi-agent orchestration: fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, hades |
+| **metacognitive-guard** | 0.3.0 | Cognitive amplification: epistemic hooks, competitive review, fact-checking, deep-thinking agents |
 | **otelwiki** | 1.0.6 | OpenTelemetry docs with auto-sync and semantic convention validation |
 | **hookify** | 0.2.0 | User-configurable hooks from .local.md files |
 | **feature-dev** | 1.0.0 | Guided feature development with codebase understanding |
@@ -26,7 +25,6 @@ multi-agent orchestration, and audited cleanup.
 ```bash
 claude plugin install exodia@ancplua-claude-plugins
 claude plugin install metacognitive-guard@ancplua-claude-plugins
-claude plugin install workflow-tools@ancplua-claude-plugins
 ```
 
 ## Architecture
@@ -37,9 +35,8 @@ Tri-AI review system: Claude, Copilot, CodeRabbit all review PRs independently.
 
 ```text
 plugins/
-├── exodia/                  # multi-agent orchestration (9 skills incl. hades cleanup)
+├── exodia/                  # multi-agent orchestration (9 commands incl. hades cleanup)
 ├── metacognitive-guard/     # struggle detection + deep-think agents
-├── workflow-tools/          # multi-agent commands (4/8 agent limits)
 ├── otelwiki/                # OTel docs + sync
 ├── hookify/                 # user-configurable hooks
 ├── feature-dev/             # guided feature development

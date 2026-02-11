@@ -139,7 +139,7 @@ Each plugin handles ONE concern:
 | `autonomous-ci` | CI verification and monitoring |
 | `code-review` | Code quality analysis |
 | `metacognitive-guard` | Cognitive amplification and struggle detection |
-| `workflow-tools` | Multi-agent orchestration workflows |
+| `exodia` | Multi-agent orchestration (8 commands + hades skill) |
 
 **Anti-pattern:** A "super-plugin" that does everything.
 

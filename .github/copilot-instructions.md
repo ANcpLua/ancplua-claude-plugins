@@ -83,14 +83,12 @@ ancplua-claude-plugins/
 │   ├── otelwiki/                # OpenTelemetry documentation
 │   ├── dotnet-architecture-lint/# .NET build pattern enforcement
 │   ├── completion-integrity/    # Prevents task shortcuts
-│   ├── workflow-tools/          # Multi-agent orchestration
 │   ├── hookify/                 # User-configurable hooks
 │   ├── feature-dev/             # Guided feature development
 │   ├── ancplua-project-routing/ # Auto-routes to specialist agents
-│   └── exodia/                  # Skills-standard workflow orchestration
+│   └── exodia/                  # Multi-agent orchestration (v2.0.0)
 │
 ├── agents/
-│   ├── cleanup-specialist/      # Zero-tolerance cleanup agent
 │   └── repo-reviewer-agent/     # Repository health reviewer
 │
 ├── docs/
