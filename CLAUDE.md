@@ -93,7 +93,7 @@ You **NOT ALLOWED TO**:
 | **CI Agent** | Runs in GitHub Actions via `claude-code-action` | PR reviews, autonomous fix PRs |
 | **Hooks** | Event-driven guards (command or prompt type) | `epistemic-guard.sh`, `TaskCompleted` haiku validation |
 
-A single `/hades` invocation spawns 12 Opus agents across 3 phases. A `/mega-swarm` spawns up to 12.
+A single `/exodia:hades` invocation spawns 12 Opus agents across 3 phases. A `/exodia:mega-swarm` spawns up to 12.
 The lead orchestrates — it never implements when teammates exist. Subagents get CLAUDE.md and skills
 but NOT conversation history. All context must be in the spawn prompt.
 
@@ -203,13 +203,13 @@ IF frontend design quality audit needed
 
 IF multi-agent orchestration needed
   → exodia commands (unlimited parallel agents):
-    /fix               - P1/P2/P3 bugs (8 std, 16 max agents)
-    /mega-swarm        - codebase audit (6/8/12 agents by mode)
-    /deep-think        - multi-perspective analysis (5 agents)
-    /tournament        - competitive solutions (N+2 agents)
-    /batch-implement   - parallel similar items (1+N+1 agents)
-    /red-blue-review   - adversarial security (3+N+1 agents)
-    hades              - audited cleanup (3 phases x 4+3 teammates with goggles)
+    /exodia:fix               - P1/P2/P3 bugs (8 std, 16 max agents)
+    /exodia:mega-swarm        - codebase audit (6/8/12 agents by mode)
+    /exodia:deep-think        - multi-perspective analysis (5 agents)
+    /exodia:tournament        - competitive solutions (N+2 agents)
+    /exodia:batch-implement   - parallel similar items (1+N+1 agents)
+    /exodia:red-blue-review   - adversarial security (3+N+1 agents)
+    /exodia:hades             - audited cleanup (3 phases x 4+3 teammates with goggles)
 
 IF zero-tolerance cleanup needed
   → exodia:hades skill (audited cleanup with Smart IDs, deletion permits, audit ledger)

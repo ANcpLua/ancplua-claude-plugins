@@ -24,12 +24,12 @@ Multi-agent workflow orchestration. 8 commands + 1 skill (hades).
 ## Typical Workflow
 
 ```text
-1. Audit the codebase         → /mega-swarm mode=quick
-2. Fix critical issues        → /turbo-fix (P0) or /fix (P1/P2)
-3. Security review            → /red-blue-review scope=security
-4. Architectural decisions    → /deep-think mode=architecture
-5. Batch implement features   → /batch-implement type=endpoints
-6. Re-audit                   → /mega-swarm mode=full
+1. Audit the codebase         → /exodia:mega-swarm mode=quick
+2. Fix critical issues        → /exodia:turbo-fix (P0) or /exodia:fix (P1/P2)
+3. Security review            → /exodia:red-blue-review scope=security
+4. Architectural decisions    → /exodia:deep-think mode=architecture
+5. Batch implement features   → /exodia:batch-implement type=endpoints
+6. Re-audit                   → /exodia:mega-swarm mode=full
 ```
 
 ## Installation

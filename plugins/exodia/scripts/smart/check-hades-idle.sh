@@ -10,7 +10,14 @@
 set -euo pipefail
 
 INPUT=$(cat)
-TEAMMATE=$(echo "$INPUT" | jq -r '.teammate_name // empty')
+
+# Extract teammate name — jq with sed fallback (matches repo convention)
+TEAMMATE=""
+if command -v jq &>/dev/null; then
+    TEAMMATE=$(echo "$INPUT" | jq -r '.teammate_name // empty' 2>/dev/null)
+else
+    TEAMMATE=$(echo "$INPUT" | sed -n 's/.*"teammate_name"\s*:\s*"\([^"]*\)".*/\1/p' 2>/dev/null || true)
+fi
 
 # Only gate eliminators — auditors and verifiers idle freely
 if ! echo "$TEAMMATE" | grep -q "smart-elim"; then
