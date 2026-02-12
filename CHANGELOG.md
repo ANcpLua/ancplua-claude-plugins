@@ -6,6 +6,17 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+
+- **metacognitive-guard Stop hook not async**: `struggle-detector.sh` never blocks stopping (always exits 0) but was running synchronously, delaying response delivery. Now runs with `async: true` — feedback delivered next turn without blocking
+- **otelwiki check-freshness.sh missing timeout**: No `timeout` field meant 600s (10 minute) default. Added `timeout: 5` matching sibling hook
+- **hades TeammateIdle inline command using relative path**: `plugins/exodia/scripts/smart/ledger.sh` breaks if CWD isn't repo root. Extracted to `check-hades-idle.sh` script using `${CLAUDE_PLUGIN_ROOT}` for reliable path resolution
+
+### Added
+
+- **metacognitive-guard TaskCompleted hook**: Prompt-based (haiku, 15s) quality gate that validates task completions in team workflows aren't premature. Fires on every `TaskUpdate` to `completed` status
+- **exodia check-hades-idle.sh**: Extracted script from hades SKILL.md inline `bash -c` command. Cleaner, debuggable, uses `${CLAUDE_PLUGIN_ROOT}` paths
+
 ### Changed
 
 - **Plugin consolidation: 10 → 7 plugins** via three merges:

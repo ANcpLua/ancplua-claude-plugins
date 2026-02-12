@@ -7,7 +7,7 @@ hooks:
   TeammateIdle:
     - hooks:
         - type: command
-          command: "bash -c 'INPUT=$(cat); TEAMMATE=$(echo \"$INPUT\" | jq -r .teammate_name); if echo \"$TEAMMATE\" | grep -q \"smart-elim\"; then COUNT=$(plugins/exodia/scripts/smart/ledger.sh count 2>/dev/null | grep -o \"[0-9]*\" | head -1); if [ \"${COUNT:-0}\" = \"0\" ]; then echo \"No ledger entries found. Log your deletions before going idle.\" >&2; exit 2; fi; fi; exit 0'"
+          command: "bash ${CLAUDE_PLUGIN_ROOT}/scripts/smart/check-hades-idle.sh"
           timeout: 10
           statusMessage: "Verifying ledger entries before idle..."
   TaskCompleted:

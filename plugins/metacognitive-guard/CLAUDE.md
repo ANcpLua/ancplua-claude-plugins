@@ -10,7 +10,8 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 | Truth Beacon | SessionStart | `truth-beacon.sh` | Injects `blackboard/assertions.yaml` as authoritative facts |
 | Epistemic Guard | PreToolUse (Write/Edit) | `epistemic-guard.sh` | Blocks writes with wrong versions, banned APIs, AGENTS.md in plugins |
 | Commit Integrity | PreToolUse (Bash) | `commit-integrity-hook.sh` | Blocks `git commit` with suppressions, commented tests, deleted assertions |
-| Struggle Detector | Stop | `struggle-detector.sh` | Scores response for uncertainty, triggers deep-think suggestion |
+| Struggle Detector | Stop (async) | `struggle-detector.sh` | Scores response for uncertainty, triggers deep-think suggestion |
+| Task Completion Gate | TaskCompleted | prompt (haiku) | Validates task completions in team workflows aren't premature |
 
 ## Commands
 
@@ -49,3 +50,5 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 - verify-local.sh and wait-for-ci.sh are utility scripts for the verification workflow, not hook triggers.
 - Hades god mode: active delete permit causes epistemic-guard to exit early.
 - Struggle detector tracks consecutive struggling responses via `.blackboard/.struggle-count`.
+- Struggle detector runs async (non-blocking) — feedback delivered next turn, never delays responses.
+- TaskCompleted prompt hook fires on every task completion in team contexts (haiku, 15s timeout).
