@@ -40,8 +40,8 @@
     },
     {
       "name": "ancplua-project-routing",
-      "description": "Auto-routes to specialist agents based on current project directory. Injects context for ErrorOrX, Analyzers, SDK, qyl (includes servicedefaults), Template, and plugin repos.",
-      "version": "1.0.1",
+      "description": "Auto-routes to specialist agents, commands, and skills based on current project. Injects cross-repo dependency graph for the ancplua .NET ecosystem.",
+      "version": "2.0.0",
       "source": "./plugins/ancplua-project-routing"
     },
     {

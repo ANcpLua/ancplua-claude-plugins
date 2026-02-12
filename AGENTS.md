@@ -85,8 +85,7 @@ IF zero-tolerance cleanup needed
 |feature-dev/agents:{code-architect.md,code-explorer.md,code-reviewer.md}
 |hookify/agents:{conversation-analyzer.md}
 
-[Standalone Agents]|root: ./agents
-|repo-reviewer-agent:{config/}
+[Note: All agents live inside their plugins. No standalone agents directory.]
 ```
 
 ## Coordination

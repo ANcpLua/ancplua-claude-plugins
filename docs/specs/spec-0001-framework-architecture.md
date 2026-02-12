@@ -184,7 +184,6 @@ plugins/<plugin-name>/
 At the top level, the repository MUST present:
 
 - `plugins/` for plugins.
-- `agents/` for Agent SDK projects.
 - `skills/` for repo-level Skills.
 - `tooling/` for scripts and templates.
 - `docs/` for architecture and process documentation.

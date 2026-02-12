@@ -85,9 +85,6 @@ ancplua-claude-plugins/
 │   ├── ancplua-project-routing/ # Auto-routes to specialist agents
 │   └── exodia/                  # Multi-agent orchestration (v2.0.0)
 │
-├── agents/
-│   └── repo-reviewer-agent/     # Repository health reviewer
-│
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── PLUGINS.md

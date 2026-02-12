@@ -30,8 +30,6 @@ ancplua-claude-plugins/
 │   ├── feature-dev/
 │   └── ... (7 plugins total)
 │
-├── agents/                      # Agent SDK projects
-│
 ├── skills/                      # Repo-level skills
 │
 ├── docs/
