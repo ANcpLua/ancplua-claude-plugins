@@ -19,7 +19,7 @@ This framework defines a single, long-lived repository that:
 
 - Hosts multiple Claude Code plugins in a **consistent marketplace layout**.
 - Provides **reusable Skills** that encode development discipline and workflows.
-- Exposes **agents** built with the Agent SDK that consume plugins and Skills.
+- Exposes **agents** inside plugins that orchestrate workflows and specialized analysis.
 - Supplies **tooling and CI** so Claude and humans can safely evolve the system.
 
 The goal is to keep Claude Code work **centralized, predictable, and inspectable** over many years without repeated
@@ -29,7 +29,7 @@ restructurings.
 
 This framework is successful when:
 
-- At least one plugin (for example `autonomous-ci`) can be:
+- At least one plugin (for example `metacognitive-guard`) can be:
   - Installed via marketplace from this repo.
   - Validated via `claude plugin validate`.
 - New plugins and agents can be added **without changing** the top-level architecture.
@@ -44,7 +44,7 @@ This framework is successful when:
 Users and Claude Code obtain:
 
 - A **single marketplace** (`.claude-plugin/marketplace.json`) that declares all plugins.
-- A **stable directory layout** (`plugins/`, `agents/`, `skills/`, `tooling/`, `docs/`) that MUST be preserved.
+- A **stable directory layout** (`plugins/`, `skills/`, `tooling/`, `docs/`) that MUST be preserved.
 - A set of **Skills and scripts** that guide how to:
   - Implement features.
   - Enforce CI discipline.
@@ -110,17 +110,17 @@ The marketplace manifest MUST:
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"
   },
-  "description": "Alexander's lifetime Claude Code ecosystem (plugins, skills, and agents).",
+  "description": "Alexander's lifetime Claude Code ecosystem.",
   "plugins": [
     {
-      "name": "autonomous-ci",
-      "source": "./plugins/autonomous-ci",
-      "description": "Never claim completion without local tests and CI verification.",
-      "version": "0.1.0"
+      "name": "metacognitive-guard",
+      "source": "./plugins/metacognitive-guard",
+      "description": "Cognitive amplification stack: epistemic hooks, competitive review, commit integrity, CI verification.",
+      "version": "0.4.0"
     }
   ]
 }
-````
+```
 
 Rules:
 
@@ -155,9 +155,9 @@ plugins/<plugin-name>/
 
   ```jsonc
   {
-    "name": "autonomous-ci",
-    "description": "Ensures Claude verifies local tests AND CI before claiming completion.",
-    "version": "0.1.0",
+    "name": "metacognitive-guard",
+    "description": "Cognitive amplification stack: epistemic hooks, competitive review, commit integrity, CI verification.",
+    "version": "0.4.0",
     "author": {
       "name": "AncpLua",
       "url": "https://github.com/ANcpLua"
@@ -227,20 +227,20 @@ In the Claude Code session:
 
 ```text
 /plugin marketplace add /Users/ancplua/WebstormProjects/ancplua-claude-plugins
-/plugin install autonomous-ci@ancplua-claude-plugins
+/plugin install metacognitive-guard@ancplua-claude-plugins
 ```
 
 Expected outcome:
 
 - Claude reads `.claude-plugin/marketplace.json`.
-- `autonomous-ci` plugin becomes available.
-- The plugin’s Skills and hooks can be used inside the target project.
+- `metacognitive-guard` plugin becomes available.
+- The plugin's Skills and hooks can be used inside the target project.
 
 ### 4.2 Add this repository as a marketplace (GitHub)
 
 ```text
 /plugin marketplace add ANcpLua/ancplua-claude-plugins
-/plugin install autonomous-ci@ancplua-claude-plugins
+/plugin install metacognitive-guard@ancplua-claude-plugins
 ```
 
 Claude MUST treat the GitHub repo as a marketplace using the same manifest.

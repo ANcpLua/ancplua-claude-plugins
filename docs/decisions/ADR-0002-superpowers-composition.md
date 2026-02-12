@@ -51,7 +51,7 @@ When Superpowers is installed:
 
 - Claude SHOULD use Superpowers for general workflows (brainstorming, TDD, debugging).
 - Claude SHOULD use plugin Skills for repo-specific behavior.
-- Plugin Skills (e.g., `autonomous-ci`) add specialized capabilities.
+- Plugin Skills (e.g., `metacognitive-guard`) add specialized capabilities.
 
 When Superpowers is NOT installed:
 
