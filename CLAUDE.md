@@ -119,15 +119,12 @@ ancplua-claude-plugins/
 │       ├── ci.yml               # Main CI pipeline
 │       └── dependabot.yml
 │
-├── plugins/                     # 10 plugins
-│   ├── autonomous-ci/           # CI verification and monitoring
-│   ├── code-review/             # Security, style, performance analysis
-│   ├── metacognitive-guard/     # Cognitive amplification stack (v0.3.0)
+├── plugins/                     # 7 plugins
+│   ├── metacognitive-guard/     # Cognitive amplification + commit integrity + CI verification (v0.4.0)
 │   ├── otelwiki/                # OpenTelemetry documentation (v1.0.6)
 │   ├── dotnet-architecture-lint/# .NET build pattern enforcement
-│   ├── completion-integrity/    # Prevents task shortcuts
 │   ├── hookify/                 # User-configurable hooks
-│   ├── feature-dev/             # Guided feature development
+│   ├── feature-dev/             # Guided feature development + code review (v1.1.0)
 │   ├── ancplua-project-routing/ # Auto-routes to specialist agents
 │   └── exodia/                  # Multi-agent workflow orchestration (v2.0.0)
 │
@@ -189,7 +186,7 @@ IF writing telemetry/observability code
   → read otel-expert skill, spawn otel-guide agent
 
 IF CI verification before merge
-  → read autonomous-ci skill
+  → use metacognitive-guard verify-local.sh + wait-for-ci.sh scripts
 
 IF creating hookify rules
   → read writing-rules skill
@@ -198,7 +195,7 @@ IF .NET MSBuild/CPM patterns
   → read dotnet-architecture-lint skill
 
 IF about to commit with suppressions/shortcuts
-  → completion-integrity blocks it automatically
+  → metacognitive-guard commit-integrity-hook blocks it automatically (PreToolUse on Bash)
 
 IF cleanup/elimination/dead code/suppressions/duplication needed
   → exodia/hades skill (Smart cleanup with audit trail, 3 phases x 4 teammates)

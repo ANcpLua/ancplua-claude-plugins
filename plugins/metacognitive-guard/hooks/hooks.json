@@ -23,6 +23,17 @@
             "statusMessage": "Checking epistemic constraints..."
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/commit-integrity-hook.sh",
+            "timeout": 10,
+            "statusMessage": "Checking commit integrity..."
+          }
+        ]
       }
     ],
     "Stop": [

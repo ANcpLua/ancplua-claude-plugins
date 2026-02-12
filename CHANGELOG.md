@@ -6,6 +6,21 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **Plugin consolidation: 10 → 7 plugins** via three merges:
+  - `completion-integrity` → absorbed into `metacognitive-guard` as PreToolUse hook on Bash (commit-integrity-hook.sh)
+  - `autonomous-ci` → absorbed into `metacognitive-guard` as utility scripts (verify-local.sh, wait-for-ci.sh)
+  - `code-review` → absorbed into `feature-dev` (skill, command, references)
+- **metacognitive-guard v0.4.0**: Now includes 4 hooks (was 3), 7 scripts (was 3), absorbs commit integrity checking and CI verification
+- **feature-dev v1.1.0**: Now includes `/review` command, `code-review` skill with references, and the full 7-phase workflow
+
+### Removed
+
+- **Standalone `completion-integrity` plugin**: Merged into metacognitive-guard as a PreToolUse hook
+- **Standalone `autonomous-ci` plugin**: Merged into metacognitive-guard as utility scripts
+- **Standalone `code-review` plugin**: Merged into feature-dev (skill + command + code-reviewer agent was already there)
+
 ### Added
 
 - **Hades Goggles (Pink Glasses)**: Frontend design judgment enhancement for Hades cleanup skill.

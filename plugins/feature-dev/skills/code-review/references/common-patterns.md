@@ -25,4 +25,4 @@ Good: Wrap in try/catch, log error, throw typed exception.
 1. Make changes
 2. Run `code-review` to check
 3. Fix issues found
-4. Run `autonomous-ci` to verify
+4. Run verification (verify-local.sh + wait-for-ci.sh)

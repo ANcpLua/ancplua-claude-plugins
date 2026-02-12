@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: superseded
 contact: "Alexander Nachtmann"
 date: "2025-11-24"
 deciders: "Alexander Nachtmann"

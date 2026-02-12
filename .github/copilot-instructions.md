@@ -70,21 +70,18 @@ ancplua-claude-plugins/
 │       └── dependabot.yml
 │
 ├── plugins/
-│   ├── autonomous-ci/           # CI verification plugin
+│   ├── metacognitive-guard/     # Cognitive amplification + commit integrity + CI verification
 │   │   ├── .claude-plugin/plugin.json
 │   │   ├── README.md
-│   │   ├── skills/<skill>/SKILL.md
 │   │   ├── commands/
 │   │   ├── hooks/
-│   │   └── scripts/
+│   │   ├── agents/
+│   │   └── blackboard/
 │   │
-│   ├── code-review/             # Code review plugin
-│   ├── metacognitive-guard/     # Cognitive amplification stack
 │   ├── otelwiki/                # OpenTelemetry documentation
 │   ├── dotnet-architecture-lint/# .NET build pattern enforcement
-│   ├── completion-integrity/    # Prevents task shortcuts
 │   ├── hookify/                 # User-configurable hooks
-│   ├── feature-dev/             # Guided feature development
+│   ├── feature-dev/             # Guided feature development + code review
 │   ├── ancplua-project-routing/ # Auto-routes to specialist agents
 │   └── exodia/                  # Multi-agent orchestration (v2.0.0)
 │
@@ -417,9 +414,8 @@ Apply these principles when designing or modifying plugins:
 
 Each plugin should do ONE thing well:
 
-- `autonomous-ci` → CI verification only
-- `code-review` → Code analysis only
-- `metacognitive-guard` → Cognitive amplification
+- `metacognitive-guard` → Cognitive amplification + commit integrity + CI verification
+- `feature-dev` → Guided feature development + code review
 
 **Anti-pattern:** A plugin that handles CI, commits, AND reviews.
 

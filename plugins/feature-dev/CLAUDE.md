@@ -1,6 +1,7 @@
 # feature-dev
 
-Guided feature development with 3 specialized agents and a 7-phase workflow command.
+Guided feature development with 3 specialized agents, a 7-phase workflow command,
+and integrated code review. Absorbs code-review plugin.
 
 ## Files
 
@@ -10,6 +11,9 @@ Guided feature development with 3 specialized agents and a 7-phase workflow comm
 | `agents/code-explorer.md` | Traces execution paths, maps abstraction layers, documents dependencies |
 | `agents/code-reviewer.md` | Reviews for bugs, security, quality (confidence-based, only reports >=80%) |
 | `commands/feature-dev.md` | `/feature-dev` command: 7-phase workflow |
+| `commands/review.md` | `/review [target]` command: standalone code review with targeting modes |
+| `skills/code-review/SKILL.md` | 6-step review workflow with severity levels |
+| `skills/code-review/references/common-patterns.md` | 5 vulnerability patterns with bad/good examples |
 
 ## 7-Phase Workflow
 
@@ -21,8 +25,16 @@ Guided feature development with 3 specialized agents and a 7-phase workflow comm
 6. Quality Review - 3 agents review in parallel
 7. Summary - final report
 
+## Code Review (Standalone)
+
+Use `/review [target]` for standalone reviews outside the feature-dev workflow:
+
+- Uncommitted changes, specific file, directory, staged, branch
+- Security audit, style check, performance review, best practices
+- Severity: CRITICAL > HIGH > MEDIUM > LOW > INFO
+
 ## Notes
 
 - Origin: Sid Bidasaria (Anthropic). Maintained as-is.
 - Agents use sonnet model with tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput.
-- No hooks or skills. Command + agents only.
+- code-review skill and /review command absorbed from standalone code-review plugin.

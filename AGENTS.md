@@ -8,7 +8,7 @@
 
 ## Repository
 
-ancplua-claude-plugins | 10 plugins, 22 commands, 11 agents.
+ancplua-claude-plugins | 7 plugins, 19 commands, 11 agents.
 Claude Code plugin marketplace. No C# or .NET code here.
 
 ## Decision Tree
@@ -25,6 +25,7 @@ IF version/date/status question
 
 IF code review needed
   → read competitive-review skill (spawns arch-reviewer + impl-reviewer)
+  → OR use feature-dev /review command for standalone review
 
 IF building a new feature
   → use feature-dev plugin (code-architect → code-explorer → code-reviewer)
@@ -33,7 +34,7 @@ IF writing telemetry/observability code
   → read otel-expert skill, spawn otel-guide agent
 
 IF CI verification before merge
-  → read autonomous-ci skill
+  → use metacognitive-guard verify-local.sh + wait-for-ci.sh scripts
 
 IF creating hookify rules
   → read writing-rules skill
@@ -42,7 +43,7 @@ IF .NET MSBuild/CPM patterns
   → read dotnet-architecture-lint skill
 
 IF about to commit with suppressions/shortcuts
-  → completion-integrity blocks it automatically
+  → metacognitive-guard commit-integrity-hook blocks it automatically
 
 IF multi-agent orchestration needed
   → exodia commands:
@@ -64,18 +65,16 @@ IF zero-tolerance cleanup needed
 ```text
 [Commands]|root: ./plugins
 |Every user-invocable skill has a commands/<name>.md file for CLI autocomplete
-|autonomous-ci/commands:{autonomous-ci.md}
-|code-review/commands:{review.md}
-|completion-integrity/commands:{completion-integrity.md}
 |dotnet-architecture-lint/commands:{lint-dotnet.md}
 |exodia/commands:{fix.md,turbo-fix.md,fix-pipeline.md,tournament.md,mega-swarm.md,deep-think.md,batch-implement.md,red-blue-review.md}
+|feature-dev/commands:{feature-dev.md,review.md}
 |hookify/commands:{help.md,list.md,configure.md,hookify.md}
 |metacognitive-guard/commands:{metacognitive-guard.md,competitive-review.md,epistemic-checkpoint.md,verification-before-completion.md}
 |otelwiki/commands:{sync.md}
 
 [Skills]|root: ./plugins (only for skills needing hooks/argument-hint)
-|code-review/skills/code-review:{SKILL.md,references/common-patterns.md}
 |exodia/skills/hades:{SKILL.md,templates/}
+|feature-dev/skills/code-review:{SKILL.md,references/common-patterns.md}
 |hookify/skills/writing-rules:{SKILL.md,references/patterns-and-examples.md}
 |otelwiki/skills/otel-expert:{SKILL.md}
 

@@ -2,7 +2,7 @@
 
 > **CCC** — Claude, Copilot, CodeRabbit. The holy trinity. And two of them are Claude in a trenchcoat.
 
-Claude Code plugin marketplace. 10 plugins for CI, code review, cognitive amplification,
+Claude Code plugin marketplace. 7 plugins for CI, code review, cognitive amplification,
 multi-agent orchestration, and audited cleanup.
 
 ## Plugins
@@ -10,14 +10,11 @@ multi-agent orchestration, and audited cleanup.
 | Plugin | Version | Description |
 |--------|---------|-------------|
 | **exodia** | 2.0.0 | Multi-agent orchestration: fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, hades |
-| **metacognitive-guard** | 0.3.0 | Cognitive amplification: epistemic hooks, competitive review, fact-checking, deep-thinking agents |
+| **metacognitive-guard** | 0.4.0 | Cognitive amplification: epistemic hooks, commit integrity, CI verification, competitive review, deep-thinking agents |
 | **otelwiki** | 1.0.6 | OpenTelemetry docs with auto-sync and semantic convention validation |
 | **hookify** | 0.2.0 | User-configurable hooks from .local.md files |
-| **feature-dev** | 1.0.0 | Guided feature development with codebase understanding |
+| **feature-dev** | 1.1.0 | Guided feature development with codebase understanding and integrated code review |
 | **dotnet-architecture-lint** | 1.0.2 | .NET build pattern enforcement (CPM, Version.props, symlinks) |
-| **completion-integrity** | 1.0.0 | Blocks commits with warning suppressions, commented tests, deleted assertions |
-| **code-review** | 0.1.0 | Security, style, performance analysis |
-| **autonomous-ci** | 0.1.0 | CI verification and monitoring |
 | **ancplua-project-routing** | 1.0.1 | Auto-routes to specialist agents by project directory |
 
 ## Install
@@ -36,14 +33,11 @@ Tri-AI review system: Claude, Copilot, CodeRabbit all review PRs independently.
 ```text
 plugins/
 ├── exodia/                  # multi-agent orchestration (9 commands incl. hades cleanup)
-├── metacognitive-guard/     # struggle detection + deep-think agents
+├── metacognitive-guard/     # struggle detection + deep-think + commit integrity + CI verification
 ├── otelwiki/                # OTel docs + sync
 ├── hookify/                 # user-configurable hooks
-├── feature-dev/             # guided feature development
+├── feature-dev/             # guided feature development + code review
 ├── dotnet-architecture-lint/# .NET build pattern enforcement
-├── completion-integrity/    # prevents task shortcuts
-├── code-review/             # security, style, performance
-├── autonomous-ci/           # CI verification
 └── ancplua-project-routing/ # project-aware agent routing
 ```
 
