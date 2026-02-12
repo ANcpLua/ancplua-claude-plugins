@@ -6,6 +6,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+
+- **Command namespacing**: Bare `/fix`, `/mega-swarm` etc. corrected to `/exodia:fix`, `/exodia:mega-swarm` across CLAUDE.md, AGENTS.md, exodia/README.md — plugin commands are always namespaced
+- **AGENTS.md stale counts**: "19 commands, 11 agents" → "20 commands, 9 agents" to match actual filesystem
+- **README.md exodia comment**: "9 commands incl. hades" → "8 commands + hades cleanup skill" (hades is a skill, not a command)
+- **check-hades-idle.sh jq guard**: Added `command -v jq` with sed fallback. Without guard, quality gate silently failed open
+- **project-routing.sh strict mode**: Added `set -euo pipefail` + fixed shebang to `#!/usr/bin/env bash` — was only script without strict mode
+- **Template README autocomplete guidance**: Removed false claim that `commands/` is required. Official docs mark `commands/` as legacy
+
 ### Changed
 
 - **turbo-fix: atomic TDD** (16→13 agents): Merged `test-writer` + `implementation-coder` into single `tdd-implementer` that owns RED→GREEN cycle atomically. Eliminates file conflict where parallel agents wrote to same source files. `docs-updater` marked read-only

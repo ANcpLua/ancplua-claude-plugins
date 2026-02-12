@@ -8,7 +8,7 @@
 
 ## Repository
 
-ancplua-claude-plugins | 7 plugins, 19 commands, 11 agents.
+ancplua-claude-plugins | 7 plugins, 20 commands, 9 agents.
 Claude Code plugin marketplace. No C# or .NET code here.
 
 ## Decision Tree
@@ -47,14 +47,14 @@ IF about to commit with suppressions/shortcuts
 
 IF multi-agent orchestration needed
   → exodia commands:
-    /fix [issue]              - unified fix pipeline (configurable parallelism)
-    /turbo-fix [issue]        - P0 maximum parallelism (13 agents)
-    /fix-pipeline [issue]     - systematic resolution from audit findings
-    /mega-swarm [scope]       - parallel codebase audit (6-12 agents)
-    /red-blue-review [target] - adversarial security review
-    /deep-think [problem]     - extended multi-perspective reasoning
-    /tournament [task]        - competitive coding (N agents compete)
-    /batch-implement [items]  - parallel similar implementations
+    /exodia:fix [issue]              - unified fix pipeline (configurable parallelism)
+    /exodia:turbo-fix [issue]        - P0 maximum parallelism (13 agents)
+    /exodia:fix-pipeline [issue]     - systematic resolution from audit findings
+    /exodia:mega-swarm [scope]       - parallel codebase audit (6-12 agents)
+    /exodia:red-blue-review [target] - adversarial security review
+    /exodia:deep-think [problem]     - extended multi-perspective reasoning
+    /exodia:tournament [task]        - competitive coding (N agents compete)
+    /exodia:batch-implement [items]  - parallel similar implementations
 
 IF zero-tolerance cleanup needed
   → exodia:hades skill (Smart cleanup with audit trail, 3 phases x 4 teammates)

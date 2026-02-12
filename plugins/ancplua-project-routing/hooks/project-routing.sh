@@ -1,5 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Project routing hook — maps $PWD to specialist context
+
+set -euo pipefail
 # Injects: specialist agents, available commands/skills, cross-repo dependencies
 #
 # Plugins available (7):
