@@ -14,8 +14,8 @@ multi-agent orchestration, and audited cleanup.
 | **otelwiki** | 1.0.6 | OpenTelemetry docs with auto-sync and semantic convention validation |
 | **hookify** | 0.2.0 | User-configurable hooks from .local.md files |
 | **feature-dev** | 1.1.0 | Guided feature development with codebase understanding and integrated code review |
-| **dotnet-architecture-lint** | 1.0.2 | .NET build pattern enforcement (CPM, Version.props, symlinks) |
-| **ancplua-project-routing** | 1.0.1 | Auto-routes to specialist agents by project directory |
+| **dotnet-architecture-lint** | 1.1.0 | .NET build pattern enforcement (CPM, Version.props, symlinks) |
+| **ancplua-project-routing** | 2.0.0 | Cross-repo aware project routing with specialist agents and dependency graph |
 
 ## Install
 
