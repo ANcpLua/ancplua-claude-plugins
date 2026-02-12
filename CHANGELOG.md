@@ -8,14 +8,22 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
-- **metacognitive-guard Stop hook not async**: `struggle-detector.sh` never blocks stopping (always exits 0) but was running synchronously, delaying response delivery. Now runs with `async: true` — feedback delivered next turn without blocking
+- **struggle-detector was dead code**: Was reading Stop hook JSON metadata via stdin and grepping it for hedging patterns — never matched anything. Now reads `transcript_path` from hook input, extracts last assistant message from JSONL transcript, analyzes actual response text
+- **struggle-detector output key**: Changed `hookSpecificOutput.additionalContext` to `systemMessage` — the field async hooks actually deliver on next turn
+- **metacognitive-guard Stop hook not async**: `struggle-detector.sh` never blocks stopping (always exits 0) but was running synchronously. Now runs with `async: true`
 - **otelwiki check-freshness.sh missing timeout**: No `timeout` field meant 600s (10 minute) default. Added `timeout: 5` matching sibling hook
 - **hades TeammateIdle inline command using relative path**: `plugins/exodia/scripts/smart/ledger.sh` breaks if CWD isn't repo root. Extracted to `check-hades-idle.sh` script using `${CLAUDE_PLUGIN_ROOT}` for reliable path resolution
+- **ancplua-project-routing redundant matcher**: SessionStart matcher `startup|resume|clear|compact` covers all 4 triggers — equivalent to no matcher. Removed
+- **hades SKILL.md line length (MD013)**: Split 178-char goggles description line to fit 120-char limit
 
 ### Added
 
 - **metacognitive-guard TaskCompleted hook**: Prompt-based (haiku, 15s) quality gate that validates task completions in team workflows aren't premature. Fires on every `TaskUpdate` to `completed` status
 - **exodia check-hades-idle.sh**: Extracted script from hades SKILL.md inline `bash -c` command. Cleaner, debuggable, uses `${CLAUDE_PLUGIN_ROOT}` paths
+
+### Removed
+
+- **hades TaskCompleted prompt hook**: Duplicate of metacognitive-guard's generic TaskCompleted gate. Hades eliminators are already gated by TeammateIdle ledger check
 
 ### Changed
 
