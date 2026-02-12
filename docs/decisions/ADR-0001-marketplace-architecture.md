@@ -135,8 +135,7 @@ These trade-offs are considered acceptable given the long-term goals.
 - `plugins/` – All Claude Code plugins.
 - `.claude-plugin/marketplace.json` – Declares plugin list and metadata.
 - `skills/` – Repo-wide Skills (for example, "working on this repo").
-- `agents/` – Agent SDK projects that use plugins and Skills from this repo.
-- `tooling/` – Scripts and templates shared across plugins and agents.
+- `tooling/` – Scripts and templates shared across plugins.
 - `docs/` – Architecture, plugin guidelines, workflows, and roadmap.
 - `.github/workflows/` – CI and dependency automation.
 

@@ -1,8 +1,10 @@
 # metacognitive-guard
 
 A cognitive amplification stack for Claude Code that prevents hallucinations,
-improves reasoning quality, and escalates complex problems to specialized
-deep-thinking agents.
+improves reasoning quality, blocks shortcut commits, verifies CI, and escalates
+complex problems to specialized deep-thinking agents.
+
+Absorbs the former `completion-integrity` and `autonomous-ci` plugins.
 
 ## The Problem
 
@@ -21,7 +23,8 @@ A layered defense system that operates at multiple cognitive levels:
 Layer 0: HOOKS - Block wrong OUTPUT
          |
          +-- truth-beacon.sh (SessionStart) - Inject facts before generation
-         +-- epistemic-guard.sh (PreToolUse) - Block incorrect writes
+         +-- epistemic-guard.sh (PreToolUse Write/Edit) - Block incorrect writes
+         +-- commit-integrity-hook.sh (PreToolUse Bash) - Block shortcut commits
          +-- struggle-detector.sh (Stop) - Detect uncertainty patterns
          |
 Layers 1-5: SKILLS - Prevent wrong REASONING
@@ -64,7 +67,16 @@ Layers 1-5: SKILLS - Prevent wrong REASONING
 |------|-------|---------|
 | `truth-beacon.sh` | SessionStart | Injects authoritative facts (runtime versions, banned APIs) before generation |
 | `epistemic-guard.sh` | PreToolUse (Write/Edit) | Blocks writing incorrect version claims or banned APIs |
+| `commit-integrity-hook.sh` | PreToolUse (Bash) | Blocks `git commit` with warning suppressions, commented tests, deleted assertions |
 | `struggle-detector.sh` | Stop | Detects hedging/uncertainty patterns; suggests deep-think-partner |
+
+### Utility Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `integrity-check.sh` | Validates staged git changes for 6 shortcut patterns |
+| `verify-local.sh` | Auto-detects project type (dotnet/node/python/go) and runs build+test |
+| `wait-for-ci.sh` | Monitors GitHub Actions workflows until all pass or any fails |
 
 ## How It Works
 
@@ -219,21 +231,21 @@ metacognitive-guard/
 |   `-- impl-reviewer.md         # Implementation analysis agent
 |-- blackboard/
 |   `-- assertions.yaml          # Ground truth facts
+|-- commands/
+|   |-- competitive-review.md    # Dual-agent competition
+|   |-- epistemic-checkpoint.md  # Version/date verification
+|   |-- metacognitive-guard.md   # Self-escalation guidance
+|   `-- verification-before-completion.md  # Pre-completion verification
 |-- hooks/
-|   |-- hooks.json               # Hook configuration
+|   |-- hooks.json               # Hook configuration (4 hooks)
 |   `-- scripts/
-|       |-- epistemic-guard.sh   # PreToolUse blocker
-|       |-- struggle-detector.sh # Stop response analyzer
-|       `-- truth-beacon.sh      # SessionStart fact injection
-|-- skills/
-|   |-- competitive-review/
-|   |   `-- SKILL.md             # Dual-agent competition
-|   |-- epistemic-checkpoint/
-|   |   `-- SKILL.md             # Version/date verification
-|   |-- metacognitive-guard/
-|   |   `-- SKILL.md             # Self-escalation guidance
-|   `-- verification-before-completion/
-|       `-- SKILL.md             # Pre-completion verification
+|       |-- commit-integrity-hook.sh  # PreToolUse Bash wrapper
+|       |-- epistemic-guard.sh        # PreToolUse Write/Edit blocker
+|       |-- integrity-check.sh        # Commit integrity engine (6 rules)
+|       |-- struggle-detector.sh      # Stop response analyzer
+|       |-- truth-beacon.sh           # SessionStart fact injection
+|       |-- verify-local.sh           # Local build+test runner
+|       `-- wait-for-ci.sh            # GitHub Actions monitor
 `-- README.md
 ```
 

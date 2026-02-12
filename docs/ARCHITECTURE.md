@@ -26,12 +26,9 @@ ancplua-claude-plugins/
 │   └── workflows/               # CI Pipelines
 │
 ├── plugins/
-│   ├── autonomous-ci/
-│   ├── code-review/
 │   ├── metacognitive-guard/
-│   └── ... (11 plugins total)
-│
-├── agents/                      # Agent SDK projects
+│   ├── feature-dev/
+│   └── ... (7 plugins total)
 │
 ├── skills/                      # Repo-level skills
 │
@@ -136,10 +133,9 @@ Each plugin handles ONE concern:
 
 | Plugin | Responsibility |
 |--------|----------------|
-| `autonomous-ci` | CI verification and monitoring |
-| `code-review` | Code quality analysis |
-| `metacognitive-guard` | Cognitive amplification and struggle detection |
-| `workflow-tools` | Multi-agent orchestration workflows |
+| `metacognitive-guard` | Cognitive amplification, commit integrity, CI verification |
+| `feature-dev` | Guided feature development + code review |
+| `exodia` | Multi-agent orchestration (8 commands + hades skill) |
 
 **Anti-pattern:** A "super-plugin" that does everything.
 

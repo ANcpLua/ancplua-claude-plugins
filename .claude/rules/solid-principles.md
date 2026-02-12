@@ -6,16 +6,12 @@ Apply these principles when designing or modifying plugins:
 
 Each plugin should do ONE thing well:
 
-- `autonomous-ci` -> CI verification only
-- `code-review` -> Code analysis only
-- `metacognitive-guard` -> Cognitive amplification (agents + hooks)
+- `metacognitive-guard` -> Cognitive amplification + commit integrity + CI verification
 - `otelwiki` -> OpenTelemetry documentation only
 - `dotnet-architecture-lint` -> .NET build patterns only
-- `completion-integrity` -> Task completion quality only
-- `workflow-tools` -> Multi-agent orchestration workflows
 - `hookify` -> User-configurable hooks
-- `feature-dev` -> Guided feature development
-- `exodia` -> Skills-standard workflow orchestration
+- `feature-dev` -> Guided feature development + code review
+- `exodia` -> Multi-agent workflow orchestration
 - `ancplua-project-routing` -> Auto-routes to specialist agents
 
 **Anti-pattern:** A plugin that handles CI, commits, AND reviews.

@@ -2,8 +2,11 @@
 # =============================================================================
 # STRUGGLE DETECTOR - Detects when Claude is uncertain/struggling
 # =============================================================================
-# Trigger: Stop (after Claude responds)
+# Trigger: Stop (async, after Claude responds)
 # Purpose: Detect hedging, vagueness, contradictions -> suggest deep-thinker
+#
+# Input: Stop hook JSON on stdin (contains transcript_path)
+# Method: Reads last assistant message from transcript JSONL
 #
 # Signals detected:
 #   - Hedging language ("I think", "probably", "might", "I'm not sure")
@@ -29,9 +32,17 @@ STRUGGLE_COUNT_FILE="$BLACKBOARD/.struggle-count"
 
 mkdir -p "$BLACKBOARD" 2>/dev/null || true
 
-# Read Claude's response from stdin
-RESPONSE=$(cat 2>/dev/null || true)
+# Read Stop hook JSON input from stdin
+INPUT=$(cat 2>/dev/null || true)
+[[ -z "$INPUT" ]] && exit 0
 
+# Extract transcript path from hook input
+TRANSCRIPT=$(echo "$INPUT" | jq -r '.transcript_path // empty' 2>/dev/null)
+[[ -z "$TRANSCRIPT" || ! -f "$TRANSCRIPT" ]] && exit 0
+
+# Extract last assistant message from transcript JSONL
+# Each line is a JSON object; find the last one with type=assistant
+RESPONSE=$(tail -50 "$TRANSCRIPT" | jq -r 'select(.type == "assistant") | .message.content[]? | select(.type == "text") | .text' 2>/dev/null | tail -1)
 [[ -z "$RESPONSE" ]] && exit 0
 
 # =============================================================================
@@ -163,10 +174,7 @@ if [[ "$CONSECUTIVE" -ge 2 ]] || [[ "$score" -gt 25 ]]; then
 
     cat <<EOF
 {
-  "hookSpecificOutput": {
-    "hookEventName": "Stop",
-    "additionalContext": "<struggle-detected score=\"$score\" consecutive=\"$CONSECUTIVE\">\\n\\nClaude appears to be struggling with this problem.\\n\\nSignals detected:\\n${SIGNALS_LIST}\\nSuggestion: Use the Task tool with subagent_type='deep-think-partner' for thorough analysis.\\n\\nExample: \\\"I'm finding this complex. Want me to spawn a deep-thinker for a more thorough analysis?\\\"\\n</struggle-detected>"
-  }
+  "systemMessage": "<struggle-detected score=\"$score\" consecutive=\"$CONSECUTIVE\">\\n\\nClaude appears to be struggling with this problem.\\n\\nSignals detected:\\n${SIGNALS_LIST}\\nSuggestion: Use the Task tool with subagent_type='deep-think-partner' for thorough analysis.\\n\\nExample: \\\"I'm finding this complex. Want me to spawn a deep-thinker for a more thorough analysis?\\\"\\n</struggle-detected>"
 }
 EOF
 fi

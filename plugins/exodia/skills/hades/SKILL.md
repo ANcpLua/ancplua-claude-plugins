@@ -7,16 +7,9 @@ hooks:
   TeammateIdle:
     - hooks:
         - type: command
-          command: "bash -c 'INPUT=$(cat); TEAMMATE=$(echo \"$INPUT\" | jq -r .teammate_name); if echo \"$TEAMMATE\" | grep -q \"smart-elim\"; then COUNT=$(plugins/exodia/scripts/smart/ledger.sh count 2>/dev/null | grep -o \"[0-9]*\" | head -1); if [ \"${COUNT:-0}\" = \"0\" ]; then echo \"No ledger entries found. Log your deletions before going idle.\" >&2; exit 2; fi; fi; exit 0'"
+          command: "bash ${CLAUDE_PLUGIN_ROOT}/scripts/smart/check-hades-idle.sh"
           timeout: 10
           statusMessage: "Verifying ledger entries before idle..."
-  TaskCompleted:
-    - hooks:
-        - type: prompt
-          prompt: "A Hades cleanup task is being marked complete. Task: $ARGUMENTS. Verify: 1) Does the task subject mention a specific file or action? 2) If it involves deletion/removal, was a ledger entry likely created? 3) Is the task description specific enough to be verifiable? Respond {\"ok\": true} if the task completion seems legitimate, or {\"ok\": false, \"reason\": \"...\"} if it looks like the task was completed without actual work."
-          model: haiku
-          timeout: 15
-          statusMessage: "Validating task completion..."
 ---
 
 # HADES — Smart Cleanup: Functional Destruction with Audit Infrastructure
@@ -28,7 +21,8 @@ hooks:
 **Scope:** $0 (default: . — file path | directory | repo | cross-repo)
 **Focus:** $1 (default: all — all|suppressions|dead-code|duplication|imports)
 **Intensity:** $2 (default: full — full|scan-only)
-**Goggles:** $3 (default: auto — [--goggles]) — optional flag to explicitly equip the Pink Glasses for frontend design judgment (otherwise scope-based auto-equip may enable them)
+**Goggles:** $3 (default: auto — [--goggles]) — equip Pink Glasses for frontend design judgment
+(auto-equipped when scope contains frontend files)
 
 **Smart Infrastructure:** `plugins/exodia/scripts/smart/`
 

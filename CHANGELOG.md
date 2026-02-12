@@ -6,6 +6,46 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **turbo-fix: atomic TDD** (16→13 agents): Merged `test-writer` + `implementation-coder` into single `tdd-implementer` that owns RED→GREEN cycle atomically. Eliminates file conflict where parallel agents wrote to same source files. `docs-updater` marked read-only
+- **batch-implement: explicit file ownership**: Implementers now declare `OWNED FILES:` and are forbidden from modifying shared registration files (DI, route tables, exports). All wiring centralized in `consistency-reviewer` Phase 3
+- **red-blue-review: module-scoped defenders**: Changed Phase 2 from "1 defender per finding" to "1 defender per module" with grouped findings. Eliminates file conflict when multiple findings target the same module. Phase 3 re-attackers mirror the same grouping
+
+### Fixed
+
+- **struggle-detector was dead code**: Was reading Stop hook JSON metadata via stdin and grepping it for hedging patterns — never matched anything. Now reads `transcript_path` from hook input, extracts last assistant message from JSONL transcript, analyzes actual response text
+- **struggle-detector output key**: Changed `hookSpecificOutput.additionalContext` to `systemMessage` — the field async hooks actually deliver on next turn
+- **metacognitive-guard Stop hook not async**: `struggle-detector.sh` never blocks stopping (always exits 0) but was running synchronously. Now runs with `async: true`
+- **otelwiki check-freshness.sh missing timeout**: No `timeout` field meant 600s (10 minute) default. Added `timeout: 5` matching sibling hook
+- **hades TeammateIdle inline command using relative path**: `plugins/exodia/scripts/smart/ledger.sh` breaks if CWD isn't repo root. Extracted to `check-hades-idle.sh` script using `${CLAUDE_PLUGIN_ROOT}` for reliable path resolution
+- **ancplua-project-routing redundant matcher**: SessionStart matcher `startup|resume|clear|compact` covers all 4 triggers — equivalent to no matcher. Removed
+- **hades SKILL.md line length (MD013)**: Split 178-char goggles description line to fit 120-char limit
+
+### Added
+
+- **metacognitive-guard TaskCompleted hook**: Prompt-based (haiku, 15s) quality gate that validates task completions in team workflows aren't premature. Fires on every `TaskUpdate` to `completed` status
+- **exodia check-hades-idle.sh**: Extracted script from hades SKILL.md inline `bash -c` command. Cleaner, debuggable, uses `${CLAUDE_PLUGIN_ROOT}` paths
+
+### Removed
+
+- **hades TaskCompleted prompt hook**: Duplicate of metacognitive-guard's generic TaskCompleted gate. Hades eliminators are already gated by TeammateIdle ledger check
+
+### Changed
+
+- **Plugin consolidation: 10 → 7 plugins** via three merges:
+  - `completion-integrity` → absorbed into `metacognitive-guard` as PreToolUse hook on Bash (commit-integrity-hook.sh)
+  - `autonomous-ci` → absorbed into `metacognitive-guard` as utility scripts (verify-local.sh, wait-for-ci.sh)
+  - `code-review` → absorbed into `feature-dev` (skill, command, references)
+- **metacognitive-guard v0.4.0**: Now includes 4 hooks (was 3), 7 scripts (was 3), absorbs commit integrity checking and CI verification
+- **feature-dev v1.1.0**: Now includes `/review` command, `code-review` skill with references, and the full 7-phase workflow
+
+### Removed
+
+- **Standalone `completion-integrity` plugin**: Merged into metacognitive-guard as a PreToolUse hook
+- **Standalone `autonomous-ci` plugin**: Merged into metacognitive-guard as utility scripts
+- **Standalone `code-review` plugin**: Merged into feature-dev (skill + command + code-reviewer agent was already there)
+
 ### Added
 
 - **Hades Goggles (Pink Glasses)**: Frontend design judgment enhancement for Hades cleanup skill.

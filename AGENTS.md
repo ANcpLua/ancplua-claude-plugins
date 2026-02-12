@@ -8,7 +8,7 @@
 
 ## Repository
 
-ancplua-claude-plugins | 11 plugins, 19 skills, 11 agents, 8 commands.
+ancplua-claude-plugins | 7 plugins, 19 commands, 11 agents.
 Claude Code plugin marketplace. No C# or .NET code here.
 
 ## Decision Tree
@@ -25,6 +25,7 @@ IF version/date/status question
 
 IF code review needed
   → read competitive-review skill (spawns arch-reviewer + impl-reviewer)
+  → OR use feature-dev /review command for standalone review
 
 IF building a new feature
   → use feature-dev plugin (code-architect → code-explorer → code-reviewer)
@@ -33,7 +34,7 @@ IF writing telemetry/observability code
   → read otel-expert skill, spawn otel-guide agent
 
 IF CI verification before merge
-  → read autonomous-ci skill
+  → use metacognitive-guard verify-local.sh + wait-for-ci.sh scripts
 
 IF creating hookify rules
   → read writing-rules skill
@@ -42,11 +43,13 @@ IF .NET MSBuild/CPM patterns
   → read dotnet-architecture-lint skill
 
 IF about to commit with suppressions/shortcuts
-  → completion-integrity blocks it automatically
+  → metacognitive-guard commit-integrity-hook blocks it automatically
 
 IF multi-agent orchestration needed
-  → workflow-tools commands:
+  → exodia commands:
     /fix [issue]              - unified fix pipeline (configurable parallelism)
+    /turbo-fix [issue]        - P0 maximum parallelism (13 agents)
+    /fix-pipeline [issue]     - systematic resolution from audit findings
     /mega-swarm [scope]       - parallel codebase audit (6-12 agents)
     /red-blue-review [target] - adversarial security review
     /deep-think [problem]     - extended multi-perspective reasoning
@@ -54,31 +57,25 @@ IF multi-agent orchestration needed
     /batch-implement [items]  - parallel similar implementations
 
 IF zero-tolerance cleanup needed
-  → exodia/hades skill (Smart cleanup with audit trail)
-
-IF multi-agent orchestration as skills (unlimited agents)
-  → exodia skills: fix, turbo-fix, fix-pipeline, tournament, mega-swarm,
-    deep-think, batch-implement, red-blue-review, hades
-
-IF enforcement/judgment needed
-  → exodia/hades skill (Smart cleanup with audit trail, 3 phases x 4 teammates)
+  → exodia:hades skill (Smart cleanup with audit trail, 3 phases x 4 teammates)
 ```
 
 ## Compressed Docs Index
 
 ```text
-[Skills]|root: ./plugins
-|IMPORTANT: Always read SKILL.md first for workflow instructions
-|autonomous-ci/skills/autonomous-ci:{SKILL.md,references/project-examples.md}
-|code-review/skills/code-review:{SKILL.md,references/common-patterns.md}
-|completion-integrity/skills/completion-integrity:{SKILL.md}
-|dotnet-architecture-lint/skills/dotnet-architecture-lint:{SKILL.md}
-|exodia/skills:{turbo-fix,fix,fix-pipeline,tournament,mega-swarm,deep-think,batch-implement,red-blue-review,hades}/SKILL.md
+[Commands]|root: ./plugins
+|Every user-invocable skill has a commands/<name>.md file for CLI autocomplete
+|dotnet-architecture-lint/commands:{lint-dotnet.md}
+|exodia/commands:{fix.md,turbo-fix.md,fix-pipeline.md,tournament.md,mega-swarm.md,deep-think.md,batch-implement.md,red-blue-review.md}
+|feature-dev/commands:{feature-dev.md,review.md}
+|hookify/commands:{help.md,list.md,configure.md,hookify.md}
+|metacognitive-guard/commands:{metacognitive-guard.md,competitive-review.md,epistemic-checkpoint.md,verification-before-completion.md}
+|otelwiki/commands:{sync.md}
+
+[Skills]|root: ./plugins (only for skills needing hooks/argument-hint)
+|exodia/skills/hades:{SKILL.md,templates/}
+|feature-dev/skills/code-review:{SKILL.md,references/common-patterns.md}
 |hookify/skills/writing-rules:{SKILL.md,references/patterns-and-examples.md}
-|metacognitive-guard/skills/metacognitive-guard:{SKILL.md}
-|metacognitive-guard/skills/competitive-review:{SKILL.md}
-|metacognitive-guard/skills/epistemic-checkpoint:{SKILL.md}
-|metacognitive-guard/skills/verification-before-completion:{SKILL.md}
 |otelwiki/skills/otel-expert:{SKILL.md}
 
 [Agents]|root: ./plugins
@@ -88,14 +85,7 @@ IF enforcement/judgment needed
 |feature-dev/agents:{code-architect.md,code-explorer.md,code-reviewer.md}
 |hookify/agents:{conversation-analyzer.md}
 
-[Commands]|root: ./plugins/workflow-tools/commands
-|Invoke via /workflow-tools:<name>
-|{fix.md,mega-swarm.md,red-blue-review.md,deep-think.md,tournament.md,batch-implement.md}
-|DEPRECATED:{turbo-fix.md→/fix parallelism=maximum,fix-pipeline.md→/fix}
-
-[Standalone Agents]|root: ./agents
-|cleanup-specialist:{prompts/,config/}
-|repo-reviewer-agent:{config/}
+[Note: All agents live inside their plugins. No standalone agents directory.]
 ```
 
 ## Coordination
