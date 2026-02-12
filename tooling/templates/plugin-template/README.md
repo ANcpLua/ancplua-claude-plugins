@@ -28,7 +28,6 @@ This plugin is part of the `ancplua-claude-plugins` marketplace.
 plugins/<plugin-name>/
 ├── .claude-plugin/
 │   └── plugin.json          # Required: name, description, version, author
-│                             # MUST include "commands": "./commands"
 ├── README.md                 # This file
 ├── commands/
 │   └── <command>.md         # Slash commands (required for CLI autocomplete)
@@ -43,17 +42,15 @@ plugins/<plugin-name>/
     └── <script>.sh          # Helper scripts (optional)
 ```
 
-### Autocomplete Rule
+### Autocomplete
 
-**Every user-invocable skill MUST have a `commands/<name>.md` file.**
+Both `commands/` and `skills/` directories are auto-discovered by
+Claude Code and provide `/` tab-completion. The official docs mark
+`commands/` as legacy; prefer `skills/<name>/SKILL.md` for new skills.
 
-The `commands/` directory is what the CLI indexes for `/` tab-completion.
-`skills/` alone does NOT provide autocomplete. Use `skills/` only when
-a skill needs extra features (hooks, argument-hint) that commands don't support.
-
-If a skill has both `commands/<name>.md` and `skills/<name>/SKILL.md`,
-the command provides autocomplete and the skill provides extended features.
-Use different names to avoid double registration.
+Use `commands/` when you need a simple markdown slash command without
+the additional features that skills provide (hooks, argument-hint,
+supporting files).
 
 ### plugin.json
 
@@ -68,11 +65,10 @@ Use different names to avoid double registration.
   },
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
   "license": "MIT",
-  "commands": "./commands"
 }
 ```
 
-The `"commands": "./commands"` field is **required** for autocomplete.
+The `commands/` directory at the plugin root is auto-discovered. No `plugin.json` field needed.
 
 ## Usage Examples
 

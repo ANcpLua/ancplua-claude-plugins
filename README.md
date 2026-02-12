@@ -32,7 +32,7 @@ Tri-AI review system: Claude, Copilot, CodeRabbit all review PRs independently.
 
 ```text
 plugins/
-├── exodia/                  # multi-agent orchestration (9 commands incl. hades cleanup)
+├── exodia/                  # multi-agent orchestration (8 commands + hades cleanup skill)
 ├── metacognitive-guard/     # struggle detection + deep-think + commit integrity + CI verification
 ├── otelwiki/                # OTel docs + sync
 ├── hookify/                 # user-configurable hooks
