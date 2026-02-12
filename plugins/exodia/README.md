@@ -6,7 +6,7 @@ Multi-agent workflow orchestration. 8 commands + 1 skill (hades).
 
 | Command | Agents | Pattern | Best For |
 |---------|--------|---------|----------|
-| `/exodia:turbo-fix` | 16 | Phased pipeline | P0 critical bugs |
+| `/exodia:turbo-fix` | 13 | Phased pipeline | P0 critical bugs |
 | `/exodia:fix` | 8-16 | Configurable pipeline | Any bug fix |
 | `/exodia:fix-pipeline` | 7 | Systematic pipeline | Audit findings |
 | `/exodia:tournament` | N+2 | Competition | Quality optimization |

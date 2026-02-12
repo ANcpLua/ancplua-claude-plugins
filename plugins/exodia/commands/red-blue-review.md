@@ -37,12 +37,12 @@ REVIEW LEAD (You — Orchestrator)
 │  └── red-api-breaker
 │  └── GATE → validate findings
 │
-├─ Phase 2: BLUE DEFENSE (1 agent per valid finding)
-│  └── blue-defender-N (one per RED finding)
+├─ Phase 2: BLUE DEFENSE (1 agent per MODULE — grouped findings)
+│  └── blue-defender-N (one per affected module, all its findings)
 │  └── GATE → fixes collected
 │
-├─ Phase 3: RED RE-ATTACK (1 agent per fix)
-│  └── red-reattacker-N (one per BLUE fix)
+├─ Phase 3: RED RE-ATTACK (1 agent per module's fixes)
+│  └── red-reattacker-N (one per BLUE module)
 │  └── VERDICT: DEFEATED / BYPASSED / INCOMPLETE
 │
 └─ RELEASE: SAFE / BLOCK
@@ -55,9 +55,9 @@ REVIEW LEAD (You — Orchestrator)
 **THIS IS AN ADVERSARIAL EXERCISE.**
 
 1. Launch 3 Red Team agents in ONE message
-2. Validate findings (reject false positives)
-3. Launch 1 Blue defender per valid finding
-4. Launch 1 Red re-attacker per Blue fix
+2. Validate findings (reject false positives), then GROUP by target module/file
+3. Launch 1 Blue defender per MODULE (with all that module's findings)
+4. Launch 1 Red re-attacker per Blue module
 5. Score and generate release recommendation
 
 **YOUR NEXT MESSAGE: 3 Red Team Task tool calls. NOTHING ELSE.**
@@ -95,27 +95,38 @@ Launch ALL 3 in ONE message.
 
 ## PHASE 2: BLUE DEFENSE
 
-Launch ONE defender per valid Red finding:
+**Before spawning:** Group validated findings by target module/file. One defender per module.
 
-### blue-defender-N (one per finding)
+Launch ONE defender per MODULE (not per finding):
+
+### blue-defender-N (one per module)
 > subagent: feature-dev:code-architect | model: opus
-> BLUE TEAM — Defend against: [PASTE RED FINDING]
+> BLUE TEAM — Defend MODULE: [MODULE_PATH]
+> FINDINGS IN THIS MODULE: [PASTE ALL RED FINDINGS FOR THIS MODULE]
+>
+> **FILE OWNERSHIP:** You own ONLY files in [MODULE_PATH]. Do not modify files outside your module.
+>
+> For EACH finding in your module:
 > 1. Verify: Is finding real?
 > 2. Analyze: Why does this exist?
 > 3. Fix: Design a fix
 > 4. Protect: No regressions
 > 5. Test: Write test case
+>
+> Output: All fixes for your module + test results
 
 ---
 
 ## PHASE 3: RED RE-ATTACK
 
-Launch ONE re-attacker per Blue fix:
+Launch ONE re-attacker per Blue module (mirrors Phase 2 grouping):
 
-### red-reattacker-N (one per fix)
+### red-reattacker-N (one per module)
 > subagent: deep-debugger
-> RED RE-ATTACK — Try to bypass: [PASTE BLUE FIX]
-> VERDICT: **DEFEATED** (Blue +5) | **BYPASSED** (Red +3, Blue -3) | **INCOMPLETE** (list gaps)
+> RED RE-ATTACK — Try to bypass ALL fixes in MODULE: [MODULE_PATH]
+> BLUE FIXES: [PASTE ALL BLUE FIXES FOR THIS MODULE]
+>
+> For EACH fix: VERDICT: **DEFEATED** (Blue +5) | **BYPASSED** (Red +3, Blue -3) | **INCOMPLETE** (list gaps)
 
 ---
 

@@ -48,7 +48,7 @@ IF about to commit with suppressions/shortcuts
 IF multi-agent orchestration needed
   → exodia commands:
     /fix [issue]              - unified fix pipeline (configurable parallelism)
-    /turbo-fix [issue]        - P0 maximum parallelism (16 agents)
+    /turbo-fix [issue]        - P0 maximum parallelism (13 agents)
     /fix-pipeline [issue]     - systematic resolution from audit findings
     /mega-swarm [scope]       - parallel codebase audit (6-12 agents)
     /red-blue-review [target] - adversarial security review

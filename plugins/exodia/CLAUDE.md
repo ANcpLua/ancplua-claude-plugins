@@ -6,7 +6,7 @@ Multi-agent workflow orchestration. 8 commands + 1 skill (hades), unlimited para
 
 | Command | Agents | Use When |
 |---------|--------|----------|
-| `turbo-fix` | 16 | P0 critical bugs |
+| `turbo-fix` | 13 | P0 critical bugs |
 | `fix` | 8-16 | Any bug fix (configurable parallelism) |
 | `fix-pipeline` | 7 | Fixing audit findings systematically |
 | `tournament` | N+2 | Multiple valid approaches, need competition |

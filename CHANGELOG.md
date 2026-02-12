@@ -6,6 +6,12 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **turbo-fix: atomic TDD** (16→13 agents): Merged `test-writer` + `implementation-coder` into single `tdd-implementer` that owns RED→GREEN cycle atomically. Eliminates file conflict where parallel agents wrote to same source files. `docs-updater` marked read-only
+- **batch-implement: explicit file ownership**: Implementers now declare `OWNED FILES:` and are forbidden from modifying shared registration files (DI, route tables, exports). All wiring centralized in `consistency-reviewer` Phase 3
+- **red-blue-review: module-scoped defenders**: Changed Phase 2 from "1 defender per finding" to "1 defender per module" with grouped findings. Eliminates file conflict when multiple findings target the same module. Phase 3 re-attackers mirror the same grouping
+
 ### Fixed
 
 - **struggle-detector was dead code**: Was reading Stop hook JSON metadata via stdin and grepping it for hedging patterns — never matched anything. Now reads `transcript_path` from hook input, extracts last assistant message from JSONL transcript, analyzes actual response text

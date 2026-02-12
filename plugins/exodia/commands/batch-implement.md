@@ -73,8 +73,12 @@ Parse $1 (comma-separated). Launch ONE agent PER ITEM in ONE message.
 > IMPLEMENT: [ITEM_NAME from $1] | TYPE: $0
 > Using template from Phase 1. Follow TDD:
 > 1. Write failing test → 2. Implement → 3. Verify pass
-> Checklist: follows pattern, unit test, implementation, registered/wired, no copy-paste errors.
-> Output: Files created with paths
+> Checklist: follows pattern, unit test, implementation, no copy-paste errors.
+>
+> **FILE OWNERSHIP:** You own ONLY files for YOUR item. List owned files at the top of your output.
+> **DO NOT** modify shared files (DI registrations, route tables, module exports, index files, barrel files).
+> Leave a `// TODO: register [ITEM_NAME]` comment in your output — the consistency-reviewer handles all wiring.
+> Output: Files created with paths + OWNED FILES list
 
 ---
 
@@ -96,13 +100,14 @@ BATCH GATE:
 
 ### consistency-reviewer
 > subagent: feature-dev:code-reviewer
-> REVIEW all new implementations for consistency:
+> REVIEW all new implementations AND handle all shared file mutations:
 > 1. Consistent naming across all items
 > 2. No conflicts between items
-> 3. All registrations complete
+> 3. **Wire ALL registrations** — DI containers, route tables, module exports, index files
+>    (implementers were instructed NOT to touch shared files — you own them all)
 > 4. Tests follow same pattern
 > 5. No duplicate code that should be shared
-> Output: Issues found + recommendations
+> Output: Issues found + shared files modified + recommendations
 
 Fix any issues found, then proceed.
 

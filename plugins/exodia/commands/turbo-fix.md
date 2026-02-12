@@ -1,11 +1,11 @@
 ---
-description: "IF P0 critical bug THEN use this. 16 agents, 4 phases, maximum parallelism. For P1-P3 → use fix. From audit → fix-pipeline."
+description: "IF P0 critical bug THEN use this. 13 agents, 4 phases, maximum parallelism. For P1-P3 → use fix. From audit → fix-pipeline."
 allowed-tools: Task, Bash, TodoWrite
 ---
 
 # TURBO FIX — Maximum Parallelism Emergency Pipeline
 
-> P0 emergency. 16 agents. 4 phases. No waiting.
+> P0 emergency. 13 agents. 4 phases. No waiting.
 
 **Issue:** $0
 **Severity:** $1 (default: P0)
@@ -31,10 +31,9 @@ TURBO LEAD (You — Orchestrator)
 │  └── devils-advocate
 │  └── GATE 2 → PROCEED | HALT
 │
-├─ Phase 3: IMPLEMENTATION SWARM (3 agents parallel)
-│  ├── test-writer
-│  ├── implementation-coder
-│  └── docs-updater
+├─ Phase 3: IMPLEMENTATION (2 agents parallel)
+│  ├── tdd-implementer (tests THEN code — atomic)
+│  └── docs-updater (read-only research)
 │  └── GATE 3 → PROCEED | HALT
 │
 └─ Phase 4: VERIFICATION (direct)
@@ -45,11 +44,11 @@ TURBO LEAD (You — Orchestrator)
 
 <CRITICAL_EXECUTION_REQUIREMENT>
 
-**YOU ORCHESTRATE. 16 AGENTS FIX.**
+**YOU ORCHESTRATE. 13 AGENTS FIX.**
 
 1. Launch 6 Phase 1 agents in ONE message
 2. GATE 1, then launch 4 Phase 2 agents in ONE message
-3. Select best, GATE 2, then launch 3 Phase 3 agents in ONE message
+3. Select best, GATE 2, then launch 2 Phase 3 agents in ONE message
 4. GATE 3, run Phase 4 verification directly
 
 **DO NOT** pause between phases.
@@ -218,31 +217,29 @@ Select best solution. Proceed.
 
 ---
 
-## PHASE 3: IMPLEMENTATION SWARM — 3 Agents
+## PHASE 3: IMPLEMENTATION — 2 Agents
 
-Launch ALL 3 in ONE message.
+Launch BOTH in ONE message.
 
-### test-writer
-
-> subagent: feature-dev:code-architect
->
-> WRITE TESTS FIRST for selected solution:
-> Failing unit test, edge case tests, regression test.
-> DO NOT implement the fix. Output: Test files with paths
-
-### implementation-coder
+### tdd-implementer
 
 > subagent: feature-dev:code-architect | model: opus
 >
-> IMPLEMENT the selected solution.
-> Minimal change. Follow existing patterns. No unnecessary refactoring.
-> Output: Changed files with diffs
+> IMPLEMENT the selected solution using TDD (atomic — tests and code in ONE agent):
+> 1. Write failing test (RED) — run it, confirm failure
+> 2. Write minimal fix (GREEN) — run it, confirm pass
+> 3. Edge case tests + regression test
+> 4. Refactor if needed — tests must still pass
+>
+> DO NOT split test-writing from implementation. One agent owns all source changes.
+> Output: Changed files with diffs + test results
 
 ### docs-updater
 
 > subagent: Explore
 >
 > CHECK what docs need updating: README, API docs, CHANGELOG, code comments.
+> DO NOT modify source or test files — read-only research.
 > Output: Documentation updates needed
 
 ---
@@ -253,7 +250,7 @@ Launch ALL 3 in ONE message.
 GATE 3: IMPLEMENTATION → [status]
 +--------------------------------------------+
 | Implementation: COMPLETE / INCOMPLETE      |
-| Tests: WRITTEN / MISSING                   |
+| TDD cycle: RED→GREEN / SKIPPED            |
 | Compiles: YES / NO                         |
 +--------------------------------------------+
 | PROCEED / HALT                              |
@@ -284,9 +281,9 @@ dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 +--------------------------------------------------------------+
 | Phase 1 Analysis:   6/6 agents | Root cause: [summary]       |
 | Phase 2 Solutions:  4/4 agents | Selected: [A/B/C]           |
-| Phase 3 Implement:  3/3 agents | Files: [count]              |
+| Phase 3 Implement:  2/2 agents | Files: [count]              |
 | Phase 4 Verify:     Build/Test/Lint: [results]               |
 +--------------------------------------------------------------+
-| TOTAL AGENTS: 16 | STATUS: FIXED / BLOCKED                   |
+| TOTAL AGENTS: 13 | STATUS: FIXED / BLOCKED                   |
 +==============================================================+
 ```
