@@ -14,9 +14,8 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
-- **eight-gates conductor identity**: Rewritten IDENTITY section — lead is the conductor (baton, not instrument), delegation is intrinsic to self-concept rather than enforced by blocking hooks
-- **eight-gates budget tracking removed**: Replaced all budget references with agent ceilings. Token costs tracked via OTel, not skills
 - **eight-gates conductor identity**: Rewritten IDENTITY section — lead agent is the conductor (baton, not instrument). Delegation is intrinsic to self-concept rather than enforced by blocking hooks. "A conductor who picks up a violin has stopped conducting."
+- **eight-gates budget tracking removed**: Replaced all budget references with agent ceilings. Token costs tracked via OTel, not skills
 - **`checkpoint.sh` smart script**: Gate checkpoint management — init, save, load, verify (idempotent), list. Append-only JSONL storage with key=value metadata per gate
 - **`session-state.sh` smart script**: TTL session state + artifact cache + decision log. Create sessions with expiry, cache expensive computations, log decisions with reasons, extend/expire sessions
 - **`.eight-gates/` gitignore entry**: Session-local runtime directory (checkpoints, artifacts, decisions)

@@ -20,7 +20,7 @@ Multi-agent workflow orchestration. 9 commands + 2 skills (eight-gates, hades), 
 
 | Skill | Agents | Use When |
 |-------|--------|----------|
-| `eight-gates` | 1-30+ | Maximum disciplined orchestration — 8 progressive gates with checkpointing, budget tracking, Hakai guarantee |
+| `eight-gates` | 1-30+ | Maximum disciplined orchestration — 8 progressive gates with checkpointing, agent ceilings, Hakai guarantee |
 | `hades` | 12 (3x4) | Smart cleanup with audit trail (Smart IDs, ledger, permits) |
 
 ## Smart Infrastructure
