@@ -135,7 +135,7 @@ Each plugin handles ONE concern:
 |--------|----------------|
 | `metacognitive-guard` | Cognitive amplification, commit integrity, CI verification |
 | `feature-dev` | Guided feature development + code review |
-| `exodia` | Multi-agent orchestration (8 commands + hades skill) |
+| `exodia` | Multi-agent orchestration (9 commands + hades skill) |
 
 **Anti-pattern:** A "super-plugin" that does everything.
 
@@ -196,7 +196,7 @@ Plugins orchestrate via Skills. Skills define contracts.
 
 ## 7. Compliance Status
 
-**Last Verified:** 2026-02-07
+**Last Verified:** 2026-02-13
 
 All components pass `claude plugin validate .` and `weave-validate.sh` checks.
 See CLAUDE.md Section 8 (CI & Validation) for the validation pipeline.
