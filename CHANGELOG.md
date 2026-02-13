@@ -16,7 +16,8 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
-- **Docs sync**: Updated README.md, CLAUDE.md, ARCHITECTURE.md, AGENTS.md, marketplace.json with accurate counts (22 commands, 4 skills, 9 agents, 9 exodia commands + hades skill) and eight-gates references
+- **Docs sync**: Updated README.md, CLAUDE.md, ARCHITECTURE.md, AGENTS.md, marketplace.json with accurate counts (22 commands, 4 skills, 9 agents) and eight-gates references
+- **ARCHITECTURE.md rewrite**: Replaced stale target-state tree with actual filesystem layout. Added missing entries (AGENTS.md, .claude/rules/, .coderabbit.yaml, agents/ dir, CLAUDE.md per plugin, tri-AI review section). Removed phantom `skills/` root dir and `docs/examples/`
 
 ### Fixed
 

@@ -1,12 +1,6 @@
 # ancplua-claude-plugins Architecture
 
-This repository is Alexander’s long-lived **Claude Code plugin marketplace** and **agent lab**.
-
-The goals are:
-
-- One repo, many **plugins**, **Skills**, and (later) **agents**
-- Explicit, inspectable **architecture**
-- Deterministic behavior backed by **validation** and **docs**
+Claude Code plugin marketplace and agent lab.
 
 ---
 
@@ -14,159 +8,151 @@ The goals are:
 
 ```text
 ancplua-claude-plugins/
-├── CLAUDE.md
-├── README.md
-├── CHANGELOG.md
+├── CLAUDE.md                    # Operational brain (routing, workflows, constraints)
+├── AGENTS.md                    # Agent catalog for other AIs (Copilot, CodeRabbit)
+├── README.md                    # Human-facing overview
+├── CHANGELOG.md                 # Chronological change log
+├── LICENSE
 ├── .gitignore
+├── .coderabbit.yaml             # CodeRabbit review config
+├── .markdownlint.json           # Markdown lint rules
+├── .markdownlintignore          # Lint exclusions
+│
+├── .claude/
+│   └── rules/                   # Auto-loaded rules (SOLID, error-handling, etc.)
 │
 ├── .claude-plugin/
-│   └── marketplace.json         # The Catalog
+│   └── marketplace.json         # Plugin registry (source of truth)
+│
+├── .gemini/                     # Gemini review config
 │
 ├── .github/
-│   └── workflows/               # CI Pipelines
+│   ├── copilot-instructions.md  # Copilot Coding Agent instructions
+│   └── workflows/
+│       ├── auto-merge.yml       # Tiered auto-merge (Dependabot, Copilot, Claude)
+│       ├── ci.yml               # Main CI (plugin validate, shellcheck, markdownlint)
+│       ├── claude.yml           # Claude interactive (@claude mention trigger)
+│       ├── claude-code-review.yml # Claude formal PR review
+│       └── dependabot.yml       # Dependency update config
 │
-├── plugins/
-│   ├── metacognitive-guard/
-│   ├── feature-dev/
-│   └── ... (7 plugins total)
-│
-├── skills/                      # Repo-level skills
+├── plugins/                     # 7 plugins (22 commands, 4 skills, 9 agents)
+│   ├── exodia/                  # Multi-agent orchestration (9 commands + hades skill)
+│   ├── metacognitive-guard/     # Cognitive amplification + commit integrity + CI
+│   ├── otelwiki/                # OpenTelemetry documentation + auto-sync
+│   ├── hookify/                 # User-configurable rule-based hooks
+│   ├── feature-dev/             # Guided feature development + code review
+│   ├── dotnet-architecture-lint/# .NET build pattern enforcement
+│   └── ancplua-project-routing/ # Cross-repo specialist agent routing
 │
 ├── docs/
-│   ├── ARCHITECTURE.md
-│   └── specs/
+│   ├── ARCHITECTURE.md          # This file
+│   ├── PLUGINS.md               # Plugin creation guide
+│   ├── AGENTS.md                # Agent documentation
+│   ├── WORKFLOWS.md             # Workflow documentation
+│   ├── specs/                   # Feature specs (spec-XXXX-*.md)
+│   └── decisions/               # ADRs (ADR-XXXX-*.md)
 │
 └── tooling/
-    ├── scripts/                 # Validation & Sync scripts
-    └── templates/               # Plugin generators
+    ├── scripts/
+    │   ├── weave-validate.sh    # Single validation entrypoint
+    │   └── sync-marketplace.sh  # Marketplace sync helper
+    └── templates/
+        └── plugin-template/     # Scaffold for new plugins
 ```
-
-This layout is the **target state**. If the filesystem differs, `CLAUDE.md` defines how Claude Code must migrate toward
-it.
 
 ---
 
 ## 2. Marketplace model
 
-This repo is a **Claude Code marketplace**:
+`.claude-plugin/marketplace.json` is the **single source of truth** for published plugins.
 
-- `.claude-plugin/marketplace.json` lists all published plugins:
+Each entry: `name`, `source` (relative path), `description`, `version`.
 
-  - `name` – plugin identifier
-  - `source` – relative path under `plugins/`
-  - `description`, `version` – human and semver info
-- Each plugin lives under `plugins/<plugin-name>/` with its own:
-
-  - `.claude-plugin/plugin.json`
-  - `README.md`
-  - Optional `skills/`, `commands/`, `hooks/`, `scripts/`
-
-The marketplace manifest is the **single source of truth** for what this repo exposes as plugins.
+Each plugin lives under `plugins/<name>/` with its own manifest, docs, and optional
+skills, commands, hooks, agents, and scripts.
 
 ---
 
 ## 3. Plugin structure
 
-Each plugin under `plugins/<plugin-name>/` follows this pattern:
-
 ```text
-plugins/<plugin-name>/
+plugins/<name>/
 ├── .claude-plugin/
-│   └── plugin.json      # Manifest
-├── README.md            # Documentation
+│   └── plugin.json      # Manifest (name, version, description, author)
+├── CLAUDE.md            # Plugin-specific agent instructions
+├── README.md            # User-facing documentation
 ├── skills/
-│   └── <skill-name>/
-│       └── SKILL.md     # The Intelligence
+│   └── <skill>/
+│       └── SKILL.md     # Workflow guidance (YAML frontmatter required)
 ├── commands/
-│   └── <command>.md     # Slash Commands
+│   └── <command>.md     # Slash commands
+├── agents/
+│   └── <agent>.md       # Custom agent definitions (YAML frontmatter)
 ├── hooks/
-│   └── hooks.json       # Event Hooks
+│   └── hooks.json       # Event hooks (auto-loaded by convention)
 └── scripts/
-    └── *.sh             # Helper Scripts
+    └── *.sh             # Shell helpers
 ```
 
-**Minimum requirement:**
+**Required:** `.claude-plugin/plugin.json` + `README.md`
 
-- `.claude-plugin/plugin.json` with:
-
-  - `name`
-  - `version`
-  - `description`
-  - `author`
-  - `repository`
-  - `license`
-
-Detailed rules live in `docs/PLUGINS.md`.
+**All other directories are optional.** Not all plugins need all features.
 
 ---
 
 ## 4. Validation and quality gates
 
-Local and CI validation are aligned:
+Single local entrypoint: `./tooling/scripts/weave-validate.sh`
 
-- `tooling/scripts/weave-validate.sh` is the **single entry point** for local checks.
-- CI uses `.github/workflows/ci.yml` to run the same checks.
+CI mirrors the same checks via `.github/workflows/ci.yml`.
 
-At minimum, `weave-validate.sh` should:
-
-- Run `claude plugin validate`:
-  - On the marketplace root (`.claude-plugin/marketplace.json`)
-  - On each plugin under `plugins/`
-- Run `shellcheck` on `*.sh` files
-- Run `markdownlint` on `**/*.md`
-- Run `actionlint` on `.github/workflows/*.yml`
-
-Rules:
-
-- Before claiming a non-trivial change is “done”, developers (human or Claude) must:
-  - Run `./tooling/scripts/weave-validate.sh`
-  - Fix failures
-  - Re-run until clean
+| Gate | Tool | What it checks |
+|------|------|----------------|
+| Plugin validation | `claude plugin validate .` | Manifest schema, required fields |
+| Shell scripts | `shellcheck` | Quoting, error handling, POSIX compliance |
+| Markdown | `markdownlint` | Formatting, line length, structure |
+| Workflows | `actionlint` | GitHub Actions syntax, permissions |
+| JSON | `jq` | Syntax validity of all .json files |
 
 ---
 
-## 5. Design Principles (SOLID for Plugins)
+## 5. Design principles (SOLID for plugins)
 
-### Single Responsibility
-
-Each plugin handles ONE concern:
+**Single Responsibility** — each plugin does ONE thing:
 
 | Plugin | Responsibility |
 |--------|----------------|
+| `exodia` | Multi-agent orchestration (9 commands + hades skill) |
 | `metacognitive-guard` | Cognitive amplification, commit integrity, CI verification |
 | `feature-dev` | Guided feature development + code review |
-| `exodia` | Multi-agent orchestration (9 commands + hades skill) |
+| `otelwiki` | OpenTelemetry documentation + sync |
+| `hookify` | User-configurable behavior prevention hooks |
+| `dotnet-architecture-lint` | .NET MSBuild/CPM pattern enforcement |
+| `ancplua-project-routing` | Cross-repo specialist agent routing |
 
-**Anti-pattern:** A "super-plugin" that does everything.
+**Open/Closed** — extend via new skills/commands, don't modify core logic for edge cases.
 
-### Open/Closed
+**Interface Segregation** — only `plugin.json` + `README.md` required. Everything else opt-in.
 
-- **Extend:** Add new skills to a plugin
-- **Don't modify:** Core plugin logic for edge cases
-- **Use hooks:** For customization points
-
-### Interface Segregation
-
-Not all plugins need all features:
-
-| Component | Required | Purpose |
-|-----------|----------|---------|
-| `.claude-plugin/plugin.json` | ✓ Always | Plugin manifest |
-| `README.md` | ✓ Always | Documentation |
-| `skills/` | Optional | Workflow guidance |
-| `commands/` | Optional | Slash commands |
-| `hooks/` | Optional | Event handling |
-| `scripts/` | Optional | Shell automation |
-
-### Dependency Inversion
-
-Plugins orchestrate via Skills. Skills define contracts.
+**Dependency Inversion** — plugins orchestrate via skills. Skills define contracts.
 
 ---
 
-## 6. DevOps Integration (CALMS)
+## 6. Tri-AI review system
 
-### Automation Touchpoints
+Three AIs review PRs independently:
+
+| Agent | Reviews | Creates Fix PRs | Config |
+|-------|---------|-----------------|--------|
+| Claude | `claude-code-review.yml` | Yes (CLI) | `CLAUDE.md` |
+| Copilot | Built-in | Yes (Coding Agent) | `.github/copilot-instructions.md` |
+| CodeRabbit | Built-in | No | `.coderabbit.yaml` |
+
+Coordination through shared files (`CLAUDE.md`, `AGENTS.md`, `CHANGELOG.md`), not real-time.
+
+---
+
+## 7. DevOps (CALMS)
 
 | Stage | Tool | Purpose |
 |-------|------|---------|
@@ -175,15 +161,7 @@ Plugins orchestrate via Skills. Skills define contracts.
 | Review | `claude-code-review.yml` | AI-assisted review |
 | Merge | `auto-merge.yml` | Tiered auto-merge |
 
-### Quality Gates
-
-1. **Plugin validation:** `claude plugin validate .`
-2. **Shell scripts:** `shellcheck`
-3. **Markdown:** `markdownlint`
-4. **Workflows:** `actionlint`
-5. **JSON:** `jq` syntax check
-
-### DORA Metrics Targets
+### DORA targets
 
 | Metric | Target |
 |--------|--------|
@@ -194,9 +172,4 @@ Plugins orchestrate via Skills. Skills define contracts.
 
 ---
 
-## 7. Compliance Status
-
 **Last Verified:** 2026-02-13
-
-All components pass `claude plugin validate .` and `weave-validate.sh` checks.
-See CLAUDE.md Section 8 (CI & Validation) for the validation pipeline.
