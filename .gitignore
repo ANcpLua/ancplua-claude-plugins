@@ -42,6 +42,9 @@ obj/
 # --- Smart-Hades runtime ---
 .smart/
 
+# --- Eight Gates runtime ---
+.eight-gates/
+
 # --- Metacognitive-guard runtime state ---
 .blackboard/
 

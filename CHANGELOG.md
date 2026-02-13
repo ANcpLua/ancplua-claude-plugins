@@ -6,8 +6,26 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **exodia `eight-gates` command**: Progressive discipline orchestration — 8 named gates (Kaimon→Shimon) composing scope, context loading (Yin), parallel MAP (Yang), checkpointing (Senzu), bounded reflection (Ralph Loop), reduce, TDD execution, and Hakai cleanup. Includes budget tracking, idempotent resume from any gate, TTL sessions, artifact caching, and decision logging. Composes mega-swarm (MAP), fix pipelines (EXECUTE), and hades (HAKAI) into a unified flow
+- **`checkpoint.sh` smart script**: Gate checkpoint management — init, save, load, verify (idempotent), list. Append-only JSONL storage with key=value metadata per gate
+- **`session-state.sh` smart script**: TTL session state + artifact cache + decision log. Create sessions with expiry, cache expensive computations, log decisions with reasons, extend/expire sessions
+- **`.eight-gates/` gitignore entry**: Session-local runtime directory (checkpoints, artifacts, decisions)
+- **metacognitive-guard `deep-analysis` command**: 4-phase structured thinking methodology — decompose & assess, adversarial self-review, transparent implementation, completion verification. Includes web search decision framework and async reviewer dispatch pattern
+
 ### Fixed
 
+- **json_escape SSOT extraction**: Extracted canonical `json_escape()` into shared `scripts/smart/lib.sh` — eliminates 4 duplicate implementations (3 different variants) across checkpoint.sh, session-state.sh, ledger.sh, permit.sh. Fixes P0 multi-line JSONL corruption in ledger.sh where Hades teammates write multi-line deletion reasons
+- **session-state.sh command injection**: Replaced raw variable interpolation in `extend()` jq call with `--argjson` safe argument passing. Flagged by Gemini as critical security vulnerability
+- **checkpoint.sh verify accuracy**: Replaced brittle `grep` with `jq --argjson` exact match + session scoping. Gate 1 no longer falsely matches gate 10
+- **session-state.sh path traversal**: Added `validate_artifact_key()` guard rejecting keys with `/` or `..` — prevents escaping artifacts directory
+- **session-state.sh ls parsing**: Replaced `ls -1 | while read` anti-pattern with `find -print0 | while read -d ''` for safe filename handling
+- **checkpoint.sh session ID check**: Added existence guard before reading `.session-id` file in `save()`
+- **json_escape newline handling**: Both scripts now use `jq -Rs` when available for proper JSON encoding including newlines, with `tr '\n' ' '` fallback
+- **decision_log JSON safety**: Uses `jq -n -c --arg` for proper escaping instead of manual `json_escape` + `printf` interpolation
+- **eight-gates.md quoting**: Quoted `$1` in `find` command and replaced `ls` with `find` for artifact counting
+- **decision subcommand routing**: Added explicit `log` subcommand with graceful fallback for backward compatibility
 - **Command namespacing**: Bare `/fix`, `/mega-swarm` etc. corrected to `/exodia:fix`, `/exodia:mega-swarm` across CLAUDE.md, AGENTS.md, exodia/README.md — plugin commands are always namespaced
 - **AGENTS.md stale counts**: "19 commands, 11 agents" → "20 commands, 9 agents" to match actual filesystem
 - **README.md exodia comment**: "9 commands incl. hades" → "8 commands + hades cleanup skill" (hades is a skill, not a command)

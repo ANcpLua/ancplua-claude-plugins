@@ -1,11 +1,12 @@
 # exodia v2.0.0
 
-Multi-agent workflow orchestration. 8 commands + 1 skill (hades).
+Multi-agent workflow orchestration. 9 commands + 1 skill (hades).
 
 ## Commands
 
 | Command | Agents | Pattern | Best For |
 |---------|--------|---------|----------|
+| `/exodia:eight-gates` | 1-30+ | Progressive discipline | Maximum orchestration with checkpointing + Hakai |
 | `/exodia:turbo-fix` | 13 | Phased pipeline | P0 critical bugs |
 | `/exodia:fix` | 8-16 | Configurable pipeline | Any bug fix |
 | `/exodia:fix-pipeline` | 7 | Systematic pipeline | Audit findings |
@@ -24,12 +25,13 @@ Multi-agent workflow orchestration. 8 commands + 1 skill (hades).
 ## Typical Workflow
 
 ```text
-1. Audit the codebase         → /exodia:mega-swarm mode=quick
-2. Fix critical issues        → /exodia:turbo-fix (P0) or /exodia:fix (P1/P2)
-3. Security review            → /exodia:red-blue-review scope=security
-4. Architectural decisions    → /exodia:deep-think mode=architecture
-5. Batch implement features   → /exodia:batch-implement type=endpoints
-6. Re-audit                   → /exodia:mega-swarm mode=full
+1. Go all-in on objective     → /exodia:eight-gates "ship v2.0" . 8
+2. Audit the codebase         → /exodia:mega-swarm mode=quick
+3. Fix critical issues        → /exodia:turbo-fix (P0) or /exodia:fix (P1/P2)
+4. Security review            → /exodia:red-blue-review scope=security
+5. Architectural decisions    → /exodia:deep-think mode=architecture
+6. Batch implement features   → /exodia:batch-implement type=endpoints
+7. Re-audit                   → /exodia:mega-swarm mode=full
 ```
 
 ## Installation

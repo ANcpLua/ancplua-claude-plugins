@@ -21,6 +21,7 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 | `competitive-review` | Spawns arch-reviewer + impl-reviewer in parallel competition |
 | `epistemic-checkpoint` | Forces WebSearch verification for version/date/status claims |
 | `verification-before-completion` | Blocks "done" claims without build/test output |
+| `deep-analysis` | 4-phase structured thinking: decompose, adversarial review, implement, verify |
 
 ## Agents
 

@@ -173,6 +173,9 @@ IF claiming done/complete/fixed/works
 IF version/date/status question
   → read epistemic-checkpoint skill (check assertions.yaml, then WebSearch)
 
+IF complex decision / multiple trade-offs / debugging dead-end
+  → read deep-analysis skill (4-phase: decompose, adversarial, implement, verify)
+
 IF code review needed
   → read competitive-review skill (spawns arch-reviewer + impl-reviewer)
 
@@ -201,6 +204,12 @@ IF frontend design quality audit needed
   → exodia/hades --goggles (adds 3 design judges: taste + spec + compliance)
   → auto-equipped when scope contains .tsx/.jsx/.css/.html/.svelte/.vue files
 
+IF maximum disciplined orchestration / all-in / go beyond limits
+  → /exodia:eight-gates "[objective]" [scope] [gate-limit]
+    8 progressive gates: scope→context→MAP→checkpoint→reflect→reduce→execute→hakai
+    Checkpointing, budget tracking, idempotent resume, Hakai guarantee
+    Composes mega-swarm (MAP), fix pipelines (EXECUTE), hades (HAKAI)
+
 IF multi-agent orchestration needed
   → exodia commands (unlimited parallel agents):
     /exodia:fix               - P1/P2/P3 bugs (8 std, 16 max agents)
@@ -219,6 +228,7 @@ IF zero-tolerance cleanup needed
 
 When multi-agent orchestration is needed, use these IF/THEN patterns:
 
+- **IF maximum discipline / all-in orchestration** THEN use `eight-gates` command (8 progressive gates, checkpointing, Hakai)
 - **IF fixing P1/P2/P3 bug** THEN use `fix` skill (8 agents standard, 16 maximum)
 - **IF need multiple solution perspectives** THEN use `tournament` skill (N competitors)
 - **IF complex debugging first** THEN use `deep-think` skill before fix
