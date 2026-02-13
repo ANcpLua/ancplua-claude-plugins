@@ -14,6 +14,10 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **`.eight-gates/` gitignore entry**: Session-local runtime directory (checkpoints, artifacts, decisions)
 - **metacognitive-guard `deep-analysis` command**: 4-phase structured thinking methodology — decompose & assess, adversarial self-review, transparent implementation, completion verification. Includes web search decision framework and async reviewer dispatch pattern
 
+### Changed
+
+- **Docs sync**: Updated README.md, CLAUDE.md, ARCHITECTURE.md, AGENTS.md, marketplace.json with accurate counts (22 commands, 4 skills, 9 agents, 9 exodia commands + hades skill) and eight-gates references
+
 ### Fixed
 
 - **json_escape SSOT extraction**: Extracted canonical `json_escape()` into shared `scripts/smart/lib.sh` — eliminates 4 duplicate implementations (3 different variants) across checkpoint.sh, session-state.sh, ledger.sh, permit.sh. Fixes P0 multi-line JSONL corruption in ledger.sh where Hades teammates write multi-line deletion reasons
