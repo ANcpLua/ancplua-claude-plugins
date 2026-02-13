@@ -16,6 +16,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **json_escape SSOT extraction**: Extracted canonical `json_escape()` into shared `scripts/smart/lib.sh` — eliminates 4 duplicate implementations (3 different variants) across checkpoint.sh, session-state.sh, ledger.sh, permit.sh. Fixes P0 multi-line JSONL corruption in ledger.sh where Hades teammates write multi-line deletion reasons
 - **session-state.sh command injection**: Replaced raw variable interpolation in `extend()` jq call with `--argjson` safe argument passing. Flagged by Gemini as critical security vulnerability
 - **checkpoint.sh verify accuracy**: Replaced brittle `grep` with `jq --argjson` exact match + session scoping. Gate 1 no longer falsely matches gate 10
 - **session-state.sh path traversal**: Added `validate_artifact_key()` guard rejecting keys with `/` or `..` — prevents escaping artifacts directory

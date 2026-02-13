@@ -8,13 +8,8 @@ GATES_DIR="${GATES_DIR:-.eight-gates}"
 CHECKPOINT_FILE="${GATES_DIR}/checkpoints.jsonl"
 SESSION_ID_FILE="${GATES_DIR}/.session-id"
 
-json_escape() {
-  if command -v jq &>/dev/null; then
-    printf '%s' "$1" | jq -Rs '.[:-1] // .'
-    return
-  fi
-  printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g' | tr '\n' ' '
-}
+# shellcheck source=lib.sh
+source "${BASH_SOURCE[0]%/*}/lib.sh"
 
 init() {
   local session_id="${1:?Usage: checkpoint.sh init <session-id>}"

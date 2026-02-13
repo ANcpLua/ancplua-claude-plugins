@@ -6,8 +6,8 @@ set -euo pipefail
 SMART_DIR="${SMART_DIR:-.smart}"
 LEDGER_FILE="${SMART_DIR}/delete-ledger.jsonl"
 
-# Escape characters that break JSON strings
-json_escape() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g'; }
+# shellcheck source=lib.sh
+source "${BASH_SOURCE[0]%/*}/lib.sh"
 
 init() {
   mkdir -p "$SMART_DIR"

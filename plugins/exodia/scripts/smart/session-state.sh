@@ -9,13 +9,8 @@ SESSION_FILE="${GATES_DIR}/session.json"
 ARTIFACTS_DIR="${GATES_DIR}/artifacts"
 DECISIONS_FILE="${GATES_DIR}/decisions.jsonl"
 
-json_escape() {
-  if command -v jq &>/dev/null; then
-    printf '%s' "$1" | jq -Rs '.[:-1] // .'
-    return
-  fi
-  printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g' | tr '\n' ' '
-}
+# shellcheck source=lib.sh
+source "${BASH_SOURCE[0]%/*}/lib.sh"
 
 # Validate artifact key — reject path traversal and unsafe characters
 validate_artifact_key() {

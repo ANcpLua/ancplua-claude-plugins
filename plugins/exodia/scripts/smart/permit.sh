@@ -6,8 +6,8 @@ set -euo pipefail
 SMART_DIR="${SMART_DIR:-.smart}"
 PERMIT_FILE="${SMART_DIR}/delete-permit.json"
 
-# Escape characters that break JSON strings
-json_escape() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g'; }
+# shellcheck source=lib.sh
+source "${BASH_SOURCE[0]%/*}/lib.sh"
 
 create() {
   local smart_id="${1:?Usage: permit.sh create <smart-id> <paths...> [--ttl=300]}"

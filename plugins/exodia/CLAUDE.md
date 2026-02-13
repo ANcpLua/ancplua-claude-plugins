@@ -28,6 +28,7 @@ Located: `scripts/smart/`
 
 | Script | Purpose |
 |--------|---------|
+| `lib.sh` | Shared utilities (`json_escape`) — sourced by all smart scripts |
 | `smart-id.sh` | Generates `SMART-YYYY-MM-DD-<epoch><random>` IDs |
 | `ledger.sh` | Append-only JSONL audit log with flock locking |
 | `permit.sh` | TTL-based deletion permits with scope matching |
