@@ -113,6 +113,11 @@ To have all gates open at once is Eight Gates Released Formation.
 
 <CRITICAL_EXECUTION_REQUIREMENT>
 
+**STEP -1 — Inherit Prior Findings:**
+If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, `.eight-gates/artifacts/findings.json` already
+has prior scan data. Skip Gate 3 MAP entirely — load findings from file, proceed directly to Gate 4 CHECKPOINT.
+This saves the most expensive phase (4-12 agents) when findings already exist from a prior session.
+
 **INIT — Before Any Gate Opens:**
 
 ```bash
