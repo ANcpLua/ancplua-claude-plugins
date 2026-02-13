@@ -8,6 +8,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **exodia `baryon-mode` command**: One-shot Noble Phantasm for .NET warning extermination. Phase 0 snapshots tooling reality via `dotnet build`, then T0 burst launches up to 9 parallel agents (1 recon-invoker for Rider MCP + NuGet MCP version discovery, 8 domain aspects: nullability, deprecation, unused code, async, style, suppressions, packages, config). No gates, no permission, headless/reckless. Cross-repo with full MCP access. Final verification via delta build comparison
 - **exodia `eight-gates` command**: Progressive discipline orchestration — 8 named gates (Kaimon→Shimon) composing scope, context loading (Yin), parallel MAP (Yang), checkpointing (Senzu), bounded reflection (Ralph Loop), reduce, TDD execution, and Hakai cleanup. Includes budget tracking, idempotent resume from any gate, TTL sessions, artifact caching, and decision logging. Composes mega-swarm (MAP), fix pipelines (EXECUTE), and hades (HAKAI) into a unified flow
 - **`checkpoint.sh` smart script**: Gate checkpoint management — init, save, load, verify (idempotent), list. Append-only JSONL storage with key=value metadata per gate
 - **`session-state.sh` smart script**: TTL session state + artifact cache + decision log. Create sessions with expiry, cache expensive computations, log decisions with reasons, extend/expire sessions
