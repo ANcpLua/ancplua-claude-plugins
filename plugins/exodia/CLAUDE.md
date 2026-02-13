@@ -1,6 +1,6 @@
 # exodia
 
-Multi-agent workflow orchestration. 9 commands + 1 skill (hades), unlimited parallel agents.
+Multi-agent workflow orchestration. 10 commands + 1 skill (hades), unlimited parallel agents.
 
 ## Commands (in commands/)
 
@@ -15,6 +15,7 @@ Multi-agent workflow orchestration. 9 commands + 1 skill (hades), unlimited para
 | `deep-think` | 5 | Analysis before action, no implementation |
 | `batch-implement` | N+2 | Multiple similar items in parallel |
 | `red-blue-review` | 3+N+1 | Adversarial security/quality review |
+| `baryon-mode` | 1+8 | .NET warning extermination (one-shot T0 burst) |
 
 ## Skill (in skills/ — uses hooks/argument-hint)
 
@@ -45,4 +46,5 @@ Hookify guard templates in `scripts/smart/hookify-rules/`:
 - All commands/skills use blockquote teammate pattern (`> subagent: ... | model: ...`).
 - Descriptions encode IF/THEN routing (Vercel pattern).
 - Eight Gates composes all others: mega-swarm (MAP) -> fix pipelines (EXECUTE) -> hades (HAKAI).
+- Baryon Mode is a Noble Phantasm: one-shot T0 burst for .NET warnings. No gates, no permission. Invoker + 8 aspects.
 - Exodia creates, Hades judges. They compose: mega-swarm -> hades.

@@ -122,8 +122,8 @@ ancplua-claude-plugins/
 │   ├── copilot-instructions.md
 │   └── workflows/               # CI, review, auto-merge
 │
-├── plugins/                     # 7 plugins (22 commands, 4 skills, 9 agents)
-│   ├── exodia/                  # Multi-agent orchestration — 9 commands + hades skill
+├── plugins/                     # 7 plugins (23 commands, 4 skills, 9 agents)
+│   ├── exodia/                  # Multi-agent orchestration — 10 commands + hades skill
 │   ├── metacognitive-guard/     # Cognitive amplification + commit integrity + CI
 │   ├── otelwiki/                # OpenTelemetry docs + sync
 │   ├── hookify/                 # User-configurable hooks
@@ -215,10 +215,14 @@ IF multi-agent orchestration needed
     /exodia:tournament        - competitive solutions (N+2 agents)
     /exodia:batch-implement   - parallel similar items (1+N+1 agents)
     /exodia:red-blue-review   - adversarial security (3+N+1 agents)
+    /exodia:baryon-mode       - .NET warning extermination (1+8 agents, one-shot T0 burst)
     /exodia:hades             - audited cleanup (3 phases x 4+3 teammates with goggles)
 
 IF zero-tolerance cleanup needed
   → exodia:hades skill (audited cleanup with Smart IDs, deletion permits, audit ledger)
+
+IF .NET warnings need extermination (one-shot, headless, cross-repo)
+  → /exodia:baryon-mode command (1 Invoker + 8 aspects burst at T0, full MCP access)
 ```
 
 ### Exodia Skills Detailed Routing
@@ -235,6 +239,7 @@ When multi-agent orchestration is needed, use these IF/THEN patterns:
 - **IF comprehensive codebase audit** THEN use `mega-swarm` skill (12 agents full, 6 quick, 8 focused)
 - **IF cleanup/elimination/dead code/suppressions** THEN use `hades` skill (Smart IDs, deletion permits, audit ledger)
 - **IF frontend cleanup + design quality** THEN use `hades --goggles` (Pink Glasses: taste → spec → compliance pipeline)
+- **IF .NET warning extermination** THEN use `baryon-mode` command (1 Invoker + 8 aspects, one-shot T0, cross-repo)
 
 ### Priority and Composition
 
