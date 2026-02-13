@@ -24,4 +24,4 @@ The separation of concerns:
 - **Plugins** encode reusable behavior and skills
 - **Agents** orchestrate plugins and execute workflows
 - **Exodia** composes agents into multi-agent pipelines
-  (8 commands + 2 skills: eight-gates, hades; 21 commands total)
+  (9 commands + 2 skills: eight-gates, hades; 22 commands total)
