@@ -2,7 +2,7 @@
 
 > **CCC** — Claude, Copilot, CodeRabbit. The holy trinity. And two of them are Claude in a trenchcoat.
 
-Claude Code plugin marketplace. 7 plugins, 22 commands, 5 skills, 9 agents, 18 scripts, 5 hook configs.
+Claude Code plugin marketplace. 7 plugins, 22 commands, 5 skills, 9 agents, 20 scripts, 6 hook configs.
 
 ## Plugins
 

@@ -9,150 +9,105 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 
 - **exodia findings auto-inherit**: SessionStart hook (`findings-inject.sh`) reads `.eight-gates/artifacts/findings.json` and injects as `<EXODIA_FINDINGS_CONTEXT>` passive context (LAW 1). STEP -1 added to all 9 commands + 2 skills — filters findings by scope, skips re-scanning. Producers: mega-swarm, eight-gates (Gate 3), hades (Phase 0). Consumers: everything else
-- **exodia `baryon-mode` command**: One-shot Noble Phantasm for .NET warning extermination. Phase 0 snapshots tooling reality via `dotnet build`, then T0 burst launches up to 9 parallel agents (1 recon-invoker for Rider MCP + NuGet MCP version discovery, 8 domain aspects: nullability, deprecation, unused code, async, style, suppressions, packages, config). No gates, no permission, headless/reckless. Cross-repo with full MCP access. Final verification via delta build comparison
-- **exodia `eight-gates` skill**: Progressive discipline orchestration — 8 named gates (Kaimon→Shimon) composing scope, context loading (Yin), parallel MAP (Yang), checkpointing (Senzu), bounded reflection (Ralph Loop), reduce, TDD execution, and Hakai cleanup. Idempotent resume from any gate, TTL sessions, artifact caching, and decision logging. Composes mega-swarm (MAP), fix pipelines (EXECUTE), and hades (HAKAI) into a unified flow
-
-### Changed
-
-- **eight-gates conductor identity**: Rewritten IDENTITY section — lead agent is the conductor (baton, not instrument). Delegation is intrinsic to self-concept rather than enforced by blocking hooks. "A conductor who picks up a violin has stopped conducting."
-- **eight-gates budget tracking removed**: Replaced all budget references with agent ceilings. Token costs tracked via OTel, not skills
-- **`checkpoint.sh` smart script**: Gate checkpoint management — init, save, load, verify (idempotent), list. Append-only JSONL storage with key=value metadata per gate
-- **`session-state.sh` smart script**: TTL session state + artifact cache + decision log. Create sessions with expiry, cache expensive computations, log decisions with reasons, extend/expire sessions
-- **`.eight-gates/` gitignore entry**: Session-local runtime directory (checkpoints, artifacts, decisions)
-- **metacognitive-guard `deep-analysis` command**: 4-phase structured thinking methodology — decompose & assess, adversarial self-review, transparent implementation, completion verification. Includes web search decision framework and async reviewer dispatch pattern
-
-### Changed
-
-- **exodia `eight-gates` promoted from command to skill**: Moved from `commands/eight-gates.md` (412 lines) to `skills/eight-gates/` (SKILL.md + 8 per-gate templates in `templates/`). Follows the hades pattern — supporting files enable specialist agent prompts per gate without bloating the main skill. Reviewer fixes applied: expanded `allowed-tools`, SSOT references instead of duplication, `.smart/` gitignore safety, fixed undefined shell functions in gate-02, fixed `$(cat ...)` references in gate-04/06, added context injection instructions for subagent prompts in gate-05/07. Counts: 22→21 commands, 4→5 skills
-- **Docs sync**: Updated README.md, CLAUDE.md, ARCHITECTURE.md, AGENTS.md, marketplace.json with accurate counts (22 commands, 4 skills, 9 agents) and eight-gates references
-- **ARCHITECTURE.md rewrite**: Replaced stale target-state tree with actual filesystem layout. Added missing entries (AGENTS.md, .claude/rules/, .coderabbit.yaml, agents/ dir, CLAUDE.md per plugin, tri-AI review section). Removed phantom `skills/` root dir and `docs/examples/`
-- **qyl routing rewrite**: Replaced thin qyl block with full project map (14 src projects), TypeSpec flow, specialist agents (servicedefaults-specialist added), and condensed MTP exit codes. Removed bloated Context Processing Requirement ceremony
-
-### Fixed
-
-- **json_escape SSOT extraction**: Extracted canonical `json_escape()` into shared `scripts/smart/lib.sh` — eliminates 4 duplicate implementations (3 different variants) across checkpoint.sh, session-state.sh, ledger.sh, permit.sh. Fixes P0 multi-line JSONL corruption in ledger.sh where Hades teammates write multi-line deletion reasons
-- **session-state.sh command injection**: Replaced raw variable interpolation in `extend()` jq call with `--argjson` safe argument passing. Flagged by Gemini as critical security vulnerability
-- **checkpoint.sh verify accuracy**: Replaced brittle `grep` with `jq --argjson` exact match + session scoping. Gate 1 no longer falsely matches gate 10
-- **session-state.sh path traversal**: Added `validate_artifact_key()` guard rejecting keys with `/` or `..` — prevents escaping artifacts directory
-- **session-state.sh ls parsing**: Replaced `ls -1 | while read` anti-pattern with `find -print0 | while read -d ''` for safe filename handling
-- **checkpoint.sh session ID check**: Added existence guard before reading `.session-id` file in `save()`
-- **json_escape newline handling**: Both scripts now use `jq -Rs` when available for proper JSON encoding including newlines, with `tr '\n' ' '` fallback
-- **decision_log JSON safety**: Uses `jq -n -c --arg` for proper escaping instead of manual `json_escape` + `printf` interpolation
-- **eight-gates.md quoting**: Quoted `$1` in `find` command and replaced `ls` with `find` for artifact counting
-- **decision subcommand routing**: Added explicit `log` subcommand with graceful fallback for backward compatibility
-- **Command namespacing**: Bare `/fix`, `/mega-swarm` etc. corrected to `/exodia:fix`, `/exodia:mega-swarm` across CLAUDE.md, AGENTS.md, exodia/README.md — plugin commands are always namespaced
-- **AGENTS.md stale counts**: "19 commands, 11 agents" → "20 commands, 9 agents" to match actual filesystem
-- **README.md exodia comment**: "9 commands incl. hades" → "8 commands + hades cleanup skill" (hades is a skill, not a command)
-- **check-hades-idle.sh jq guard**: Added `command -v jq` with sed fallback. Without guard, quality gate silently failed open
-- **project-routing.sh strict mode**: Added `set -euo pipefail` + fixed shebang to `#!/usr/bin/env bash` — was only script without strict mode
-- **Template README autocomplete guidance**: Removed false claim that `commands/` is required. Official docs mark `commands/` as legacy
-
-### Changed
-
-- **turbo-fix: atomic TDD** (16→13 agents): Merged `test-writer` + `implementation-coder` into single `tdd-implementer` that owns RED→GREEN cycle atomically. Eliminates file conflict where parallel agents wrote to same source files. `docs-updater` marked read-only
-- **batch-implement: explicit file ownership**: Implementers now declare `OWNED FILES:` and are forbidden from modifying shared registration files (DI, route tables, exports). All wiring centralized in `consistency-reviewer` Phase 3
-- **red-blue-review: module-scoped defenders**: Changed Phase 2 from "1 defender per finding" to "1 defender per module" with grouped findings. Eliminates file conflict when multiple findings target the same module. Phase 3 re-attackers mirror the same grouping
-
-### Fixed
-
-- **struggle-detector was dead code**: Was reading Stop hook JSON metadata via stdin and grepping it for hedging patterns — never matched anything. Now reads `transcript_path` from hook input, extracts last assistant message from JSONL transcript, analyzes actual response text
-- **struggle-detector output key**: Changed `hookSpecificOutput.additionalContext` to `systemMessage` — the field async hooks actually deliver on next turn
-- **metacognitive-guard Stop hook not async**: `struggle-detector.sh` never blocks stopping (always exits 0) but was running synchronously. Now runs with `async: true`
-- **otelwiki check-freshness.sh missing timeout**: No `timeout` field meant 600s (10 minute) default. Added `timeout: 5` matching sibling hook
-- **hades TeammateIdle inline command using relative path**: `plugins/exodia/scripts/smart/ledger.sh` breaks if CWD isn't repo root. Extracted to `check-hades-idle.sh` script using `${CLAUDE_PLUGIN_ROOT}` for reliable path resolution
-- **ancplua-project-routing redundant matcher**: SessionStart matcher `startup|resume|clear|compact` covers all 4 triggers — equivalent to no matcher. Removed
-- **hades SKILL.md line length (MD013)**: Split 178-char goggles description line to fit 120-char limit
-
-### Added
-
-- **metacognitive-guard TaskCompleted hook**: Prompt-based (haiku, 15s) quality gate that validates task completions in team workflows aren't premature. Fires on every `TaskUpdate` to `completed` status
-- **exodia check-hades-idle.sh**: Extracted script from hades SKILL.md inline `bash -c` command. Cleaner, debuggable, uses `${CLAUDE_PLUGIN_ROOT}` paths
-
-### Removed
-
-- **hades TaskCompleted prompt hook**: Duplicate of metacognitive-guard's generic TaskCompleted gate. Hades eliminators are already gated by TeammateIdle ledger check
-
-### Changed
-
-- **Plugin consolidation: 10 → 7 plugins** via three merges:
-  - `completion-integrity` → absorbed into `metacognitive-guard` as PreToolUse hook on Bash (commit-integrity-hook.sh)
-  - `autonomous-ci` → absorbed into `metacognitive-guard` as utility scripts (verify-local.sh, wait-for-ci.sh)
-  - `code-review` → absorbed into `feature-dev` (skill, command, references)
-- **metacognitive-guard v0.4.0**: Now includes 4 hooks (was 3), 7 scripts (was 3), absorbs commit integrity checking and CI verification
-- **feature-dev v1.1.0**: Now includes `/review` command, `code-review` skill with references, and the full 7-phase workflow
-
-### Removed
-
-- **Standalone `completion-integrity` plugin**: Merged into metacognitive-guard as a PreToolUse hook
-- **Standalone `autonomous-ci` plugin**: Merged into metacognitive-guard as utility scripts
-- **Standalone `code-review` plugin**: Merged into feature-dev (skill + command + code-reviewer agent was already there)
-
-### Added
-
-- **Hades Goggles (Pink Glasses)**: Frontend design judgment enhancement for Hades cleanup skill.
-  - Equip with `--goggles` or auto-equipped when scope contains frontend files (`.tsx`/`.jsx`/`.css`/`.html`/`.svelte`/`.vue`).
-  - Adds 3 Opus 4.6 teammates (taste/spec/compliance) to Phase 0 audit.
-  - Three-layer pipeline: frontend-design (aesthetic direction) → ui-ux-pro-max (measurable specs) → web-design-guidelines (implementation compliance).
-  - Findings feed into Phase 1 elimination as design-violation tasks.
-- **Hades smart targeting**: Auto-detects frontend files in scope and equips goggles without explicit `--goggles` flag
-- **Goggles teammate templates**: `plugins/exodia/skills/hades/templates/goggles.md` — smart-goggles-taste, smart-goggles-spec, smart-goggles-compliance
-- **CLAUDE.md routing**: Added frontend design quality audit routing to Hades --goggles
-
-### Fixed
-
-- **Hook timeout units**: Changed `timeout: 5000` (83 minutes) to `timeout: 5` (5 seconds) across metacognitive-guard, otelwiki, dotnet-architecture-lint hooks.json (6 occurrences)
-- **Invalid `"stdin": "response"` field**: Removed from metacognitive-guard Stop hook — not a valid hook property, was silently ignored
-- **Skill $N indexing**: Fixed 1-based to 0-based indexing across all 9 exodia skills (133 references). `$1`→`$0`, `$2`→`$1`, etc. per Claude Code spec
-- **SessionStart hooks invalid JSON**: Fixed 3 scripts that embedded raw newlines in JSON string values — `inject-dotnet-rules.sh`, `truth-beacon.sh`, `project-routing.sh`. Now use `jq` when available, with `printf`/`sed` escaping fallback
-- **dotnet CLI syntax**: Removed erroneous `--` separator and added `.slnx` preference in `verify-local.sh`
-- **macOS flock compatibility**: Added `command -v flock` guard in `ledger.sh` matching the existing pattern in sibling `permit.sh`
-- **README.md hades ghost**: Removed deleted hades plugin from plugin table and install commands
-- **AGENTS.md false counts**: Fixed "12 plugins, 22 skills" → "11 plugins, 19 skills"
-- **AGENTS.md stale hades routing**: Removed references to non-existent `hades/skills:{judge,enforce,verify}` and updated decision tree
-- **copilot-instructions.md Quad-AI**: Was not updated in previous pass — now correctly says "Tri-AI" and "three AI agents"
-- **CLAUDE.md Quad-AI heading**: Section 5.5.1 heading contradicted its own body — fixed to "Tri-AI"
-- **README.md stale docs URL**: Updated from `docs.anthropic.com` to `code.claude.com/docs/en/plugins`
-
-### Removed
-
-- **Standalone hades plugin** (`plugins/hades/`): Redundant with `plugins/exodia/skills/hades/`
-- **GEMINI.md**: Gemini removed as co-agent
-- **Quad-AI references**: Downgraded to tri-AI (Claude, Copilot, CodeRabbit) across all files
-- **Type A/Type T architecture**: Removed all Type A/Type T terminology and ancplua-mcp references across 15 files. ancplua-mcp project is discontinued
-- **CLAUDE.md Section 10**: Removed entire MCP Integration / Dual-Repo Workflow section
-- **copilot-instructions.md Section 3**: Removed entire "Type A vs Type T separation" section
-- **docs/ARCHITECTURE.md**: Removed Sections 1 (Type A vs T), 5 (MCP integration), 7 (Relationship to ancplua-mcp); renumbered remaining sections
-- **docs/PLUGINS.md**: Removed Type A/MCP paragraph
-- **docs/AGENTS.md**: Removed ancplua-mcp MCP servers reference
-- **spec-0003-cross-repo-contracts.md**: Deprecated — ancplua-mcp project discontinued
-- **claude-code-review.yml**: Removed Type A/T references from review prompt
-- **claude.yml**: Removed Type A comment
-- **.gemini/styleguide.md**: Removed Type A/T identity and sister repo reference
-- **.gemini/config.yaml**: Removed Type A comment
-- **ancplua-project-routing**: Removed Type A/T labels, removed ancplua-mcp routing block from hook script, CLAUDE.md, README.md
-- **weave-validate.sh**: Removed dual-repo mode (`--dual` flag, `SIBLING_REPO`, sibling validation)
-- **plugin-template/README.md**: Removed MCP tools section referencing ancplua-mcp
-
-### Added
-
-- **Mega-swarm backlog**: `docs/mega-swarm-backlog.md` — P2/P3 issues for follow-up (18 medium, 14 low)
-- **Claude multi-entity documentation**: CLAUDE.md section 2 now explains Claude as a multi-agent system
-- **CCC tagline**: README now opens with "Claude, Copilot, CodeRabbit — the holy trinity"
+- **exodia `baryon-mode` command**: One-shot .NET warning extermination. Phase 0 snapshots via `dotnet build`, then T0 burst launches up to 9 parallel agents (1 recon-invoker + 8 domain aspects). Cross-repo with full MCP access
+- **exodia `eight-gates` skill**: Progressive discipline orchestration — 8 named gates (Kaimon→Shimon). Idempotent resume, TTL sessions, artifact caching, decision logging. Composes mega-swarm (MAP), fix pipelines (EXECUTE), and hades (HAKAI)
+- **Hades Goggles (Pink Glasses)**: Frontend design judgment for Hades cleanup. Auto-equipped for `.tsx`/`.jsx`/`.css`/`.html`/`.svelte`/`.vue` files. Adds 3 teammates (taste/spec/compliance) to Phase 0 audit
+- **metacognitive-guard TaskCompleted hook**: Prompt-based (haiku, 15s) quality gate for team workflow task completions
+- **exodia `check-hades-idle.sh`**: Extracted from inline `bash -c` command. Uses `${CLAUDE_PLUGIN_ROOT}` paths
+- **Mega-swarm backlog**: `docs/mega-swarm-backlog.md` — P2/P3 issues for follow-up
+- **Claude multi-entity documentation**: CLAUDE.md section 2 explains Claude as a multi-agent system
+- **CCC tagline**: README opens with "Claude, Copilot, CodeRabbit — the holy trinity"
 - **Hades teammate prompt templates**: Extracted into `plugins/exodia/skills/hades/templates/`
 - **Hades skill hooks**: `TeammateIdle` (command) and `TaskCompleted` (prompt/haiku)
 - **Modular rule files**: `.claude/rules/` auto-loaded files
+- **`checkpoint.sh` smart script**: Gate checkpoint management — init, save, load, verify (idempotent), list. Append-only JSONL storage
+- **`session-state.sh` smart script**: TTL session state + artifact cache + decision log
+- **`.eight-gates/` gitignore entry**: Session-local runtime directory
 
 ### Changed
 
+- **eight-gates conductor identity**: Lead agent is the conductor (baton, not instrument). Delegation is intrinsic to self-concept. "A conductor who picks up a violin has stopped conducting."
+- **eight-gates budget tracking removed**: Replaced all budget references with agent ceilings. Token costs tracked via OTel, not skills
+- **exodia `eight-gates` promoted from command to skill**: Moved from `commands/eight-gates.md` (412 lines) to `skills/eight-gates/` (SKILL.md + 8 per-gate templates). Reviewer fixes: expanded `allowed-tools`, SSOT references, `.smart/` gitignore safety, fixed undefined functions/references in gate-02/04/06, added context injection in gate-05/07
+- **metacognitive-guard `deep-analysis` command**: 4-phase structured thinking — decompose, adversarial review, implementation, verification
+- **Docs sync**: Updated README.md, CLAUDE.md, ARCHITECTURE.md, AGENTS.md, marketplace.json with accurate counts (22 commands, 5 skills, 9 agents)
+- **ARCHITECTURE.md rewrite**: Replaced stale target-state tree with actual filesystem layout. Removed phantom `skills/` root dir and `docs/examples/`
+- **qyl routing rewrite**: Full project map (14 src projects), TypeSpec flow, specialist agents. Removed bloated Context Processing Requirement ceremony
+- **turbo-fix: atomic TDD** (16→13 agents): Merged `test-writer` + `implementation-coder` into single `tdd-implementer`. Eliminates file conflict
+- **batch-implement: explicit file ownership**: Implementers declare `OWNED FILES:`, wiring centralized in `consistency-reviewer` Phase 3
+- **red-blue-review: module-scoped defenders**: Changed from "1 defender per finding" to "1 defender per module" with grouped findings
+- **Plugin consolidation: 10 → 7 plugins**: `completion-integrity` → metacognitive-guard, `autonomous-ci` → metacognitive-guard, `code-review` → feature-dev
+- **metacognitive-guard v0.4.0**: 4 hooks (was 3), 7 scripts (was 3), absorbs commit integrity + CI verification
+- **feature-dev v1.1.0**: `/review` command, `code-review` skill, full 7-phase workflow
 - **Exodia hades skill**: Merged content from standalone hades, refactored to ~280 lines
 - **CLAUDE.md**: Replaced sections 15-18 with `.claude/rules/` references
 - **All hooks.json files**: Added `statusMessage` for spinner UX
-- **metacognitive-guard hooks.json**: Combined `Write` + `Edit` into `Write|Edit` regex
-- **dotnet-architecture-lint hooks.json**: Combined `Write` + `Edit` into `Write|Edit` regex
+- **hooks.json regex**: Combined `Write` + `Edit` into `Write|Edit` regex across metacognitive-guard, dotnet-architecture-lint
 - **hookify hooks.json**: Added `async: true` to PostToolUse hook
 - **arch-reviewer & impl-reviewer agents**: Added `memory: user`
 - **weave-validate.sh**: Rewritten with hard failures vs soft warnings, proper exit codes
 - **ci.yml**: Rewritten with 4 parallel jobs and real validation checks
+
+### Fixed
+
+- **json_escape SSOT extraction**: Extracted canonical `json_escape()` into shared `scripts/smart/lib.sh` — eliminates 4 duplicate implementations. Fixes P0 multi-line JSONL corruption in ledger.sh
+- **session-state.sh command injection**: Replaced raw variable interpolation with `--argjson` safe argument passing
+- **checkpoint.sh verify accuracy**: Replaced brittle `grep` with `jq --argjson` exact match + session scoping
+- **session-state.sh path traversal**: Added `validate_artifact_key()` guard rejecting keys with `/` or `..`
+- **session-state.sh ls parsing**: Replaced `ls -1 | while read` with `find -print0 | while read -d ''`
+- **checkpoint.sh session ID check**: Added existence guard before reading `.session-id`
+- **json_escape newline handling**: Both scripts now use `jq -Rs` with `tr '\n' ' '` fallback
+- **decision_log JSON safety**: Uses `jq -n -c --arg` instead of manual `json_escape` + `printf`
+- **eight-gates.md quoting**: Quoted `$1` in `find` command, replaced `ls` with `find` for artifact counting
+- **decision subcommand routing**: Added explicit `log` subcommand with graceful fallback
+- **Command namespacing**: Bare `/fix`, `/mega-swarm` etc. corrected to `/exodia:fix`, `/exodia:mega-swarm` across docs
+- **AGENTS.md stale counts**: "19 commands, 11 agents" → "20 commands, 9 agents"
+- **README.md exodia comment**: "9 commands incl. hades" → "8 commands + hades cleanup skill"
+- **check-hades-idle.sh jq guard**: Added `command -v jq` with sed fallback
+- **project-routing.sh strict mode**: Added `set -euo pipefail` + fixed shebang
+- **Template README autocomplete guidance**: Removed false claim that `commands/` is required
+- **struggle-detector was dead code**: Now reads `transcript_path` from hook input and analyzes actual response text
+- **struggle-detector output key**: Changed `additionalContext` to `systemMessage`
+- **metacognitive-guard Stop hook not async**: Now runs with `async: true`
+- **otelwiki check-freshness.sh missing timeout**: Added `timeout: 5`
+- **hades TeammateIdle inline command**: Extracted to script using `${CLAUDE_PLUGIN_ROOT}` for reliable paths
+- **ancplua-project-routing redundant matcher**: Removed matcher equivalent to no matcher
+- **hades SKILL.md line length (MD013)**: Split 178-char line to fit 120-char limit
+- **Hook timeout units**: Changed `timeout: 5000` (83 minutes) to `timeout: 5` (5 seconds) across 6 occurrences
+- **Invalid `"stdin": "response"` field**: Removed from metacognitive-guard Stop hook
+- **Skill $N indexing**: Fixed 1-based to 0-based across all 9 exodia skills (133 references)
+- **SessionStart hooks invalid JSON**: Fixed 3 scripts embedding raw newlines in JSON
+- **dotnet CLI syntax**: Removed erroneous `--` separator, added `.slnx` preference in `verify-local.sh`
+- **macOS flock compatibility**: Added `command -v flock` guard in `ledger.sh`
+- **README.md hades ghost**: Removed deleted hades plugin from table and install commands
+- **AGENTS.md false counts**: Fixed "12 plugins, 22 skills" → "11 plugins, 19 skills"
+- **AGENTS.md stale hades routing**: Removed references to non-existent `hades/skills:{judge,enforce,verify}`
+- **copilot-instructions.md Quad-AI**: Fixed to "Tri-AI" and "three AI agents"
+- **CLAUDE.md Quad-AI heading**: Fixed section 5.5.1 to "Tri-AI"
+- **README.md stale docs URL**: Updated to `code.claude.com/docs/en/plugins`
+
+### Removed
+
+- **hades TaskCompleted prompt hook**: Duplicate of metacognitive-guard's generic gate
+- **Standalone `completion-integrity` plugin**: Merged into metacognitive-guard
+- **Standalone `autonomous-ci` plugin**: Merged into metacognitive-guard
+- **Standalone `code-review` plugin**: Merged into feature-dev
+- **Standalone hades plugin** (`plugins/hades/`): Redundant with `plugins/exodia/skills/hades/`
+- **GEMINI.md**: Gemini removed as co-agent
+- **Quad-AI references**: Downgraded to tri-AI across all files
+- **Type A/Type T architecture**: Removed all references across 15 files. ancplua-mcp discontinued
+- **CLAUDE.md Section 10**: Removed MCP Integration / Dual-Repo Workflow section
+- **copilot-instructions.md Section 3**: Removed "Type A vs Type T separation" section
+- **docs/ARCHITECTURE.md**: Removed Sections 1, 5, 7 (Type A/T, MCP, ancplua-mcp relationship)
+- **docs/PLUGINS.md**: Removed Type A/MCP paragraph
+- **docs/AGENTS.md**: Removed ancplua-mcp MCP servers reference
+- **spec-0003-cross-repo-contracts.md**: Deprecated — ancplua-mcp discontinued
+- **claude-code-review.yml**: Removed Type A/T references
+- **claude.yml**: Removed Type A comment
+- **.gemini/**: Removed Type A/T identity and sister repo references
+- **ancplua-project-routing**: Removed Type A/T labels and ancplua-mcp routing
+- **weave-validate.sh**: Removed dual-repo mode (`--dual` flag, `SIBLING_REPO`)
+- **plugin-template/README.md**: Removed MCP tools section
 
 ## [1.0.0] - 2026-02-07
 
