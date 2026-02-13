@@ -14,7 +14,7 @@
 
 - **ONE reflection round.** No more.
 - **THREE questions per P0/P1 finding.** No more.
-- P2/P3 findings are NOT reflected on (not worth the budget).
+- P2/P3 findings are NOT reflected on (not worth the time).
 - If the agent wants more reflection: propose a mini-test instead.
 - Mini-test = one command, one check, one grep. Concrete, fast, testable.
 

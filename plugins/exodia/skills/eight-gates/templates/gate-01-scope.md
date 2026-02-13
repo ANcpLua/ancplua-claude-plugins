@@ -40,10 +40,9 @@ The stop condition is critical. Examples:
 
 - "HALT if root cause not found after 3 agents"
 - "HALT if scope grows beyond 50 files"
-- "HALT if budget ceiling reached"
 - "HALT if build fails twice after fix attempt"
 
-### 3. Estimate Work + Set Budget
+### 3. Estimate Work + Agent Ceiling
 
 | Estimate | Files | Agent Ceiling | Rounds |
 |----------|-------|---------------|--------|
@@ -97,11 +96,9 @@ Log these counts — they inform agent selection at later gates.
     "success_criteria": "testable statement",
     "stop_condition": "when to halt"
   },
-  "budget": {
-    "estimate": "S|M|L|XL",
-    "ceiling": 8,
-    "rounds": 1
-  },
+  "estimate": "S|M|L|XL",
+  "agent_ceiling": 8,
+  "rounds": 1,
   "risk": "low|medium|high"
 }
 ```
@@ -113,9 +110,9 @@ plugins/exodia/scripts/smart/checkpoint.sh save 1 "scope-defined" \
   "files=$(wc -l < .eight-gates/artifacts/scope.txt | tr -d ' ')" \
   "type=[BUG|AUDIT|FEATURE|CLEANUP|CUSTOM]" \
   "estimate=[S|M|L|XL]" \
-  "budget=[4|8|12]" \
+  "agents=[4|8|12]" \
   "risk=[low|medium|high]"
 ```
 
-**PROCEED** if scope is clear and budget set.
+**PROCEED** if scope is clear.
 **HALT** if scope is ambiguous → ask user to clarify.
