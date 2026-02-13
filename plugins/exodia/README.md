@@ -1,12 +1,11 @@
 # exodia v2.0.0
 
-Multi-agent workflow orchestration. 10 commands + 1 skill (hades).
+Multi-agent workflow orchestration. 9 commands + 2 skills (eight-gates, hades).
 
 ## Commands
 
 | Command | Agents | Pattern | Best For |
 |---------|--------|---------|----------|
-| `/exodia:eight-gates` | 1-30+ | Progressive discipline | Maximum orchestration with checkpointing + Hakai |
 | `/exodia:turbo-fix` | 13 | Phased pipeline | P0 critical bugs |
 | `/exodia:fix` | 8-16 | Configurable pipeline | Any bug fix |
 | `/exodia:fix-pipeline` | 7 | Systematic pipeline | Audit findings |
@@ -17,10 +16,11 @@ Multi-agent workflow orchestration. 10 commands + 1 skill (hades).
 | `/exodia:red-blue-review` | 3+N | Adversarial | Security review |
 | `/exodia:baryon-mode` | 1+8 | One-shot T0 burst | .NET warning extermination |
 
-## Skill (uses hooks/argument-hint)
+## Skills (uses hooks/argument-hint)
 
 | Skill | Agents | Pattern | Best For |
 |-------|--------|---------|----------|
+| `exodia:eight-gates` | 1-30+ | Progressive discipline | Maximum orchestration with checkpointing + Hakai |
 | `exodia:hades` | 12 (3x4) | Smart cleanup | Audited elimination |
 
 ## Typical Workflow

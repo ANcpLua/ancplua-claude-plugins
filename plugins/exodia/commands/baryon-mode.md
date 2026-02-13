@@ -42,7 +42,6 @@ If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, read `.eight-gates
 Filter findings with `category == "SUPP"` (suppression findings). Inject as known-issues for the Invoker's
 categorization step — skip re-discovering suppressions already catalogued.
 
-
 **THIS IS A NOBLE PHANTASM. ONE BURST. NO GATES. NO PERMISSION.**
 
 1. Phase 0: Run `dotnet build`, capture ALL warnings, categorize into 8 buckets

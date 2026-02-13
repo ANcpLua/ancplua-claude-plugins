@@ -39,8 +39,7 @@ THINK LEAD (You — Synthesizer)
 
 **STEP -1 — Inherit Prior Findings:**
 If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, read `.eight-gates/artifacts/findings.json`.
-Filter findings matching `$0`. Inject matched findings into all perspective agent prompts as context.
-
+Inject ALL findings as background context for Phase 1 agents — they should reason about existing evidence.
 
 **RUN ALL 3 PHASES WITHOUT STOPPING.**
 

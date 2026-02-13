@@ -54,8 +54,7 @@ REVIEW LEAD (You — Orchestrator)
 
 **STEP -1 — Inherit Prior Findings:**
 If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, read `.eight-gates/artifacts/findings.json`.
-Inject all findings as context for Red team — they become the attack surface map.
-
+Inject findings into Red Team prompts as attack surface hints. Do NOT give to Blue — they defend blind.
 
 **THIS IS AN ADVERSARIAL EXERCISE.**
 

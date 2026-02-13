@@ -47,7 +47,7 @@ If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, `.eight-gates/arti
 has prior scan data. Report existing findings instead of re-scanning. Only launch agents for UNCOVERED areas.
 
 **STEP FINAL — Persist Findings:**
-After synthesis, write ALL findings to `.eight-gates/artifacts/findings.json` in this format:
+After synthesis, write ALL findings to `.eight-gates/artifacts/findings.json`:
 ```json
 {"session":"[ID]","source":"mega-swarm","total_findings":N,"by_category":{...},"findings":[{"id":"...","category":"...","severity":"P0-P3","title":"...","files":[...],"fix":"...","effort":"S|M|L|XL"}]}
 ```

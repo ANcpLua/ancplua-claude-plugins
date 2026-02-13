@@ -1,12 +1,11 @@
 # exodia
 
-Multi-agent workflow orchestration. 10 commands + 1 skill (hades), unlimited parallel agents.
+Multi-agent workflow orchestration. 9 commands + 2 skills (eight-gates, hades), unlimited parallel agents.
 
 ## Commands (in commands/)
 
 | Command | Agents | Use When |
 |---------|--------|----------|
-| `eight-gates` | 1-30+ | Maximum disciplined orchestration — 8 progressive gates with checkpointing, Hakai guarantee |
 | `turbo-fix` | 13 | P0 critical bugs |
 | `fix` | 8-16 | Any bug fix (configurable parallelism) |
 | `fix-pipeline` | 7 | Fixing audit findings systematically |
@@ -17,10 +16,11 @@ Multi-agent workflow orchestration. 10 commands + 1 skill (hades), unlimited par
 | `red-blue-review` | 3+N+1 | Adversarial security/quality review |
 | `baryon-mode` | 1+8 | .NET warning extermination (one-shot T0 burst) |
 
-## Skill (in skills/ — uses hooks/argument-hint)
+## Skills (in skills/ — uses hooks/argument-hint)
 
 | Skill | Agents | Use When |
 |-------|--------|----------|
+| `eight-gates` | 1-30+ | Maximum disciplined orchestration — 8 progressive gates with checkpointing, budget tracking, Hakai guarantee |
 | `hades` | 12 (3x4) | Smart cleanup with audit trail (Smart IDs, ledger, permits) |
 
 ## Smart Infrastructure

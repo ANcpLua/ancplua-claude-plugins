@@ -8,8 +8,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **exodia findings auto-inherit**: SessionStart hook (`findings-inject.sh`) reads `.eight-gates/artifacts/findings.json` and injects as `<EXODIA_FINDINGS_CONTEXT>` passive context (LAW 1). STEP -1 added to all 9 commands + 2 skills — filters findings by scope, skips re-scanning. Producers: mega-swarm, eight-gates (Gate 3), hades (Phase 0). Consumers: everything else
 - **exodia `baryon-mode` command**: One-shot Noble Phantasm for .NET warning extermination. Phase 0 snapshots tooling reality via `dotnet build`, then T0 burst launches up to 9 parallel agents (1 recon-invoker for Rider MCP + NuGet MCP version discovery, 8 domain aspects: nullability, deprecation, unused code, async, style, suppressions, packages, config). No gates, no permission, headless/reckless. Cross-repo with full MCP access. Final verification via delta build comparison
-- **exodia `eight-gates` command**: Progressive discipline orchestration — 8 named gates (Kaimon→Shimon) composing scope, context loading (Yin), parallel MAP (Yang), checkpointing (Senzu), bounded reflection (Ralph Loop), reduce, TDD execution, and Hakai cleanup. Includes budget tracking, idempotent resume from any gate, TTL sessions, artifact caching, and decision logging. Composes mega-swarm (MAP), fix pipelines (EXECUTE), and hades (HAKAI) into a unified flow
+- **exodia `eight-gates` skill**: Progressive discipline orchestration — 8 named gates (Kaimon→Shimon) composing scope, context loading (Yin), parallel MAP (Yang), checkpointing (Senzu), bounded reflection (Ralph Loop), reduce, TDD execution, and Hakai cleanup. Idempotent resume from any gate, TTL sessions, artifact caching, and decision logging. Composes mega-swarm (MAP), fix pipelines (EXECUTE), and hades (HAKAI) into a unified flow
+
+### Changed
+
+- **eight-gates conductor identity**: Rewritten IDENTITY section — lead is the conductor (baton, not instrument), delegation is intrinsic to self-concept rather than enforced by blocking hooks
+- **eight-gates budget tracking removed**: Replaced all budget references with agent ceilings. Token costs tracked via OTel, not skills
+- **eight-gates conductor identity**: Rewritten IDENTITY section — lead agent is the conductor (baton, not instrument). Delegation is intrinsic to self-concept rather than enforced by blocking hooks. "A conductor who picks up a violin has stopped conducting."
 - **`checkpoint.sh` smart script**: Gate checkpoint management — init, save, load, verify (idempotent), list. Append-only JSONL storage with key=value metadata per gate
 - **`session-state.sh` smart script**: TTL session state + artifact cache + decision log. Create sessions with expiry, cache expensive computations, log decisions with reasons, extend/expire sessions
 - **`.eight-gates/` gitignore entry**: Session-local runtime directory (checkpoints, artifacts, decisions)
@@ -17,6 +24,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- **exodia `eight-gates` promoted from command to skill**: Moved from `commands/eight-gates.md` (412 lines) to `skills/eight-gates/` (SKILL.md + 8 per-gate templates in `templates/`). Follows the hades pattern — supporting files enable specialist agent prompts per gate without bloating the main skill. Reviewer fixes applied: expanded `allowed-tools`, SSOT references instead of duplication, `.smart/` gitignore safety, fixed undefined shell functions in gate-02, fixed `$(cat ...)` references in gate-04/06, added context injection instructions for subagent prompts in gate-05/07. Counts: 22→21 commands, 4→5 skills
 - **Docs sync**: Updated README.md, CLAUDE.md, ARCHITECTURE.md, AGENTS.md, marketplace.json with accurate counts (22 commands, 4 skills, 9 agents) and eight-gates references
 - **ARCHITECTURE.md rewrite**: Replaced stale target-state tree with actual filesystem layout. Added missing entries (AGENTS.md, .claude/rules/, .coderabbit.yaml, agents/ dir, CLAUDE.md per plugin, tri-AI review section). Removed phantom `skills/` root dir and `docs/examples/`
 - **qyl routing rewrite**: Replaced thin qyl block with full project map (14 src projects), TypeSpec flow, specialist agents (servicedefaults-specialist added), and condensed MTP exit codes. Removed bloated Context Processing Requirement ceremony
