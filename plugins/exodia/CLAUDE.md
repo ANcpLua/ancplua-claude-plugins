@@ -1,11 +1,12 @@
 # exodia
 
-Multi-agent workflow orchestration. 8 commands + 1 skill (hades), unlimited parallel agents.
+Multi-agent workflow orchestration. 9 commands + 1 skill (hades), unlimited parallel agents.
 
 ## Commands (in commands/)
 
 | Command | Agents | Use When |
 |---------|--------|----------|
+| `eight-gates` | 1-30+ | Maximum disciplined orchestration — 8 progressive gates with checkpointing, budget tracking, Hakai guarantee |
 | `turbo-fix` | 13 | P0 critical bugs |
 | `fix` | 8-16 | Any bug fix (configurable parallelism) |
 | `fix-pipeline` | 7 | Fixing audit findings systematically |
@@ -30,6 +31,8 @@ Located: `scripts/smart/`
 | `smart-id.sh` | Generates `SMART-YYYY-MM-DD-<epoch><random>` IDs |
 | `ledger.sh` | Append-only JSONL audit log with flock locking |
 | `permit.sh` | TTL-based deletion permits with scope matching |
+| `checkpoint.sh` | Gate checkpoint management (init/save/load/verify/list) |
+| `session-state.sh` | TTL session state + artifact cache + decision log |
 
 Hookify guard templates in `scripts/smart/hookify-rules/`:
 
@@ -40,4 +43,5 @@ Hookify guard templates in `scripts/smart/hookify-rules/`:
 
 - All commands/skills use blockquote teammate pattern (`> subagent: ... | model: ...`).
 - Descriptions encode IF/THEN routing (Vercel pattern).
+- Eight Gates composes all others: mega-swarm (MAP) -> fix pipelines (EXECUTE) -> hades (HAKAI).
 - Exodia creates, Hades judges. They compose: mega-swarm -> hades.

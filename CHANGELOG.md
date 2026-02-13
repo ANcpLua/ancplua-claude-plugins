@@ -6,6 +6,14 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **exodia `eight-gates` command**: Progressive discipline orchestration — 8 named gates (Kaimon→Shimon) composing scope, context loading (Yin), parallel MAP (Yang), checkpointing (Senzu), bounded reflection (Ralph Loop), reduce, TDD execution, and Hakai cleanup. Includes budget tracking, idempotent resume from any gate, TTL sessions, artifact caching, and decision logging. Composes mega-swarm (MAP), fix pipelines (EXECUTE), and hades (HAKAI) into a unified flow
+- **`checkpoint.sh` smart script**: Gate checkpoint management — init, save, load, verify (idempotent), list. Append-only JSONL storage with key=value metadata per gate
+- **`session-state.sh` smart script**: TTL session state + artifact cache + decision log. Create sessions with expiry, cache expensive computations, log decisions with reasons, extend/expire sessions
+- **`.eight-gates/` gitignore entry**: Session-local runtime directory (checkpoints, artifacts, decisions)
+- **metacognitive-guard `deep-analysis` command**: 4-phase structured thinking methodology — decompose & assess, adversarial self-review, transparent implementation, completion verification. Includes web search decision framework and async reviewer dispatch pattern
+
 ### Fixed
 
 - **Command namespacing**: Bare `/fix`, `/mega-swarm` etc. corrected to `/exodia:fix`, `/exodia:mega-swarm` across CLAUDE.md, AGENTS.md, exodia/README.md — plugin commands are always namespaced
