@@ -18,6 +18,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - **Docs sync**: Updated README.md, CLAUDE.md, ARCHITECTURE.md, AGENTS.md, marketplace.json with accurate counts (22 commands, 4 skills, 9 agents) and eight-gates references
 - **ARCHITECTURE.md rewrite**: Replaced stale target-state tree with actual filesystem layout. Added missing entries (AGENTS.md, .claude/rules/, .coderabbit.yaml, agents/ dir, CLAUDE.md per plugin, tri-AI review section). Removed phantom `skills/` root dir and `docs/examples/`
+- **qyl routing rewrite**: Replaced thin qyl block with full project map (14 src projects), TypeSpec flow, specialist agents (servicedefaults-specialist added), and condensed MTP exit codes. Removed bloated Context Processing Requirement ceremony
 
 ### Fixed
 

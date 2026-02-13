@@ -5,7 +5,7 @@ set -euo pipefail
 # Injects: specialist agents, available commands/skills, cross-repo dependencies
 #
 # Plugins available (7):
-#   exodia         — multi-agent orchestration (8 commands + hades skill)
+#   exodia         — multi-agent orchestration (9 commands + hades skill)
 #   metacognitive-guard — cognitive amplification, commit integrity, CI verification
 #   feature-dev    — guided feature development, code review, 3 agents
 #   dotnet-architecture-lint — .NET MSBuild/CPM enforcement
@@ -230,102 +230,75 @@ elif [[ "$PWD" == *"qyl"* ]]; then
 
 ## qyl Observability Platform
 
-OpenTelemetry-based observability platform.
+OTLP-native observability: ingest traces/logs/metrics, store in DuckDB, query via API/MCP/Copilot.
 
-### Mandatory Routing
+### Project Map
 
-| Task | Use |
-|------|-----|
-| Implementation | Task tool → qyl-observability-specialist |
-| OTel work | Skill → /otel-expert |
+```text
+src/
+├── qyl.collector        # OTLP ingestion (gRPC+HTTP), DuckDB storage, SSE streaming, dashboards, alerts
+├── qyl.protocol         # TypeSpec-generated models, enums, semconv attributes (source of truth)
+├── qyl.servicedefaults  # OTel instrumentation SDK (source-gen interceptors: [Traced], [GenAi], [Db])
+├── qyl.servicedefaults.generator  # Roslyn source generator for servicedefaults attributes
+├── qyl.instrumentation.generators # DuckDB schema + GenAI interceptor generators
+├── qyl.copilot          # Copilot extensibility agent (workflows, MCP adapter)
+├── qyl.mcp              # MCP server (telemetry tools, replay, structured logs)
+├── qyl.dashboard        # React + Vite + shadcn/ui frontend
+├── qyl.browser          # Browser SDK (Web Vitals, interactions, navigation)
+├── qyl.hosting          # .NET Aspire-style hosting (QylApp, resource model)
+├── qyl.cli              # CLI init tool (dotnet/docker stack detection)
+├── qyl.watch            # Terminal SSE span viewer
+└── qyl.watchdog         # Process anomaly detection daemon
+core/
+├── specs/               # TypeSpec definitions (main.tsp → models, otel, api)
+└── schemas/             # Generated JSON schemas
+eng/
+├── build/               # Nuke build (Build.cs, coverage, infra, pipeline)
+├── MSBuild/             # Shared props/targets
+└── semconv/             # Semconv TypeSpec generator (TS)
+tests/
+└── qyl.collector.tests  # Integration + unit tests
+```
 
-### For Beginners
+### Specialist Agents
 
-Try: "Explain the observability architecture" or "How do traces flow through the system?"
+| Agent | subagent_type | Use for |
+|-------|---------------|---------|
+| qyl specialist | qyl-observability-specialist | OTLP ingestion, DuckDB schema, collector architecture |
+| OTel GenAI | otel-genai-architect | GenAI instrumentation, semconv attributes |
+| ServiceDefaults | servicedefaults-specialist | Source-gen interceptors, OTel attributes |
+| OTel guide | otelwiki:otel-guide | Semantic conventions, collector config |
 
-### Microsoft.Testing.Platform Exit Codes
+### Key Commands
 
-When running `dotnet test`, interpret exit codes as follows:
+| Command | When |
+|---------|------|
+| `/otelwiki:otel-expert` | Semconv questions, attribute lookup |
+| `/exodia:fix [issue]` | Bug fixes |
+| `/exodia:mega-swarm` | Full codebase audit |
+| `/feature-dev:review` | Code review |
+| `/dotnet-architecture-lint:lint-dotnet` | MSBuild/CPM validation |
 
-| Exit | Meaning | Action |
-|------|---------|--------|
-| 0 | Success - all tests passed | Done |
-| 1 | Unknown error | Check output for details |
-| 2 | At least one test failed | Fix failing tests |
-| 3 | Session aborted (Ctrl+C) | Re-run tests |
-| 4 | Invalid extension setup | Check test project config |
-| 5 | Invalid command line args | Fix the dotnet test command |
-| 6 | Non-implemented feature | Remove unsupported feature |
-| 7 | Test session crashed | Check for test fixture issues |
-| 8 | **Zero tests ran** | Filter matched nothing - check test name/class |
-| 9 | Minimum execution policy violated | Check test count requirements |
-| 10 | Test adapter infrastructure failure | Check xUnit/NUnit/MSTest setup |
-| 11 | Dependent process exited | Check test host process |
-| 12 | Protocol version mismatch | Update test SDK |
-| 13 | Max failed tests reached | Intentional stop via --maximum-failed-tests |
+### TypeSpec → Code Flow
 
-**Exit code 8 is common**: Your filter (`--filter-method`, `--filter-class`) matched zero tests. Check:
-- Test method/class name spelling
-- Namespace in filter
-- Whether tests were actually compiled
+```text
+core/specs/*.tsp → tsp compile → qyl.protocol (C# models/enums)
+eng/semconv/generate-semconv.ts → qyl.protocol/Attributes/Generated/
+core/specs/generated/semconv.g.tsp → generated from upstream semconv YAML
+```
 
-**Filtering syntax for xUnit v3 with MTP:**
+### MTP Exit Codes (xUnit v3)
+
+| Exit | Meaning |
+|------|---------|
+| 0 | All passed |
+| 2 | Test(s) failed |
+| 8 | Zero tests ran (filter matched nothing) |
+
 ```bash
-# By class name (partial match)
 dotnet test --filter-class "*DiagnosticTests"
-
-# By method name (partial match)
 dotnet test --filter-method "*EOE056*"
-
-# By fully qualified name
-dotnet test --filter "FullyQualifiedName~DiagnosticTests.EOE056"
 ```
-
-
----
-
-## 🔒 Context Processing Requirement (Mandatory)
-
-When you receive this routing context, you MUST demonstrate active processing:
-
-### First Response Protocol
-
-In your FIRST response after session start, include a brief acknowledgment block:
-
-```
-📍 **Session Context Loaded**
-- Project: [project name]
-- Routing: [specialist/agent to use]
-- Ground-truth overrides active: [yes/no - check for <ground-truth> tags]
-```
-
-### Ground-Truth Handling
-
-If ANY `<ground-truth>` tags were injected at session start:
-1. **List the overrides** exactly as stated in the tags
-2. **Flag conflicts** with your training priors
-3. **ALWAYS spawn background metacognitive agent** that analyzes:
-   - What context was injected and why?
-   - Which skills/plugins should I consider using?
-   - What ground-truth facts override my training?
-   - What are the pros/cons of each approach?
-   - Agent reports findings while main work proceeds
-
-Example acknowledgment:
-```
-📍 **Session Context Loaded**
-- Project: [name]
-- Routing: [specialist]
-- Ground-truth: [count] overrides active
-- Skills available: [list relevant ones]
-🧠 Metacognitive analysis running in background...
-```
-
-### Why This Matters
-
-Passive context ≠ active processing. You caught this gap yourself - context was "available" but not demonstrably "internalized". This protocol closes that gap.
-
----
 
 </QYL_ROUTING>'
 
