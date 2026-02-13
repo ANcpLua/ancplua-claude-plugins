@@ -23,4 +23,5 @@ Spawn agents via the Task tool with `subagent_type` matching the agent identifie
 The separation of concerns:
 - **Plugins** encode reusable behavior and skills
 - **Agents** orchestrate plugins and execute workflows
-- **Exodia commands** compose agents into multi-agent pipelines (9 commands + hades skill, 22 commands total across all plugins)
+- **Exodia** composes agents into multi-agent pipelines
+  (8 commands + 2 skills: eight-gates, hades; 21 commands total)

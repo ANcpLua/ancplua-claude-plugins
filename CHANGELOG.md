@@ -6,9 +6,13 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **exodia `eight-gates` promoted from command to skill**: Moved from `commands/eight-gates.md` (412 lines) to `skills/eight-gates/` (SKILL.md + 8 per-gate templates in `templates/`). Follows the hades pattern — supporting files enable specialist agent prompts per gate without bloating the main skill. Reviewer fixes applied: expanded `allowed-tools`, SSOT references instead of duplication, `.smart/` gitignore safety, fixed undefined shell functions in gate-02, fixed `$(cat ...)` references in gate-04/06, added context injection instructions for subagent prompts in gate-05/07. Counts: 22→21 commands, 4→5 skills
+
 ### Added
 
-- **exodia `eight-gates` command**: Progressive discipline orchestration — 8 named gates (Kaimon→Shimon) composing scope, context loading (Yin), parallel MAP (Yang), checkpointing (Senzu), bounded reflection (Ralph Loop), reduce, TDD execution, and Hakai cleanup. Includes budget tracking, idempotent resume from any gate, TTL sessions, artifact caching, and decision logging. Composes mega-swarm (MAP), fix pipelines (EXECUTE), and hades (HAKAI) into a unified flow
+- **exodia `eight-gates` skill**: Progressive discipline orchestration — 8 named gates (Kaimon→Shimon) composing scope, context loading (Yin), parallel MAP (Yang), checkpointing (Senzu), bounded reflection (Ralph Loop), reduce, TDD execution, and Hakai cleanup. Includes budget tracking, idempotent resume from any gate, TTL sessions, artifact caching, and decision logging. Composes mega-swarm (MAP), fix pipelines (EXECUTE), and hades (HAKAI) into a unified flow
 - **`checkpoint.sh` smart script**: Gate checkpoint management — init, save, load, verify (idempotent), list. Append-only JSONL storage with key=value metadata per gate
 - **`session-state.sh` smart script**: TTL session state + artifact cache + decision log. Create sessions with expiry, cache expensive computations, log decisions with reasons, extend/expire sessions
 - **`.eight-gates/` gitignore entry**: Session-local runtime directory (checkpoints, artifacts, decisions)

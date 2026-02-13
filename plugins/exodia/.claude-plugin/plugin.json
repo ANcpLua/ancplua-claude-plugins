@@ -1,7 +1,7 @@
 {
   "name": "exodia",
   "version": "2.0.0",
-  "description": "Multi-agent workflow orchestration: fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, hades (Smart cleanup with audit trail).",
+  "description": "Multi-agent workflow orchestration: 8 commands (fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review) + 2 skills (eight-gates, hades).",
   "author": {
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"

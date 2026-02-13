@@ -5,7 +5,7 @@
     "url": "https://github.com/ANcpLua"
   },
   "metadata": {
-    "description": "Claude Code plugin marketplace: 7 plugins, 22 commands, 4 skills, 9 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, and .NET build enforcement."
+    "description": "Claude Code plugin marketplace: 7 plugins, 21 commands, 5 skills, 9 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, and .NET build enforcement."
   },
   "plugins": [
     {
@@ -46,7 +46,7 @@
     },
     {
       "name": "exodia",
-      "description": "Multi-agent workflow orchestration (9 commands + hades skill): fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, eight-gates.",
+      "description": "Multi-agent workflow orchestration (8 commands + 2 skills: eight-gates, hades): fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review.",
       "version": "2.0.0",
       "source": "./plugins/exodia"
     }

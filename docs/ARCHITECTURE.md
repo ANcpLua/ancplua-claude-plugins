@@ -35,8 +35,8 @@ ancplua-claude-plugins/
 │       ├── claude-code-review.yml # Claude formal PR review
 │       └── dependabot.yml       # Dependency update config
 │
-├── plugins/                     # 7 plugins (22 commands, 4 skills, 9 agents)
-│   ├── exodia/                  # Multi-agent orchestration (9 commands + hades skill)
+├── plugins/                     # 7 plugins (21 commands, 5 skills, 9 agents)
+│   ├── exodia/                  # Multi-agent orchestration (8 commands + 2 skills: eight-gates, hades)
 │   ├── metacognitive-guard/     # Cognitive amplification + commit integrity + CI
 │   ├── otelwiki/                # OpenTelemetry documentation + auto-sync
 │   ├── hookify/                 # User-configurable rule-based hooks
@@ -122,7 +122,7 @@ CI mirrors the same checks via `.github/workflows/ci.yml`.
 
 | Plugin | Responsibility |
 |--------|----------------|
-| `exodia` | Multi-agent orchestration (9 commands + hades skill) |
+| `exodia` | Multi-agent orchestration (8 commands + 2 skills: eight-gates, hades) |
 | `metacognitive-guard` | Cognitive amplification, commit integrity, CI verification |
 | `feature-dev` | Guided feature development + code review |
 | `otelwiki` | OpenTelemetry documentation + sync |

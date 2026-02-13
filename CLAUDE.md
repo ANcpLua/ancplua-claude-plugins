@@ -122,8 +122,8 @@ ancplua-claude-plugins/
 │   ├── copilot-instructions.md
 │   └── workflows/               # CI, review, auto-merge
 │
-├── plugins/                     # 7 plugins (22 commands, 4 skills, 9 agents)
-│   ├── exodia/                  # Multi-agent orchestration — 9 commands + hades skill
+├── plugins/                     # 7 plugins (21 commands, 5 skills, 9 agents)
+│   ├── exodia/                  # Multi-agent orchestration — 8 commands + 2 skills (eight-gates, hades)
 │   ├── metacognitive-guard/     # Cognitive amplification + commit integrity + CI
 │   ├── otelwiki/                # OpenTelemetry docs + sync
 │   ├── hookify/                 # User-configurable hooks
@@ -225,7 +225,7 @@ IF zero-tolerance cleanup needed
 
 When multi-agent orchestration is needed, use these IF/THEN patterns:
 
-- **IF maximum discipline orchestration** THEN use `eight-gates` command (8 gates, composes all others)
+- **IF maximum discipline orchestration** THEN use `eight-gates` skill (8 gates, composes all others)
 - **IF fixing P1/P2/P3 bug** THEN use `fix` skill (8 agents standard, 16 maximum)
 - **IF need multiple solution perspectives** THEN use `tournament` skill (N competitors)
 - **IF complex debugging first** THEN use `deep-think` skill before fix
