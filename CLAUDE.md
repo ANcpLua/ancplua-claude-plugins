@@ -101,45 +101,43 @@ but NOT conversation history. All context must be in the spawn prompt.
 
 ## 3. Target Architecture (North Star)
 
-This is the canonical structure. Reality should converge toward this:
-
 ```text
 ancplua-claude-plugins/
-├── CLAUDE.md                    # This file - your brain
-├── README.md                    # Human-facing overview
-├── CHANGELOG.md                 # Chronological change log
+├── CLAUDE.md                    # This file — operational brain
+├── AGENTS.md                    # Agent catalog for other AIs
+├── README.md
+├── CHANGELOG.md
 ├── LICENSE
 ├── .gitignore
+├── .coderabbit.yaml             # CodeRabbit config
+├── .markdownlint.json           # Lint rules
+│
+├── .claude/
+│   └── rules/                   # Auto-loaded rules (SOLID, errors, etc.)
 │
 ├── .claude-plugin/
-│   └── marketplace.json         # Declares all plugins
+│   └── marketplace.json         # Plugin registry (source of truth)
 │
 ├── .github/
-│   └── workflows/
-│       ├── ci.yml               # Main CI pipeline
-│       └── dependabot.yml
+│   ├── copilot-instructions.md
+│   └── workflows/               # CI, review, auto-merge
 │
-├── plugins/                     # 7 plugins, 22 commands, 4 skills, 9 agents
-│   ├── metacognitive-guard/     # Cognitive amplification + commit integrity + CI verification (v0.4.0)
-│   ├── otelwiki/                # OpenTelemetry documentation (v1.0.6)
-│   ├── dotnet-architecture-lint/# .NET build pattern enforcement (v1.1.0)
-│   ├── hookify/                 # User-configurable hooks (v0.2.0)
-│   ├── feature-dev/             # Guided feature development + code review (v1.1.0)
-│   ├── ancplua-project-routing/ # Auto-routes to specialist agents (v2.0.0)
-│   └── exodia/                  # Multi-agent workflow orchestration (v2.0.0) — 9 commands + hades skill
+├── plugins/                     # 7 plugins (22 commands, 4 skills, 9 agents)
+│   ├── exodia/                  # Multi-agent orchestration — 9 commands + hades skill
+│   ├── metacognitive-guard/     # Cognitive amplification + commit integrity + CI
+│   ├── otelwiki/                # OpenTelemetry docs + sync
+│   ├── hookify/                 # User-configurable hooks
+│   ├── feature-dev/             # Guided feature development + code review
+│   ├── dotnet-architecture-lint/# .NET build pattern enforcement
+│   └── ancplua-project-routing/ # Cross-repo specialist agent routing
 │
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── PLUGINS.md
 │   ├── AGENTS.md
 │   ├── WORKFLOWS.md
-│   ├── specs/
-│   │   ├── spec-template.md
-│   │   └── spec-XXXX-*.md
-│   ├── decisions/
-│   │   ├── adr-template.md
-│   │   └── ADR-XXXX-*.md
-│   └── examples/
+│   ├── specs/                   # Feature specs (spec-XXXX-*.md)
+│   └── decisions/               # ADRs (ADR-XXXX-*.md)
 │
 └── tooling/
     ├── scripts/
@@ -148,8 +146,6 @@ ancplua-claude-plugins/
     └── templates/
         └── plugin-template/
 ```
-
-When actual structure differs, move toward this incrementally.
 
 ---
 
