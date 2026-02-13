@@ -6,6 +6,12 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+
+- **hookify blocking rules shown 3x**: Removed duplicate `systemMessage` from blocking responses — `permissionDecisionReason` already carries the message
+- **mtp-smart-test rule verbosity**: Trimmed 73-line reference doc to 5-line nudge — detailed MTP syntax belongs in `dotnet-mtp-advisor` agent, not a hook message
+- **mtp-smart-test `# VERIFY` bypass**: Added missing `not_contains` condition so the documented bypass actually works
+
 ### Added
 
 - **exodia findings auto-inherit**: SessionStart hook (`findings-inject.sh`) reads `.eight-gates/artifacts/findings.json` and injects as `<EXODIA_FINDINGS_CONTEXT>` passive context (LAW 1). STEP -1 added to all 9 commands + 2 skills — filters findings by scope, skips re-scanning. Producers: mega-swarm, eight-gates (Gate 3), hades (Phase 0). Consumers: everything else
