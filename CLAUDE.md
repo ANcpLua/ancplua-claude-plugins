@@ -222,7 +222,7 @@ IF zero-tolerance cleanup needed
   → exodia:hades skill (audited cleanup with Smart IDs, deletion permits, audit ledger)
 
 IF .NET warnings need extermination (one-shot, headless, cross-repo)
-  → exodia:baryon-mode command (1 Invoker + 8 aspects burst at T0, full MCP access)
+  → /exodia:baryon-mode command (1 Invoker + 8 aspects burst at T0, full MCP access)
 ```
 
 ### Exodia Skills Detailed Routing

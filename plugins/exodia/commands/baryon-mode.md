@@ -1,6 +1,6 @@
 ---
 description: "IF .NET warnings need extermination THEN use this. One-shot Noble Phantasm: snapshots reality (Rider MCP + NuGet MCP), 8 aspects burst at T0, headless/reckless, cross-repo. Full MCP access."
-allowed-tools: Task, Bash, TodoWrite
+allowed-tools: Task, Bash, TodoWrite, WebFetch, WebSearch
 ---
 
 # BARYON MODE — One-Shot Warning Exterminator
@@ -8,7 +8,7 @@ allowed-tools: Task, Bash, TodoWrite
 > Noble Phantasm. Triggers at battle start. 8 aspects manifest. Phantasm concludes.
 
 **Solution:** $0 (path to .sln or directory)
-**Scope:** $1 (default: all | all|nullability|style|packages|cleanup)
+**Scope:** $1 (default: all | nullability|deprecation|unused|async|style|suppressions|packages|config)
 
 ---
 
@@ -24,7 +24,7 @@ INVOKER (You — Phase 0: snapshot + categorize)
 │  ├── aspect-nullability     ← CS8600-CS8799
 │  ├── aspect-deprecation     ← CS0612, CS0618, SYSLIB*, CA1422
 │  ├── aspect-unused          ← CS0168, CS0219, IDE0051-IDE0060
-│  ├── aspect-async           ← CS4014, CS1998, CA2007, CA2008
+│  ├── aspect-async           ← CS4014, CS1998, CA2007, CA2008, CA2016
 │  ├── aspect-style           ← IDE0001-IDE0100, SA1*, RCS*
 │  ├── aspect-suppressions    ← #pragma, SuppressMessage, NoWarn
 │  ├── aspect-packages        ← NU*, CPM, version conflicts
@@ -40,13 +40,15 @@ INVOKER (You — Phase 0: snapshot + categorize)
 **THIS IS A NOBLE PHANTASM. ONE BURST. NO GATES. NO PERMISSION.**
 
 1. Phase 0: Run `dotnet build`, capture ALL warnings, categorize into 8 buckets
-2. T₀: Launch recon-invoker + ALL aspects that have warnings — ONE message
+2. IF `$1` != `all`: filter buckets to only the requested scope
+3. T₀: Launch recon-invoker + ALL aspects that have warnings in scope — ONE message
 3. Phantasm Concludes: `dotnet build` again, report delta, exit
 
 **NO asking "should I continue?" EVER.**
 **NO gates between burst and verification.**
 **RECKLESS MODE: Fix everything. Verify once. Exit.**
 **Only launch aspects that have warnings in their category. Skip empty buckets.**
+**IF $1 specifies a scope: only launch that aspect. Ignore all other buckets.**
 
 **YOUR NEXT MESSAGE: Run `dotnet build` to capture warnings. THEN launch Task calls. NOTHING ELSE.**
 
@@ -57,11 +59,14 @@ INVOKER (You — Phase 0: snapshot + categorize)
 ## PHASE 0: INVOCATION (Direct — You)
 
 ```bash
-dotnet build "$0" 2>&1 | tee /tmp/baryon-warnings-before.txt
+BARYON_BEFORE=$(mktemp)
+dotnet build "$0" 2>&1 | tee "$BARYON_BEFORE"
 ```
 
 Parse output. Categorize each warning by code prefix into the 8 aspect buckets.
 Count per bucket. If 0 total warnings: "Solution clean. Baryon Mode not needed." EXIT.
+
+IF `$1` is set and not `all`: keep only the matching bucket, discard the rest.
 
 For each non-empty bucket, prepare the warning list (file:line + code + message).
 
@@ -69,7 +74,7 @@ For each non-empty bucket, prepare the warning list (file:line + code + message)
 
 ## T₀ BURST: ALL PARALLEL — ONE MESSAGE
 
-Launch recon-invoker ALWAYS. Launch each aspect ONLY if its bucket has warnings.
+Launch recon-invoker ALWAYS. Launch each aspect ONLY if its bucket has warnings AND is in scope.
 All in ONE message. No sequencing. No dependencies.
 
 ### recon-invoker
@@ -229,7 +234,8 @@ All in ONE message. No sequencing. No dependencies.
 ## PHANTASM CONCLUDES (Direct — You)
 
 ```bash
-dotnet build "$0" 2>&1 | tee /tmp/baryon-warnings-after.txt
+BARYON_AFTER=$(mktemp)
+dotnet build "$0" 2>&1 | tee "$BARYON_AFTER"
 ```
 
 Compare before/after warning counts. Report.
