@@ -203,7 +203,7 @@ IF frontend design quality audit needed
 IF maximum disciplined orchestration / all-in / go beyond limits
   → /exodia:eight-gates "[objective]" [scope] [gate-limit]
     8 progressive gates: scope→context→MAP→checkpoint→reflect→reduce→execute→hakai
-    Checkpointing, budget tracking, idempotent resume, Hakai guarantee
+    Checkpointing, agent ceilings, idempotent resume, Hakai guarantee
     Composes mega-swarm (MAP), fix pipelines (EXECUTE), hades (HAKAI)
 
 IF multi-agent orchestration needed
