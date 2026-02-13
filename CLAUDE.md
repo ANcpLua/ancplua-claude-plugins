@@ -207,15 +207,16 @@ IF maximum disciplined orchestration / all-in / go beyond limits
     Composes mega-swarm (MAP), fix pipelines (EXECUTE), hades (HAKAI)
 
 IF multi-agent orchestration needed
-  → exodia commands (unlimited parallel agents):
+  → exodia skills (unlimited parallel agents):
     /exodia:eight-gates       - maximum discipline (8 progressive gates, composes all others)
+    /exodia:hades             - audited cleanup (3 phases x 4+3 teammates with goggles)
+  → exodia commands:
     /exodia:fix               - P1/P2/P3 bugs (8 std, 16 max agents)
     /exodia:mega-swarm        - codebase audit (6/8/12 agents by mode)
     /exodia:deep-think        - multi-perspective analysis (5 agents)
     /exodia:tournament        - competitive solutions (N+2 agents)
     /exodia:batch-implement   - parallel similar items (1+N+1 agents)
     /exodia:red-blue-review   - adversarial security (3+N+1 agents)
-    /exodia:hades             - audited cleanup (3 phases x 4+3 teammates with goggles)
 
 IF zero-tolerance cleanup needed
   → exodia:hades skill (audited cleanup with Smart IDs, deletion permits, audit ledger)

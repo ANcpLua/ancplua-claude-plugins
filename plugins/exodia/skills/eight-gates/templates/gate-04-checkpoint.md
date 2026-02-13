@@ -6,7 +6,7 @@
 
 ## Entry Condition
 
-- Gate 3 checkpoint exists with status "map-complete"
+- Gate 3 checkpoint exists (`checkpoint.sh verify 3`)
 - Agent findings available from Gate 3
 
 ## Actions (Lead Only — 0 Agents)
@@ -98,7 +98,7 @@ plugins/exodia/scripts/smart/session-state.sh artifact add "work-items-raw" \
 
 ```bash
 plugins/exodia/scripts/smart/checkpoint.sh save 4 "checkpoint-complete" \
-  "artifacts=$(find .eight-gates/artifacts -maxdepth 1 -type f | wc -l)" \
+  "artifacts=$(find .eight-gates/artifacts -maxdepth 1 -type f | wc -l | tr -d ' ')" \
   "decisions=$(wc -l < .eight-gates/decisions.jsonl | tr -d ' ')" \
   "budget_used=[n]" \
   "budget_remaining=[n]"

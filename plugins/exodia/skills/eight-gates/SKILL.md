@@ -1,6 +1,10 @@
 ---
 name: eight-gates
-description: "IF maximum disciplined orchestration needed THEN use this. 8 progressive gates — each unlocks more capability only if the workflow proves it can stay honest, testable, and resumable. Composes mega-swarm agents (MAP), fix pipeline patterns (EXECUTE), and hades infrastructure (HAKAI — ledger + permits). Not max chaos — max discipline."
+description: >-
+  IF maximum disciplined orchestration needed THEN use this. 8 progressive gates —
+  each unlocks more capability only if the workflow proves it can stay honest, testable,
+  and resumable. Composes mega-swarm agents (MAP), fix pipeline patterns (EXECUTE),
+  and hades infrastructure (HAKAI — ledger + permits). Not max chaos — max discipline.
 argument-hint: "[objective] [scope] [gate-limit]"
 allowed-tools: Task, Bash, TodoWrite, Read, Grep, Glob, WebSearch
 ---
@@ -58,8 +62,8 @@ Two runtime directories (both gitignored):
     └── ...                       <- per-gate artifacts
 
 .smart/                           <- persistent audit trail (shared with Hades)
-├── ledger.jsonl                  <- append-only deletion log (survives session expiry)
-└── permits/                      <- TTL-based deletion permits
+├── delete-ledger.jsonl           <- append-only deletion log (survives session expiry)
+└── delete-permit.json            <- TTL-based deletion permits
 ```
 
 Checked-in tooling:
@@ -112,9 +116,13 @@ To have all gates open at once is Eight Gates Released Formation.
 **INIT — Before Any Gate Opens:**
 
 ```bash
-# 1. Ensure runtime directories are gitignored
-grep -q '.eight-gates/' .gitignore 2>/dev/null || echo '.eight-gates/' >> .gitignore
-grep -q '.smart/' .gitignore 2>/dev/null || echo '.smart/' >> .gitignore
+# 1. Ensure runtime directories are git-ignored (local exclude, no tracked-file changes)
+if [ -d .git ]; then
+  mkdir -p .git/info
+  touch .git/info/exclude
+  grep -q '^\.eight-gates/' .git/info/exclude 2>/dev/null || echo '.eight-gates/' >> .git/info/exclude
+  grep -q '^\.smart/' .git/info/exclude 2>/dev/null || echo '.smart/' >> .git/info/exclude
+fi
 
 # 2. Generate session ID
 SESSION_ID="$(plugins/exodia/scripts/smart/smart-id.sh generate)"
@@ -183,7 +191,7 @@ Gate 4 tallies cumulative cost. If budget exceeded → HALT, trim scope or escal
 
 - Smart scripts unavailable → inline checkpointing via TodoWrite
 - Agent Teams unavailable → Task tool with `subagent_type: general-purpose`
-- Trivial scope (S estimate) → skip Gates 3-5, go straight to Gate 6-7
+- Trivial scope (S estimate) → compress Gates 3-5 into minimal checkpoints (mark as "bypassed-trivial" with rationale), then proceed to Gate 6-7
 
 **YOUR NEXT ACTION: Run INIT, auto-classify objective, open Gate 1.**
 

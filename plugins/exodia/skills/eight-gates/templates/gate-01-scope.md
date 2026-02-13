@@ -15,7 +15,7 @@
 
 ```bash
 # Count files in scope
-find "$SCOPE" -type f \
+find "$1" -type f \
   | grep -v node_modules \
   | grep -v .git \
   | grep -v __pycache__ \
@@ -110,7 +110,7 @@ Log these counts — they inform agent selection at later gates.
 
 ```bash
 plugins/exodia/scripts/smart/checkpoint.sh save 1 "scope-defined" \
-  "files=$(wc -l < .eight-gates/artifacts/scope.txt)" \
+  "files=$(wc -l < .eight-gates/artifacts/scope.txt | tr -d ' ')" \
   "type=[BUG|AUDIT|FEATURE|CLEANUP|CUSTOM]" \
   "estimate=[S|M|L|XL]" \
   "budget=[4|8|12]" \

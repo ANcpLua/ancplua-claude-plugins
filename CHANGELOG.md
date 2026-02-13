@@ -6,10 +6,6 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
-### Changed
-
-- **exodia `eight-gates` promoted from command to skill**: Moved from `commands/eight-gates.md` (412 lines) to `skills/eight-gates/` (SKILL.md + 8 per-gate templates in `templates/`). Follows the hades pattern — supporting files enable specialist agent prompts per gate without bloating the main skill. Reviewer fixes applied: expanded `allowed-tools`, SSOT references instead of duplication, `.smart/` gitignore safety, fixed undefined shell functions in gate-02, fixed `$(cat ...)` references in gate-04/06, added context injection instructions for subagent prompts in gate-05/07. Counts: 22→21 commands, 4→5 skills
-
 ### Added
 
 - **exodia `eight-gates` skill**: Progressive discipline orchestration — 8 named gates (Kaimon→Shimon) composing scope, context loading (Yin), parallel MAP (Yang), checkpointing (Senzu), bounded reflection (Ralph Loop), reduce, TDD execution, and Hakai cleanup. Includes budget tracking, idempotent resume from any gate, TTL sessions, artifact caching, and decision logging. Composes mega-swarm (MAP), fix pipelines (EXECUTE), and hades (HAKAI) into a unified flow
@@ -20,6 +16,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- **exodia `eight-gates` promoted from command to skill**: Moved from `commands/eight-gates.md` (412 lines) to `skills/eight-gates/` (SKILL.md + 8 per-gate templates in `templates/`). Follows the hades pattern — supporting files enable specialist agent prompts per gate without bloating the main skill. Reviewer fixes applied: expanded `allowed-tools`, SSOT references instead of duplication, `.smart/` gitignore safety, fixed undefined shell functions in gate-02, fixed `$(cat ...)` references in gate-04/06, added context injection instructions for subagent prompts in gate-05/07. Counts: 22→21 commands, 4→5 skills
 - **Docs sync**: Updated README.md, CLAUDE.md, ARCHITECTURE.md, AGENTS.md, marketplace.json with accurate counts (22 commands, 4 skills, 9 agents) and eight-gates references
 - **ARCHITECTURE.md rewrite**: Replaced stale target-state tree with actual filesystem layout. Added missing entries (AGENTS.md, .claude/rules/, .coderabbit.yaml, agents/ dir, CLAUDE.md per plugin, tri-AI review section). Removed phantom `skills/` root dir and `docs/examples/`
 - **qyl routing rewrite**: Replaced thin qyl block with full project map (14 src projects), TypeSpec flow, specialist agents (servicedefaults-specialist added), and condensed MTP exit codes. Removed bloated Context Processing Requirement ceremony

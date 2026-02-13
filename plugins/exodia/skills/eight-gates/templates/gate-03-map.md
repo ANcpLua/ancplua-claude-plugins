@@ -6,7 +6,7 @@
 
 ## Entry Condition
 
-- Gate 2 checkpoint exists with status "context-loaded"
+- Gate 2 checkpoint exists (`checkpoint.sh verify 2`)
 - Objective type known from Gate 1
 
 ## Rules
@@ -15,6 +15,11 @@
 2. No agent implements changes — MAP means observe and report
 3. Each agent returns the standard payload (see bottom of this file)
 4. Agent count respects budget ceiling from Gate 1
+
+**Variable substitution:** Agent prompts below use `$SESSION_ID`, `$OBJECTIVE`, `$SCOPE`.
+Lead MUST replace these with actual values before spawning. Mapping from skill args:
+`$OBJECTIVE` = `$0` (first skill argument), `$SCOPE` = `$1` (second skill argument).
+`$SESSION_ID` comes from INIT. Subagents have NO conversation history — inject everything.
 
 ---
 

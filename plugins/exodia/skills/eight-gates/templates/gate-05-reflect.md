@@ -7,7 +7,7 @@
 
 ## Entry Condition
 
-- Gate 4 checkpoint exists with status "checkpoint-complete"
+- Gate 4 checkpoint exists (`checkpoint.sh verify 4`)
 - Findings cached in artifacts
 
 ## Rules

@@ -6,7 +6,7 @@
 
 ## Entry Condition
 
-- Gate 5 checkpoint exists with status "reflection-complete"
+- Gate 5 checkpoint exists (`checkpoint.sh verify 5`)
 - MAP findings + reflection output available in artifacts
 
 ## Actions (0-1 Agents)

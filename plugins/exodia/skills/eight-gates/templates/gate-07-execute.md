@@ -7,7 +7,7 @@
 
 ## Entry Condition
 
-- Gate 6 checkpoint exists with status "reduce-complete"
+- Gate 6 checkpoint exists (`checkpoint.sh verify 6`)
 - Work queue cached in artifacts with ownership map and lane structure
 
 ## Execution Modes
@@ -109,9 +109,12 @@ If context fills during execution (common for XL objectives):
 ### Session Handoff
 
 ```bash
-# Save handoff with all state needed to resume
-plugins/exodia/scripts/smart/session-state.sh artifact add "handoff" \
-  "$(cat .eight-gates/checkpoints.jsonl)"
+# Copy checkpoint log to artifacts for resume (avoids ARG_MAX on large sessions)
+cp .eight-gates/checkpoints.jsonl .eight-gates/artifacts/handoff-checkpoints.jsonl
+
+# Record handoff decision
+plugins/exodia/scripts/smart/session-state.sh decision "handoff-created" \
+  "Context limit reached, checkpoint log preserved for resume"
 
 # Extend session TTL if still active
 plugins/exodia/scripts/smart/session-state.sh extend 3600

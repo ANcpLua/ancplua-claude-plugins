@@ -7,7 +7,7 @@
 
 ## Entry Condition
 
-- Gate 1 checkpoint exists with status "scope-defined"
+- Gate 1 checkpoint exists (`checkpoint.sh verify 1`)
 - Objective type classified
 
 ## Actions

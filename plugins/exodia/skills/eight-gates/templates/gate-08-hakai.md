@@ -10,7 +10,7 @@
 
 ## Entry Condition
 
-- Gate 7 checkpoint exists with status "execute-complete"
+- Gate 7 checkpoint exists (`checkpoint.sh verify 7`)
 - Build passes. Tests pass.
 
 ## Actions
@@ -27,8 +27,8 @@ dotnet test 2>&1 || npm test 2>&1 || make test 2>&1
 # Lint
 dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
 
-# Repo-specific validation (if exists)
-[ -f ./tooling/scripts/weave-validate.sh ] && ./tooling/scripts/weave-validate.sh 2>&1
+# Repo-specific validation (non-fatal if absent)
+if [ -f ./tooling/scripts/weave-validate.sh ]; then ./tooling/scripts/weave-validate.sh 2>&1; fi
 ```
 
 If ANY check fails: **do not proceed.** Fix the issue or ITERATE back to Gate 7.
