@@ -18,7 +18,7 @@ Each project gets a tailored context block containing:
 | ANcpLua.Analyzers | Roslyn diagnostics | ancplua-analyzers-specialist, deep-debugger |
 | ANcpLua.NET.Sdk | MSBuild SDK | ancplua-sdk-specialist, msbuild-expert |
 | ANcpLua.Roslyn.Utilities | Shared helpers (SOURCE OF TRUTH) | feature-dev agents + competitive-review |
-| qyl | Observability platform | qyl-observability-specialist, otel-genai-architect |
+| qyl | Observability platform (14 src projects) | qyl-observability-specialist, otel-genai-architect, servicedefaults-specialist |
 | Template | Clean Architecture | template-clean-arch-specialist |
 | ancplua-claude-plugins | Plugin marketplace | exodia, hookify commands |
 | ancplua.io / ancplua-docs | Mintlify docs | ancplua-docs-generator |
