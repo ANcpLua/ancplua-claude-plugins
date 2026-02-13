@@ -102,7 +102,7 @@ plugins/exodia/scripts/smart/session-state.sh validate
 
    ```bash
    # Inventory all files in scope
-   find $1 -type f | grep -v node_modules | grep -v .git > .eight-gates/artifacts/scope.txt
+   find "$1" -type f | grep -v node_modules | grep -v .git > .eight-gates/artifacts/scope.txt
    wc -l < .eight-gates/artifacts/scope.txt
    ```
 
@@ -145,7 +145,7 @@ plugins/exodia/scripts/smart/checkpoint.sh save 1 "scope-defined" \
 
 ```bash
 plugins/exodia/scripts/smart/checkpoint.sh save 2 "context-loaded" \
-  "artifacts=$(ls .eight-gates/artifacts/ | wc -l)" "assumptions-verified=[n]"
+  "artifacts=$(find .eight-gates/artifacts -maxdepth 1 -type f | wc -l)" "assumptions-verified=[n]"
 ```
 
 **Exit:** Context loaded, assumptions verified. PROCEED. HALT if critical assumption is wrong.

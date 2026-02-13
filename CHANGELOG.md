@@ -16,6 +16,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **session-state.sh command injection**: Replaced raw variable interpolation in `extend()` jq call with `--argjson` safe argument passing. Flagged by Gemini as critical security vulnerability
+- **checkpoint.sh verify accuracy**: Replaced brittle `grep` with `jq --argjson` exact match + session scoping. Gate 1 no longer falsely matches gate 10
+- **session-state.sh path traversal**: Added `validate_artifact_key()` guard rejecting keys with `/` or `..` — prevents escaping artifacts directory
+- **session-state.sh ls parsing**: Replaced `ls -1 | while read` anti-pattern with `find -print0 | while read -d ''` for safe filename handling
+- **checkpoint.sh session ID check**: Added existence guard before reading `.session-id` file in `save()`
+- **json_escape newline handling**: Both scripts now use `jq -Rs` when available for proper JSON encoding including newlines, with `tr '\n' ' '` fallback
+- **decision_log JSON safety**: Uses `jq -n -c --arg` for proper escaping instead of manual `json_escape` + `printf` interpolation
+- **eight-gates.md quoting**: Quoted `$1` in `find` command and replaced `ls` with `find` for artifact counting
+- **decision subcommand routing**: Added explicit `log` subcommand with graceful fallback for backward compatibility
 - **Command namespacing**: Bare `/fix`, `/mega-swarm` etc. corrected to `/exodia:fix`, `/exodia:mega-swarm` across CLAUDE.md, AGENTS.md, exodia/README.md — plugin commands are always namespaced
 - **AGENTS.md stale counts**: "19 commands, 11 agents" → "20 commands, 9 agents" to match actual filesystem
 - **README.md exodia comment**: "9 commands incl. hades" → "8 commands + hades cleanup skill" (hades is a skill, not a command)

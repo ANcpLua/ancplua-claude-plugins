@@ -9,7 +9,22 @@ SESSION_FILE="${GATES_DIR}/session.json"
 ARTIFACTS_DIR="${GATES_DIR}/artifacts"
 DECISIONS_FILE="${GATES_DIR}/decisions.jsonl"
 
-json_escape() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g'; }
+json_escape() {
+  if command -v jq &>/dev/null; then
+    printf '%s' "$1" | jq -Rs '.[:-1] // .'
+    return
+  fi
+  printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g' | tr '\n' ' '
+}
+
+# Validate artifact key — reject path traversal and unsafe characters
+validate_artifact_key() {
+  local key="$1"
+  if [[ "$key" == *"/"* ]] || [[ "$key" == *".."* ]] || [[ "$key" == "" ]]; then
+    echo "Error: Invalid artifact key '${key}'. Keys must not contain '/' or '..'." >&2
+    return 1
+  fi
+}
 
 create() {
   local session_id="${1:?Usage: session-state.sh create <session-id> [ttl-seconds]}"
@@ -78,10 +93,9 @@ extend() {
   fi
 
   if command -v jq &>/dev/null; then
-    local new_expires
-    new_expires="$(jq -r ".expires_epoch + ${extra_ttl}" "$SESSION_FILE")"
     local tmp
-    tmp="$(jq ".expires_epoch = ${new_expires} | .ttl = .ttl + ${extra_ttl}" "$SESSION_FILE")"
+    tmp="$(jq --argjson extra "$extra_ttl" \
+      '(.expires_epoch += $extra) | (.ttl += $extra)' "$SESSION_FILE")"
     printf '%s\n' "$tmp" > "$SESSION_FILE"
   else
     echo "Warning: jq not available, cannot extend session." >&2
@@ -113,6 +127,8 @@ artifact_add() {
   local key="${1:?Usage: session-state.sh artifact add <key> <value>}"
   local value="${2:?}"
 
+  validate_artifact_key "$key" || exit 1
+
   mkdir -p "$ARTIFACTS_DIR"
   printf '%s' "$value" > "${ARTIFACTS_DIR}/${key}"
   echo "Artifact cached: ${key} ($(printf '%s' "$value" | wc -c | tr -d ' ') bytes)"
@@ -120,6 +136,9 @@ artifact_add() {
 
 artifact_get() {
   local key="${1:?Usage: session-state.sh artifact get <key>}"
+
+  validate_artifact_key "$key" || exit 1
+
   local path="${ARTIFACTS_DIR}/${key}"
 
   if [ ! -f "$path" ]; then
@@ -135,12 +154,14 @@ artifact_list() {
     echo "No artifacts."
     return
   fi
-  # shellcheck disable=SC2012
-  ls -1 "$ARTIFACTS_DIR" 2>/dev/null | while read -r f; do
-    local size
-    size="$(wc -c < "${ARTIFACTS_DIR}/${f}" | tr -d ' ')"
-    echo "  ${f} (${size} bytes)"
-  done
+
+  find "$ARTIFACTS_DIR" -maxdepth 1 -type f -print0 2>/dev/null | \
+    while IFS= read -r -d '' path; do
+      local f size
+      f="${path##*/}"
+      size="$(wc -c < "$path" | tr -d ' ')"
+      echo "  ${f} (${size} bytes)"
+    done
 }
 
 decision_log() {
@@ -152,13 +173,21 @@ decision_log() {
     touch "$DECISIONS_FILE"
   fi
 
-  local ts
+  local ts escaped_decision escaped_reason
   ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  decision="$(json_escape "$decision")"
-  reason="$(json_escape "$reason")"
 
-  printf '{"ts":"%s","decision":"%s","reason":"%s"}\n' \
-    "$ts" "$decision" "$reason" >> "$DECISIONS_FILE"
+  if command -v jq &>/dev/null; then
+    jq -n -c \
+      --arg ts "$ts" \
+      --arg d "$decision" \
+      --arg r "$reason" \
+      '{ts: $ts, decision: $d, reason: $r}' >> "$DECISIONS_FILE"
+  else
+    escaped_decision="$(printf '%s' "$decision" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g' | tr '\n' ' ')"
+    escaped_reason="$(printf '%s' "$reason" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g' | tr '\n' ' ')"
+    printf '{"ts":"%s","decision":"%s","reason":"%s"}\n' \
+      "$ts" "$escaped_decision" "$escaped_reason" >> "$DECISIONS_FILE"
+  fi
 
   echo "Decision logged: ${decision}"
 }
@@ -199,7 +228,15 @@ case "${1:-}" in
     shift
     case "${1:-}" in
       list) decision_list ;;
-      *)    decision_log "$@" ;;
+      log)  shift; decision_log "$@" ;;
+      *)
+        if [ $# -ge 2 ]; then
+          decision_log "$@"
+        else
+          echo "Usage: session-state.sh decision {log <decision> <reason>|list}" >&2
+          exit 1
+        fi
+        ;;
     esac
     ;;
   *)
@@ -211,7 +248,7 @@ case "${1:-}" in
     echo "  artifact add <key> <value>          Cache artifact" >&2
     echo "  artifact get <key>                  Retrieve cached artifact" >&2
     echo "  artifact list                       List all artifacts" >&2
-    echo "  decision <decision> <reason>        Log decision" >&2
+    echo "  decision log <decision> <reason>    Log decision" >&2
     echo "  decision list                       List all decisions" >&2
     exit 1
     ;;
