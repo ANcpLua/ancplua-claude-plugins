@@ -14,7 +14,7 @@
 1. ALL agents launch in ONE message (parallel, LAW 3)
 2. No agent implements changes — MAP means observe and report
 3. Each agent returns the standard payload (see bottom of this file)
-4. Agent count respects budget ceiling from Gate 1
+4. Agent count respects ceiling from Gate 1
 
 **Variable substitution:** Agent prompts below use `$SESSION_ID`, `$OBJECTIVE`, `$SCOPE`.
 Lead MUST replace these with actual values before spawning. Mapping from skill args:
@@ -25,7 +25,7 @@ Lead MUST replace these with actual values before spawning. Mapping from skill a
 
 ## type=BUG (3-6 agents)
 
-Standard: 3 agents. Full budget: all 6.
+Standard: 3 agents. Full: all 6.
 
 > subagent: deep-debugger
 >
@@ -68,7 +68,7 @@ Standard: 3 agents. Full budget: all 6.
 
 > subagent: Explore
 >
-> You are **history-detective**. (full budget only)
+> You are **history-detective**. (full mode only)
 > SESSION: $SESSION_ID | OBJECTIVE: $OBJECTIVE | SCOPE: $SCOPE
 >
 > Find the HISTORY.
@@ -79,7 +79,7 @@ Standard: 3 agents. Full budget: all 6.
 
 > subagent: feature-dev:code-explorer
 >
-> You are **pattern-matcher**. (full budget only)
+> You are **pattern-matcher**. (full mode only)
 > SESSION: $SESSION_ID | OBJECTIVE: $OBJECTIVE | SCOPE: $SCOPE
 >
 > Find SIMILAR bugs.
@@ -89,7 +89,7 @@ Standard: 3 agents. Full budget: all 6.
 
 > subagent: feature-dev:code-reviewer
 >
-> You are **test-analyzer**. (full budget only)
+> You are **test-analyzer**. (full mode only)
 > SESSION: $SESSION_ID | OBJECTIVE: $OBJECTIVE | SCOPE: $SCOPE
 >
 > Analyze TEST coverage gaps.
@@ -225,7 +225,7 @@ Full mode adds (launch alongside the 6 above):
 >
 > Output: Risk assessment with mitigations.
 
-Full budget adds: test-planner, ux-reviewer, performance-profiler.
+Full mode adds: test-planner, ux-reviewer, performance-profiler.
 
 ---
 
@@ -314,7 +314,7 @@ Severity definitions:
 |-------|---------|--------|
 | P0 | Critical — blocks deployment/correctness | Fix immediately |
 | P1 | High — significant quality/security issue | Fix before ship |
-| P2 | Medium — should fix, non-blocking | Fix if budget allows |
+| P2 | Medium — should fix, non-blocking | Fix if time allows |
 | P3 | Low — nice to have, cosmetic | Kill list candidate |
 
 ## Exit Condition

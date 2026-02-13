@@ -106,23 +106,7 @@ For high-risk objectives or large scopes, spawn verification agents:
 >
 > Output: Full verification log with pass/fail evidence.
 
-### 5. Final Budget Report
-
-```text
-BUDGET REPORT:
-  Ceiling: [N] agents (from Gate 1)
-  Spent:
-    Gate 2 (context):    [x] agents
-    Gate 3 (map):        [y] agents
-    Gate 5 (reflect):    1 agent
-    Gate 6 (reduce):     [z] agents
-    Gate 7 (execute):    [w] agents
-    Gate 8 (hakai):      [v] agents
-  Total:                 [sum]
-  Under/Over:            [delta]
-```
-
-### 6. Session Cleanup
+### 5. Session Cleanup
 
 ```bash
 # Expire session
@@ -151,8 +135,7 @@ plugins/exodia/scripts/smart/session-state.sh decision list
   "permits_used": 0,
   "challenges_raised": 0,
   "challenges_resolved": 0,
-  "budget_total": 0,
-  "budget_ceiling": 0,
+  "agents_spawned": 0,
   "verdict": "SHIP|ITERATE|HALT"
 }
 ```

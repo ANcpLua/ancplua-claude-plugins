@@ -52,22 +52,7 @@ FINDING_HASH = sha256(file_path + ":" + line_number + ":" + description)
 Store hashes in `.eight-gates/artifacts/finding-hashes.txt`.
 On resume: compare against existing hashes, skip matches.
 
-### 4. Budget Check
-
-```text
-Budget ceiling:    [N] agents (from Gate 1)
-Agents spent:      Gate 2: [x] + Gate 3: [y] = [total]
-Remaining:         [N - total]
-Estimated need:    Gate 5: 1 + Gate 6: 0-1 + Gate 7: [est] + Gate 8: 0-4
-```
-
-If remaining < estimated need for Gates 5-8:
-
-- Option A: Trim scope (remove P2/P3 from work queue)
-- Option B: Increase budget (escalate to user)
-- Option C: HALT
-
-### 5. Cache Work Items
+### 4. Cache Work Items
 
 Extract actionable items from findings. The lead parses the merged findings
 artifact and extracts items with severity, file, description, and evidence:
@@ -88,9 +73,7 @@ plugins/exodia/scripts/smart/session-state.sh artifact add "work-items-raw" \
   "decisions_logged": 0,
   "findings_total": 0,
   "findings_deduplicated": 0,
-  "budget_used": 0,
-  "budget_remaining": 0,
-  "budget_status": "ON_TRACK|WARNING|EXCEEDED"
+  "agents_spawned": 0
 }
 ```
 
@@ -100,9 +83,7 @@ plugins/exodia/scripts/smart/session-state.sh artifact add "work-items-raw" \
 plugins/exodia/scripts/smart/checkpoint.sh save 4 "checkpoint-complete" \
   "artifacts=$(find .eight-gates/artifacts -maxdepth 1 -type f | wc -l | tr -d ' ')" \
   "decisions=$(wc -l < .eight-gates/decisions.jsonl | tr -d ' ')" \
-  "budget_used=[n]" \
-  "budget_remaining=[n]"
+  "agents_spawned=[n]"
 ```
 
 **PROCEED** always (bookkeeping can't fail structurally).
-**HALT** only if budget exceeded AND scope can't be trimmed → escalate to user.
