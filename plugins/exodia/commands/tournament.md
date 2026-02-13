@@ -48,6 +48,10 @@ TOURNAMENT JUDGE (You — Orchestrator)
 
 <CRITICAL_EXECUTION_REQUIREMENT>
 
+**STEP -1 — Inherit Prior Findings:**
+If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, read `.eight-gates/artifacts/findings.json`.
+Inject relevant findings into competitor prompts as shared starting context — level the playing field.
+
 **YOU ARE THE JUDGE, NOT A COMPETITOR.**
 
 - DO NOT read files, write code, or fix issues yourself

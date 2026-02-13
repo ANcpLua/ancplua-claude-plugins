@@ -181,6 +181,13 @@ HADES (Lead — Delegate Mode — Opus 4.6)
 
 <CRITICAL_EXECUTION_REQUIREMENT>
 
+**STEP -1 — Inherit Prior Findings:**
+If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, read `.eight-gates/artifacts/findings.json`.
+Filter findings where `category` matches focus (`DEAD`, `DUP`, `SUPP`, `IMP`, or all).
+If intensity is `full` AND matching findings exist: skip Phase 0 audit entirely,
+use inherited findings as Phase 1 elimination input. Log: "Inherited [n] findings from prior scan."
+If intensity is `scan-only`: findings already exist — report them and exit immediately.
+
 **YOU ARE THE TEAM LEAD. DELEGATE MODE.**
 
 **STEP 0 — Smart Infrastructure Init (before any teammates):**
@@ -297,9 +304,11 @@ GOGGLES: [EQUIPPED | OFF]
 +------------------------------------------------------------+
 ```
 
-- $2 = scan-only -> SCAN_COMPLETE. Present report. Revoke permit. Shut down. Done.
+- $2 = scan-only -> SCAN_COMPLETE. **Write findings to `.eight-gates/artifacts/findings.json`**
+  (enables auto-inherit). Present report. Revoke permit. Shut down. Done.
 - Zero findings -> HALT. Nothing to clean. Revoke permit. Shut down. Done.
-- Findings exist -> PROCEED. Shut down Phase 0. Spawn Phase 1.
+- Findings exist -> PROCEED. **Write findings to `.eight-gates/artifacts/findings.json`**.
+  Shut down Phase 0. Spawn Phase 1.
 
 ---
 

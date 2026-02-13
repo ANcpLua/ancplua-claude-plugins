@@ -37,6 +37,10 @@ THINK LEAD (You — Synthesizer)
 
 <CRITICAL_EXECUTION_REQUIREMENT>
 
+**STEP -1 — Inherit Prior Findings:**
+If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, read `.eight-gates/artifacts/findings.json`.
+Inject ALL findings as background context for Phase 1 agents — they should reason about existing evidence.
+
 **RUN ALL 3 PHASES WITHOUT STOPPING.**
 
 1. Launch 3 Phase 1 agents in ONE message

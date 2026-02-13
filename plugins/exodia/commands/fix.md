@@ -48,6 +48,11 @@ FIX LEAD (You — Orchestrator)
 
 <CRITICAL_EXECUTION_REQUIREMENT>
 
+**STEP -1 — Inherit Prior Findings:**
+If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, read `.eight-gates/artifacts/findings.json`.
+Filter by `finding.id` matching `$0`. If a match exists, inject its `fix`, `files`, and `severity` into
+Phase 1 agent prompts as pre-existing context. Skip re-discovery of already-known information.
+
 **YOU ORCHESTRATE. AGENTS FIX.**
 
 1. Launch Phase 1 agents in ONE message (Task tool, parallel)
