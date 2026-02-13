@@ -42,6 +42,17 @@ SWARM LEAD (You — Orchestrator)
 
 <CRITICAL_EXECUTION_REQUIREMENT>
 
+**STEP -1 — Inherit Prior Findings:**
+If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, `.eight-gates/artifacts/findings.json` already
+has prior scan data. Report existing findings instead of re-scanning. Only launch agents for UNCOVERED areas.
+
+**STEP FINAL — Persist Findings:**
+After synthesis, write ALL findings to `.eight-gates/artifacts/findings.json` in this format:
+```json
+{"session":"[ID]","source":"mega-swarm","total_findings":N,"by_category":{...},"findings":[{"id":"...","category":"...","severity":"P0-P3","title":"...","files":[...],"fix":"...","effort":"S|M|L|XL"}]}
+```
+This enables auto-inherit for ALL downstream Exodia skills in parallel sessions.
+
 **Launch ALL agents for selected mode in ONE message. NOTHING ELSE.**
 
 - Full ($2=full or unspecified): 12 agents

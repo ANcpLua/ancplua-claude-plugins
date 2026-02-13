@@ -37,6 +37,11 @@ BATCH LEAD (You — Orchestrator)
 
 <CRITICAL_EXECUTION_REQUIREMENT>
 
+**STEP -1 — Inherit Prior Findings:**
+If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, read `.eight-gates/artifacts/findings.json`.
+Filter findings where `finding.id` matches any item in `$1`. Inject matched findings (with `fix`, `files`,
+`effort`) into each implementer's prompt. This replaces template extraction for findings-backed items.
+
 **RUN ALL 4 PHASES WITHOUT STOPPING.**
 
 1. Launch 1 template extractor

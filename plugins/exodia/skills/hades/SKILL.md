@@ -4,6 +4,54 @@ description: "IF cleanup/elimination needed THEN use this. IF zero suppressions 
 argument-hint: "[scope] [focus] [intensity] [--goggles]"
 allowed-tools: Task, Bash, TodoWrite
 hooks:
+  PreToolUse:
+    - matcher: "Edit|Write"
+      hooks:
+        - type: prompt
+          prompt: |
+            You are Ralph, the behavior enforcer for a Hades cleanup session.
+            The LEAD agent is trying to use a tool. Context:
+            $ARGUMENTS
+
+            The lead's ONLY job is orchestrating — spawning teammates,
+            evaluating gates, messaging teammates. The lead NEVER writes
+            code, edits files, or fixes issues directly.
+
+            Exception: writing to .eight-gates/ or .smart/ directories
+            (infrastructure files like findings.json, checkpoints, ledger)
+            is allowed — that's bookkeeping, not implementation.
+
+            If the lead is editing/writing code files, BLOCK it.
+            If the lead is writing infrastructure files, ALLOW it.
+          model: haiku
+          timeout: 10
+  Stop:
+    - hooks:
+        - type: prompt
+          prompt: |
+            You are Ralph. The Hades lead agent wants to stop.
+            Context:
+            $ARGUMENTS
+
+            Check: Are all gate criteria met? Did all teammates finish
+            and get shut down? Is the deletion permit revoked? Is the
+            ledger complete? If anything is incomplete, BLOCK and explain
+            what's missing.
+          model: haiku
+          timeout: 15
+  SubagentStop:
+    - hooks:
+        - type: prompt
+          prompt: |
+            You are Ralph. A Hades teammate wants to stop.
+            Context:
+            $ARGUMENTS
+
+            Check: Did this teammate complete its assigned tasks?
+            Did it report findings or log deletions? Teammates that
+            quit without delivering results should be BLOCKED.
+          model: haiku
+          timeout: 10
   TeammateIdle:
     - hooks:
         - type: command
@@ -262,7 +310,14 @@ plugins/exodia/scripts/smart/ledger.sh count
 **Fallback:** If Agent Teams unavailable, use Task tool with
 `subagent_type: general-purpose`, 4 agents per phase.
 
-**YOUR NEXT ACTION: Run Step 0 (Smart Init), then create team and spawn Phase 0.**
+**STEP -1 — Inherit Prior Findings:**
+If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, read `.eight-gates/artifacts/findings.json`.
+Filter findings where `category` matches focus (`DEAD`, `DUP`, `SUPP`, `IMP`, or all).
+If intensity is `full` (not scan-only) AND matching findings exist: skip Phase 0 audit entirely,
+use inherited findings as Phase 1 elimination input. Log: "Inherited [n] findings from prior scan."
+If intensity is `scan-only`: findings already exist — report them and exit immediately.
+
+**YOUR NEXT ACTION: Run Step -1 check, then Step 0 (Smart Init), then create team and spawn Phase 0.**
 
 </CRITICAL_EXECUTION_REQUIREMENT>
 
@@ -297,9 +352,11 @@ GOGGLES: [EQUIPPED | OFF]
 +------------------------------------------------------------+
 ```
 
-- $2 = scan-only -> SCAN_COMPLETE. Present report. Revoke permit. Shut down. Done.
+- $2 = scan-only -> SCAN_COMPLETE. **Write findings to `.eight-gates/artifacts/findings.json`**
+  (enables auto-inherit). Present report. Revoke permit. Shut down. Done.
 - Zero findings -> HALT. Nothing to clean. Revoke permit. Shut down. Done.
-- Findings exist -> PROCEED. Shut down Phase 0. Spawn Phase 1.
+- Findings exist -> PROCEED. **Write findings to `.eight-gates/artifacts/findings.json`**.
+  Shut down Phase 0. Spawn Phase 1.
 
 ---
 

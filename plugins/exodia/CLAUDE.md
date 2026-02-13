@@ -6,7 +6,7 @@ Multi-agent workflow orchestration. 10 commands + 1 skill (hades), unlimited par
 
 | Command | Agents | Use When |
 |---------|--------|----------|
-| `eight-gates` | 1-30+ | Maximum disciplined orchestration — 8 progressive gates with checkpointing, budget tracking, Hakai guarantee |
+| `eight-gates` | 1-30+ | Maximum disciplined orchestration — 8 progressive gates with checkpointing, Hakai guarantee |
 | `turbo-fix` | 13 | P0 critical bugs |
 | `fix` | 8-16 | Any bug fix (configurable parallelism) |
 | `fix-pipeline` | 7 | Fixing audit findings systematically |
@@ -35,6 +35,23 @@ Located: `scripts/smart/`
 | `permit.sh` | TTL-based deletion permits with scope matching |
 | `checkpoint.sh` | Gate checkpoint management (init/save/load/verify/list) |
 | `session-state.sh` | TTL session state + artifact cache + decision log |
+| `findings-inject.sh` | SessionStart hook — injects prior findings as passive context |
+
+## Findings Auto-Inherit (LAW 1)
+
+```text
+findings.json exists → SessionStart hook fires → <EXODIA_FINDINGS_CONTEXT> injected
+    → Any Exodia skill reads STEP -1 → filters findings by scope → skips re-scanning
+```
+
+Three reinforcing layers:
+
+1. **Hook** (`hooks/hooks.json`): `findings-inject.sh` reads `.eight-gates/artifacts/findings.json`, injects compact summary
+2. **Skill body** (STEP -1): every command/skill checks for `<EXODIA_FINDINGS_CONTEXT>` tag, uses findings as input
+3. **Tag is IMPERATIVE**: "MUST use. Do NOT re-scan." — not advisory, not optional
+
+Producers: `mega-swarm`, `eight-gates` (Gate 3 MAP), `hades` (Phase 0 scan-only)
+Consumers: all other commands + hades `--full` + eight-gates (skips Gate 3)
 
 Hookify guard templates in `scripts/smart/hookify-rules/`:
 

@@ -44,6 +44,12 @@ TURBO LEAD (You — Orchestrator)
 
 <CRITICAL_EXECUTION_REQUIREMENT>
 
+**STEP -1 — Inherit Prior Findings:**
+If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, read `.eight-gates/artifacts/findings.json`.
+Filter by `finding.id` matching `$0`. If a match exists, inject its `fix`, `files`, and `severity` into
+all Phase 1 agent prompts as pre-existing context. Skip re-discovery of already-known information.
+
+
 **YOU ORCHESTRATE. 13 AGENTS FIX.**
 
 1. Launch 6 Phase 1 agents in ONE message

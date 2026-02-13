@@ -1,5 +1,5 @@
 ---
-description: "IF maximum disciplined orchestration needed THEN use this. 8 progressive gates, checkpointing, budget tracking, Hakai guarantee. Composes mega-swarm (MAP), existing fix pipelines (EXECUTE), and hades (HAKAI). Not max chaos — max discipline."
+description: "IF maximum disciplined orchestration needed THEN use this. 8 progressive gates, checkpointing, Hakai guarantee. Composes mega-swarm (MAP), existing fix pipelines (EXECUTE), and hades (HAKAI). Not max chaos — max discipline."
 allowed-tools: Task, Bash, TodoWrite
 argument-hint: "[objective] [scope] [gate-limit]"
 ---
@@ -27,7 +27,6 @@ argument-hint: "[objective] [scope] [gate-limit]"
 │   ├── scope.txt                 <- file inventory
 │   ├── dependencies.txt          <- dependency graph
 │   └── findings.json             <- merged findings from MAP phase
-└── budget.json                   <- agent count, estimated cost
 
 plugins/exodia/scripts/smart/     <- checked-in tooling
 ├── checkpoint.sh                 <- save | load | verify | list
@@ -49,7 +48,7 @@ Gate 7: 驚門 KYŌMON (Wonder)     → EXECUTE         — TDD implementation w
 Gate 8: 死門 SHIMON (Death)       → HAKAI          — Final verification, irreversible cleanup
 ```
 
-Each gate has: Entry Condition | Actions | Exit (PROCEED/HALT) | Budget Cost
+Each gate has: Entry Condition | Actions | Exit (PROCEED/HALT)
 
 ---
 
@@ -71,7 +70,7 @@ plugins/exodia/scripts/smart/checkpoint.sh init "$SESSION_ID"
 plugins/exodia/scripts/smart/ledger.sh init
 ```
 
-Store `$SESSION_ID`. Pass it to every agent prompt. Track budget from first gate.
+Store `$SESSION_ID`. Pass it to every agent prompt.
 
 **PROGRESSIVE EXECUTION:**
 Open gates 1 through $2 (default: all 8). Each gate evaluates before proceeding.
@@ -87,7 +86,12 @@ plugins/exodia/scripts/smart/session-state.sh validate
 # Skip completed gates, resume from first incomplete
 ```
 
-**YOUR NEXT ACTION: Run INIT, then open Gate 1.**
+**STEP -1 — Inherit Prior Findings:**
+If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, `.eight-gates/artifacts/findings.json` already
+has prior scan data. Skip Gate 3 MAP entirely — load findings from file, proceed directly to Gate 4 CHECKPOINT.
+This saves the most expensive phase (4-12 agents) when findings already exist from a prior session.
+
+**YOUR NEXT ACTION: Run Step -1 check, then INIT, then open Gate 1.**
 
 </CRITICAL_EXECUTION_REQUIREMENT>
 
@@ -96,7 +100,6 @@ plugins/exodia/scripts/smart/session-state.sh validate
 ## GATE 1: 開門 KAIMON — SCOPE
 
 **Entry:** Session initialized.
-**Budget:** 0 agents (lead only).
 
 1. Define boundaries — what's IN, what's OUT:
 
@@ -107,13 +110,12 @@ plugins/exodia/scripts/smart/session-state.sh validate
    ```
 
 2. Identify constraints (language, framework, conventions)
-3. Estimate total work (S/M/L/XL)
-4. Set budget ceiling: S=4 agents, M=8, L=12, XL=12+multi-round
+3. Estimate total work (S/M/L/XL) and agent count: S=4, M=8, L=12, XL=12+multi-round
 
 ```bash
 plugins/exodia/scripts/smart/checkpoint.sh save 1 "scope-defined" \
   "files=$(wc -l < .eight-gates/artifacts/scope.txt)" \
-  "estimate=[S|M|L|XL]" "budget=[4|8|12]"
+  "estimate=[S|M|L|XL]" "agents=[4|8|12]"
 ```
 
 **Exit:** Scope document exists. PROCEED if scope is clear. HALT if ambiguous — ask user.
@@ -123,7 +125,6 @@ plugins/exodia/scripts/smart/checkpoint.sh save 1 "scope-defined" \
 ## GATE 2: 休門 KYŪMON — CONTEXT (Yin)
 
 **Entry:** Gate 1 PROCEED.
-**Budget:** 0-2 agents (epistemic verification only).
 
 1. Load passive context: CLAUDE.md, relevant skills, specs, ADRs
 2. Build artifact cache — expensive-to-reconstruct facts:
@@ -155,7 +156,7 @@ plugins/exodia/scripts/smart/checkpoint.sh save 2 "context-loaded" \
 ## GATE 3: 生門 SEIMON — MAP (Yang Ignition)
 
 **Entry:** Gate 2 PROCEED.
-**Budget:** 4-12 agents (based on Gate 1 estimate). ALL launched in ONE message.
+**Agents:** 4-12 (based on Gate 1 estimate). ALL launched in ONE message.
 
 Parallel MAP phase — every independent research angle simultaneously:
 
@@ -189,7 +190,6 @@ plugins/exodia/scripts/smart/checkpoint.sh save 3 "map-complete" \
 ## GATE 4: 傷門 SHŌMON — CHECKPOINT (Senzu Bean)
 
 **Entry:** Gate 3 PROCEED.
-**Budget:** 0 agents (lead only — pure bookkeeping).
 
 The pain gate. Cost of persistence. This is where state becomes durable.
 
@@ -208,21 +208,19 @@ The pain gate. Cost of persistence. This is where state becomes durable.
    ```
 
 3. **Idempotent Guards** — mark each finding with hash so re-runs skip done work
-4. **Budget Check** — are we on track or burning too fast?
 
 ```bash
 plugins/exodia/scripts/smart/checkpoint.sh save 4 "checkpoint-complete" \
-  "artifacts-cached=[n]" "decisions-logged=[n]" "budget-remaining=[estimate]"
+  "artifacts-cached=[n]" "decisions-logged=[n]"
 ```
 
-**Exit:** Always PROCEED (bookkeeping can't fail). But if budget exceeded → HALT, trim scope.
+**Exit:** Always PROCEED (bookkeeping can't fail).
 
 ---
 
 ## GATE 5: 杜門 TOMON — REFLECT (Ralph Loop)
 
 **Entry:** Gate 4 PROCEED.
-**Budget:** 1 agent (bounded reflection — max 1 round).
 
 **One reflection. Three questions. Cut if it wants more.**
 
@@ -249,7 +247,6 @@ plugins/exodia/scripts/smart/checkpoint.sh save 5 "reflection-complete" \
 ## GATE 6: 景門 KEIMON — REDUCE (Full View)
 
 **Entry:** Gate 5 PROCEED.
-**Budget:** 0-1 agents (merge + prioritize).
 
 See the full picture. One agent merges all findings into a roadmap.
 
@@ -278,7 +275,6 @@ plugins/exodia/scripts/smart/checkpoint.sh save 6 "reduce-complete" \
 ## GATE 7: 驚門 KYŌMON — EXECUTE (Making It Real)
 
 **Entry:** Gate 6 PROCEED.
-**Budget:** 1-12 agents (based on work queue size). Lanes from dependency graph.
 
 Implementation phase. TDD. Parallel lanes where possible.
 
@@ -315,8 +311,7 @@ Resume in new session from last checkpoint.
 
 ## GATE 8: 死門 SHIMON — HAKAI (Night Guy)
 
-**Entry:** Gate 7 PROCEED. Build passes. Tests pass.
-**Budget:** 0-4 agents (verification + cleanup). This is the LAST gate. No return.
+**Entry:** Gate 7 PROCEED. Build passes. Tests pass. This is the LAST gate. No return.
 
 **The Death Gate. What survives, ships. What doesn't, Hakai.**
 
@@ -338,7 +333,7 @@ Resume in new session from last checkpoint.
    - Log every deletion to ledger (shared with Hades infra)
    - Irreversible. No heal. Audit ledger is proof.
 
-3. **Budget Report:**
+3. **Final Checkpoint:**
 
    ```bash
    plugins/exodia/scripts/smart/checkpoint.sh save 8 "hakai-complete" \
@@ -377,7 +372,7 @@ Resume in new session from last checkpoint.
 | Gate 8 死門 HAKAI:      [DONE|ACTIVE|PENDING] | agents: [n]        |
 +--------------------------------------------------------------------+
 | Total Agents: [n] | Checkpoints: [n] | Decisions: [n]              |
-| Budget: [used]/[ceiling] | Session TTL: [remaining]s               |
+| Session TTL: [remaining]s                                           |
 +====================================================================+
 | VERDICT: SHIP | HALT at Gate [n] | IN PROGRESS Gate [n]            |
 +====================================================================+
@@ -404,7 +399,7 @@ Resume in new session from last checkpoint.
 |  Gate 7 EXECUTE:    [n] items done, [n] tests passing               |
 |  Gate 8 HAKAI:      build=PASS tests=PASS suppressions=0           |
 +====================================================================+
-|  BUDGET: [n] agents spawned | [n] checkpoints | [n] decisions       |
+|  Agents spawned: [n] | Checkpoints: [n] | Decisions: [n]            |
 |  SESSION: created [time] | expired [time] | duration [n]s           |
 |  LEDGER: [n] entries                                                |
 +====================================================================+

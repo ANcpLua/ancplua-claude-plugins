@@ -52,6 +52,11 @@ REVIEW LEAD (You — Orchestrator)
 
 <CRITICAL_EXECUTION_REQUIREMENT>
 
+**STEP -1 — Inherit Prior Findings:**
+If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, read `.eight-gates/artifacts/findings.json`.
+Inject all findings as context for Red team — they become the attack surface map.
+
+
 **THIS IS AN ADVERSARIAL EXERCISE.**
 
 1. Launch 3 Red Team agents in ONE message

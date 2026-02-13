@@ -37,6 +37,11 @@ THINK LEAD (You — Synthesizer)
 
 <CRITICAL_EXECUTION_REQUIREMENT>
 
+**STEP -1 — Inherit Prior Findings:**
+If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, read `.eight-gates/artifacts/findings.json`.
+Filter findings matching `$0`. Inject matched findings into all perspective agent prompts as context.
+
+
 **RUN ALL 3 PHASES WITHOUT STOPPING.**
 
 1. Launch 3 Phase 1 agents in ONE message
