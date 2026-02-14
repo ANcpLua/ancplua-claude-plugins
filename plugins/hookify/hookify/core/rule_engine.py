@@ -99,15 +99,16 @@ class RuleEngine:
             if hook_event == 'Stop':
                 return {
                     "decision": "block",
-                    "reason": combined_message
+                    "reason": combined_message,
+                    "systemMessage": combined_message
                 }
             elif hook_event in ['PreToolUse', 'PostToolUse']:
                 return {
                     "hookSpecificOutput": {
                         "hookEventName": hook_event,
-                        "permissionDecision": "deny",
-                        "permissionDecisionReason": combined_message
-                    }
+                        "permissionDecision": "deny"
+                    },
+                    "systemMessage": combined_message
                 }
             else:
                 # For other events, just show message
