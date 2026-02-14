@@ -8,6 +8,8 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **hookify block responses missing systemMessage**: Aligned with upstream — blocking responses now include `systemMessage` at root so Claude sees WHY an action was blocked (prevents blind retry loops)
+- **hookify hooks firing on every tool**: Added `matcher: "Bash|Edit|Write|MultiEdit"` to PreToolUse/PostToolUse in hooks.json — stops Python from spawning on Grep/Read/Glob/Task calls
 - **hookify blocking rules shown 3x**: Removed duplicate `systemMessage` from blocking responses — `permissionDecisionReason` already carries the message
 - **mtp-smart-test rule verbosity**: Trimmed 73-line reference doc to 5-line nudge — detailed MTP syntax belongs in `dotnet-mtp-advisor` agent, not a hook message
 - **mtp-smart-test `# VERIFY` bypass**: Added missing `not_contains` condition so the documented bypass actually works
