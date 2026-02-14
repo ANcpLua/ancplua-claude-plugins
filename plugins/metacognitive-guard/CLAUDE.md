@@ -11,6 +11,7 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 | Epistemic Guard | PreToolUse (Write/Edit) | `epistemic-guard.sh` | Blocks writes with wrong versions, banned APIs, AGENTS.md in plugins |
 | Commit Integrity | PreToolUse (Bash) | `commit-integrity-hook.sh` | Blocks `git commit` with suppressions, commented tests, deleted assertions |
 | Struggle Detector | Stop (async) | `struggle-detector.sh` | Scores response for uncertainty, triggers deep-think suggestion |
+| Ralph Loop | PostToolUse (Write/Edit) | prompt (haiku) + `ralph-loop.sh` | Two-layer drift detection: haiku analyzes context (over-engineering, complexity, premature optimization), grep catches surface patterns (TODO, suppressions, catch-all). Both inject via additionalContext. Silent when clean |
 | Task Completion Gate | TaskCompleted | prompt (haiku) | Validates task completions in team workflows aren't premature |
 
 ## Commands
@@ -43,7 +44,7 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 
 - `blackboard/assertions.yaml`: Ground truth (runtime versions, banned APIs, conventions)
 - `.blackboard/`: Runtime state (struggle count, signals) - gitignored
-- `hooks/scripts/`: 7 shell scripts (4 hook handlers + 3 utility scripts)
+- `hooks/scripts/`: 8 shell scripts (5 hook handlers + 3 utility scripts)
 
 ## Notes
 
@@ -53,3 +54,8 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 - Struggle detector tracks consecutive struggling responses via `.blackboard/.struggle-count`.
 - Struggle detector runs async (non-blocking) — feedback delivered next turn, never delays responses.
 - TaskCompleted prompt hook fires on every task completion in team contexts (haiku, 15s timeout).
+- Ralph Loop fires PostToolUse on Write/Edit — two layers run in parallel:
+  (1) Haiku prompt analyzes context for deep drift (over-engineering, complexity creep, premature
+  optimization, unclear naming). (2) Grep script catches surface antipatterns instantly (TODO/HACK,
+  suppressions, catch-all, empty catch, 150+ line dumps). Both inject via additionalContext.
+  Silent when code is clean. Skips docs/config.

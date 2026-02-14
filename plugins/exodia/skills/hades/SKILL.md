@@ -119,19 +119,19 @@ and "it's current" is where technical debt is born.
 
 Goggles classification table — what to flag and why:
 
-| Pattern | Verdict | Why | Modern replacement |
-|---------|---------|-----|--------------------|
-| `rounded-lg shadow-md` | GENERIC-AI-SLOP | Thoughtless defaults, no hierarchy, no design intent | Semantic `@theme` tokens: `--radius-card`, `--shadow-card` |
-| `Inter` as display font | MISAPPLIED | Fine for body/UI. As hero font it's the #1 AI default | Satoshi, Geist, or expressive variable fonts for display |
-| Purple-to-blue gradient | GENERIC-AI-SLOP | The canonical AI gradient. v4 renamed `bg-gradient-*` → `bg-linear-*` | `bg-radial-[at_25%_25%]/oklch`, mesh/layered gradients, `bg-conic` |
-| Flat centered card | GENERIC-AI-SLOP | The most obvious AI layout pattern | Bento grids, asymmetric layouts, varied card sizes, layered depth |
-| `transition-all` | ANTI-PATTERN | Forces browser to watch every CSS property | `transition-transform`, `transition-colors`, specific props + `transform-gpu` |
-| `outline-none` | HARMFUL | Breaks keyboard nav + invisible in Windows High Contrast Mode | `outline-hidden` (v4) + `focus-visible:outline-2 focus-visible:outline-offset-2` |
-| `tailwind.config.js` | OUTDATED | v4 is CSS-first. `@theme` directive replaces the JS config | `@theme { --color-*: oklch(...); --font-*: ...; --radius-*: ...; }` |
+| Pattern                | Verdict          | Why                                                            | Modern replacement                                                                 |
+|------------------------|------------------|----------------------------------------------------------------|------------------------------------------------------------------------------------|
+| `rounded-lg shadow-md` | GENERIC-AI-SLOP  | Thoughtless defaults, no hierarchy, no design intent           | Semantic `@theme` tokens: `--radius-card`, `--shadow-card`                         |
+| `Inter` as display     | MISAPPLIED       | Fine for body/UI. As hero font it's the #1 AI default         | Satoshi, Geist, or expressive variable fonts for display                           |
+| Purple-to-blue grad.   | GENERIC-AI-SLOP  | The canonical AI gradient. v4: `bg-gradient-*` → `bg-linear-*`| `bg-radial-[at_25%_25%]/oklch`, mesh/layered gradients, `bg-conic`                |
+| Flat centered card     | GENERIC-AI-SLOP  | The most obvious AI layout pattern                             | Bento grids, asymmetric layouts, varied card sizes, layered depth                  |
+| `transition-all`       | ANTI-PATTERN     | Forces browser to watch every CSS property                     | `transition-transform`, `transition-colors`, specific props + `transform-gpu`      |
+| `outline-none`         | HARMFUL          | Breaks keyboard nav + invisible in High Contrast Mode          | `outline-hidden` (v4) + `focus-visible:outline-2 focus-visible:outline-offset-2`   |
+| `tailwind.config.js`   | OUTDATED         | v4 is CSS-first. `@theme` replaces the JS config               | `@theme { --color-*: oklch(...); --font-*: ...; --radius-*: ...; }`               |
 
 The v4-native pattern all goggles teammates enforce:
 
-```css
+```text
 @import "tailwindcss";
 
 @theme {
@@ -471,13 +471,13 @@ SMART_ID: [value]
 +====================================================================+
 ```
 
-| Category | Before | After | Ledger Entries | Debate Messages |
-|----------|--------|-------|----------------|-----------------|
-| Suppressions | X | 0 | [n] | [n] |
-| Dead code | X lines | 0 | [n] | [n] |
-| Duplication | X clusters | 0 | [n] | [n] |
-| Imports | X issues | 0 | [n] | [n] |
-| Build warnings | X | 0 | -- | -- |
-| Taste (goggles) | X | 0 | [n] | [n] |
-| Spec (goggles) | X | 0 | [n] | [n] |
-| Compliance (goggles) | X | 0 | [n] | [n] |
+| Category             | Before     | After | Ledger Entries | Debate Messages |
+|----------------------|------------|-------|----------------|-----------------|
+| Suppressions         | X          | 0     | [n]            | [n]             |
+| Dead code            | X lines    | 0     | [n]            | [n]             |
+| Duplication          | X clusters | 0     | [n]            | [n]             |
+| Imports              | X issues   | 0     | [n]            | [n]             |
+| Build warnings       | X          | 0     | --             | --              |
+| Taste (goggles)      | X          | 0     | [n]            | [n]             |
+| Spec (goggles)       | X          | 0     | [n]            | [n]             |
+| Compliance (goggles) | X          | 0     | [n]            | [n]             |
