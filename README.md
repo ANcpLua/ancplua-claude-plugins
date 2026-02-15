@@ -1,40 +1,61 @@
 # ancplua-claude-plugins
 
-> **CCC** — Claude, Copilot, CodeRabbit. The holy trinity. And two of them are Claude in a trenchcoat.
+> One developer. Twelve parallel workers. Zero unchecked steps.
 
-Claude Code plugin marketplace. 7 plugins, 22 commands, 5 skills, 9 agents, 20 scripts, 6 hook configs.
+Claude Code plugin marketplace. 7 plugins that turn a single AI session into
+a parallel workforce with automatic quality gates at every step.
+
+## What this does
+
+A normal developer looks at code one file at a time, finds problems one by one,
+fixes them one by one. With these plugins, you look at all the code at once,
+find all the problems at once, fix them all in parallel — and every step is
+automatically checked before moving to the next.
 
 ## Plugins
 
-| Plugin | Version | Description |
-|--------|---------|-------------|
-| **exodia** | 2.0.0 | Multi-agent orchestration (9 commands + 2 skills: eight-gates, hades): fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, baryon-mode |
-| **metacognitive-guard** | 0.4.0 | Cognitive amplification: epistemic hooks, commit integrity, CI verification, competitive review, deep analysis, deep-thinking agents |
-| **otelwiki** | 1.0.6 | OpenTelemetry docs with auto-sync and semantic convention validation |
-| **hookify** | 0.2.0 | User-configurable hooks from .local.md files |
-| **feature-dev** | 1.1.0 | Guided feature development with codebase understanding and integrated code review |
-| **dotnet-architecture-lint** | 1.1.0 | .NET build pattern enforcement (CPM, Version.props, symlinks) |
-| **ancplua-project-routing** | 2.0.0 | Cross-repo aware project routing with specialist agents and dependency graph |
+| Plugin | What it does in plain language |
+|--------|-------------------------------|
+| **exodia** | Summons up to 12 AI workers that tackle different parts of your code simultaneously. One finds problems, another fixes them, another reviews the fix — all at the same time |
+| **metacognitive-guard** | Watches the AI while it works. If it's about to cut corners, guess instead of verify, or say "done" when it isn't — this blocks it before the mistake happens |
+| **feature-dev** | A guided process for building new things: understand what exists, design the plan, build it, review it. No skipping steps |
+| **hookify** | Custom tripwires you set up. "Never do X" or "Always check Y before Z." The AI physically cannot proceed if it violates your rules |
+| **otelwiki** | Built-in reference for OpenTelemetry monitoring standards so the AI writes correct telemetry code instead of guessing |
+| **dotnet-architecture-lint** | Enforces .NET project structure rules automatically — catches version mismatches and structural violations before they ship |
+| **ancplua-project-routing** | Automatically recognizes what kind of project you're in and loads the right tools and rules. No configuration needed |
+
+### How does this work without failing?
+
+Every step is a gate. Work only moves forward if the gate says PROCEED.
+If it says HALT — the work stops, gets diagnosed, and gets fixed before
+anything else continues. No hoping. No skipping. No "it probably works."
 
 ## Install
 
+Add the marketplace, then install plugins individually:
+
 ```bash
-claude plugin install exodia@ancplua-claude-plugins
-claude plugin install metacognitive-guard@ancplua-claude-plugins
+# Add the marketplace
+/plugin marketplace add ANcpLua/ancplua-claude-plugins
+
+# Install plugins you want
+/plugin install exodia@ancplua-claude-plugins
+/plugin install metacognitive-guard@ancplua-claude-plugins
+/plugin install hookify@ancplua-claude-plugins
 ```
 
-## Architecture
+## Technical details
 
-Plugins, skills, hooks. No MCP servers.
+7 plugins, 22 commands, 5 skills, 9 agents, 20 scripts, 6 hook configs.
 
 Tri-AI review system: Claude, Copilot, CodeRabbit all review PRs independently.
 
 ```text
 plugins/
-├── exodia/                  # multi-agent orchestration (9 commands + 2 skills: eight-gates, hades)
-├── metacognitive-guard/     # struggle detection + deep-think + commit integrity + CI verification
-├── otelwiki/                # OTel docs + sync
-├── hookify/                 # user-configurable hooks
+├── exodia/                  # parallel agent orchestration (9 commands + 2 skills)
+├── metacognitive-guard/     # quality gates + commit integrity + CI verification
+├── otelwiki/                # OpenTelemetry docs + sync
+├── hookify/                 # user-configurable behavior rules
 ├── feature-dev/             # guided feature development + code review
 ├── dotnet-architecture-lint/# .NET build pattern enforcement
 └── ancplua-project-routing/ # project-aware agent routing

@@ -6,6 +6,10 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **README.md rewrite for newcomers**: Plain-language plugin descriptions, gate system explanation, marketplace install instructions. Replaces technical jargon with accessible framing
+
 ### Added
 
 - **ecosystem architecture section**: New Section 8 in `docs/ARCHITECTURE.md` documenting the full developer setup beyond this marketplace (LSP plugins, IDE MCP, Service MCP, Browser MCP), how layers compose, and why separation matters
