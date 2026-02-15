@@ -172,4 +172,46 @@ Coordination through shared files (`CLAUDE.md`, `AGENTS.md`, `CHANGELOG.md`), no
 
 ---
 
-**Last Verified:** 2026-02-13
+## 8. Full ecosystem (beyond this marketplace)
+
+This marketplace provides the orchestration brain. The complete developer setup includes
+additional layers that are installed separately per user:
+
+```text
+Developer
+ |
+ +-- 7 custom plugins (this repo -- orchestration, guards, cleanup, routing)
+ |
+ +-- LSP plugins (Anthropic official -- per-language diagnostics + navigation)
+ |    +-- C#, TypeScript, Python, C/C++, Go, Rust, etc.
+ |
+ +-- IDE MCP (JetBrains/VS Code -- build, run, refactor, query databases)
+ |
+ +-- Service MCP (GitHub, Slack, Sentry, etc. -- external integrations)
+ |
+ +-- Browser MCP (Chrome -- page automation, screenshots, form filling)
+```
+
+### How the layers compose
+
+| Layer | What it does | Installed from |
+|-------|-------------|----------------|
+| **Plugins** (this repo) | Parallel agents, quality gates, routing, cleanup | `ancplua-claude-plugins` marketplace |
+| **LSP** | Type errors after every edit, go-to-definition, find references | `claude-plugins-official` marketplace |
+| **IDE MCP** | Build projects, run configs, rename refactoring, database queries | MCP server config |
+| **Service MCP** | PRs, issues, messages, monitoring alerts | MCP server config or `claude-plugins-official` |
+| **Browser MCP** | Automate Chrome tabs, capture screenshots, fill forms | MCP server config |
+
+### Why separation matters
+
+Each layer is independently optional. A user who only writes Python can install
+`pyright-lsp` and skip C#. A user without JetBrains can skip the IDE MCP entirely.
+The plugins from this marketplace work regardless of which other layers are present.
+
+The plugins provide the **orchestration and quality** layer. The LSP and MCP layers
+provide the **perception and action** layer. Together: one developer, parallel agents,
+every step gated.
+
+---
+
+**Last Verified:** 2026-02-15
