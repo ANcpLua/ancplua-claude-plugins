@@ -6,6 +6,10 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **README.md rewrite for newcomers**: Plain-language plugin descriptions, gate system explanation, marketplace install instructions. Replaces technical jargon with accessible framing
+
 ### Added
 
 - **engineering-philosophy rule**: Alexander's 26 software engineering principles distilled into agent-actionable directives in `.claude/rules/engineering-philosophy.md`. Organized by situation (before code, during implementation, when things break, code review, production). Complements existing SOLID, CALMS, error-handling, and thought-transparency rules without duplication
