@@ -75,7 +75,11 @@ validate() {
   # Check expiration
   local now expires_epoch
   now="$(date -u +%s)"
-  expires_epoch="$(grep -o '"expires_epoch":[0-9]*' "$PERMIT_FILE" | grep -o '[0-9]*')"
+  if has_jq; then
+    expires_epoch="$(jq -r '.expires_epoch // 0' "$PERMIT_FILE")"
+  else
+    expires_epoch="$(grep -o '"expires_epoch":[0-9]*' "$PERMIT_FILE" | grep -o '[0-9]*' || echo 0)"
+  fi
 
   if [ "$now" -gt "$expires_epoch" ]; then
     echo "DENIED: Permit expired." >&2

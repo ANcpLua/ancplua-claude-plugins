@@ -10,7 +10,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - **hookify: extract shared hook_runner.py**: 4 near-identical handlers (pretooluse/posttooluse/stop/userpromptsubmit) reduced from 60-78 lines each to 18-line thin wrappers. Shared logic in `hookify/core/hook_runner.py` (~197 lines eliminated)
 - **exodia smart scripts: extract lib.sh shared functions**: `has_jq()`, `has_flock()`, `atomic_write()` extracted from inline duplications across permit.sh, ledger.sh, checkpoint.sh, session-state.sh
-- **exodia permit.sh: add `active` subcommand**: Canonical permit-active check replaces 3 inline reimplementations in epistemic-guard.sh, precheck-dotnet.py, and rule_engine.py
+- **exodia permit.sh: add `active` subcommand**: Canonical permit-active check for shell callers (epistemic-guard.sh, precheck-dotnet.py). Python callers (rule_engine.py) retain native implementation for import compatibility
 - **AGENTS.md: sync decision tree with CLAUDE.md**: Fixed 5 missing routing entries, corrected command count (20 to 22), added baryon-mode/eight-gates/hades routing
 - **plugin.json: standardize fields**: Added keywords to exodia and otelwiki; added repository, license, and keywords to feature-dev
 - **plugin template: modernize**: Updated hooks.json format, added CLAUDE.md, removed empty agents/.gitkeep, simplified README
