@@ -18,7 +18,10 @@ INPUT=$(cat 2>/dev/null || true)
 [[ -z "$INPUT" ]] && exit 0
 
 # Requires jq for JSON parsing
-command -v jq &>/dev/null || exit 0
+if ! command -v jq &>/dev/null; then
+  echo "WARNING: jq not found, Ralph Loop disabled" >&2
+  exit 0
+fi
 
 # Extract both fields in a single jq call
 eval "$(echo "$INPUT" | jq -r '

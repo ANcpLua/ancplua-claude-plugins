@@ -36,17 +36,10 @@ append() {
   reason="$(json_escape "$reason")"
   agent="$(json_escape "$agent")"
 
-  # Atomic append (flock if available, direct write otherwise — matches permit.sh pattern)
-  if command -v flock &>/dev/null; then
-    (
-      flock -x 200
-      printf '{"ts":"%s","smart_id":"%s","action":"%s","path":"%s","reason":"%s","agent":"%s","git_sha":"%s"}\n' \
-        "$ts" "$smart_id" "$action" "$path" "$reason" "$agent" "$git_sha" >> "$LEDGER_FILE"
-    ) 200>"${LEDGER_FILE}.lock"
-  else
-    printf '{"ts":"%s","smart_id":"%s","action":"%s","path":"%s","reason":"%s","agent":"%s","git_sha":"%s"}\n' \
-      "$ts" "$smart_id" "$action" "$path" "$reason" "$agent" "$git_sha" >> "$LEDGER_FILE"
-  fi
+  local entry
+  entry="$(printf '{"ts":"%s","smart_id":"%s","action":"%s","path":"%s","reason":"%s","agent":"%s","git_sha":"%s"}' \
+    "$ts" "$smart_id" "$action" "$path" "$reason" "$agent" "$git_sha")"
+  atomic_write "$LEDGER_FILE" "$entry" --append
 }
 
 query() {

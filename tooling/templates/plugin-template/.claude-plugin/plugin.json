@@ -1,7 +1,7 @@
 {
-  "name": "example-plugin",
+  "name": "plugin-name",
   "version": "0.1.0",
-  "description": "A template description for what this plugin does.",
+  "description": "What this plugin does.",
   "author": {
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"
@@ -10,6 +10,5 @@
   "license": "MIT",
   "keywords": [
     "claude-plugin"
-  ],
-  "_comment": "Required fields per https://code.claude.com/docs/en/plugins: name, description, version, author"
+  ]
 }

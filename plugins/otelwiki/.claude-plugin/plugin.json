@@ -8,6 +8,14 @@
   },
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
   "license": "MIT",
+  "keywords": [
+    "opentelemetry",
+    "observability",
+    "semantic-conventions",
+    "instrumentation",
+    "dotnet",
+    "collector"
+  ],
   "commands": "./commands",
   "skills": "./skills",
   "agents": [

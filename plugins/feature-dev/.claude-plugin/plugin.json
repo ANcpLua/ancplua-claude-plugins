@@ -6,6 +6,15 @@
     "name": "Sid Bidasaria",
     "email": "sbidasaria@anthropic.com"
   },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "feature-development",
+    "code-review",
+    "architecture",
+    "agents",
+    "quality-assurance"
+  ],
   "commands": "./commands",
   "skills": "./skills"
 }

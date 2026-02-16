@@ -49,17 +49,10 @@ create() {
   done
   paths_json+="]"
 
-  # Atomic write (flock if available, direct write otherwise)
-  if command -v flock &>/dev/null; then
-    (
-      flock -x 200
-      printf '{"smart_id":"%s","created_at":"%s","expires_at":"%s","ttl":%d,"expires_epoch":%d,"paths":%s,"status":"active"}\n' \
-        "$smart_id" "$created_iso" "$expires_iso" "$ttl" "$expires_at" "$paths_json" > "$PERMIT_FILE"
-    ) 200>"${PERMIT_FILE}.lock"
-  else
-    printf '{"smart_id":"%s","created_at":"%s","expires_at":"%s","ttl":%d,"expires_epoch":%d,"paths":%s,"status":"active"}\n' \
-      "$smart_id" "$created_iso" "$expires_iso" "$ttl" "$expires_at" "$paths_json" > "$PERMIT_FILE"
-  fi
+  local entry
+  entry="$(printf '{"smart_id":"%s","created_at":"%s","expires_at":"%s","ttl":%d,"expires_epoch":%d,"paths":%s,"status":"active"}' \
+    "$smart_id" "$created_iso" "$expires_iso" "$ttl" "$expires_at" "$paths_json")"
+  atomic_write "$PERMIT_FILE" "$entry"
 
   echo "Permit created: ${smart_id} (TTL: ${ttl}s, paths: ${#paths[@]})"
 }
@@ -123,24 +116,33 @@ revoke() {
     echo "No active permit to revoke."
     return
   fi
-  # Atomic revoke (flock if available)
-  if command -v flock &>/dev/null; then
-    (
-      flock -x 200
-      if [[ "$OSTYPE" == "darwin"* ]]; then
-        sed -i '' 's/"status":"active"/"status":"revoked"/' "$PERMIT_FILE"
-      else
-        sed -i 's/"status":"active"/"status":"revoked"/' "$PERMIT_FILE"
-      fi
-    ) 200>"${PERMIT_FILE}.lock"
-  else
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      sed -i '' 's/"status":"active"/"status":"revoked"/' "$PERMIT_FILE"
-    else
-      sed -i 's/"status":"active"/"status":"revoked"/' "$PERMIT_FILE"
-    fi
-  fi
+  # Read current content, replace status, atomic write back
+  local content
+  content="$(cat "$PERMIT_FILE")"
+  content="${content/\"status\":\"active\"/\"status\":\"revoked\"}"
+  atomic_write "$PERMIT_FILE" "$content"
   echo "Permit revoked."
+}
+
+active() {
+  # Check if ANY active, non-expired permit exists (god-mode check)
+  if [ ! -f "$PERMIT_FILE" ]; then
+    return 1
+  fi
+
+  if ! grep -q '"status":"active"' "$PERMIT_FILE" 2>/dev/null; then
+    return 1
+  fi
+
+  local now expires_epoch
+  now="$(date -u +%s)"
+  expires_epoch="$(grep -o '"expires_epoch":[0-9]*' "$PERMIT_FILE" | grep -o '[0-9]*')"
+
+  if [ "$now" -gt "$expires_epoch" ]; then
+    return 1
+  fi
+
+  return 0
 }
 
 show() {
@@ -154,12 +156,14 @@ show() {
 case "${1:-}" in
   create)   shift; create "$@" ;;
   validate) shift; validate "$@" ;;
+  active)   active ;;
   revoke)   revoke ;;
   show)     show ;;
   *)
-    echo "Usage: permit.sh {create|validate|revoke|show}" >&2
+    echo "Usage: permit.sh {create|validate|revoke|show|active}" >&2
     echo "  create <smart-id> <paths...> [--ttl=300]  Create deletion permit" >&2
     echo "  validate <path>                            Check if path is permitted" >&2
+    echo "  active                                     Check if any active permit exists (exit 0 = yes)" >&2
     echo "  revoke                                     Revoke active permit" >&2
     echo "  show                                       Show current permit" >&2
     exit 1

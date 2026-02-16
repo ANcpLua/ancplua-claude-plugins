@@ -8,7 +8,33 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- **hookify: extract shared hook_runner.py**: 4 near-identical handlers (pretooluse/posttooluse/stop/userpromptsubmit) reduced from 60-78 lines each to 18-line thin wrappers. Shared logic in `hookify/core/hook_runner.py` (~197 lines eliminated)
+- **exodia smart scripts: extract lib.sh shared functions**: `has_jq()`, `has_flock()`, `atomic_write()` extracted from inline duplications across permit.sh, ledger.sh, checkpoint.sh, session-state.sh
+- **exodia permit.sh: add `active` subcommand**: Canonical permit-active check replaces 3 inline reimplementations in epistemic-guard.sh, precheck-dotnet.py, and rule_engine.py
+- **AGENTS.md: sync decision tree with CLAUDE.md**: Fixed 5 missing routing entries, corrected command count (20 to 22), added baryon-mode/eight-gates/hades routing
+- **plugin.json: standardize fields**: Added missing repository/license/keywords to exodia, feature-dev, otelwiki plugin.json files
+- **plugin template: modernize**: Updated hooks.json format, added CLAUDE.md, removed empty agents/.gitkeep, simplified README
 - **README.md rewrite for newcomers**: Plain-language plugin descriptions, gate system explanation, marketplace install instructions. Replaces technical jargon with accessible framing
+
+### Fixed
+
+- **hookify rule_engine.py: narrow exception at line 50**: Replaced bare `except Exception` with `except (FileNotFoundError, JSONDecodeError, KeyError, TypeError)` for Hades permit check
+- **hookify type annotations**: Fixed `Optional[str]` and `Optional[Dict[str, Any]]` in hook_runner.py and rule_engine.py (Pyright compliance)
+- **precheck-dotnet.py: narrow exception + remove unused variable**: Replaced bare `except Exception` with specific types, removed captured-but-unused `e` variable
+- **ralph-loop.sh: warn on missing jq**: Changed silent `exit 0` to stderr warning when jq unavailable
+- **docs stale references**: Fixed `skills/` to `plugins/*/skills/` in spec-0001 and ADR-0001, removed `.gemini/` from ARCHITECTURE.md directory tree
+- **dotnet-architecture-lint CLAUDE.md**: Removed phantom reference to non-existent skill
+
+### Removed
+
+- **.gemini/ directory**: config.yaml + styleguide.md removed (Gemini discontinued as co-agent, no workflow references)
+- **docs/AGENTS.md**: 28-line subset of root AGENTS.md — single source of truth is root file
+- **hookify empty packages**: Deleted matchers/, utils/ (empty __init__.py only), hooks/__init__.py (no exports, nothing imported it)
+- **template agents/.gitkeep**: Removed from plugin template
+
+### Added
+
+- **docs/designs/ directory**: Referenced in CLAUDE.md but didn't exist, now created with .gitkeep
 
 ### Added
 

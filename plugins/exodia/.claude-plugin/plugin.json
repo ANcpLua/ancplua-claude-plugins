@@ -8,6 +8,14 @@
   },
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
   "license": "MIT",
+  "keywords": [
+    "multi-agent",
+    "orchestration",
+    "parallel-execution",
+    "workflow",
+    "code-fix",
+    "cleanup"
+  ],
   "commands": "./commands",
   "skills": "./skills"
 }

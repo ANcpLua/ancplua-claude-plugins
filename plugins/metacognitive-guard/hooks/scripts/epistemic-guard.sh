@@ -15,12 +15,10 @@ PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"
 [[ -z "$PLUGIN_ROOT" ]] && exit 0
 
 # Hades god mode — active permit bypasses all checks
-if [ -f ".smart/delete-permit.json" ]; then
-    _now=$(date -u +%s)
-    _expires=$(grep -o '"expires_epoch":[0-9]*' .smart/delete-permit.json 2>/dev/null | grep -o '[0-9]*' || echo 0)
-    if grep -q '"status":"active"' .smart/delete-permit.json 2>/dev/null && [ "$_now" -le "$_expires" ] 2>/dev/null; then
-        exit 0
-    fi
+# Uses canonical permit.sh active check (single source of truth)
+PERMIT_SCRIPT="$(find plugins/exodia/scripts/smart -name 'permit.sh' -print -quit 2>/dev/null || true)"
+if [ -n "$PERMIT_SCRIPT" ] && bash "$PERMIT_SCRIPT" active 2>/dev/null; then
+    exit 0
 fi
 
 # Read tool input from stdin (Claude Code passes JSON)

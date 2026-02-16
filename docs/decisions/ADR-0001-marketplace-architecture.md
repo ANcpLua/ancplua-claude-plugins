@@ -49,7 +49,7 @@ Include variants such as **plain plugin vs MCP server vs combined** when relevan
 3. **Option C (chosen):** One repository as a **plugin marketplace and lab**:
     - `plugins/` for plugins.
     - `.claude-plugin/marketplace.json` as the manifest.
-    - `skills/`, `agents/`, `tooling/`, and `docs/` as shared infrastructure.
+    - `tooling/` and `docs/` as shared infrastructure (skills and agents live inside their plugins).
 
 ## Decision Outcome
 
@@ -134,7 +134,7 @@ These trade-offs are considered acceptable given the long-term goals.
 
 - `plugins/` – All Claude Code plugins.
 - `.claude-plugin/marketplace.json` – Declares plugin list and metadata.
-- `skills/` – Repo-wide Skills (for example, "working on this repo").
+- `plugins/*/skills/` – Skills live inside their plugins (no repo-wide skills directory).
 - `tooling/` – Scripts and templates shared across plugins.
 - `docs/` – Architecture, plugin guidelines, workflows, and roadmap.
 - `.github/workflows/` – CI and dependency automation.
