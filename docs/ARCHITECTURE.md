@@ -24,8 +24,6 @@ ancplua-claude-plugins/
 ├── .claude-plugin/
 │   └── marketplace.json         # Plugin registry (source of truth)
 │
-├── .gemini/                     # Gemini review config
-│
 ├── .github/
 │   ├── copilot-instructions.md  # Copilot Coding Agent instructions
 │   └── workflows/
@@ -47,7 +45,7 @@ ancplua-claude-plugins/
 ├── docs/
 │   ├── ARCHITECTURE.md          # This file
 │   ├── PLUGINS.md               # Plugin creation guide
-│   ├── AGENTS.md                # Agent documentation
+│   ├── QUICK-REFERENCE.md       # Quick reference card
 │   ├── WORKFLOWS.md             # Workflow documentation
 │   ├── specs/                   # Feature specs (spec-XXXX-*.md)
 │   └── decisions/               # ADRs (ADR-XXXX-*.md)

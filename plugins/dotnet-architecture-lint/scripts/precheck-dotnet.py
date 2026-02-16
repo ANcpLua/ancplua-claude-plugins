@@ -115,13 +115,22 @@ def check_violations(file_path: str, content: str) -> list[str]:
 
 
 def _hades_permit_active() -> bool:
-    """Hades god mode — active permit bypasses all checks."""
-    permit = Path('.smart', 'delete-permit.json')
+    """Hades god mode — active permit bypasses all checks.
+
+    Delegates to canonical permit.sh active check (single source of truth).
+    """
+    import subprocess
+    import glob
+    matches = glob.glob('plugins/exodia/scripts/smart/permit.sh')
+    if not matches:
+        return False
     try:
-        import time as _time
-        data = json.loads(permit.read_text(encoding='utf-8'))
-        return data.get('status') == 'active' and _time.time() <= data.get('expires_epoch', 0)
-    except Exception:
+        result = subprocess.run(
+            ['bash', matches[0], 'active'],
+            capture_output=True, timeout=5
+        )
+        return result.returncode == 0
+    except (subprocess.TimeoutExpired, OSError):
         return False
 
 
@@ -132,7 +141,7 @@ def main():
 
     try:
         input_data = json.load(sys.stdin)
-    except json.JSONDecodeError as e:
+    except json.JSONDecodeError:
         # Can't parse input, allow to proceed (don't block on hook errors)
         sys.exit(0)
 

@@ -44,7 +44,7 @@ This framework is successful when:
 Users and Claude Code obtain:
 
 - A **single marketplace** (`.claude-plugin/marketplace.json`) that declares all plugins.
-- A **stable directory layout** (`plugins/`, `skills/`, `tooling/`, `docs/`) that MUST be preserved.
+- A **stable directory layout** (`plugins/`, `tooling/`, `docs/`) that MUST be preserved.
 - A set of **Skills and scripts** that guide how to:
   - Implement features.
   - Enforce CI discipline.
@@ -183,8 +183,7 @@ plugins/<plugin-name>/
 
 At the top level, the repository MUST present:
 
-- `plugins/` for plugins.
-- `skills/` for repo-level Skills.
+- `plugins/` for plugins (each plugin contains its own `skills/`, `commands/`, `agents/` directories).
 - `tooling/` for scripts and templates.
 - `docs/` for architecture and process documentation.
 - `.github/workflows` for CI and Dependabot.

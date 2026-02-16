@@ -1,4 +1,17 @@
 {
-  "$schema": "https://code.claude.com/schemas/hooks.json",
-  "hooks": []
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/example-script.sh",
+            "timeout": 5,
+            "statusMessage": "Running example check..."
+          }
+        ]
+      }
+    ]
+  }
 }

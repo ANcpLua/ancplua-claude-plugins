@@ -8,7 +8,7 @@
 
 ## Repository
 
-ancplua-claude-plugins | 7 plugins, 20 commands, 9 agents.
+ancplua-claude-plugins | 7 plugins, 22 commands, 9 agents.
 Claude Code plugin marketplace. No C# or .NET code here.
 
 ## Decision Tree
@@ -22,6 +22,9 @@ IF claiming done/complete/fixed/works
 
 IF version/date/status question
   → read epistemic-checkpoint skill (check assertions.yaml, then WebSearch)
+
+IF complex decision / multiple trade-offs / debugging dead-end
+  → read deep-analysis skill (4-phase: decompose, adversarial, implement, verify)
 
 IF code review needed
   → read competitive-review skill (spawns arch-reviewer + impl-reviewer)
@@ -45,6 +48,17 @@ IF .NET MSBuild/CPM patterns
 IF about to commit with suppressions/shortcuts
   → metacognitive-guard commit-integrity-hook blocks it automatically
 
+IF cleanup/elimination/dead code/suppressions/duplication needed
+  → exodia:hades skill (Smart cleanup with audit trail, 3 phases x 4 teammates)
+
+IF frontend design quality audit needed
+  → exodia:hades --goggles (adds 3 design judges: taste + spec + compliance)
+  → auto-equipped when scope contains .tsx/.jsx/.css/.html/.svelte/.vue files
+
+IF maximum disciplined orchestration / all-in / go beyond limits
+  → /exodia:eight-gates "[objective]" [scope] [gate-limit]
+    8 progressive gates, composes mega-swarm, fix pipelines, hades
+
 IF multi-agent orchestration needed
   → exodia commands:
     /exodia:fix [issue]              - unified fix pipeline (configurable parallelism)
@@ -55,6 +69,11 @@ IF multi-agent orchestration needed
     /exodia:deep-think [problem]     - extended multi-perspective reasoning
     /exodia:tournament [task]        - competitive coding (N agents compete)
     /exodia:batch-implement [items]  - parallel similar implementations
+    /exodia:baryon-mode [scope]      - .NET warning extermination (1+8 agents, one-shot)
+    /exodia:hades [scope]            - audited cleanup (3 phases x 4+3 teammates)
+
+IF .NET warnings need extermination (one-shot, headless, cross-repo)
+  → /exodia:baryon-mode command (1 Invoker + 8 aspects burst at T0, full MCP access)
 
 IF zero-tolerance cleanup needed
   → exodia:hades skill (Smart cleanup with audit trail, 3 phases x 4 teammates)
@@ -66,13 +85,14 @@ IF zero-tolerance cleanup needed
 [Commands]|root: ./plugins
 |Every user-invocable skill has a commands/<name>.md file for CLI autocomplete
 |dotnet-architecture-lint/commands:{lint-dotnet.md}
-|exodia/commands:{fix.md,turbo-fix.md,fix-pipeline.md,tournament.md,mega-swarm.md,deep-think.md,batch-implement.md,red-blue-review.md}
+|exodia/commands:{fix.md,turbo-fix.md,fix-pipeline.md,tournament.md,mega-swarm.md,deep-think.md,batch-implement.md,red-blue-review.md,baryon-mode.md}
 |feature-dev/commands:{feature-dev.md,review.md}
 |hookify/commands:{help.md,list.md,configure.md,hookify.md}
-|metacognitive-guard/commands:{metacognitive-guard.md,competitive-review.md,epistemic-checkpoint.md,verification-before-completion.md}
+|metacognitive-guard/commands:{metacognitive-guard.md,competitive-review.md,deep-analysis.md,epistemic-checkpoint.md,verification-before-completion.md}
 |otelwiki/commands:{sync.md}
 
 [Skills]|root: ./plugins (only for skills needing hooks/argument-hint)
+|exodia/skills/eight-gates:{SKILL.md}
 |exodia/skills/hades:{SKILL.md,templates/}
 |feature-dev/skills/code-review:{SKILL.md,references/common-patterns.md}
 |hookify/skills/writing-rules:{SKILL.md,references/patterns-and-examples.md}

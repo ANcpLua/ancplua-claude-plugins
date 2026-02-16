@@ -47,7 +47,7 @@ def _hades_permit_active() -> bool:
         if time.time() > permit.get('expires_epoch', 0):
             return False
         return True
-    except Exception:
+    except (FileNotFoundError, _json.JSONDecodeError, KeyError, TypeError):
         return False
 
 
@@ -175,7 +175,7 @@ class RuleEngine:
         return tool_name in patterns
 
     def _check_condition(self, condition: Condition, tool_name: str,
-                        tool_input: Dict[str, Any], input_data: Dict[str, Any] = None) -> bool:
+                        tool_input: Dict[str, Any], input_data: Optional[Dict[str, Any]] = None) -> bool:
         """Check if a single condition matches.
 
         Args:
@@ -213,7 +213,7 @@ class RuleEngine:
             return False
 
     def _extract_field(self, field: str, tool_name: str,
-                      tool_input: Dict[str, Any], input_data: Dict[str, Any] = None) -> Optional[str]:
+                      tool_input: Dict[str, Any], input_data: Optional[Dict[str, Any]] = None) -> Optional[str]:
         """Extract field value from tool input or hook input data.
 
         Args:
