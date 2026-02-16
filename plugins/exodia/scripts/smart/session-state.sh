@@ -32,7 +32,7 @@ create() {
   created_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   expires_epoch="$(( $(date -u +%s) + ttl ))"
 
-  if has_jq; then
+  if command -v jq &>/dev/null; then
     jq -n \
       --arg sid "$session_id" \
       --arg cat "$created_at" \
@@ -57,7 +57,7 @@ validate() {
   local now expires_epoch status
   now="$(date -u +%s)"
 
-  if has_jq; then
+  if command -v jq &>/dev/null; then
     expires_epoch="$(jq -r '.expires_epoch' "$SESSION_FILE")"
     status="$(jq -r '.status' "$SESSION_FILE")"
   else
@@ -87,7 +87,7 @@ extend() {
     exit 1
   fi
 
-  if has_jq; then
+  if command -v jq &>/dev/null; then
     local tmp
     tmp="$(jq --argjson extra "$extra_ttl" \
       '(.expires_epoch += $extra) | (.ttl += $extra)' "$SESSION_FILE")"
@@ -106,7 +106,7 @@ expire() {
     return
   fi
 
-  if has_jq; then
+  if command -v jq &>/dev/null; then
     local tmp
     tmp="$(jq '.status = "expired"' "$SESSION_FILE")"
     printf '%s\n' "$tmp" > "$SESSION_FILE"
@@ -171,7 +171,7 @@ decision_log() {
   local ts escaped_decision escaped_reason
   ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-  if has_jq; then
+  if command -v jq &>/dev/null; then
     jq -n -c \
       --arg ts "$ts" \
       --arg d "$decision" \
@@ -198,7 +198,7 @@ decision_list() {
   echo "Decisions: ${count}"
   echo "---"
 
-  if has_jq; then
+  if command -v jq &>/dev/null; then
     jq -r '"[\(.ts)] \(.decision): \(.reason)"' "$DECISIONS_FILE"
   else
     cat "$DECISIONS_FILE"

@@ -42,7 +42,7 @@ save() {
   for kv in "$@"; do
     local key="${kv%%=*}"
     local val="${kv#*=}"
-    if has_jq; then
+    if command -v jq &>/dev/null; then
       local escaped_key escaped_val
       escaped_key="$(printf '%s' "$key" | jq -Rs '.')"
       escaped_val="$(printf '%s' "$val" | jq -Rs '.')"
@@ -57,7 +57,7 @@ save() {
   metadata="${metadata%,}"
 
   local entry
-  if has_jq; then
+  if command -v jq &>/dev/null; then
     entry="$(jq -n -c \
       --arg ts "$ts" \
       --arg sid "$session_id" \
@@ -95,7 +95,7 @@ verify() {
   fi
 
   # Use jq for exact matching when available
-  if has_jq; then
+  if command -v jq &>/dev/null; then
     if [ -n "$session_id" ]; then
       if jq -e --argjson g "$gate" --arg sid "$session_id" \
         'select(.gate == $g and .session_id == $sid)' "$CHECKPOINT_FILE" >/dev/null 2>&1; then
@@ -132,7 +132,7 @@ list() {
   echo "---"
 
   # Pretty-print if jq available, raw otherwise
-  if has_jq; then
+  if command -v jq &>/dev/null; then
     jq -r '"Gate \(.gate): \(.status) [\(.ts)]"' "$CHECKPOINT_FILE"
   else
     while IFS= read -r line; do

@@ -134,10 +134,12 @@ ancplua-claude-plugins/
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── PLUGINS.md
-│   ├── AGENTS.md
 │   ├── WORKFLOWS.md
+│   ├── QUICK-REFERENCE.md
+│   ├── ENGINEERING-PRINCIPLES.md
 │   ├── specs/                   # Feature specs (spec-XXXX-*.md)
-│   └── decisions/               # ADRs (ADR-XXXX-*.md)
+│   ├── decisions/               # ADRs (ADR-XXXX-*.md)
+│   └── designs/                 # Design docs
 │
 └── tooling/
     ├── scripts/

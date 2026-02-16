@@ -12,7 +12,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **exodia smart scripts: extract lib.sh shared functions**: `has_jq()`, `has_flock()`, `atomic_write()` extracted from inline duplications across permit.sh, ledger.sh, checkpoint.sh, session-state.sh
 - **exodia permit.sh: add `active` subcommand**: Canonical permit-active check replaces 3 inline reimplementations in epistemic-guard.sh, precheck-dotnet.py, and rule_engine.py
 - **AGENTS.md: sync decision tree with CLAUDE.md**: Fixed 5 missing routing entries, corrected command count (20 to 22), added baryon-mode/eight-gates/hades routing
-- **plugin.json: standardize fields**: Added missing repository/license/keywords to exodia, feature-dev, otelwiki plugin.json files
+- **plugin.json: standardize fields**: Added keywords to exodia and otelwiki; added repository, license, and keywords to feature-dev
 - **plugin template: modernize**: Updated hooks.json format, added CLAUDE.md, removed empty agents/.gitkeep, simplified README
 - **README.md rewrite for newcomers**: Plain-language plugin descriptions, gate system explanation, marketplace install instructions. Replaces technical jargon with accessible framing
 
@@ -35,9 +35,6 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 
 - **docs/designs/ directory**: Referenced in CLAUDE.md but didn't exist, now created with .gitkeep
-
-### Added
-
 - **ecosystem architecture section**: New Section 8 in `docs/ARCHITECTURE.md` documenting the full developer setup beyond this marketplace (LSP plugins, IDE MCP, Service MCP, Browser MCP), how layers compose, and why separation matters
 - **engineering-philosophy rule**: Alexander's 26 software engineering principles distilled into agent-actionable directives in `.claude/rules/engineering-philosophy.md`. Organized by situation (before code, during implementation, when things break, code review, production). Complements existing SOLID, CALMS, error-handling, and thought-transparency rules without duplication
 - **engineering-principles rule**: IF/THEN conditional routing format of the same 26 principles in `.claude/rules/engineering-principles.md`. Complementary retrieval pathway to philosophy tables — research shows hybrid structured formats (conditional logic + tables) improve agent decision-making by 18% vs single format. Full reference with examples in `docs/ENGINEERING-PRINCIPLES.md`

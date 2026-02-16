@@ -88,7 +88,7 @@ IF zero-tolerance cleanup needed
 |exodia/commands:{fix.md,turbo-fix.md,fix-pipeline.md,tournament.md,mega-swarm.md,deep-think.md,batch-implement.md,red-blue-review.md,baryon-mode.md}
 |feature-dev/commands:{feature-dev.md,review.md}
 |hookify/commands:{help.md,list.md,configure.md,hookify.md}
-|metacognitive-guard/commands:{metacognitive-guard.md,competitive-review.md,epistemic-checkpoint.md,verification-before-completion.md}
+|metacognitive-guard/commands:{metacognitive-guard.md,competitive-review.md,deep-analysis.md,epistemic-checkpoint.md,verification-before-completion.md}
 |otelwiki/commands:{sync.md}
 
 [Skills]|root: ./plugins (only for skills needing hooks/argument-hint)
