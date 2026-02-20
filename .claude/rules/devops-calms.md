@@ -27,10 +27,11 @@ Track these DORA-inspired metrics:
 | Validation Pass Rate | >95%    | CI green on first push   |
 | Lead Time            | <1 hour | Commit to merge time     |
 | Change Failure Rate  | <15%    | PRs requiring fixes      |
-| Recovery Time        | <30 min | Time to fix broken build |
+| MTTR                 | <30 min | Time to fix broken build |
 
 ## Sharing
 
 - **Document decisions:** ADRs for architecture, specs for features
-- **Cross-agent communication:** AGENTS.md, CLAUDE.md, copilot-instructions.md
+- **Claude coordination:** `CLAUDE.md`, `.claude/rules/`, `SKILL.md` frontmatter, `SessionStart` hooks
+- **External-AI coordination:** `AGENTS.md`, `.github/copilot-instructions.md` (Copilot, CodeRabbit, humans)
 - **Knowledge transfer:** Skills encode reusable workflows

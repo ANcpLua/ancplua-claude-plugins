@@ -34,7 +34,7 @@ When reporting errors, use this format:
 1. Parse error output completely
 2. Identify root cause (not just symptoms)
 3. Attempt automatic fix if deterministic
-4. Retry with backoff if transient
+4. Re-run after fixing the identified issue; escalate if same error recurs on unchanged input
 5. Escalate with full context if persistent
 
 ## Never Hide Failures

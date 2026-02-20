@@ -49,7 +49,8 @@ I need to...
 └── Hooks / Rules
     ├── Create a new rule ──────── /hookify:hookify "behavior to prevent"
     ├── List active rules ──────── /hookify:list
-    └── Toggle rules ──────────── /hookify:configure
+    ├── Toggle rules ──────────── /hookify:configure
+    └── Get help ──────────────── /hookify:help
 ```
 
 ## Plugins at a Glance
@@ -80,10 +81,13 @@ I need to...
 
 ## Exodia Skills
 
+> **Note:** `eight-gates` and `hades` are **skills**, not slash commands.
+> Invoke via the `Skill` tool — this loads their full SKILL.md workflow.
+
 | Skill | Agents | When |
 |-------|--------|------|
-| `/exodia:eight-gates "obj" [scope]` | 1-30+ | Maximum discipline — 8 gates, composes mega-swarm + fix + hades |
-| `/exodia:hades "scope" [focus] [--goggles]` | 12-15 | Cleanup: dead code, duplication, suppressions. Teams required |
+| `exodia:eight-gates "obj" [scope]` | 1-30+ | Maximum discipline — 8 gates, composes mega-swarm + fix + hades |
+| `exodia:hades "scope" [focus] [--goggles]` | 12 (base) or 15 (--goggles) | Cleanup: dead code, duplication, suppressions. Teams required |
 
 ## Metacognitive-Guard
 

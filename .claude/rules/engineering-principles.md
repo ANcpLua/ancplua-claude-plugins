@@ -143,7 +143,7 @@
 - Make invalid states unrepresentable
 - Good defaults + clear errors
 
-**IF choosing patterns** → Favor composition over inheritance (#25)
+**IF choosing patterns** → Favor composition over inheritance (#25b)
 - More flexible, less coupling
 - Each module = clear, focused purpose
 - Maximize cohesion, minimize coupling

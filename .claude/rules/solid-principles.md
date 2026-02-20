@@ -4,45 +4,32 @@ Apply these principles when designing or modifying plugins:
 
 ## Single Responsibility
 
-Each plugin should do ONE thing well:
+Each plugin does ONE thing well:
 
-- `metacognitive-guard` -> Cognitive amplification + commit integrity + CI verification
-- `otelwiki` -> OpenTelemetry documentation only
-- `dotnet-architecture-lint` -> .NET build patterns only
-- `hookify` -> User-configurable hooks
-- `feature-dev` -> Guided feature development + code review
-- `exodia` -> Multi-agent workflow orchestration
-- `ancplua-project-routing` -> Auto-routes to specialist agents
+| Plugin | Responsibility |
+|--------|----------------|
+| `exodia` | Multi-agent orchestration |
+| `metacognitive-guard` | Cognitive safety (amplification, integrity, CI — one domain) |
+| `otelwiki` | OpenTelemetry documentation |
+| `hookify` | User-configurable behavior hooks |
+| `feature-dev` | Guided feature development + code review |
+| `dotnet-architecture-lint` | .NET build pattern enforcement |
+| `ancplua-project-routing` | Cross-repo specialist agent routing |
 
-**Anti-pattern:** A plugin that handles CI, commits, AND reviews.
+**Anti-pattern:** A plugin that handles CI, commits, AND reviews simultaneously with no cohesion.
 
 ## Open/Closed
 
-Plugins should be extensible without modification:
-
-- Add new skills to extend behavior
-- Use hooks for customization points
-- Don't modify core plugin logic for edge cases
+Extend via new skills/commands. Don't modify core plugin logic for edge cases.
 
 ## Liskov Substitution
 
-Skills must be interchangeable within their category:
-
-- Any code-review skill should accept the same inputs
-- Any commit skill should produce compatible outputs
+Skills must be interchangeable within their category: any code-review skill accepts the same inputs.
 
 ## Interface Segregation
 
-Don't force plugins to implement unused features:
-
-- `hooks/` directory is optional
-- `commands/` directory is optional
-- Only require what's actually used
+Only `plugin.json` + `README.md` are required. All other directories (`skills/`, `commands/`, `hooks/`, `agents/`) are optional.
 
 ## Dependency Inversion
 
-Plugins depend on abstractions (Skills), not concrete implementations:
-
-- Skills define the contract
-- MCP servers provide the implementation
-- Plugins orchestrate, never implement low-level operations
+Plugins orchestrate via Skills. Skills define the contract. MCP servers implement. Plugins never implement low-level operations.
