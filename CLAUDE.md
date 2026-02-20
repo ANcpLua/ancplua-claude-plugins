@@ -101,53 +101,13 @@ but NOT conversation history. All context must be in the spawn prompt.
 
 ## 3. Target Architecture (North Star)
 
-```text
-ancplua-claude-plugins/
-├── CLAUDE.md                    # This file — operational brain
-├── AGENTS.md                    # Agent catalog for other AIs
-├── README.md
-├── CHANGELOG.md
-├── LICENSE
-├── .gitignore
-├── .coderabbit.yaml             # CodeRabbit config
-├── .markdownlint.json           # Lint rules
-│
-├── .claude/
-│   └── rules/                   # Auto-loaded rules (SOLID, errors, etc.)
-│
-├── .claude-plugin/
-│   └── marketplace.json         # Plugin registry (source of truth)
-│
-├── .github/
-│   ├── copilot-instructions.md
-│   └── workflows/               # CI, review, auto-merge
-│
-├── plugins/                     # 7 plugins (22 commands, 5 skills, 9 agents)
-│   ├── exodia/                  # Multi-agent orchestration — 9 commands + 2 skills (eight-gates, hades)
-│   ├── metacognitive-guard/     # Cognitive amplification + commit integrity + CI
-│   ├── otelwiki/                # OpenTelemetry docs + sync
-│   ├── hookify/                 # User-configurable hooks
-│   ├── feature-dev/             # Guided feature development + code review
-│   ├── dotnet-architecture-lint/# .NET build pattern enforcement
-│   └── ancplua-project-routing/ # Cross-repo specialist agent routing
-│
-├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── PLUGINS.md
-│   ├── WORKFLOWS.md
-│   ├── QUICK-REFERENCE.md
-│   ├── ENGINEERING-PRINCIPLES.md
-│   ├── specs/                   # Feature specs (spec-XXXX-*.md)
-│   ├── decisions/               # ADRs (ADR-XXXX-*.md)
-│   └── designs/                 # Design docs
-│
-└── tooling/
-    ├── scripts/
-    │   ├── weave-validate.sh    # Single validation entrypoint
-    │   └── sync-marketplace.sh
-    └── templates/
-        └── plugin-template/
-```
+See `docs/ARCHITECTURE.md` for the complete repository layout, plugin structure, and ecosystem diagram.
+
+Key paths:
+- Plugins: `plugins/<name>/` — 7 plugins (22 commands, 5 skills, 9 agents)
+- Rules (auto-loaded): `.claude/rules/`
+- Plugin registry: `.claude-plugin/marketplace.json`
+- Docs: `docs/` (ARCHITECTURE.md, QUICK-REFERENCE.md, WORKFLOWS.md, PLUGINS.md, ENGINEERING-PRINCIPLES.md)
 
 ---
 
@@ -162,6 +122,12 @@ These decision trees are ALWAYS loaded and guide your task selection.
 Use this decision tree to route tasks to the correct skill or agent:
 
 ```text
+IF P0 critical bug
+  → /exodia:turbo-fix (13 agents, maximum parallelism)
+
+IF fixing audit findings
+  → /exodia:fix-pipeline (7 agents)
+
 IF struggling > 2 min
   → read metacognitive-guard skill, escalate to deep-think-partner agent
 
@@ -213,7 +179,9 @@ IF multi-agent orchestration needed
     /exodia:eight-gates       - maximum discipline (8 progressive gates, composes all others)
     /exodia:hades             - audited cleanup (3 phases x 4+3 teammates with goggles)
   → exodia commands:
+    /exodia:turbo-fix         - P0 critical bugs (13 agents, maximum parallelism)
     /exodia:fix               - P1/P2/P3 bugs (8 std, 16 max agents)
+    /exodia:fix-pipeline      - fixing findings from an audit (7 agents)
     /exodia:mega-swarm        - codebase audit (6/8/12 agents by mode)
     /exodia:deep-think        - multi-perspective analysis (5 agents)
     /exodia:tournament        - competitive solutions (N+2 agents)
@@ -549,21 +517,11 @@ When you add/rename/remove a plugin:
 
 ### Plugin Structure
 
-Each plugin in `plugins/<name>/` (per [official docs](https://code.claude.com/docs/en/plugins)):
+Each plugin in `plugins/<name>/` (per [official docs](https://code.claude.com/docs/en/plugins)).
 
-```text
-plugins/<name>/
-├── .claude-plugin/
-│   └── plugin.json      # REQUIRED: name, version, description, author
-├── README.md            # REQUIRED: User-facing docs
-├── skills/
-│   └── <skill>/
-│       └── SKILL.md     # YAML frontmatter required
-├── commands/            # Slash commands (.md)
-├── agents/              # Custom agents
-├── hooks/               # Event hooks (hooks.json)
-└── scripts/             # Shell helpers (.sh)
-```
+See `docs/ARCHITECTURE.md` Section 3 for the full plugin structure and passive context layer documentation.
+
+**Required:** `.claude-plugin/plugin.json` (fields: `name`, `version`, `description`, `author`) + `README.md`
 
 ### SKILL.md Format
 
@@ -627,16 +585,9 @@ You MUST NOT:
 
 ## 8. CI & Validation
 
-### CI Jobs (`.github/workflows/ci.yml`)
-
-- `plugin-validation`: `claude plugin validate .` + per-plugin
-- `shell-scripts`: `shellcheck` on `*.sh` files
-- `markdown`: `markdownlint` on `**/*.md`
-- `workflow-syntax`: `actionlint` on workflows
+See `docs/WORKFLOWS.md` for complete CI pipeline documentation, exact shell commands, and the cross-repo `trigger-docs.yml` workflow.
 
 ### Local Validation
-
-Single entrypoint:
 
 ```bash
 ./tooling/scripts/weave-validate.sh
@@ -743,6 +694,10 @@ claude plugin validate .
 - Specs: `docs/specs/spec-XXXX-*.md`
 - ADRs: `docs/decisions/ADR-XXXX-*.md`
 - Architecture: `docs/ARCHITECTURE.md`
+- Full command reference: `docs/QUICK-REFERENCE.md`
+- CI pipeline details: `docs/WORKFLOWS.md`
+- Plugin creation guide: `docs/PLUGINS.md`
+- Deep engineering principles: `docs/ENGINEERING-PRINCIPLES.md`
 
 ---
 
@@ -778,7 +733,8 @@ You have SUCCEEDED when:
 The following rules are maintained as separate files in `.claude/rules/` and auto-loaded at session start:
 
 - `.claude/rules/solid-principles.md` — SOLID principles for plugin design
-- `.claude/rules/thought-transparency.md` — Observable decision making, task decomposition
+- `.claude/rules/engineering-principles.md` — IF/THEN routing index for Alexander's 26 engineering principles
+- `.claude/rules/thought-transparency.md` — Observable decision making via Processing Log template
 - `.claude/rules/devops-calms.md` — CALMS framework, DORA metrics
 - `.claude/rules/error-handling.md` — Standardized error responses, validation failures
 

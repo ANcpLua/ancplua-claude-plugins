@@ -6,6 +6,23 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Removed
+
+- **`engineering-philosophy.md`**: Deleted — complete duplicate of `engineering-principles.md` (~900 tokens wasted per session; both auto-loaded)
+
+### Changed
+
+- **`thought-transparency.md`**: Removed "Granular Task Decomposition" section (contradicted LAW 3 parallel execution) and duplicate "Silent Processing" section
+- **`devops-calms.md`**: Fixed AGENTS.md incorrectly listed as Claude coordination channel; separated Claude channels (`CLAUDE.md`, `.claude/rules/`, `SKILL.md`, SessionStart hooks) from external-AI channels (`AGENTS.md`, `copilot-instructions.md`); standardized "Recovery Time" → "MTTR"
+- **`solid-principles.md`**: Compressed from 49 to ~25 lines; replaced bullet list with responsibility table; fixed metacognitive-guard SRP description
+- **`engineering-principles.md`**: Fixed duplicate `#25` tag (second instance is now `#25b`)
+- **`error-handling.md`**: Fixed "Retry with backoff if transient" — inapplicable to local tool failures
+- **`ARCHITECTURE.md`**: Fixed directory tree (dependabot.yml moved to correct location, added trigger-docs.yml, CODEOWNERS, designs/, ENGINEERING-PRINCIPLES.md); replaced Section 5 SOLID with pointer to rules file; fixed AGENTS.md coordination statement; replaced DORA table with pointer; added SessionStart hooks passive context layer documentation; updated Last Verified date
+- **`WORKFLOWS.md`**: Added trigger-docs.yml cross-repo workflow documentation; added commit-integrity-hook note to pre-commit checklist
+- **`QUICK-REFERENCE.md`**: Added `/hookify:help` command; clarified eight-gates/hades are skills not slash commands; fixed hades agent count to "12 (base) or 15 (--goggles)"
+- **`PLUGINS.md`**: Removed fake required fields (`repository`, `license`); added capability declaration fields example
+- **`CLAUDE.md`**: Replaced Section 3 directory tree with pointer to ARCHITECTURE.md; added turbo-fix and fix-pipeline to Section 4 routing tree; removed plugin structure tree from Section 6; reduced Section 8 CI details to pointer; added all doc paths to Section 12; updated Section 15 rules list
+
 ### Changed
 
 - **hookify: extract shared hook_runner.py**: 4 near-identical handlers (pretooluse/posttooluse/stop/userpromptsubmit) reduced from 60-78 lines each to 18-line thin wrappers. Shared logic in `hookify/core/hook_runner.py` (~197 lines eliminated)

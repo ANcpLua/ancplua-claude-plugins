@@ -25,13 +25,15 @@ ancplua-claude-plugins/
 │   └── marketplace.json         # Plugin registry (source of truth)
 │
 ├── .github/
+│   ├── CODEOWNERS               # Code ownership rules
 │   ├── copilot-instructions.md  # Copilot Coding Agent instructions
+│   ├── dependabot.yml           # Dependency update config
 │   └── workflows/
 │       ├── auto-merge.yml       # Tiered auto-merge (Dependabot, Copilot, Claude)
 │       ├── ci.yml               # Main CI (plugin validate, shellcheck, markdownlint)
 │       ├── claude.yml           # Claude interactive (@claude mention trigger)
 │       ├── claude-code-review.yml # Claude formal PR review
-│       └── dependabot.yml       # Dependency update config
+│       └── trigger-docs.yml     # Triggers ancplua-docs rebuild on push to main
 │
 ├── plugins/                     # 7 plugins (22 commands, 5 skills, 9 agents)
 │   ├── exodia/                  # Multi-agent orchestration (9 commands + 2 skills: eight-gates, hades)
@@ -44,11 +46,13 @@ ancplua-claude-plugins/
 │
 ├── docs/
 │   ├── ARCHITECTURE.md          # This file
+│   ├── ENGINEERING-PRINCIPLES.md # Alexander's 26 engineering principles (full narrative)
 │   ├── PLUGINS.md               # Plugin creation guide
 │   ├── QUICK-REFERENCE.md       # Quick reference card
-│   ├── WORKFLOWS.md             # Workflow documentation
+│   ├── WORKFLOWS.md             # CI workflows and local validation
 │   ├── specs/                   # Feature specs (spec-XXXX-*.md)
-│   └── decisions/               # ADRs (ADR-XXXX-*.md)
+│   ├── decisions/               # ADRs (ADR-XXXX-*.md)
+│   └── designs/                 # Design documents
 │
 └── tooling/
     ├── scripts/
@@ -87,7 +91,7 @@ plugins/<name>/
 ├── agents/
 │   └── <agent>.md       # Custom agent definitions (YAML frontmatter)
 ├── hooks/
-│   └── hooks.json       # Event hooks (auto-loaded by convention)
+│   └── hooks.json       # Event hooks (declared in plugin.json, loaded by Claude Code)
 └── scripts/
     └── *.sh             # Shell helpers
 ```
@@ -95,6 +99,16 @@ plugins/<name>/
 **Required:** `.claude-plugin/plugin.json` + `README.md`
 
 **All other directories are optional.** Not all plugins need all features.
+
+### Passive context layers
+
+Plugins contribute to the agent's passive context via three layers (in load order):
+
+1. **`CLAUDE.md`** — static routing and constraints, always present
+2. **`SKILL.md` frontmatter `description`** — loaded when skill is referenced
+3. **`hooks/hooks.json` SessionStart → `additionalContext`** — dynamic, computed at session start
+
+Use SessionStart hooks when context must be computed at runtime (version detection, prior findings, project-specific routing). Use CLAUDE.md for stable rules. Use skill descriptions for task-routing cues.
 
 ---
 
@@ -116,23 +130,7 @@ CI mirrors the same checks via `.github/workflows/ci.yml`.
 
 ## 5. Design principles (SOLID for plugins)
 
-**Single Responsibility** — each plugin does ONE thing:
-
-| Plugin | Responsibility |
-|--------|----------------|
-| `exodia` | Multi-agent orchestration (9 commands + 2 skills: eight-gates, hades) |
-| `metacognitive-guard` | Cognitive amplification, commit integrity, CI verification |
-| `feature-dev` | Guided feature development + code review |
-| `otelwiki` | OpenTelemetry documentation + sync |
-| `hookify` | User-configurable behavior prevention hooks |
-| `dotnet-architecture-lint` | .NET MSBuild/CPM pattern enforcement |
-| `ancplua-project-routing` | Cross-repo specialist agent routing |
-
-**Open/Closed** — extend via new skills/commands, don't modify core logic for edge cases.
-
-**Interface Segregation** — only `plugin.json` + `README.md` required. Everything else opt-in.
-
-**Dependency Inversion** — plugins orchestrate via skills. Skills define contracts.
+See `.claude/rules/solid-principles.md` (auto-loaded at session start) for the full SOLID plugin design constraints including the plugin responsibility table.
 
 ---
 
@@ -146,7 +144,9 @@ Three AIs review PRs independently:
 | Copilot | Built-in | Yes (Coding Agent) | `.github/copilot-instructions.md` |
 | CodeRabbit | Built-in | No | `.coderabbit.yaml` |
 
-Coordination through shared files (`CLAUDE.md`, `AGENTS.md`, `CHANGELOG.md`), not real-time.
+Claude coordinates via passive context (`CLAUDE.md`, `.claude/rules/`, `SKILL.md` frontmatter, SessionStart hooks).
+Copilot and CodeRabbit coordinate via `AGENTS.md`, `.github/copilot-instructions.md`, and `CHANGELOG.md`.
+No real-time communication between AI systems.
 
 ---
 
@@ -161,12 +161,7 @@ Coordination through shared files (`CLAUDE.md`, `AGENTS.md`, `CHANGELOG.md`), no
 
 ### DORA targets
 
-| Metric | Target |
-|--------|--------|
-| Deployment Frequency | Multiple per day |
-| Lead Time | < 1 hour |
-| Change Failure Rate | < 15% |
-| MTTR | < 30 minutes |
+See `.claude/rules/devops-calms.md` (auto-loaded) for DORA metric targets and CALMS framework details.
 
 ---
 
@@ -212,4 +207,4 @@ every step gated.
 
 ---
 
-**Last Verified:** 2026-02-15
+**Last Verified:** 2026-02-20
