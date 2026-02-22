@@ -1,6 +1,6 @@
 ---
 description: >-
-  Invoke the four-model council on any complex task. Opus captain decomposes and synthesizes.
+  Invoke the five-agent council on any complex task. Opus captain decomposes and synthesizes.
   Researcher and synthesizer run in parallel. Clarity reads their raw output.
   Haiku janitor flags bloat. Captain removes cuts and delivers.
 ---

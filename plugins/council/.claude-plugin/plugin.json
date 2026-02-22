@@ -1,7 +1,7 @@
 {
   "name": "council",
   "version": "1.0.0",
-  "description": "Four-model council: Opus captain coordinates three Sonnet specialists (researcher, synthesizer, clarity) plus a Haiku janitor. Each agent identity lives in its soul CLAUDE.md — passive context, zero activation cost.",
+  "description": "Five-agent council: Opus captain decomposes and synthesizes, researcher + synthesizer run in parallel, clarity checks their output, Haiku janitor flags bloat. Each agent identity is inlined in its agent file — passive context, zero activation cost.",
   "author": {
     "name": "ANcpLua",
     "email": ""

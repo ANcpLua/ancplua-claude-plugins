@@ -104,7 +104,7 @@ but NOT conversation history. All context must be in the spawn prompt.
 See `docs/ARCHITECTURE.md` for the complete repository layout, plugin structure, and ecosystem diagram.
 
 Key paths:
-- Plugins: `plugins/<name>/` — 7 plugins (22 commands, 5 skills, 9 agents)
+- Plugins: `plugins/<name>/` — 8 plugins (23 commands, 6 skills, 14 agents)
 - Rules (auto-loaded): `.claude/rules/`
 - Plugin registry: `.claude-plugin/marketplace.json`
 - Docs: `docs/` (ARCHITECTURE.md, QUICK-REFERENCE.md, WORKFLOWS.md, PLUGINS.md, ENGINEERING-PRINCIPLES.md)
