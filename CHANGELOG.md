@@ -6,6 +6,14 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **`plugins/council`**: New plugin — four-model council (opus-captain, sonnet-researcher, sonnet-synthesizer, sonnet-clarity, haiku-janitor). Each agent identity defined in a soul file (`souls/`) loaded as passive context. Inspired by Grok 4.20's multi-agent architecture. Invoke via `/council [task]`.
+
+### Changed
+
+- **`hookify/agents/conversation-analyzer.md`**: Upgraded model from `inherit` to `opus`; rewrote opening prompt to lead with stakes ("memory of the codebase, one missed pattern = one recurring problem")
+
 ### Removed
 
 - **`engineering-philosophy.md`**: Deleted — complete duplicate of `engineering-principles.md` (~900 tokens wasted per session; both auto-loaded)
