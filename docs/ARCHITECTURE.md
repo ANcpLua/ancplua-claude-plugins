@@ -35,7 +35,7 @@ ancplua-claude-plugins/
 │       ├── claude-code-review.yml # Claude formal PR review
 │       └── trigger-docs.yml     # Triggers ancplua-docs rebuild on push to main
 │
-├── plugins/                     # 7 plugins (22 commands, 5 skills, 9 agents)
+├── plugins/                     # 8 plugins (23 commands, 6 skills, 14 agents)
 │   ├── exodia/                  # Multi-agent orchestration (9 commands + 2 skills: eight-gates, hades)
 │   ├── metacognitive-guard/     # Cognitive amplification + commit integrity + CI
 │   ├── otelwiki/                # OpenTelemetry documentation + auto-sync

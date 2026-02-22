@@ -1,0 +1,21 @@
+{
+  "name": "council",
+  "version": "1.0.0",
+  "description": "Five-agent council: Opus captain decomposes and synthesizes, researcher + synthesizer run in parallel, clarity checks their output, Haiku janitor flags bloat. Each agent identity is inlined in its agent file — passive context, zero activation cost.",
+  "author": {
+    "name": "ANcpLua",
+    "email": ""
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "multi-agent",
+    "council",
+    "opus",
+    "sonnet",
+    "parallel",
+    "orchestration"
+  ],
+  "commands": "./commands",
+  "skills": "./skills"
+}
