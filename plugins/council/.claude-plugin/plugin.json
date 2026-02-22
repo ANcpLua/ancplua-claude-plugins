@@ -1,0 +1,21 @@
+{
+  "name": "council",
+  "version": "1.0.0",
+  "description": "Four-model council: Opus captain coordinates three Sonnet specialists (researcher, synthesizer, clarity) plus a Haiku janitor. Each agent identity lives in its soul CLAUDE.md — passive context, zero activation cost.",
+  "author": {
+    "name": "ANcpLua",
+    "email": ""
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "multi-agent",
+    "council",
+    "opus",
+    "sonnet",
+    "parallel",
+    "orchestration"
+  ],
+  "commands": "./commands",
+  "skills": "./skills"
+}
