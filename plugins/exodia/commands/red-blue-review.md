@@ -75,6 +75,7 @@ Inject findings into Red Team prompts as attack surface hints. Do NOT give to Bl
 Launch ALL 3 in ONE message.
 
 ### red-crash-hunter
+
 > subagent: deep-debugger | model: opus
 > RED TEAM — Crash Hunter. TARGET: $0 | SCOPE: $1
 > Find ways to CRASH the code: Null refs, invalid input, resource exhaustion, race conditions, overflow.
@@ -82,6 +83,7 @@ Launch ALL 3 in ONE message.
 > Real bugs only — false alarms cost -5 points.
 
 ### red-security-attacker
+
 > subagent: feature-dev:code-reviewer | model: opus
 > RED TEAM — Security Attacker. TARGET: $0 | SCOPE: $1
 > Find SECURITY vulnerabilities: Injection, path traversal, data exposure, unsafe deserialization, SSRF/CSRF.
@@ -89,6 +91,7 @@ Launch ALL 3 in ONE message.
 > Proof of concept required. Theoretical issues = 0 points.
 
 ### red-api-breaker
+
 > subagent: feature-dev:code-explorer
 > RED TEAM — API Breaker. TARGET: $0 | SCOPE: $1
 > Find ways to BREAK the API contract: Behavior != docs, edge cases, missing validation, breaking changes.
@@ -104,6 +107,7 @@ Launch ALL 3 in ONE message.
 Launch ONE defender per MODULE (not per finding):
 
 ### blue-defender-N (one per module)
+
 > subagent: feature-dev:code-architect | model: opus
 > BLUE TEAM — Defend MODULE: [MODULE_PATH]
 > FINDINGS IN THIS MODULE: [PASTE ALL RED FINDINGS FOR THIS MODULE]
@@ -111,6 +115,7 @@ Launch ONE defender per MODULE (not per finding):
 > **FILE OWNERSHIP:** You own ONLY files in [MODULE_PATH]. Do not modify files outside your module.
 >
 > For EACH finding in your module:
+>
 > 1. Verify: Is finding real?
 > 2. Analyze: Why does this exist?
 > 3. Fix: Design a fix
@@ -126,6 +131,7 @@ Launch ONE defender per MODULE (not per finding):
 Launch ONE re-attacker per Blue module (mirrors Phase 2 grouping):
 
 ### red-reattacker-N (one per module)
+
 > subagent: deep-debugger
 > RED RE-ATTACK — Try to bypass ALL fixes in MODULE: [MODULE_PATH]
 > BLUE FIXES: [PASTE ALL BLUE FIXES FOR THIS MODULE]

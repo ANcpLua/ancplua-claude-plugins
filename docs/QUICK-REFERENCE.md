@@ -4,7 +4,7 @@
 
 ## Decision Tree
 
-```
+```text
 I need to...
 ├── Fix a bug
 │   ├── P0 critical ──────────── /exodia:turbo-fix "description"
@@ -100,6 +100,7 @@ I need to...
 | `/metacognitive-guard:metacognitive-guard` | Self-assessment: am I struggling? Should I escalate? |
 
 **Auto-hooks (no command needed):**
+
 - Truth Beacon — injects ground truth at session start
 - Epistemic Guard — blocks writes with wrong versions/banned APIs
 - Commit Integrity — blocks commits with suppressions or commented tests
@@ -129,7 +130,7 @@ I need to...
 
 ## Composition Patterns
 
-```
+```text
 mega-swarm (audit) → findings → fix-pipeline (fix each)
 mega-swarm (audit) → findings → hades (cleanup)
 eight-gates = mega-swarm (MAP) + fix-pipeline (EXECUTE) + hades (HAKAI)

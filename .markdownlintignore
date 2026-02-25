@@ -4,5 +4,8 @@ plugins/otelwiki/docs/
 # Append-only history — reformatting past entries has no value
 CHANGELOG.md
 
+# Blog post content
+Claude Code Agent Teams*.md
+
 # Node modules
 node_modules/

@@ -53,7 +53,9 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 - verify-local.sh and wait-for-ci.sh are utility scripts for the verification workflow, not hook triggers.
 - Hades god mode: active delete permit causes epistemic-guard to exit early.
 - Struggle detector tracks consecutive struggling responses via `.blackboard/.struggle-count`.
-- Struggle detector is a two-part system: Stop hook (async) does analysis + blackboard writes, UserPromptSubmit hook reads blackboard and injects `additionalContext` so Claude actually sees the suggestion. No latency on responses.
+- Struggle detector is a two-part system: Stop hook (async) does analysis + blackboard writes,
+  UserPromptSubmit hook reads blackboard and injects `additionalContext` so Claude actually sees the
+  suggestion. No latency on responses.
 - TaskCompleted prompt hook fires on every task completion in team contexts (haiku, 15s timeout).
 - Ralph Loop fires PostToolUse on Write/Edit — two layers run in parallel:
   (1) Haiku prompt analyzes context for deep drift (over-engineering, complexity creep, premature

@@ -42,6 +42,7 @@
 >    (one command, one check, one grep — concrete and executable)
 >
 > DO NOT:
+>
 > - Philosophize about architecture
 > - Expand scope beyond the findings
 > - Add new findings

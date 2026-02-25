@@ -19,57 +19,60 @@ Review code for security vulnerabilities, style issues, performance problems, an
 - `/review --staged` - Review only staged changes.
 - `/review --branch=feature` - Review changes in a branch.
 
-## Behavior
+## Workflow
 
-1. Gather the target files or changes.
-2. Perform security audit.
-3. Check code style and conventions.
-4. Analyze performance implications.
-5. Review error handling and best practices.
-6. Generate a summary report.
+### 1. Gather Context
 
-## Example output
-
-```text
-Reviewing changes...
-
-Files analyzed: 5
-Lines reviewed: 342
-
-## Security Issues
-
-### HIGH: SQL injection risk
-
-Location: src/api/users.ts:42
-Code: const query = `SELECT * FROM users WHERE id = ${id}`;
-Suggestion: Use parameterized queries.
-
-## Style Issues
-
-### MEDIUM: Function too long
-
-Location: src/services/auth.ts:89
-The authenticateUser function is 87 lines.
-Suggestion: Extract helper functions.
-
-## Performance Issues
-
-### LOW: N+1 query pattern
-
-Location: src/api/posts.ts:23
-Posts are fetched in a loop.
-Suggestion: Use eager loading or batch queries.
-
-## Summary
-
-- Critical: 0
-- High: 1
-- Medium: 1
-- Low: 1
-- Info: 2
-
-Recommendation: Address high-severity issues before merging.
+```bash
+git diff --stat
+git diff
 ```
+
+Understand: purpose of changes, affected files, expected behavior.
+
+### 2. Security Audit
+
+Check for: injection vulnerabilities (SQL, command, XSS), authentication/authorization flaws,
+hardcoded secrets, missing input validation, insecure dependencies.
+
+Common patterns:
+
+- **SQL injection** — Bad: string concatenation in queries. Good: parameterized queries.
+- **XSS** — Bad: `innerHTML = userInput`. Good: `textContent = userInput`.
+- **Missing error handling** — Bad: bare `JSON.parse(input)`. Good: try/catch with typed exceptions.
+
+### 3. Style Check
+
+Verify: naming conventions, formatting consistency, necessary documentation, logical file organization.
+
+### 4. Performance Review
+
+Look for: N+1 queries, unnecessary computation, memory issues, blocking operations in async contexts, inefficient algorithms.
+
+### 5. Best Practices
+
+Check: error handling, logging levels, test coverage, DRY principle, single responsibility.
+
+### 6. Generate Report
+
+## Severity Levels
+
+| Level | Description | Action |
+|-------|-------------|--------|
+| `CRITICAL` | Security vulnerability, data loss | Must fix now |
+| `HIGH` | Bugs, significant issues | Fix before merge |
+| `MEDIUM` | Code quality, maintainability | Fix soon |
+| `LOW` | Minor improvements | Nice to have |
+| `INFO` | Observations, positive feedback | No action needed |
+
+## Checklist
+
+- [ ] Security vulnerabilities checked
+- [ ] Code style verified
+- [ ] Performance issues identified
+- [ ] Error handling reviewed
+- [ ] Test coverage assessed
+- [ ] Report generated with findings
 
 ## Options
 

@@ -1,0 +1,38 @@
+{
+  // ancplua-claude-plugins markdownlint configuration
+  "default": true,
+
+  // MD013: Line length — 120 for our files, disabled for CHANGELOG (long entries are fine)
+  "MD013": {
+    "line_length": 120,
+    "heading_line_length": 120,
+    "code_block_line_length": 200,
+    "tables": false
+  },
+
+  // MD024: Duplicate headings — allowed in CHANGELOG (### Added, ### Fixed per version)
+  "MD024": {
+    "siblings_only": true
+  },
+
+  // MD004: Unordered list style — dashes
+  "MD004": {
+    "style": "dash"
+  },
+
+  // MD029: Ordered list prefix — ordered (1/2/3)
+  "MD029": {
+    "style": "ordered"
+  },
+
+  // MD050: Strong style — asterisks
+  "MD050": {
+    "style": "asterisk"
+  },
+
+  // MD060: Table column style — disabled (too noisy for our mixed table formats)
+  "MD060": false,
+
+  // MD041: First line heading — disabled (hookify .local.md files have YAML frontmatter)
+  "MD041": false
+}

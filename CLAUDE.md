@@ -104,6 +104,7 @@ but NOT conversation history. All context must be in the spawn prompt.
 See `docs/ARCHITECTURE.md` for the complete repository layout, plugin structure, and ecosystem diagram.
 
 Key paths:
+
 - Plugins: `plugins/<name>/` — 8 plugins (23 commands, 6 skills, 14 agents)
 - Rules (auto-loaded): `.claude/rules/`
 - Plugin registry: `.claude-plugin/marketplace.json`
@@ -595,7 +596,8 @@ You MUST NOT:
 
 ## 8. CI & Validation
 
-See `docs/WORKFLOWS.md` for complete CI pipeline documentation, exact shell commands, and the cross-repo `trigger-docs.yml` workflow.
+See `docs/WORKFLOWS.md` for complete CI pipeline documentation, exact shell commands, and the
+cross-repo `trigger-docs.yml` workflow.
 
 ### Local Validation
 

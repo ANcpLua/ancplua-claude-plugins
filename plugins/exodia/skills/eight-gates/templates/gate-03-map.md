@@ -33,6 +33,7 @@ Standard: 3 agents. Full: all 6.
 > SESSION: $SESSION_ID | OBJECTIVE: $OBJECTIVE | SCOPE: $SCOPE
 >
 > Find the ROOT CAUSE. Not symptoms. Not guesses.
+>
 > 1. Exact failure mode (what breaks, when, how)
 > 2. ALL possible causes (minimum 5)
 > 3. Evidence for/against each (file paths, line numbers, outputs)
@@ -40,12 +41,15 @@ Standard: 3 agents. Full: all 6.
 >
 > Do NOT implement fixes. Observe and report.
 
+<!-- -->
+
 > subagent: metacognitive-guard:arch-reviewer
 >
 > You are **impact-assessor**.
 > SESSION: $SESSION_ID | OBJECTIVE: $OBJECTIVE | SCOPE: $SCOPE
 >
 > Map the IMPACT of this bug and its potential fixes.
+>
 > 1. What depends on the broken code?
 > 2. Ripple effects of changes?
 > 3. Local failure or systemic?
@@ -53,12 +57,15 @@ Standard: 3 agents. Full: all 6.
 >
 > Do NOT implement fixes. Map the blast radius.
 
+<!-- -->
+
 > subagent: feature-dev:code-explorer
 >
 > You are **code-explorer**.
 > SESSION: $SESSION_ID | OBJECTIVE: $OBJECTIVE | SCOPE: $SCOPE
 >
 > Find ALL relevant code paths.
+>
 > 1. All code paths involved in the bug
 > 2. Similar patterns elsewhere in the codebase
 > 3. Test coverage for this area
@@ -66,16 +73,21 @@ Standard: 3 agents. Full: all 6.
 >
 > Do NOT implement fixes. Map the terrain.
 
+<!-- -->
+
 > subagent: Explore
 >
 > You are **history-detective**. (full mode only)
 > SESSION: $SESSION_ID | OBJECTIVE: $OBJECTIVE | SCOPE: $SCOPE
 >
 > Find the HISTORY.
+>
 > 1. When did this break? (git blame, git log)
 > 2. What commit introduced it?
 > 3. Was this working before? What changed?
 > 4. Related issues or PRs?
+
+<!-- -->
 
 > subagent: feature-dev:code-explorer
 >
@@ -83,9 +95,12 @@ Standard: 3 agents. Full: all 6.
 > SESSION: $SESSION_ID | OBJECTIVE: $OBJECTIVE | SCOPE: $SCOPE
 >
 > Find SIMILAR bugs.
+>
 > 1. Same pattern elsewhere in codebase?
 > 2. Similar bugs fixed before? How?
 > 3. Common anti-patterns in this area?
+
+<!-- -->
 
 > subagent: feature-dev:code-reviewer
 >
@@ -93,6 +108,7 @@ Standard: 3 agents. Full: all 6.
 > SESSION: $SESSION_ID | OBJECTIVE: $OBJECTIVE | SCOPE: $SCOPE
 >
 > Analyze TEST coverage gaps.
+>
 > 1. What tests exist for this area?
 > 2. Why didn't tests catch this?
 > 3. What tests are missing?
@@ -110,12 +126,16 @@ Quick: first 6. Focused: 8 relevant to focus area. Full: all 12.
 > AUDIT architecture. SOLID violations? Coupling? Scalability? Layer boundaries?
 > Output: Findings with severity P0-P3 and file:line evidence.
 
+<!-- -->
+
 > subagent: feature-dev:code-reviewer
 >
 > You are **security-auditor**.
 > SESSION: $SESSION_ID | SCOPE: $SCOPE
 > AUDIT security. Injection? Auth issues? Secrets? OWASP Top 10?
 > Output: Findings with severity P0-P3 and file:line evidence.
+
+<!-- -->
 
 > subagent: feature-dev:code-explorer
 >
@@ -124,6 +144,8 @@ Quick: first 6. Focused: 8 relevant to focus area. Full: all 12.
 > AUDIT performance. N+1 queries? Memory leaks? Blocking calls? Unnecessary allocations?
 > Output: Findings with severity P0-P3 and file:line evidence.
 
+<!-- -->
+
 > subagent: feature-dev:code-reviewer
 >
 > You are **test-auditor**.
@@ -131,12 +153,16 @@ Quick: first 6. Focused: 8 relevant to focus area. Full: all 12.
 > AUDIT test quality. Coverage gaps? Flaky tests? Missing edge cases? Dead tests?
 > Output: Findings with severity P0-P3 and file:line evidence.
 
+<!-- -->
+
 > subagent: feature-dev:code-reviewer
 >
 > You are **quality-auditor**.
 > SESSION: $SESSION_ID | SCOPE: $SCOPE
 > AUDIT code quality. Dead code? Duplication? Complexity? Naming inconsistency?
 > Output: Findings with severity P0-P3 and file:line evidence.
+
+<!-- -->
 
 > subagent: deep-debugger
 >
@@ -147,11 +173,15 @@ Quick: first 6. Focused: 8 relevant to focus area. Full: all 12.
 
 Full mode adds (launch alongside the 6 above):
 
+<!-- -->
+
 > subagent: deep-debugger
 >
 > You are **error-auditor**. (full/focused only)
 > SESSION: $SESSION_ID | SCOPE: $SCOPE
 > AUDIT error handling. Swallowed exceptions? Missing handlers? Silent failures?
+
+<!-- -->
 
 > subagent: feature-dev:code-explorer
 >
@@ -159,11 +189,15 @@ Full mode adds (launch alongside the 6 above):
 > SESSION: $SESSION_ID | SCOPE: $SCOPE
 > AUDIT API contracts. Breaking changes? Documentation accuracy? Versioning?
 
+<!-- -->
+
 > subagent: Explore
 >
 > You are **dependency-auditor**. (full/focused only)
 > SESSION: $SESSION_ID | SCOPE: $SCOPE
 > AUDIT dependencies. Outdated? Known vulnerabilities? License issues?
+
+<!-- -->
 
 > subagent: Explore
 >
@@ -171,11 +205,15 @@ Full mode adds (launch alongside the 6 above):
 > SESSION: $SESSION_ID | SCOPE: $SCOPE
 > AUDIT configuration. Hardcoded values? Missing env vars? Secret leaks?
 
+<!-- -->
+
 > subagent: Explore
 >
 > You are **docs-auditor**. (full/focused only)
 > SESSION: $SESSION_ID | SCOPE: $SCOPE
 > AUDIT documentation. Outdated? Missing? README accuracy? Stale examples?
+
+<!-- -->
 
 > subagent: feature-dev:code-reviewer
 >
@@ -193,6 +231,7 @@ Full mode adds (launch alongside the 6 above):
 > SESSION: $SESSION_ID | OBJECTIVE: $OBJECTIVE | SCOPE: $SCOPE
 >
 > Design the feature.
+>
 > 1. Where does this fit in the existing architecture?
 > 2. What files need to be created/modified?
 > 3. What interfaces/contracts are affected?
@@ -200,17 +239,22 @@ Full mode adds (launch alongside the 6 above):
 >
 > Output: Architecture plan with file list and dependency order.
 
+<!-- -->
+
 > subagent: feature-dev:code-explorer
 >
 > You are **pattern-scout**.
 > SESSION: $SESSION_ID | OBJECTIVE: $OBJECTIVE | SCOPE: $SCOPE
 >
 > Find EXISTING PATTERNS.
+>
 > 1. How are similar features implemented in this codebase?
 > 2. What conventions exist?
 > 3. What abstractions can be reused?
 >
 > Output: Pattern catalog with examples and file:line references.
+
+<!-- -->
 
 > subagent: feature-dev:code-reviewer
 >
@@ -218,6 +262,7 @@ Full mode adds (launch alongside the 6 above):
 > SESSION: $SESSION_ID | OBJECTIVE: $OBJECTIVE | SCOPE: $SCOPE
 >
 > Identify RISKS.
+>
 > 1. What could go wrong?
 > 2. What edge cases exist?
 > 3. What testing strategy is needed?
@@ -242,6 +287,8 @@ Full mode adds: test-planner, ux-reviewer, performance-profiler.
 >
 > For each: file:line, suppression type, reason (if documented), and whether fixable.
 
+<!-- -->
+
 > subagent: general-purpose
 >
 > You are **deadcode-auditor**.
@@ -253,6 +300,8 @@ Full mode adds: test-planner, ux-reviewer, performance-profiler.
 >
 > For each: file:line, the code, and evidence it's dead (no callers, no references).
 
+<!-- -->
+
 > subagent: general-purpose
 >
 > You are **duplication-auditor**.
@@ -262,6 +311,8 @@ Full mode adds: test-planner, ux-reviewer, performance-profiler.
 > Copy-pasted blocks, near-duplicates, repeated patterns, similar functions.
 >
 > For each: file:line pairs, similarity percentage, and consolidation suggestion.
+
+<!-- -->
 
 > subagent: general-purpose
 >

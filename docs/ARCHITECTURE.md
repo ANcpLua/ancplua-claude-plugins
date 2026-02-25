@@ -108,7 +108,8 @@ Plugins contribute to the agent's passive context via three layers (in load orde
 2. **`SKILL.md` frontmatter `description`** — loaded when skill is referenced
 3. **`hooks/hooks.json` SessionStart → `additionalContext`** — dynamic, computed at session start
 
-Use SessionStart hooks when context must be computed at runtime (version detection, prior findings, project-specific routing). Use CLAUDE.md for stable rules. Use skill descriptions for task-routing cues.
+Use SessionStart hooks when context must be computed at runtime (version detection, prior findings,
+project-specific routing). Use CLAUDE.md for stable rules. Use skill descriptions for task-routing cues.
 
 ---
 
@@ -130,7 +131,8 @@ CI mirrors the same checks via `.github/workflows/ci.yml`.
 
 ## 5. Design principles (SOLID for plugins)
 
-See `.claude/rules/solid-principles.md` (auto-loaded at session start) for the full SOLID plugin design constraints including the plugin responsibility table.
+See `.claude/rules/solid-principles.md` (auto-loaded at session start) for the full SOLID plugin design
+constraints including the plugin responsibility table.
 
 ---
 

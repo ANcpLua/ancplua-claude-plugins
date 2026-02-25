@@ -5,6 +5,7 @@
 1. Create `plugins/<plugin-name>/`.
 2. Add `.claude-plugin/plugin.json` with at least `name`, `version`, `description`, `author`.
 3. Optionally declare capabilities in `plugin.json`:
+
    ```json
    {
      "name": "my-plugin",
@@ -17,6 +18,7 @@
      "hooks": "hooks/hooks.json"
    }
    ```
+
    > **Note:** `hooks/hooks.json` is loaded by Claude Code when declared in `plugin.json`.
 4. Optionally add:
    - `skills/<skill-name>/SKILL.md`

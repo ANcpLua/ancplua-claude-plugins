@@ -8,6 +8,23 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **markdownlint**: Ground-up cleanup — 181 violations → 0 across 69 files. MD032 (blanks-around-lists), MD013 (line-length), MD031 (blanks-around-fences), MD040 (code-fence-language), MD022 (blanks-after-headings), MD028 (blockquote-blanks), MD029 (ordered-list-prefix). Formatting only, no content changes
+
+### Added
+
+- **`.markdownlint.jsonc`**: Project-wide markdownlint configuration — line length 120, dashes for lists, asterisks for bold, MD060/MD041 disabled
+- **`.markdownlintignore`**: Added blog post exclusion pattern
+
+### Removed
+
+- **`feature-dev/skills/code-review`**: Deleted redundant skill — 95% identical to `/review` command. Merged severity table, checklist, and common vulnerability patterns into `/review` command. One entry point instead of two
+
+### Changed
+
+- **`feature-dev`**: Bumped 1.1.0 → 1.2.0. `/review` command now contains the full 6-step workflow, severity levels table, checklist, and common vulnerability patterns previously split across the skill and command
+
+### Fixed
+
 - **`hookify/rule_engine.py`**: Fixed PreToolUse deny putting message in `systemMessage` (user-only display) instead of `permissionDecisionReason` (the field Claude actually receives). Root cause of Claude never seeing hook guidance when tools are blocked. Also split PreToolUse/PostToolUse into separate branches with correct response formats per Claude Code hooks spec
 - **`hookify/hook_runner.py`**: Fixed error reporting — hookify crashes now use exit code 2 + stderr (Claude-visible) instead of `systemMessage` (user-only)
 - **`hookify/global-rules/mtp-smart-test-filtering`**: Rewrote rule message to be directive — shorter (8 lines vs 80) with explicit "pick one and retry" action items

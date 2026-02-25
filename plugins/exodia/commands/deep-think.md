@@ -59,37 +59,46 @@ Inject ALL findings as background context for Phase 1 agents — they should rea
 Launch ALL 3 in ONE message.
 
 ### debugger-mind
+
 > subagent: deep-debugger | model: opus
 > You are debugger-mind. THINK AS A DEBUGGER.
 > PROBLEM: $0 | CONTEXT: $1
+>
 > 1. Actual problem vs perceived problem?
 > 2. ALL possible root causes (5+)
 > 3. Evidence to confirm/deny each
 > 4. Minimum viable investigation
 > 5. Assumptions being made
+>
 > DO NOT propose solutions. Just understand completely.
 > Output: Problem analysis with confidence per hypothesis
 
 ### architect-mind
+
 > subagent: metacognitive-guard:arch-reviewer | model: opus
 > You are architect-mind. THINK AS AN ARCHITECT.
 > PROBLEM: $0 | CONTEXT: $1
+>
 > 1. Where does this fit in the system?
 > 2. Boundaries and interfaces?
 > 3. Invariants violated?
 > 4. Ripple effects of changes?
 > 5. Local issue or systemic?
+>
 > Output: Architectural context and implications
 
 ### explorer-mind
+
 > subagent: feature-dev:code-explorer
 > You are explorer-mind. EXPLORE THE CODEBASE.
 > PROBLEM: $0 | CONTEXT: $1
+>
 > 1. All code related to this problem
 > 2. Pattern used elsewhere?
 > 3. History of this code
 > 4. Tests for this area?
 > 5. Similar problems solved before?
+>
 > Output: Relevant code map with file:line references
 
 ---
@@ -99,6 +108,7 @@ Launch ALL 3 in ONE message.
 Launch BOTH in ONE message.
 
 ### solution-designer
+
 > subagent: feature-dev:code-architect | model: opus
 > SYNTHESIZE solutions from Phase 1's 3 perspectives.
 > Per solution: what it addresses, implementation approach, complexity (1-10), confidence (%), reversibility.
@@ -106,6 +116,7 @@ Launch BOTH in ONE message.
 > Output: Top 3 solutions with trade-offs
 
 ### devils-advocate
+
 > subagent: feature-dev:code-reviewer
 > CHALLENGE each proposed solution:
 > What could go wrong? Worst case? Hidden assumptions? Simpler approach?

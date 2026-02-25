@@ -1,6 +1,6 @@
 {
   "name": "feature-dev",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Guided feature development with specialized agents for codebase exploration, architecture design, code review, and quality assurance.",
   "author": {
     "name": "Sid Bidasaria",
@@ -15,6 +15,5 @@
     "agents",
     "quality-assurance"
   ],
-  "commands": "./commands",
-  "skills": "./skills"
+  "commands": "./commands"
 }

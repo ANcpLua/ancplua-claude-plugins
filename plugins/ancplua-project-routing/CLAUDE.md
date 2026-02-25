@@ -5,6 +5,7 @@ SessionStart hook that auto-routes Claude to specialist agents, commands, and sk
 ## What It Injects
 
 Each project gets a tailored context block containing:
+
 - **Specialist agents** with exact `subagent_type` values for the Task tool
 - **Key commands** from exodia, feature-dev, metacognitive-guard, dotnet-architecture-lint
 - **Cross-repo dependency graph** (for .NET projects) with breaking change protocol

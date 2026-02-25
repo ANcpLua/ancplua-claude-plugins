@@ -231,6 +231,7 @@ Launch BOTH in ONE message.
 > subagent: feature-dev:code-architect | model: opus
 >
 > IMPLEMENT the selected solution using TDD (atomic — tests and code in ONE agent):
+>
 > 1. Write failing test (RED) — run it, confirm failure
 > 2. Write minimal fix (GREEN) — run it, confirm pass
 > 3. Edge case tests + regression test
