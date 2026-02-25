@@ -30,18 +30,12 @@ CONSECUTIVE=$(cat "$STRUGGLE_COUNT_FILE" 2>/dev/null || echo "0")
 SIGNALS_FILE="$BLACKBOARD/.struggle-signals"
 RECENT_SIGNALS=""
 if [[ -f "$SIGNALS_FILE" ]]; then
-    RECENT_SIGNALS=$(tail -20 "$SIGNALS_FILE" | grep '  - ' | sed 's/  - //' | tr '\n' ', ' | sed 's/, $//')
+    RECENT_SIGNALS=$( (tail -20 "$SIGNALS_FILE" | grep '  - ' || true) | sed 's/  - //' | tr '\n' ', ' | sed 's/, $//')
 fi
 
-# Inject as additionalContext — Claude sees this field on UserPromptSubmit
-cat <<EOF
-{
-  "hookSpecificOutput": {
-    "hookEventName": "UserPromptSubmit",
-    "additionalContext": "STRUGGLE DETECTOR ($CONSECUTIVE consecutive uncertain responses): Signals — $RECENT_SIGNALS. Consider spawning a deep-think-partner agent (Task tool, subagent_type='deep-think-partner') for thorough analysis instead of continuing to iterate."
-  }
-}
-EOF
+# Inject as additionalContext — use jq for safe JSON construction
+MSG="STRUGGLE DETECTOR ($CONSECUTIVE consecutive uncertain responses): Signals — $RECENT_SIGNALS. Consider spawning a deep-think-partner agent (Task tool, subagent_type='deep-think-partner') for thorough analysis instead of continuing to iterate."
+jq -n --arg ctx "$MSG" '{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":$ctx}}'
 
 # Reset after delivering to prevent repeated suggestions
 echo "0" > "$STRUGGLE_COUNT_FILE"

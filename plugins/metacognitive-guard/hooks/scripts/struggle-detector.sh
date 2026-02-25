@@ -140,6 +140,10 @@ fi
 if [[ "$score" -gt 10 ]]; then
     PREV_COUNT=$(cat "$STRUGGLE_COUNT_FILE" 2>/dev/null || echo "0")
     NEW_COUNT=$((PREV_COUNT + 1))
+    # High severity (score > 25) triggers inject on next prompt immediately
+    if [[ "$score" -gt 25 && "$NEW_COUNT" -lt 2 ]]; then
+        NEW_COUNT=2
+    fi
     echo "$NEW_COUNT" > "$STRUGGLE_COUNT_FILE"
 else
     echo "0" > "$STRUGGLE_COUNT_FILE"
