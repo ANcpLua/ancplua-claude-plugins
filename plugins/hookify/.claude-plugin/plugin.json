@@ -1,6 +1,6 @@
 {
   "name": "hookify",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Create hooks to prevent unwanted behaviors. Fork with global rules support ($HOME/.claude/global-rules/)",
   "author": {
     "name": "AncpLua",
