@@ -25,8 +25,9 @@ def run_hook(hook_event_name: str, fixed_event: Optional[str] = None):
         from hookify.core.config_loader import load_rules
         from hookify.core.rule_engine import RuleEngine
     except ImportError as e:
-        print(json.dumps({"systemMessage": f"Hookify import error: {e}"}), file=sys.stdout)
-        sys.exit(0)
+        # stderr with exit 2 ensures Claude sees the error on PreToolUse
+        print(f"Hookify import error: {e}", file=sys.stderr)
+        sys.exit(2)
 
     try:
         input_data = json.load(sys.stdin)
@@ -51,7 +52,6 @@ def run_hook(hook_event_name: str, fixed_event: Optional[str] = None):
         print(json.dumps(result), file=sys.stdout)
 
     except Exception as e:
-        print(json.dumps({"systemMessage": f"Hookify error: {str(e)}"}), file=sys.stdout)
-
-    finally:
-        sys.exit(0)
+        # stderr with exit 2 ensures Claude sees the error on PreToolUse
+        print(f"Hookify error: {str(e)}", file=sys.stderr)
+        sys.exit(2)

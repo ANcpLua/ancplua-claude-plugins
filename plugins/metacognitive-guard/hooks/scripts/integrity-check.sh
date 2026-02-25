@@ -203,8 +203,11 @@ elif [[ "$VIOLATION_COUNT" -eq 0 ]]; then
     echo -e "${YELLOW}WARNINGS|$WARNING_COUNT warnings (review recommended)${NC}"
     exit 0
 else
-    echo -e "${RED}BLOCKED|$VIOLATION_COUNT violations, $WARNING_COUNT warnings${NC}"
-    echo ""
-    echo "Fix violations before committing. These patterns indicate shortcuts that will cause problems later."
-    exit 1
+    # Exit code 2 = blocking error, stderr is fed to Claude
+    echo "COMMIT INTEGRITY: $VIOLATION_COUNT violations found. Fix these before committing:" >&2
+    for v in "${VIOLATIONS[@]}"; do
+        echo "  - $v" >&2
+    done
+    echo "These patterns indicate shortcuts that will cause problems later." >&2
+    exit 2
 fi

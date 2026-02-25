@@ -6,6 +6,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+
+- **`hookify/rule_engine.py`**: Fixed PreToolUse deny putting message in `systemMessage` (user-only display) instead of `permissionDecisionReason` (the field Claude actually receives). Root cause of Claude never seeing hook guidance when tools are blocked. Also split PreToolUse/PostToolUse into separate branches with correct response formats per Claude Code hooks spec
+- **`hookify/hook_runner.py`**: Fixed error reporting — hookify crashes now use exit code 2 + stderr (Claude-visible) instead of `systemMessage` (user-only)
+- **`hookify/global-rules/mtp-smart-test-filtering`**: Rewrote rule message to be directive — shorter (8 lines vs 80) with explicit "pick one and retry" action items
+- **`metacognitive-guard/epistemic-guard.sh`**: Migrated all 5 blocks from deprecated `decision`/`reason` format to modern `hookSpecificOutput.permissionDecision`/`permissionDecisionReason`. Removed dead `message` field that was ignored by Claude Code
+- **`metacognitive-guard/integrity-check.sh`**: Fixed exit code 1 (non-blocking, commit proceeds) → exit code 2 (blocking, stderr fed to Claude). Violations now actually block commits instead of being silently ignored
+- **`metacognitive-guard/struggle-detector`**: Split into two hooks — async Stop (analysis + blackboard write) and new `struggle-inject.sh` on UserPromptSubmit (reads blackboard, injects `additionalContext` that Claude actually sees). Removed dead `systemMessage` output from Stop hook
+
 ### Added
 
 - **`plugins/council`**: New plugin — five-agent council (opus-captain, sonnet-researcher, sonnet-synthesizer, sonnet-clarity, haiku-janitor). Each agent identity inlined directly in its `agents/*.md` file as passive context. Researcher + synthesizer run in parallel; clarity reads their raw output; haiku-janitor flags bloat; captain removes cuts. Inspired by Grok 4.20's multi-agent architecture. Invoke via `/council [task]`.

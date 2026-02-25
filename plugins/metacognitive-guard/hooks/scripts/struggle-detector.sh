@@ -140,6 +140,10 @@ fi
 if [[ "$score" -gt 10 ]]; then
     PREV_COUNT=$(cat "$STRUGGLE_COUNT_FILE" 2>/dev/null || echo "0")
     NEW_COUNT=$((PREV_COUNT + 1))
+    # High severity (score > 25) triggers inject on next prompt immediately
+    if [[ "$score" -gt 25 && "$NEW_COUNT" -lt 2 ]]; then
+        NEW_COUNT=2
+    fi
     echo "$NEW_COUNT" > "$STRUGGLE_COUNT_FILE"
 else
     echo "0" > "$STRUGGLE_COUNT_FILE"
@@ -164,19 +168,8 @@ CONSECUTIVE=$(cat "$STRUGGLE_COUNT_FILE" 2>/dev/null || echo "0")
     done
 } >> "$STRUGGLE_FILE"
 
-# Trigger after 2+ consecutive struggling responses OR high single score
-if [[ "$CONSECUTIVE" -ge 2 ]] || [[ "$score" -gt 25 ]]; then
-    # Build signals list with proper escaping
-    SIGNALS_LIST=""
-    for sig in "${signals[@]}"; do
-        SIGNALS_LIST="${SIGNALS_LIST}- ${sig}\\n"
-    done
-
-    cat <<EOF
-{
-  "systemMessage": "<struggle-detected score=\"$score\" consecutive=\"$CONSECUTIVE\">\\n\\nClaude appears to be struggling with this problem.\\n\\nSignals detected:\\n${SIGNALS_LIST}\\nSuggestion: Use the Task tool with subagent_type='deep-think-partner' for thorough analysis.\\n\\nExample: \\\"I'm finding this complex. Want me to spawn a deep-thinker for a more thorough analysis?\\\"\\n</struggle-detected>"
-}
-EOF
-fi
+# Note: No JSON output needed here. The struggle-inject.sh (UserPromptSubmit)
+# reads .blackboard/.struggle-count and injects additionalContext to Claude
+# on the next prompt. This async Stop hook only does analysis + blackboard writes.
 
 exit 0

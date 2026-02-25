@@ -45,9 +45,11 @@ fi
 if [[ "$FILE_PATH" == */plugins/*/AGENTS.md ]]; then
     cat << 'EOF'
 {
-  "decision": "block",
-  "reason": "EPISTEMIC GUARD: Anti-pattern - AGENTS.md in plugin directory",
-  "message": "AGENTS.md is NOT auto-loaded by Claude Code plugins.\n\nRouting intelligence belongs in skill description frontmatter (passive context).\nUse the Vercel pattern: encode WHEN to use each skill in the description field.\n\nIf you need human documentation, use README.md instead."
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "EPISTEMIC GUARD: Anti-pattern - AGENTS.md in plugin directory.\n\nAGENTS.md is NOT auto-loaded by Claude Code plugins.\nRouting intelligence belongs in skill description frontmatter (passive context).\nUse the Vercel pattern: encode WHEN to use each skill in the description field.\nIf you need human documentation, use README.md instead."
+  }
 }
 EOF
     exit 0
@@ -73,9 +75,11 @@ esac
 if echo "$CONTENT" | grep -qiE "\.NET 10.*(preview|not.*(released|LTS|available))|\.NET 10 is still|net9\.0"; then
     cat << 'EOF'
 {
-  "decision": "block",
-  "reason": "EPISTEMIC GUARD: Incorrect .NET version claim",
-  "message": "FACT CHECK: .NET 10 is LTS (Long Term Support) since November 11, 2025.\n\nIt is NOT preview. Use net10.0 in TargetFramework.\n\nSource: https://dotnet.microsoft.com/download/dotnet/10.0\n\nPlease correct your response before writing."
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "EPISTEMIC GUARD: Incorrect .NET version claim. FACT: .NET 10 is LTS since November 11, 2025. It is NOT preview. Use net10.0 in TargetFramework. Correct your content before writing."
+  }
 }
 EOF
     exit 0
@@ -88,9 +92,11 @@ if [[ "$IS_DOCS" == false ]]; then
 if echo "$CONTENT" | grep -qE 'DateTime\.(Now|UtcNow)|DateTimeOffset\.(Now|UtcNow)'; then
     cat << 'EOF'
 {
-  "decision": "block",
-  "reason": "EPISTEMIC GUARD: Banned API - DateTime.Now",
-  "message": "DateTime.Now/UtcNow should be avoided.\n\nUse: TimeProvider.System.GetUtcNow()\n\nThis enables testability and follows .NET 8+ best practices."
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "EPISTEMIC GUARD: Banned API - DateTime.Now/UtcNow. Use TimeProvider.System.GetUtcNow() instead. This enables testability and follows .NET 8+ best practices."
+  }
 }
 EOF
     exit 0
@@ -100,9 +106,11 @@ fi
 if echo "$CONTENT" | grep -qE 'object\s+_?lock\s*='; then
     cat << 'EOF'
 {
-  "decision": "block",
-  "reason": "EPISTEMIC GUARD: Banned pattern - object lock",
-  "message": "object-based locking should be avoided.\n\nUse: Lock _lock = new();\n\n.NET 9+ Lock type is more efficient and type-safe."
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "EPISTEMIC GUARD: Banned pattern - object lock. Use Lock _lock = new() instead. .NET 9+ Lock type is more efficient and type-safe."
+  }
 }
 EOF
     exit 0
@@ -112,9 +120,11 @@ fi
 if echo "$CONTENT" | grep -qE 'Newtonsoft\.Json|JsonConvert\.'; then
     cat << 'EOF'
 {
-  "decision": "block",
-  "reason": "EPISTEMIC GUARD: Banned dependency - Newtonsoft.Json",
-  "message": "Newtonsoft.Json should be avoided in new code.\n\nUse: System.Text.Json with source generators.\n\nExample: JsonSerializer.Serialize(obj, MyContext.Default.MyType)"
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "EPISTEMIC GUARD: Banned dependency - Newtonsoft.Json. Use System.Text.Json with source generators instead. Example: JsonSerializer.Serialize(obj, MyContext.Default.MyType)"
+  }
 }
 EOF
     exit 0
