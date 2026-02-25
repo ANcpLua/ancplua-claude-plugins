@@ -138,16 +138,17 @@ constraints including the plugin responsibility table.
 
 ## 6. Tri-AI review system
 
-Three AIs review PRs independently:
+Three AIs (Claude, Copilot, CodeRabbit) review PRs independently.
+Full capability matrix, workflow triggers, and auto-merge tiers: see `CLAUDE.md` Section 5.5.1.
 
-| Agent | Reviews | Creates Fix PRs | Config |
-|-------|---------|-----------------|--------|
-| Claude | `claude-code-review.yml` | Yes (CLI) | `CLAUDE.md` |
-| Copilot | Built-in | Yes (Coding Agent) | `.github/copilot-instructions.md` |
-| CodeRabbit | Built-in | No | `.coderabbit.yaml` |
+Config files per agent:
 
-Claude coordinates via passive context (`CLAUDE.md`, `.claude/rules/`, `SKILL.md` frontmatter, SessionStart hooks).
-Copilot and CodeRabbit coordinate via `AGENTS.md`, `.github/copilot-instructions.md`, and `CHANGELOG.md`.
+| Agent | Config |
+|-------|--------|
+| Claude | `CLAUDE.md`, `.claude/rules/`, SessionStart hooks |
+| Copilot | `.github/copilot-instructions.md`, `AGENTS.md` |
+| CodeRabbit | `.coderabbit.yaml`, `AGENTS.md` |
+
 No real-time communication between AI systems.
 
 ---
