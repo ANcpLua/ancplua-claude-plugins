@@ -86,6 +86,7 @@ For high-risk objectives or large scopes, spawn verification agents:
 >
 > Challenge ALL claims from Gate 7 implementation.
 > For each change:
+>
 > 1. Does the test actually test what it claims?
 > 2. Are there edge cases not covered?
 > 3. Could this change break something not in scope?
@@ -93,12 +94,15 @@ For high-risk objectives or large scopes, spawn verification agents:
 >
 > Be adversarial. Evidence only. No hand-waving.
 
+<!-- -->
+
 > subagent: general-purpose
 >
 > You are **build-verifier**.
 > SESSION: $SESSION_ID | SCOPE: $SCOPE
 >
 > Run FULL verification from clean state:
+>
 > 1. Build from scratch (not incremental)
 > 2. Run ALL tests (not just affected)
 > 3. Check for new warnings (zero tolerance)

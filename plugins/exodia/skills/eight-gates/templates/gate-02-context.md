@@ -73,6 +73,7 @@ If the objective involves versions, dates, APIs, or "current" state — verify b
 > Subagents have NO conversation history — inject everything here.]
 >
 > For each assumption:
+>
 > 1. Is this still true? (check files, check dates)
 > 2. WebSearch for any version/date/status claims
 > 3. Confidence level (high/medium/low)

@@ -61,7 +61,8 @@ This script mirrors CI and runs:
 
 Before committing changes:
 
-> **Note:** The `commit-integrity-hook` (metacognitive-guard) automatically blocks commits containing warning suppressions or commented-out tests. No manual check needed for these — the hook enforces it.
+> **Note:** The `commit-integrity-hook` (metacognitive-guard) automatically blocks commits containing warning suppressions
+> or commented-out tests. No manual check needed for these — the hook enforces it.
 
 1. Run `./tooling/scripts/weave-validate.sh`
 2. Fix any failures
@@ -80,8 +81,10 @@ Check the configuration for specific schedules and ignored dependencies.
 
 ## Cross-repo docs trigger
 
-`.github/workflows/trigger-docs.yml` runs on every push to `main` and triggers a rebuild of the `ancplua-docs` documentation site.
+`.github/workflows/trigger-docs.yml` runs on every push to `main` and triggers a rebuild of the
+`ancplua-docs` documentation site.
 
 **Requires:** `DOCS_TRIGGER_PAT` secret (a GitHub PAT with `repo` scope on the `ancplua-docs` repository).
 
-**Cross-repo dependency:** Changes to plugin docs, SKILL.md files, or README files in this repo will automatically propagate to the docs site after merge.
+**Cross-repo dependency:** Changes to plugin docs, SKILL.md files, or README files in this repo will
+automatically propagate to the docs site after merge.

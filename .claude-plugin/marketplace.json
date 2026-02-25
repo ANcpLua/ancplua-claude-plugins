@@ -5,7 +5,7 @@
     "url": "https://github.com/ANcpLua"
   },
   "metadata": {
-    "description": "Claude Code plugin marketplace: 8 plugins, 23 commands, 6 skills, 14 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, and .NET build enforcement."
+    "description": "Claude Code plugin marketplace: 8 plugins, 23 commands, 5 skills, 14 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, and .NET build enforcement."
   },
   "plugins": [
     {
@@ -35,7 +35,7 @@
     {
       "name": "feature-dev",
       "description": "Guided feature development with specialized agents for codebase exploration, architecture design, code review, and quality assurance.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "source": "./plugins/feature-dev"
     },
     {

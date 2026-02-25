@@ -53,6 +53,7 @@ Use Mode B when:
 > [list from Gate 6 ownership map]
 >
 > RULES:
+>
 > 1. TDD for each item: Write failing test → minimal fix → verify pass → refactor
 > 2. ONLY touch files in your ownership list
 > 3. After each item: run `[build command]` and `[test command]`
@@ -67,6 +68,7 @@ Use Mode B when:
 > Subagents have NO conversation history — inject everything.]
 >
 > OUTPUT (per item):
+>
 > ```text
 > ITEM: [description]
 > STATUS: DONE | BLOCKED | SKIPPED

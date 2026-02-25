@@ -215,7 +215,8 @@ Token costs tracked via OTel, not here.
 
 - Smart scripts unavailable → inline checkpointing via TodoWrite
 - Agent Teams unavailable → Task tool with `subagent_type: general-purpose`
-- Trivial scope (S estimate) → compress Gates 3-5 into minimal checkpoints (mark as "bypassed-trivial" with rationale), then proceed to Gate 6-7
+- Trivial scope (S estimate) → compress Gates 3-5 into minimal checkpoints
+  (mark as "bypassed-trivial" with rationale), then proceed to Gate 6-7
 
 **YOUR NEXT ACTION: Run INIT, auto-classify objective, open Gate 1.**
 

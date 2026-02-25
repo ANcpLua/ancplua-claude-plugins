@@ -47,7 +47,7 @@ categorization step — skip re-discovering suppressions already catalogued.
 1. Phase 0: Run `dotnet build`, capture ALL warnings, categorize into 8 buckets
 2. IF `$1` != `all`: filter buckets to only the requested scope
 3. T₀: Launch recon-invoker + ALL aspects that have warnings in scope — ONE message
-3. Phantasm Concludes: `dotnet build` again, report delta, exit
+4. Phantasm Concludes: `dotnet build` again, report delta, exit
 
 **NO asking "should I continue?" EVER.**
 **NO gates between burst and verification.**
@@ -186,6 +186,7 @@ All in ONE message. No sequencing. No dependencies.
 > Solution: $0
 >
 > Find and eliminate across the entire solution:
+>
 > - ALL `#pragma warning disable` / `#pragma warning restore` pairs
 > - ALL `[SuppressMessage(...)]` attributes
 > - ALL `<NoWarn>` entries in .csproj files

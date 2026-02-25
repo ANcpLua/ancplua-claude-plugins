@@ -35,5 +35,7 @@ Rules loaded from TWO locations:
 ## Key Behavior
 
 - Hades permit exemption: active `.smart/delete-permit.json` bypasses ALL blocking rules.
-- Python hooks read stdin JSON, return JSON with event-specific fields: `permissionDecisionReason` (PreToolUse deny), `reason` (Stop/PostToolUse block), `additionalContext` (warnings on PostToolUse/UserPromptSubmit/SessionStart). `systemMessage` is user-display only — Claude never sees it.
+- Python hooks read stdin JSON, return JSON with event-specific fields: `permissionDecisionReason`
+  (PreToolUse deny), `reason` (Stop/PostToolUse block), `additionalContext` (warnings on
+  PostToolUse/UserPromptSubmit/SessionStart). `systemMessage` is user-display only — Claude never sees it.
 - Conversation analyzer searches for "Don't use X", frustrated reactions, repeated issues.

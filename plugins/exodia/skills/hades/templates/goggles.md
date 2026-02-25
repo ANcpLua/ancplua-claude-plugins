@@ -78,6 +78,7 @@ Their findings feed into Phase 1 elimination as design-violation tasks.
 > **Priority evaluation (in order — higher priority items are never sacrificed):**
 >
 > P1 ACCESSIBILITY (CRITICAL — zero tolerance):
+>
 > - Color contrast: 4.5:1 minimum. Check every color pair.
 > - Focus states: visible rings on every interactive element.
 > - Alt text: every `<img>` has descriptive alt. Decorative = `alt=""`.
@@ -87,6 +88,7 @@ Their findings feed into Phase 1 elimination as design-violation tasks.
 > - Semantic HTML: `<nav>`, `<main>`, `<button>`, `<a>` used correctly.
 >
 > P2 TOUCH & INTERACTION (CRITICAL):
+>
 > - Touch targets: 44x44px minimum on all interactive.
 > - Hover vs tap: no critical functionality behind hover-only.
 > - Loading buttons: spinner + disabled during async.
@@ -94,27 +96,32 @@ Their findings feed into Phase 1 elimination as design-violation tasks.
 > - Cursor: `cursor-pointer` on clickable, `cursor-not-allowed` on disabled.
 >
 > P3 PERFORMANCE (HIGH):
+>
 > - Images: WebP, srcset, `loading="lazy"` below fold.
 > - Reduced motion: `prefers-reduced-motion` respected.
 > - CLS: explicit width/height on images, skeleton loaders.
 >
 > P4 LAYOUT & RESPONSIVE (HIGH):
+>
 > - 16px minimum mobile font.
 > - No horizontal scroll at any breakpoint.
 > - Z-index managed scale: 10 dropdowns, 20 modals, 30 toasts, 40 tooltips.
 > - Works at: 375px, 768px, 1024px, 1440px.
 >
 > P5 TYPOGRAPHY & COLOR (MEDIUM):
+>
 > - Line height: 1.5-1.75 body, 1.2-1.3 headings.
 > - Line length: 65-75 characters max.
 > - Font pairing: display + body complementary.
 >
 > P6 ANIMATION (MEDIUM):
+>
 > - Duration: 150-300ms micro, 300-500ms transitions.
 > - Properties: transform + opacity only (GPU composited).
 > - Loading states on every async action.
 >
 > P7 STYLE (MEDIUM):
+>
 > - SVG icons only. No emoji as UI icons.
 > - Consistent icon set (Lucide or Heroicons).
 > - Hover states: no layout shift.
@@ -168,7 +175,7 @@ Their findings feed into Phase 1 elimination as design-violation tasks.
 >
 > **Output format:** Group by file. `file:line` (VS Code clickable). Terse.
 >
-> ```
+> ```text
 > ## <filepath>
 > [CRITICAL] file:line — [issue] → [fix]
 > [WARNING] file:line — [issue] → [fix]

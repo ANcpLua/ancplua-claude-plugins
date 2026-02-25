@@ -9,7 +9,9 @@ conditions:
     pattern: HADES CLEANUP REPORT
 ---
 
-**Smart-Hades Stop Guard — Cleanup report not found!**
+# Smart-Hades Stop Guard
+
+**Cleanup report not found!**
 
 When enabled, blocks session completion unless a `HADES CLEANUP REPORT`
 is present in the transcript. This ensures cleanup was actually performed

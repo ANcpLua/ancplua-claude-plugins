@@ -6,7 +6,9 @@ pattern: \b(rm\s|git\s+rm|git\s+clean|git\s+reset\s+--hard)\b
 action: block
 ---
 
-**Smart-Hades Delete Guard — Destructive command blocked!**
+# Smart-Hades Delete Guard
+
+**Destructive command blocked!**
 
 Deletions must flow through the Hades pipeline so they get a Smart ID,
 a deletion permit, and an audit ledger entry.

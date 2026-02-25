@@ -59,6 +59,7 @@ Use TodoWrite: one todo per item, mark complete as each finishes.
 ## PHASE 1: PATTERN EXTRACTION — 1 Agent
 
 ### template-extractor
+
 > subagent: feature-dev:code-explorer
 > You are template-extractor. Extract the implementation pattern.
 > TYPE: $0 | ITEMS: $1
@@ -73,10 +74,13 @@ Use TodoWrite: one todo per item, mark complete as each finishes.
 Parse $1 (comma-separated). Launch ONE agent PER ITEM in ONE message.
 
 ### implementer-item-N (one per item)
+
 > subagent: feature-dev:code-architect
 > IMPLEMENT: [ITEM_NAME from $1] | TYPE: $0
 > Using template from Phase 1. Follow TDD:
+>
 > 1. Write failing test → 2. Implement → 3. Verify pass
+>
 > Checklist: follows pattern, unit test, implementation, no copy-paste errors.
 >
 > **FILE OWNERSHIP:** You own ONLY files for YOUR item. List owned files at the top of your output.
@@ -103,14 +107,17 @@ BATCH GATE:
 ## PHASE 3: CONSISTENCY REVIEW — 1 Agent
 
 ### consistency-reviewer
+
 > subagent: feature-dev:code-reviewer
 > REVIEW all new implementations AND handle all shared file mutations:
+>
 > 1. Consistent naming across all items
 > 2. No conflicts between items
 > 3. **Wire ALL registrations** — DI containers, route tables, module exports, index files
 >    (implementers were instructed NOT to touch shared files — you own them all)
 > 4. Tests follow same pattern
 > 5. No duplicate code that should be shared
+>
 > Output: Issues found + shared files modified + recommendations
 
 Fix any issues found, then proceed.

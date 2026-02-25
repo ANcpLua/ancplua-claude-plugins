@@ -118,6 +118,7 @@ For complex objectives (L/XL) with many findings, spawn a merge agent:
 >
 > You have findings from [n] MAP agents and reflection output.
 > Merge into one canonical work queue:
+>
 > 1. Deduplicate (same file:line = one item)
 > 2. Resolve contradictions (evidence wins)
 > 3. Create kill list (out of scope, false positive, low ROI, blocked, premature)
