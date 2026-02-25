@@ -114,10 +114,7 @@ class RuleEngine:
             elif hook_event == 'PostToolUse':
                 return {
                     "decision": "block",
-                    "reason": combined_message,
-                    "hookSpecificOutput": {
-                        "hookEventName": hook_event
-                    }
+                    "reason": combined_message
                 }
             elif hook_event == 'UserPromptSubmit':
                 return {
