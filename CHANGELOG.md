@@ -22,6 +22,9 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Changed
 
 - **`feature-dev`**: Bumped 1.1.0 → 1.2.0. `/review` command now contains the full 6-step workflow, severity levels table, checklist, and common vulnerability patterns previously split across the skill and command
+- **`engineering-principles.md`**: Slimmed from 26 principles (~1050 tokens) to 10 agent-relevant (~450 tokens). Dropped human-only principles. Full list stays in `docs/ENGINEERING-PRINCIPLES.md`
+- **`docs/ARCHITECTURE.md`**: Section 6 Tri-AI replaced with pointer to CLAUDE.md 5.5.1 — zero duplication
+- **`findings.json`**: F28 and F32 marked FIXED — 35/35 mega-swarm findings now resolved
 
 ### Fixed
 
