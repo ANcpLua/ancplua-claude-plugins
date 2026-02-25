@@ -15,8 +15,12 @@ conditions:
     pattern: "# VERIFY"
 ---
 
-Full test suite detected. If previous tests failed, filter to just those tests.
+This hookify rule blocked a full test suite run. This is intentional, not a bug.
 
-**Bypass:** append `# VERIFY` to the command.
-**Filter:** `dotnet test --filter-method "*FailingTestName"`
-**Help:** use `dotnet-mtp-advisor` agent for MTP filter syntax.
+**Action required — pick one:**
+
+1. **Verify all tests pass** → Re-run the exact same command with `# VERIFY` appended
+2. **Run only failing tests** → Use `--filter-method "*FailingTestName"` or `--filter-class "*ClassName"`
+3. **Need MTP filter help** → Spawn the `dotnet-mtp-advisor` agent
+
+Do NOT tell the user this is a bug. Do NOT tell the user to run the command themselves. Just pick option 1 or 2 and retry.

@@ -72,7 +72,9 @@ class RuleEngine:
             input_data: Hook input JSON (tool_name, tool_input, etc.)
 
         Returns:
-            Response dict with systemMessage, hookSpecificOutput, etc.
+            Response dict with event-appropriate fields per Claude Code hooks spec.
+            Uses permissionDecisionReason (PreToolUse), reason (Stop/PostToolUse),
+            additionalContext (warnings on PostToolUse/UserPromptSubmit/SessionStart).
             Empty dict {} if no rules match.
         """
         # Hades god mode — active permit bypasses all rules
@@ -99,29 +101,50 @@ class RuleEngine:
             if hook_event == 'Stop':
                 return {
                     "decision": "block",
-                    "reason": combined_message,
-                    "systemMessage": combined_message
+                    "reason": combined_message
                 }
-            elif hook_event in ['PreToolUse', 'PostToolUse']:
+            elif hook_event == 'PreToolUse':
                 return {
                     "hookSpecificOutput": {
                         "hookEventName": hook_event,
-                        "permissionDecision": "deny"
-                    },
-                    "systemMessage": combined_message
+                        "permissionDecision": "deny",
+                        "permissionDecisionReason": combined_message
+                    }
+                }
+            elif hook_event == 'PostToolUse':
+                return {
+                    "decision": "block",
+                    "reason": combined_message,
+                    "hookSpecificOutput": {
+                        "hookEventName": hook_event
+                    }
+                }
+            elif hook_event == 'UserPromptSubmit':
+                return {
+                    "decision": "block",
+                    "reason": combined_message
                 }
             else:
-                # For other events, just show message
-                return {
-                    "systemMessage": combined_message
-                }
+                # SessionStart, Notification — no blocking mechanism, no audience
+                return {}
 
         # If only warnings, show them but allow operation
         if warning_rules:
             messages = [f"**[{r.name}]**\n{r.message}" for r in warning_rules]
-            return {
-                "systemMessage": "\n\n".join(messages)
-            }
+            combined_warning = "\n\n".join(messages)
+
+            # Use additionalContext where Claude can see it
+            if hook_event in ['PostToolUse', 'UserPromptSubmit', 'SessionStart']:
+                return {
+                    "hookSpecificOutput": {
+                        "hookEventName": hook_event,
+                        "additionalContext": combined_warning
+                    }
+                }
+            else:
+                # PreToolUse warnings can't reach Claude without blocking
+                # No audience for the message — skip
+                return {}
 
         # No matches - allow operation
         return {}

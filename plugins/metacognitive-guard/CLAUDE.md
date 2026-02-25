@@ -10,7 +10,8 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 | Truth Beacon | SessionStart | `truth-beacon.sh` | Injects `blackboard/assertions.yaml` as authoritative facts |
 | Epistemic Guard | PreToolUse (Write/Edit) | `epistemic-guard.sh` | Blocks writes with wrong versions, banned APIs, AGENTS.md in plugins |
 | Commit Integrity | PreToolUse (Bash) | `commit-integrity-hook.sh` | Blocks `git commit` with suppressions, commented tests, deleted assertions |
-| Struggle Detector | Stop (async) | `struggle-detector.sh` | Scores response for uncertainty, triggers deep-think suggestion |
+| Struggle Detector | Stop (async) | `struggle-detector.sh` | Scores response for uncertainty, writes to blackboard |
+| Struggle Inject | UserPromptSubmit | `struggle-inject.sh` | Reads blackboard, injects deep-think suggestion as `additionalContext` |
 | Ralph Loop | PostToolUse (Write/Edit) | prompt (haiku) + `ralph-loop.sh` | Two-layer drift detection: haiku analyzes context (over-engineering, complexity, premature optimization), grep catches surface patterns (TODO, suppressions, catch-all). Both inject via additionalContext. Silent when clean |
 | Task Completion Gate | TaskCompleted | prompt (haiku) | Validates task completions in team workflows aren't premature |
 
@@ -52,7 +53,7 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 - verify-local.sh and wait-for-ci.sh are utility scripts for the verification workflow, not hook triggers.
 - Hades god mode: active delete permit causes epistemic-guard to exit early.
 - Struggle detector tracks consecutive struggling responses via `.blackboard/.struggle-count`.
-- Struggle detector runs async (non-blocking) — feedback delivered next turn, never delays responses.
+- Struggle detector is a two-part system: Stop hook (async) does analysis + blackboard writes, UserPromptSubmit hook reads blackboard and injects `additionalContext` so Claude actually sees the suggestion. No latency on responses.
 - TaskCompleted prompt hook fires on every task completion in team contexts (haiku, 15s timeout).
 - Ralph Loop fires PostToolUse on Write/Edit — two layers run in parallel:
   (1) Haiku prompt analyzes context for deep drift (over-engineering, complexity creep, premature
