@@ -1,16 +1,12 @@
 # ancplua-claude-plugins
 
-> One developer. Twelve parallel workers. Zero unchecked steps.
-
-Claude Code plugin marketplace. 7 plugins that turn a single AI session into
-a parallel workforce with automatic quality gates at every step.
+Claude Code plugin marketplace. 7 plugins for parallel agent orchestration,
+quality gates, and automated enforcement in Claude Code sessions.
 
 ## What this does
 
-A normal developer looks at code one file at a time, finds problems one by one,
-fixes them one by one. With these plugins, you look at all the code at once,
-find all the problems at once, fix them all in parallel — and every step is
-automatically checked before moving to the next.
+Spawns up to 12 parallel subagents for audits, fixes, and reviews. Each phase
+is gated — work only advances when the gate passes. No manual babysitting.
 
 ## Plugins
 
