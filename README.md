@@ -1,6 +1,6 @@
 # ancplua-claude-plugins
 
-Claude Code plugin marketplace. 7 plugins for parallel agent orchestration,
+Claude Code plugin marketplace. 8 plugins for parallel agent orchestration,
 quality gates, and automated enforcement in Claude Code sessions.
 
 ## What this does
@@ -18,6 +18,7 @@ is gated — work only advances when the gate passes. No manual babysitting.
 | **hookify** | Custom tripwires you set up. "Never do X" or "Always check Y before Z." The AI physically cannot proceed if it violates your rules |
 | **otelwiki** | Built-in reference for OpenTelemetry monitoring standards so the AI writes correct telemetry code instead of guessing |
 | **dotnet-architecture-lint** | Enforces .NET project structure rules automatically — catches version mismatches and structural violations before they ship |
+| **council** | Five-agent council for complex tasks. Opus captain decomposes and dispatches, three Sonnet specialists research/synthesize/check, Haiku janitor flags bloat |
 | **ancplua-project-routing** | Automatically recognizes what kind of project you're in and loads the right tools and rules. No configuration needed |
 
 ### How does this work without failing?
@@ -42,7 +43,7 @@ Add the marketplace, then install plugins individually:
 
 ## Technical details
 
-7 plugins, 22 commands, 4 skills, 9 agents, 20 scripts, 6 hook configs.
+8 plugins, 23 commands, 4 skills, 14 agents, 21 scripts, 7 hook configs.
 
 Tri-AI review system: Claude, Copilot, CodeRabbit all review PRs independently.
 
@@ -53,6 +54,7 @@ plugins/
 ├── otelwiki/                # OpenTelemetry docs + sync
 ├── hookify/                 # user-configurable behavior rules
 ├── feature-dev/             # guided feature development + code review
+├── council/                 # five-agent council (Opus captain + Sonnet specialists + Haiku janitor)
 ├── dotnet-architecture-lint/# .NET build pattern enforcement
 └── ancplua-project-routing/ # project-aware agent routing
 ```
