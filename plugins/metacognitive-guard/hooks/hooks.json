@@ -59,6 +59,17 @@
             "statusMessage": "Evaluating response quality..."
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "model": "haiku",
+            "prompt": "You are a silent session observer. You see Claude's latest response. Extract what was just accomplished and what appears to remain. Output ONLY: {\"hookSpecificOutput\":{\"hookEventName\":\"Stop\",\"additionalContext\":\"SESSION: [done] → [in progress] → [remaining]\"}}. Keep it under 30 words. If the response is trivial (greeting, short answer), return {}.",
+            "timeout": 10,
+            "statusMessage": "Session observer..."
+          }
+        ]
       }
     ],
     "PostToolUse": [
