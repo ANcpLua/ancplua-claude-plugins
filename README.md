@@ -42,7 +42,7 @@ Add the marketplace, then install plugins individually:
 
 ## Technical details
 
-7 plugins, 22 commands, 5 skills, 9 agents, 20 scripts, 6 hook configs.
+7 plugins, 22 commands, 4 skills, 9 agents, 20 scripts, 6 hook configs.
 
 Tri-AI review system: Claude, Copilot, CodeRabbit all review PRs independently.
 

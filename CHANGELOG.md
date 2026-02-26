@@ -6,6 +6,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Removed
+
+- **`council/skills/invoke`**: Deleted redundant skill — `SlashCommand` tool (Claude Code 1.0.124+) already makes `/council` command both user-invokable and model-invokable programmatically. Merged cost profile, when-to-use criteria, and flow diagram into the command
+
+### Changed
+
+- **`council`**: Bumped 1.0.0 → 1.1.0. `/council` command now contains the full content from the deleted invoke skill (flow diagram, cost profile, when-to-use section). Single entry point instead of two
+- **marketplace.json**: Updated skill count 5 → 4
+
 ### Fixed
 
 - **markdownlint**: Ground-up cleanup — 181 violations → 0 across 69 files. MD032 (blanks-around-lists), MD013 (line-length), MD031 (blanks-around-fences), MD040 (code-fence-language), MD022 (blanks-after-headings), MD028 (blockquote-blanks), MD029 (ordered-list-prefix). Formatting only, no content changes
