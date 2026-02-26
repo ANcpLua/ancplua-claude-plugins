@@ -1,6 +1,12 @@
 # Phase 2: Verification — Teammate Prompt Templates
 
-Shut down Phase 1 teammates. Spawn 4 verifiers who CHALLENGE each other.
+Shut down Phase 1 teammates (SendMessage type="shutdown_request" to each, wait for shutdown_responses).
+Spawn 4 verifiers via Task tool with `team_name="hades-cleanup"` who CHALLENGE each other.
+
+**Teammate context (include in every spawn prompt):**
+You are a teammate in the `hades-cleanup` team. Use SendMessage to communicate with other teammates and the lead.
+Use TaskList to see tasks. Use TaskUpdate to update task status.
+When you receive a SendMessage with type `shutdown_request` from the lead, approve it with SendMessage type: `shutdown_response`.
 
 ## smart-verify-build
 
@@ -10,7 +16,7 @@ Shut down Phase 1 teammates. Spawn 4 verifiers who CHALLENGE each other.
 > Run: `dotnet build -warnaserror 2>&1` or `npm run build 2>&1` or `make build 2>&1`
 >
 > Report: zero warnings, zero errors, clean build.
-> MESSAGE smart-verify-challenger with your results so they can challenge them.
+> Use SendMessage (recipient: "smart-verify-challenger") with your results so they can challenge them.
 
 ## smart-verify-tests
 
@@ -21,7 +27,7 @@ Shut down Phase 1 teammates. Spawn 4 verifiers who CHALLENGE each other.
 >
 > Report: pass count, fail count, skip count.
 > If any test was DELETED or SKIPPED during cleanup, flag it.
-> MESSAGE smart-verify-challenger with your results.
+> Use SendMessage (recipient: "smart-verify-challenger") with your results.
 
 ## smart-verify-grep
 
@@ -39,7 +45,7 @@ Shut down Phase 1 teammates. Spawn 4 verifiers who CHALLENGE each other.
 > `plugins/exodia/scripts/smart/ledger.sh count` — must match total eliminations.
 >
 > Report: count per category. Goal: all zeros + ledger complete.
-> MESSAGE smart-verify-challenger with your counts.
+> Use SendMessage (recipient: "smart-verify-challenger") with your counts.
 
 ## smart-verify-challenger
 
@@ -62,4 +68,5 @@ Shut down Phase 1 teammates. Spawn 4 verifiers who CHALLENGE each other.
 >
 > Report: confirmed claims, challenged claims with evidence.
 
-**Lead instruction:** When challenger has finished challenging, synthesize results for Gate 2.
+**Lead instruction:** When challenger has finished challenging (SendMessage traffic stops),
+synthesize results via TaskList for Gate 2.

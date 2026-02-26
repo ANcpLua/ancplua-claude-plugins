@@ -1,7 +1,12 @@
 # Phase 0: Audit — Teammate Prompt Templates
 
-Spawn 4 teammates. Each scans the full scope but through their lens.
-They MESSAGE each other to challenge findings before finalizing.
+Spawn 4 teammates via Task tool with `team_name="hades-cleanup"`. Each scans the full scope but through their lens.
+They use SendMessage to challenge findings before finalizing.
+
+**Teammate context (include in every spawn prompt):**
+You are a teammate in the `hades-cleanup` team. Use SendMessage to communicate with other teammates and the lead.
+Use TaskCreate to create tasks in the shared task list. Use TaskUpdate to claim and complete tasks.
+When you receive a SendMessage with type `shutdown_request` from the lead, approve it with SendMessage type: `shutdown_response`.
 
 **Pass Smart ID to all auditors:** Include `SMART_ID=[value]` in each teammate prompt.
 
@@ -19,11 +24,11 @@ They MESSAGE each other to challenge findings before finalizing.
 >
 > For each: git blame (why added), is warning valid, is it false positive.
 >
-> MESSAGE smart-audit-deadcode when you find suppressions on potentially dead code.
-> MESSAGE smart-audit-duplication when you find identical suppressions across files.
-> CHALLENGE other auditors: "Is this really needed? I can fix the underlying code."
+> Use SendMessage (recipient: "smart-audit-deadcode") when you find suppressions on potentially dead code.
+> Use SendMessage (recipient: "smart-audit-duplication") when you find identical suppressions across files.
+> Use SendMessage to challenge other auditors: "Is this really needed? I can fix the underlying code."
 >
-> Create tasks in shared list. Verdict per item: FIX_CODE | FALSE_POSITIVE | UPSTREAM_FIX
+> Use TaskCreate to create tasks in the shared list. Verdict per item: FIX_CODE | FALSE_POSITIVE | UPSTREAM_FIX
 
 ## smart-audit-deadcode
 
@@ -37,11 +42,12 @@ They MESSAGE each other to challenge findings before finalizing.
 >
 > Verify ZERO references (grep entire codebase) before marking dead.
 >
-> MESSAGE smart-audit-suppressions when dead code has suppressions (they own the suppression, you own the deletion).
-> MESSAGE smart-audit-duplication when dead code is a duplicate of live code.
-> CHALLENGE other auditors: "Are you sure nothing calls this? I found a reflection reference."
+> Use SendMessage (recipient: "smart-audit-suppressions") when dead code has suppressions
+> (they own the suppression, you own the deletion).
+> Use SendMessage (recipient: "smart-audit-duplication") when dead code is a duplicate of live code.
+> Use SendMessage to challenge other auditors: "Are you sure nothing calls this? I found a reflection reference."
 >
-> Create tasks in shared list with file:line and confidence level.
+> Use TaskCreate to create tasks in the shared list with file:line and confidence level.
 
 ## smart-audit-duplication
 
@@ -53,11 +59,11 @@ They MESSAGE each other to challenge findings before finalizing.
 > Find: copy-pasted code, similar implementations to unify,
 > repeated patterns, local reimplementations of shared library helpers.
 >
-> MESSAGE smart-audit-deadcode when one copy is unused (they handle deletion).
-> MESSAGE smart-audit-imports when duplication exists because of wrong import paths.
-> CHALLENGE other auditors: "These look similar but serve different edge cases — really duplicates?"
+> Use SendMessage (recipient: "smart-audit-deadcode") when one copy is unused (they handle deletion).
+> Use SendMessage (recipient: "smart-audit-imports") when duplication exists because of wrong import paths.
+> Use SendMessage to challenge other auditors: "These look similar but serve different edge cases — really duplicates?"
 >
-> Create tasks in shared list with duplication clusters.
+> Use TaskCreate to create tasks in the shared list with duplication clusters.
 
 ## smart-audit-imports
 
@@ -70,10 +76,11 @@ They MESSAGE each other to challenge findings before finalizing.
 > overly broad imports (import \* when only one symbol used),
 > missing imports that cause runtime failures, deprecated package refs.
 >
-> MESSAGE smart-audit-deadcode when imports point to dead modules.
-> MESSAGE smart-audit-duplication when import issues cause local reimplementation.
-> CHALLENGE other auditors: "This import looks unused but it's a side-effect import — don't remove."
+> Use SendMessage (recipient: "smart-audit-deadcode") when imports point to dead modules.
+> Use SendMessage (recipient: "smart-audit-duplication") when import issues cause local reimplementation.
+> Use SendMessage to challenge other auditors: "This import looks unused but it's a side-effect import — don't remove."
 >
-> Create tasks in shared list with file:line.
+> Use TaskCreate to create tasks in the shared list with file:line.
 
-**Lead instruction:** Wait for all 4 to finish debating. When messaging stops and tasks are created, evaluate Gate 0.
+**Lead instruction:** Wait for all 4 to finish debating. When SendMessage traffic stops
+and tasks are created (check via TaskList), evaluate Gate 0.

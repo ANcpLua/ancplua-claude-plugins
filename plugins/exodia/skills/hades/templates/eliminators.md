@@ -1,7 +1,13 @@
 # Phase 1: Elimination — Teammate Prompt Templates
 
-Shut down all Phase 0 teammates. Spawn 4 new teammates.
-Each claims tasks from the shared list created during Phase 0.
+Shut down all Phase 0 teammates (SendMessage type="shutdown_request" to each, wait for shutdown_responses).
+Spawn 4 new teammates via Task tool with `team_name="hades-cleanup"`.
+Each claims tasks from the shared task list created during Phase 0.
+
+**Teammate context (include in every spawn prompt):**
+You are a teammate in the `hades-cleanup` team. Use SendMessage to communicate with other teammates and the lead.
+Use TaskList to see available tasks. Use TaskUpdate to claim and complete tasks.
+When you receive a SendMessage with type `shutdown_request` from the lead, approve it with SendMessage type: `shutdown_response`.
 
 **File Ownership Protocol (CRITICAL — prevents overwrites):**
 
@@ -18,10 +24,11 @@ Before spawning eliminators, map files to owners:
 5. List ownership explicitly in each eliminator's spawn prompt
 
 Plan approval: mandatory for structural changes (extracting utilities, moving code).
-Optional for trivial fixes (single-line replacements). Teammates send plan to lead,
-wait for approval, then implement.
+Optional for trivial fixes (single-line replacements). Teammates use SendMessage (recipient: lead)
+to send plan, wait for approval via SendMessage, then implement.
 
-Iteration 2+: shutdown, TeamDelete, fresh TeamCreate with remaining violations.
+Iteration 2+: lead shuts down all eliminators (SendMessage type="shutdown_request" to each),
+waits for shutdown_responses, then spawns fresh eliminators targeting remaining violations.
 
 **Every eliminator MUST log deletions to the ledger:**
 
@@ -44,9 +51,9 @@ plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "delete" "<path>" "<re
 > `plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "remove-suppression" "<file:line>" "<reason>" "smart-elim-suppressions"`
 >
 > Build after every 3-5 changes. If build breaks, fix immediately.
-> MESSAGE the lead when blocked on a file owned by another teammate.
-> MESSAGE smart-elim-deadcode if fixing a suppression reveals dead code.
-> Mark tasks complete as you go. Goal: ZERO suppressions.
+> Use SendMessage (recipient: lead) when blocked on a file owned by another teammate.
+> Use SendMessage (recipient: "smart-elim-deadcode") if fixing a suppression reveals dead code.
+> Use TaskUpdate to mark tasks complete as you go. Goal: ZERO suppressions.
 
 ## smart-elim-deadcode
 
@@ -63,8 +70,8 @@ plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "delete" "<path>" "<re
 >
 > Verify zero references one final time before each deletion.
 > Build after every 3-5 deletions. If build breaks, fix immediately.
-> MESSAGE smart-elim-duplication if deletion reveals new duplication.
-> Mark tasks complete as you go.
+> Use SendMessage (recipient: "smart-elim-duplication") if deletion reveals new duplication.
+> Use TaskUpdate to mark tasks complete as you go.
 
 ## smart-elim-duplication
 
@@ -80,8 +87,8 @@ plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "delete" "<path>" "<re
 > `plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "consolidate-dup" "<files>" "<reason>" "smart-elim-duplication"`
 >
 > Build after every consolidation. If build breaks, fix immediately.
-> MESSAGE smart-elim-imports if consolidation changes import structure.
-> Mark tasks complete as you go.
+> Use SendMessage (recipient: "smart-elim-imports") if consolidation changes import structure.
+> Use TaskUpdate to mark tasks complete as you go.
 
 ## smart-elim-imports
 
@@ -97,7 +104,8 @@ plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "delete" "<path>" "<re
 > `plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "fix-import" "<file:line>" "<reason>" "smart-elim-imports"`
 >
 > Build after every batch. If build breaks, fix immediately.
-> MESSAGE the lead when import changes affect files owned by other teammates.
-> Mark tasks complete as you go.
+> Use SendMessage (recipient: lead) when import changes affect files owned by other teammates.
+> Use TaskUpdate to mark tasks complete as you go.
 
-**Lead instruction:** Monitor task completion. Resolve file ownership conflicts. When all tasks done, evaluate Gate 1.
+**Lead instruction:** Monitor task completion via TaskList. Resolve file ownership conflicts
+via SendMessage. When all tasks done, evaluate Gate 1.
