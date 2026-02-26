@@ -31,21 +31,24 @@ allowed-tools: Task, Bash, TodoWrite
 ```text
 REVIEW LEAD (You — Orchestrator)
 │
-├─ Phase 1: RED ATTACK (3 agents parallel)
-│  ├── red-crash-hunter
-│  ├── red-security-attacker
-│  └── red-api-breaker
-│  └── GATE → validate findings
+│  TeamCreate: "red-blue-review"
 │
-├─ Phase 2: BLUE DEFENSE (1 agent per MODULE — grouped findings)
-│  └── blue-defender-N (one per affected module, all its findings)
-│  └── GATE → fixes collected
+├─ Phase 1: RED ATTACK (3 teammates, coordinate via SendMessage)
+│  ├── red-crash-hunter ──────┐
+│  ├── red-security-attacker ─┼── SendMessage: share attack vectors
+│  └── red-api-breaker ───────┘   TaskCreate: each finding → shared list
+│  └── GATE → validate findings, shutdown_request → Red
 │
-├─ Phase 3: RED RE-ATTACK (1 agent per module's fixes)
-│  └── red-reattacker-N (one per BLUE module)
-│  └── VERDICT: DEFEATED / BYPASSED / INCOMPLETE
+├─ Phase 2: BLUE DEFENSE (1 teammate per MODULE)
+│  └── blue-defender-N ── TaskUpdate: claim findings, SendMessage: cross-module fixes
+│  └── GATE → fixes collected, shutdown_request → Blue
 │
-└─ RELEASE: SAFE / BLOCK
+├─ Phase 3: RED RE-ATTACK (1 teammate per module)
+│  └── red-reattacker-N ── TaskUpdate: DEFEATED/BYPASSED/INCOMPLETE
+│  └── shutdown_request → re-attackers
+│
+├─ RELEASE: SAFE / BLOCK
+└─ TeamDelete
 ```
 
 ---
@@ -58,13 +61,45 @@ Inject findings into Red Team prompts as attack surface hints. Do NOT give to Bl
 
 **THIS IS AN ADVERSARIAL EXERCISE.**
 
-1. Launch 3 Red Team agents in ONE message
-2. Validate findings (reject false positives), then GROUP by target module/file
-3. Launch 1 Blue defender per MODULE (with all that module's findings)
-4. Launch 1 Red re-attacker per Blue module
-5. Score and generate release recommendation
+**STEP 0 — Create Team:**
+TeamCreate: team_name = "red-blue-review", description = "Adversarial review: $0"
 
-**YOUR NEXT MESSAGE: 3 Red Team Task tool calls. NOTHING ELSE.**
+**STEP 1 — Red Attack Phase:**
+Spawn 3 Red attackers as teammates (ALL in ONE message):
+Task tool: team_name="red-blue-review", name="red-crash-hunter", subagent_type="deep-debugger", model="opus"
+Task tool: team_name="red-blue-review", name="red-security-attacker", subagent_type="general-purpose", model="opus"
+Task tool: team_name="red-blue-review", name="red-api-breaker", subagent_type="general-purpose", model="opus"
+
+Red attackers use SendMessage to coordinate: "I found SQL injection in handler X, check for XSS too"
+Red attackers use TaskCreate for each finding (shared task list).
+
+**STEP 2 — Validate & Transition:**
+When Red converges (idle, no new messages): validate findings, reject false positives.
+SendMessage type="shutdown_request" to all Red attackers.
+Group validated findings by module.
+
+**STEP 3 — Blue Defense Phase:**
+Spawn 1 Blue defender per module as teammates:
+Task tool: team_name="red-blue-review", name="blue-defender-[module]", subagent_type="general-purpose", model="opus"
+
+Blue defenders claim findings from shared task list via TaskUpdate.
+Blue defenders use SendMessage to coordinate fixes across modules.
+
+**STEP 4 — Validate & Transition:**
+SendMessage type="shutdown_request" to all Blue defenders.
+
+**STEP 5 — Red Re-Attack Phase:**
+Spawn 1 Red re-attacker per module:
+Task tool: team_name="red-blue-review", name="red-reattacker-[module]", subagent_type="deep-debugger"
+
+Re-attackers use TaskUpdate to mark findings as DEFEATED/BYPASSED/INCOMPLETE.
+
+**STEP 6 — Score & Cleanup:**
+Score results, generate release recommendation.
+SendMessage type="shutdown_request" to all re-attackers.
+TeamDelete.
+
+**YOUR NEXT MESSAGE: TeamCreate + 3 Red Team Task tool calls. NOTHING ELSE.**
 
 </CRITICAL_EXECUTION_REQUIREMENT>
 
@@ -76,24 +111,36 @@ Launch ALL 3 in ONE message.
 
 ### red-crash-hunter
 
-> subagent: deep-debugger | model: opus
+> teammate: red-crash-hunter | team: red-blue-review | subagent_type: deep-debugger | model: opus
 > RED TEAM — Crash Hunter. TARGET: $0 | SCOPE: $1
+> You are a teammate in the red-blue-review team.
+> Use SendMessage to coordinate with other Red team members (red-security-attacker, red-api-breaker).
+> Use TaskCreate for each finding you discover.
+> When you receive a shutdown_request, approve it.
 > Find ways to CRASH the code: Null refs, invalid input, resource exhaustion, race conditions, overflow.
 > Format: CRASH-001: [title] | Severity | Reproduction | Location
 > Real bugs only — false alarms cost -5 points.
 
 ### red-security-attacker
 
-> subagent: feature-dev:code-reviewer | model: opus
+> teammate: red-security-attacker | team: red-blue-review | subagent_type: general-purpose | model: opus
 > RED TEAM — Security Attacker. TARGET: $0 | SCOPE: $1
+> You are a teammate in the red-blue-review team.
+> Use SendMessage to coordinate with other Red team members (red-crash-hunter, red-api-breaker).
+> Use TaskCreate for each finding you discover.
+> When you receive a shutdown_request, approve it.
 > Find SECURITY vulnerabilities: Injection, path traversal, data exposure, unsafe deserialization, SSRF/CSRF.
 > Format: SEC-001: [title] | Severity | Attack Input | Exploitation | Impact
 > Proof of concept required. Theoretical issues = 0 points.
 
 ### red-api-breaker
 
-> subagent: feature-dev:code-explorer
+> teammate: red-api-breaker | team: red-blue-review | subagent_type: general-purpose | model: opus
 > RED TEAM — API Breaker. TARGET: $0 | SCOPE: $1
+> You are a teammate in the red-blue-review team.
+> Use SendMessage to coordinate with other Red team members (red-crash-hunter, red-security-attacker).
+> Use TaskCreate for each finding you discover.
+> When you receive a shutdown_request, approve it.
 > Find ways to BREAK the API contract: Behavior != docs, edge cases, missing validation, breaking changes.
 > Format: BREAK-001: [title] | Severity | Documented | Actual | Proof
 > Real contract violations only, not style preferences.
@@ -108,9 +155,13 @@ Launch ONE defender per MODULE (not per finding):
 
 ### blue-defender-N (one per module)
 
-> subagent: feature-dev:code-architect | model: opus
+> teammate: blue-defender-[module] | team: red-blue-review | subagent_type: general-purpose | model: opus
 > BLUE TEAM — Defend MODULE: [MODULE_PATH]
 > FINDINGS IN THIS MODULE: [PASTE ALL RED FINDINGS FOR THIS MODULE]
+> You are a teammate in the red-blue-review team.
+> Claim findings from the shared task list using TaskUpdate (set status to "in_progress").
+> Use SendMessage to coordinate with other Blue defenders when fixes span modules.
+> When you receive a shutdown_request, approve it.
 >
 > **FILE OWNERSHIP:** You own ONLY files in [MODULE_PATH]. Do not modify files outside your module.
 >
@@ -132,9 +183,13 @@ Launch ONE re-attacker per Blue module (mirrors Phase 2 grouping):
 
 ### red-reattacker-N (one per module)
 
-> subagent: deep-debugger
+> teammate: red-reattacker-[module] | team: red-blue-review | subagent_type: deep-debugger | model: opus
 > RED RE-ATTACK — Try to bypass ALL fixes in MODULE: [MODULE_PATH]
 > BLUE FIXES: [PASTE ALL BLUE FIXES FOR THIS MODULE]
+> You are a teammate in the red-blue-review team.
+> Use TaskUpdate to mark each finding as DEFEATED/BYPASSED/INCOMPLETE.
+> Use SendMessage to share bypass techniques with other re-attackers.
+> When you receive a shutdown_request, approve it.
 >
 > For EACH fix: VERDICT: **DEFEATED** (Blue +5) | **BYPASSED** (Red +3, Blue -3) | **INCOMPLETE** (list gaps)
 

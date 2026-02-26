@@ -1,8 +1,8 @@
 ---
 description: >-
   Invoke the five-agent council on any complex task. Opus captain decomposes and synthesizes.
-  Researcher and synthesizer run in parallel. Clarity reads their raw output.
-  Haiku janitor flags bloat. Captain removes cuts and delivers.
+  Researcher and synthesizer run in parallel and cross-pollinate via SendMessage.
+  Clarity reads their output and asks follow-ups. Haiku janitor flags bloat. Captain removes cuts and delivers.
 argument-hint: [task description]
 ---
 
@@ -20,20 +20,52 @@ Invoke the council on `[task]`.
 ## How it runs
 
 ```text
-opus-captain receives task
+captain (lead) creates team "council"
   │
-  ├── sonnet-researcher  (parallel) → FINDING/SOURCE/CONFIDENCE/GAPS
-  └── sonnet-synthesizer (parallel) → REASONING/CONCLUSION/CONFIDENCE/BREAKS
+  ├── researcher   (teammate, parallel) ─┐
+  └── synthesizer  (teammate, parallel) ─┤── cross-pollinate via SendMessage
+  │                                       │
+  │   captain waits for convergence       │
+  │                                       │
+  └── clarity (teammate) reads task list + messages researcher/synthesizer
+        → flags GAPS/ASSUMPTIONS/MISALIGNMENT via SendMessage
   │
-  └── sonnet-clarity reads researcher + synthesizer raw output
-        → GAPS/ASSUMPTIONS/MISALIGNMENT/RESEARCHER_SYNTHESIZER_CONFLICT
-  │
-  └── opus-captain reads all three → produces draft answer
+  └── captain reads all messages → produces draft
         │
-        └── haiku-janitor → BLOAT_FLAG + CUTS list
+        └── janitor (teammate) → BLOAT_FLAG + CUTS via SendMessage
               │
-              └── opus-captain removes cuts → final output
+              └── captain removes cuts → final output
+              │
+              └── TeamDelete
 ```
+
+## Orchestration
+
+1. **TeamCreate:** `team_name="council"`, description = "Council: [task summary]"
+2. **Spawn researcher + synthesizer** (both in ONE message, parallel):
+   - `Task: team_name="council", name="researcher", subagent_type="council:sonnet-researcher"`
+   - `Task: team_name="council", name="synthesizer", subagent_type="council:sonnet-synthesizer"`
+   - They cross-pollinate via `SendMessage`: "My sources say X" / "That contradicts my reasoning on Y"
+3. **Wait for convergence** — both go idle, no new messages for sustained period
+4. **Spawn clarity** (researcher + synthesizer stay alive):
+   - `Task: team_name="council", name="clarity", subagent_type="council:sonnet-clarity"`
+   - Clarity reads team message history AND messages researcher/synthesizer for follow-ups
+   - Researcher/synthesizer respond to clarifying questions in real time
+5. **When clarity converges:** shutdown researcher + synthesizer + clarity
+   (`SendMessage type="shutdown_request"` to each)
+6. **Captain synthesizes** from all team messages into draft answer
+7. **Spawn janitor:**
+   - `Task: team_name="council", name="janitor", subagent_type="council:haiku-janitor"`
+   - Janitor sends `BLOAT_FLAG` + `CUTS` via `SendMessage`
+8. **Shutdown janitor** (`SendMessage type="shutdown_request"`)
+9. **Captain applies cuts** → final output
+10. **TeamDelete** — clean up team
+
+**Why researcher + synthesizer stay alive through clarity:**
+Clarity's value comes from asking follow-up questions — "Your source X contradicts synthesizer's
+assumption Y, can you clarify?" — which requires live teammates. Shutting them down early
+saves tokens but eliminates the reactive collaboration that justifies using Teams over
+fire-and-forget subagents.
 
 ## Usage
 
@@ -55,10 +87,11 @@ opus-captain receives task
 | Agent | Model | Relative cost |
 |-------|-------|---------------|
 | opus-captain | opus-4.6 | High (runs three times: dispatch + clarity read + synthesis) |
-| sonnet-researcher | sonnet-4.6 | Medium |
-| sonnet-synthesizer | sonnet-4.6 | Medium |
-| sonnet-clarity | sonnet-4.6 | Low — reads output, no tool calls |
+| sonnet-researcher | sonnet-4.6 | Medium-High (stays alive through clarity phase for follow-ups) |
+| sonnet-synthesizer | sonnet-4.6 | Medium-High (stays alive through clarity phase for follow-ups) |
+| sonnet-clarity | sonnet-4.6 | Medium — reads output, asks follow-ups, receives responses |
 | haiku-janitor | haiku-4.5 | Minimal |
 
-Total: ~2.5x a single Opus pass. Researcher and synthesizer run in parallel,
-clarity and haiku are lightweight sequential passes on their output.
+Total: ~3x a single Opus pass. Higher than fire-and-forget (~2.5x) because researcher
+and synthesizer stay alive through the clarity phase. The cost buys reactive
+cross-pollination and real follow-up conversations instead of one-shot reads.

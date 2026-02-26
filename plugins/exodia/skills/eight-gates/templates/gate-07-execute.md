@@ -10,44 +10,44 @@
 - Gate 6 checkpoint exists (`checkpoint.sh verify 6`)
 - Work queue cached in artifacts with ownership map and lane structure
 
-## Execution Modes
+## Execution Mode
 
-### Mode A: Task Tool (S/M objectives — default)
+Create a team for the execute phase. Lane workers are teammates who coordinate
+via messaging and shared task list. Lead never implements — only assigns tasks,
+evaluates gates, and manages team lifecycle.
 
-Use the Task tool with subagents. One Task call per lane item. All items in a
-lane launch in ONE message (parallel).
+**Setup:**
 
-### Mode B: Agent Teams (L/XL objectives)
-
-Use TeamCreate + delegate mode for complex, multi-round execution.
-Teammates coordinate via messaging. Lead never implements — only assigns
-tasks and evaluates gates.
-
-```text
-Use Mode B when:
-- XL estimate (multi-round expected)
-- Work queue has >8 items
-- Lane depth >3 (complex dependency chains)
-- Items require coordination (shared interfaces, data models)
-```
+1. `TeamCreate`: team_name = `"eight-gates-execute"`, description = `"Gate 7 execution lanes"`
+2. For each lane: create tasks via `TaskCreate` (from Gate 6 work queue)
+3. Spawn lane workers as teammates: `Task` tool with `team_name="eight-gates-execute"`
+4. Workers claim tasks via `TaskUpdate`, message blockers via `SendMessage`
+5. After each lane completes: evaluate mini-gate, then spawn next lane's workers
+6. After all lanes: `SendMessage type="shutdown_request"` to all, then `TeamDelete`
 
 ## Lane Execution (LAW 3)
 
 1. Load work queue and dependency graph from Gate 6 artifacts
 2. Group items with no dependencies → Lane 1 (all parallel)
-3. Launch ALL Lane 1 agents in ONE message
-4. When Lane 1 completes → evaluate mini-gate → launch Lane 2
-5. Repeat until all lanes complete
+3. Create tasks for Lane 1 via `TaskCreate` on the shared task list
+4. Spawn ALL Lane 1 teammates in ONE message (`Task` with `team_name="eight-gates-execute"`)
+5. Workers claim tasks via `TaskUpdate`, coordinate via `SendMessage`
+6. When Lane 1 completes → evaluate mini-gate → spawn Lane 2 teammates
+7. Repeat until all lanes complete
 
 ### Lane Worker Prompt
 
-> subagent: general-purpose
->
-> You are **lane-worker-[N]**.
+Spawn each lane worker via `Task` with `team_name="eight-gates-execute"`:
+
+> You are **lane-worker-[N]**, a teammate in the `eight-gates-execute` team.
 > SESSION: $SESSION_ID | LANE: [lane_number]
 >
-> YOUR WORK ITEMS:
-> [ordered list of items from Gate 6 work queue with descriptions]
+> TEAM COORDINATION:
+>
+> - Use `TaskUpdate` to claim tasks from the shared task list before starting work
+> - Use `SendMessage` to report blockers or completed items to the lead
+> - Use `SendMessage` to coordinate with other teammates if you need files they own
+> - When you receive a `shutdown_request`, approve it
 >
 > YOUR FILES (exclusive ownership — only you touch these):
 > [list from Gate 6 ownership map]
@@ -58,16 +58,16 @@ Use Mode B when:
 > 2. ONLY touch files in your ownership list
 > 3. After each item: run `[build command]` and `[test command]`
 > 4. If build/test fails: fix it before moving to next item
-> 5. If you can't fix it: report the blocker, move to next item
+> 5. If you can't fix it: report the blocker via `SendMessage`, move to next item
 >
 > CONTEXT FROM EARLIER GATES:
 > [Lead: inject relevant content from artifacts here.
 > Use `session-state.sh artifact get "conventions"` for Gate 2 context.
 > Filter Gate 3 findings to only those matching this worker's files.
 > Include Gate 5 reflection notes for those findings.
-> Subagents have NO conversation history — inject everything.]
+> Teammates have NO conversation history — inject everything.]
 >
-> OUTPUT (per item):
+> OUTPUT (per item — report via `SendMessage` to lead):
 >
 > ```text
 > ITEM: [description]
@@ -137,10 +137,10 @@ plugins/exodia/scripts/smart/checkpoint.sh list | grep "lane-"
 
 ## Collision Avoidance
 
-- File ownership from Gate 6 is absolute: one agent per file
-- If a work item needs files owned by another agent → flag as dependency, defer to later lane
-- If two items unexpectedly need the same file → lead reassigns one to the file owner's agent
-- Agents must NOT touch files outside their ownership list
+- File ownership from Gate 6 is absolute: one teammate per file
+- If a work item needs files owned by another teammate → message the file owner via `SendMessage` to coordinate
+- If two items unexpectedly need the same file → lead reassigns one to the file owner's teammate
+- Teammates must NOT touch files outside their ownership list
 
 ## Output Schema
 
