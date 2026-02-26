@@ -6,6 +6,12 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **`exodia/skills/hades`**: Migrated from vague Teams references to explicit Teams API usage. SKILL.md now uses `TeamCreate`, `TeamDelete`, `SendMessage` (with type shutdown_request/shutdown_response), `TaskCreate`, `TaskList`, `TaskUpdate` with explicit parameters. Removed fallback subagent path and duplicate STEP -1 block. All 4 teammate templates (auditors, eliminators, verifiers, goggles) updated: vague `MESSAGE` replaced with `SendMessage (recipient: "...")`, vague `Create tasks in shared list` replaced with `TaskCreate`/`TaskUpdate`, team context preamble and shutdown_response protocol added to each
+- **`exodia`**: Bumped 2.0.0 → 2.1.0
+- **`exodia/skills/hades` allowed-tools**: Added `TeamCreate`, `TeamDelete`, `TaskCreate`, `TaskList`, `TaskUpdate`, `SendMessage` to frontmatter
+
 ### Removed
 
 - **`council/skills/invoke`**: Deleted redundant skill — `SlashCommand` tool (Claude Code 1.0.124+) already makes `/council` command both user-invokable and model-invokable programmatically. Merged cost profile, when-to-use criteria, and flow diagram into the command

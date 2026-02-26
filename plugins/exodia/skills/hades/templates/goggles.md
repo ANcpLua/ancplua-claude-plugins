@@ -12,8 +12,13 @@ frontend-design (taste) → ui-ux-pro-max (spec) → web-design-guidelines (comp
 | Spec | Mid | "Does it meet the bar?" | Design system violations |
 | Compliance | Ground | "Did they build it correctly?" | file:line violation report |
 
-Spawn all 3 goggles teammates in Phase 0 alongside the standard auditors.
+Spawn all 3 goggles teammates in Phase 0 via Task tool with `team_name="hades-cleanup"`, alongside the standard auditors.
 Their findings feed into Phase 1 elimination as design-violation tasks.
+
+**Teammate context (include in every spawn prompt):**
+You are a teammate in the `hades-cleanup` team. Use SendMessage to communicate with other teammates and the lead.
+Use TaskCreate to create tasks in the shared task list. Use TaskUpdate to claim and complete tasks.
+When you receive a SendMessage with type `shutdown_request` from the lead, approve it with SendMessage type: `shutdown_response`.
 
 **Pass Smart ID to all goggles teammates:** Include `SMART_ID=[value]` in each teammate prompt.
 
@@ -60,12 +65,12 @@ Their findings feed into Phase 1 elimination as design-violation tasks.
 > WARNING = partial direction but with generic fallbacks.
 > NOTE = minor taste improvements.
 >
-> MESSAGE smart-goggles-spec when you find aesthetic choices that conflict with
+> Use SendMessage (recipient: "smart-goggles-spec") when you find aesthetic choices that conflict with
 > measurable spec values (e.g., "distinctive font" that fails contrast).
-> MESSAGE smart-goggles-compliance when you find taste violations that are also
+> Use SendMessage (recipient: "smart-goggles-compliance") when you find taste violations that are also
 > code-level anti-patterns.
 >
-> Create tasks in shared list. Verdict per item: REDESIGN | REFINE | ACCEPTABLE
+> Use TaskCreate to create tasks in the shared list. Verdict per item: REDESIGN | REFINE | ACCEPTABLE
 
 ## smart-goggles-spec
 
@@ -129,11 +134,11 @@ Their findings feed into Phase 1 elimination as design-violation tasks.
 > For each violation: file:line, priority level (P1-P7), specific measurement
 > that fails, required value.
 >
-> MESSAGE smart-goggles-taste when spec violations undermine the aesthetic direction.
-> MESSAGE smart-goggles-compliance when spec violations overlap with implementation
+> Use SendMessage (recipient: "smart-goggles-taste") when spec violations undermine the aesthetic direction.
+> Use SendMessage (recipient: "smart-goggles-compliance") when spec violations overlap with implementation
 > anti-patterns.
 >
-> Create tasks in shared list. Tag each with priority level.
+> Use TaskCreate to create tasks in the shared list. Tag each with priority level.
 
 ## smart-goggles-compliance
 
@@ -182,10 +187,10 @@ Their findings feed into Phase 1 elimination as design-violation tasks.
 > [NOTE]    file:line — [issue] → [fix]
 > ```
 >
-> MESSAGE smart-goggles-taste when compliance issues reveal deeper design problems.
-> MESSAGE smart-goggles-spec when implementation violations also fail spec measurements.
+> Use SendMessage (recipient: "smart-goggles-taste") when compliance issues reveal deeper design problems.
+> Use SendMessage (recipient: "smart-goggles-spec") when implementation violations also fail spec measurements.
 >
-> Create tasks in shared list with file:line and severity.
+> Use TaskCreate to create tasks in the shared list with file:line and severity.
 
 ---
 

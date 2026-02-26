@@ -2,7 +2,7 @@
 name: hades
 description: "IF cleanup/elimination needed THEN use this. IF zero suppressions THEN this. IF dead code THEN this. IF duplication THEN this. IF frontend design quality audit THEN use this with --goggles. Smart-Hades: every session gets a Smart ID, deletion permit, and audit ledger. Team lead skill — spawns 4 debate teammates per phase (+3 goggles teammates when equipped). Ignores public API, semver, changelog. Pure functional destruction. Idempotent: same input, same output. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1."
 argument-hint: "[scope] [focus] [intensity] [--goggles]"
-allowed-tools: Task, Bash, TodoWrite
+allowed-tools: Task, Bash, TodoWrite, TeamCreate, TeamDelete, TaskCreate, TaskList, TaskUpdate, SendMessage
 hooks:
   PreToolUse:
     - matcher: "Edit|Write"
@@ -288,21 +288,80 @@ fi
 If `$3 = --goggles` OR scope contains frontend files → equip goggles automatically.
 Hades is smart enough to know when he needs his glasses.
 
-**STEPS 1-8 — Team Execution:**
+**STEP 1 — Create Team:**
 
-1. Create agent team: `Create an agent team for codebase cleanup`
-2. Enter delegate mode (Shift+Tab) — you coordinate, never implement
-3. Spawn Phase 0:
-   - 4 auditors from [templates/auditors.md](templates/auditors.md)
-   - If GOGGLES: +3 goggles teammates from [templates/goggles.md](templates/goggles.md) (all Opus 4.6)
-   - Require plan approval before they start
-4. Wait for debate to converge (both auditors AND goggles), evaluate GATE 0
-5. Shut down Phase 0 teammates, spawn Phase 1 (4 eliminators from [templates/eliminators.md](templates/eliminators.md))
-   - Goggles findings become elimination tasks alongside standard findings
-6. Wait for elimination, evaluate GATE 1
-7. Shut down Phase 1 teammates, spawn Phase 2 (4 verifiers from [templates/verifiers.md](templates/verifiers.md))
-   - smart-verify-grep also checks goggles violations were resolved
-8. If GATE 2 = ITERATE, repeat Phase 1. If COMPLETE, clean up team.
+```text
+TeamCreate: team_name = "hades-cleanup", description = "Hades cleanup: [scope]"
+```
+
+You are the team lead. You orchestrate — you NEVER implement. Teammates do all code work.
+
+**STEP 2 — Create Phase 0 Tasks:**
+
+Use TaskCreate for each audit domain. These go into the shared task list that all teammates can see.
+
+```text
+TaskCreate: team_name = "hades-cleanup", title = "Audit suppressions in [scope]", description = "..."
+TaskCreate: team_name = "hades-cleanup", title = "Audit dead code in [scope]", description = "..."
+TaskCreate: team_name = "hades-cleanup", title = "Audit duplication in [scope]", description = "..."
+TaskCreate: team_name = "hades-cleanup", title = "Audit imports in [scope]", description = "..."
+```
+
+If GOGGLES equipped, also create goggles tasks (taste, spec, compliance).
+
+**STEP 3 — Spawn Phase 0 Teammates (ALL in ONE message):**
+
+Use Task tool with `team_name="hades-cleanup"` for each. Prompts from [templates/auditors.md](templates/auditors.md):
+
+```text
+Task: name="smart-audit-suppressions", team_name="hades-cleanup", subagent_type="general-purpose", model="opus"
+Task: name="smart-audit-deadcode", team_name="hades-cleanup", subagent_type="general-purpose", model="opus"
+Task: name="smart-audit-duplication", team_name="hades-cleanup", subagent_type="general-purpose", model="opus"
+Task: name="smart-audit-imports", team_name="hades-cleanup", subagent_type="general-purpose", model="opus"
+```
+
+If GOGGLES: +3 goggles teammates from [templates/goggles.md](templates/goggles.md) (all Opus 4.6, same team_name).
+
+Teammates use SendMessage to debate findings with each other.
+Teammates use TaskCreate/TaskUpdate for the shared task list.
+Messages are automatically delivered — do not poll.
+
+**STEP 4 — Evaluate GATE 0:**
+
+When debate converges (teammates go idle with no new messages), evaluate Gate 0.
+Use TaskList to review completed audit tasks and findings.
+
+**STEP 5 — Phase Transition (Phase 0 -> Phase 1):**
+
+Shut down each Phase 0 teammate:
+
+```text
+SendMessage: type="shutdown_request", recipient="smart-audit-suppressions"
+SendMessage: type="shutdown_request", recipient="smart-audit-deadcode"
+SendMessage: type="shutdown_request", recipient="smart-audit-duplication"
+SendMessage: type="shutdown_request", recipient="smart-audit-imports"
+(+ goggles teammates if equipped)
+```
+
+Wait for all `shutdown_response` messages. Then spawn Phase 1 eliminators
+(same pattern: Task with team_name="hades-cleanup", 4 teammates from [templates/eliminators.md](templates/eliminators.md)).
+Goggles findings become elimination tasks alongside standard findings.
+
+**STEP 6 — Evaluate GATE 1:**
+
+When all elimination tasks are complete (check via TaskList), evaluate Gate 1.
+
+**STEP 7 — Phase Transition (Phase 1 -> Phase 2):**
+
+Shut down Phase 1 teammates (SendMessage type="shutdown_request" to each).
+Wait for all shutdown_responses. Spawn Phase 2 verifiers
+(4 teammates from [templates/verifiers.md](templates/verifiers.md), same team_name).
+smart-verify-grep also checks goggles violations were resolved.
+
+**STEP 8 — Evaluate GATE 2:**
+
+If COMPLETE -> proceed to cleanup.
+If ITERATE -> shut down verifiers, respawn eliminators targeting remaining items.
 
 **STEP 9 — Cleanup (after COMPLETE):**
 
@@ -314,17 +373,14 @@ plugins/exodia/scripts/smart/permit.sh revoke
 plugins/exodia/scripts/smart/ledger.sh count
 ```
 
-**Fallback:** If Agent Teams unavailable, use Task tool with
-`subagent_type: general-purpose`, 4 agents per phase.
+Shut down all remaining teammates (SendMessage type="shutdown_request").
+Wait for all shutdown_responses, then delete the team:
 
-**STEP -1 — Inherit Prior Findings:**
-If `<EXODIA_FINDINGS_CONTEXT>` tag exists in session context, read `.eight-gates/artifacts/findings.json`.
-Filter findings where `category` matches focus (`DEAD`, `DUP`, `SUPP`, `IMP`, or all).
-If intensity is `full` (not scan-only) AND matching findings exist: skip Phase 0 audit entirely,
-use inherited findings as Phase 1 elimination input. Log: "Inherited [n] findings from prior scan."
-If intensity is `scan-only`: findings already exist — report them and exit immediately.
+```text
+TeamDelete: team_name = "hades-cleanup"
+```
 
-**YOUR NEXT ACTION: Run Step -1 check, then Step 0 (Smart Init), then create team and spawn Phase 0.**
+**YOUR NEXT ACTION: Run Step -1 check, then Step 0 (Smart Init), then Step 1 (TeamCreate) and spawn Phase 0.**
 
 </CRITICAL_EXECUTION_REQUIREMENT>
 
@@ -420,10 +476,11 @@ SMART_ID: [value]
 
 ## CLEANUP
 
-1. Shut down all remaining teammates
-2. Revoke deletion permit: `plugins/exodia/scripts/smart/permit.sh revoke`
-3. `Clean up the team`
-4. Present final report
+1. Shut down all remaining teammates: SendMessage type="shutdown_request" to each
+2. Wait for all shutdown_responses
+3. Revoke deletion permit: `plugins/exodia/scripts/smart/permit.sh revoke`
+4. Delete team: `TeamDelete: team_name = "hades-cleanup"`
+5. Present final report
 
 ---
 
