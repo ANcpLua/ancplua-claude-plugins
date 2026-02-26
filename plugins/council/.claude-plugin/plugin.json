@@ -1,7 +1,7 @@
 {
   "name": "council",
-  "version": "1.1.0",
-  "description": "Five-agent council: Opus captain decomposes and synthesizes, researcher + synthesizer run in parallel, clarity checks their output, Haiku janitor flags bloat. Each agent identity is inlined in its agent file — passive context, zero activation cost.",
+  "version": "1.2.0",
+  "description": "Five-agent council using Teams API: Opus captain orchestrates, researcher + synthesizer cross-pollinate via SendMessage, clarity asks live follow-ups, Haiku janitor flags bloat. Reactive collaboration instead of fire-and-forget subagents.",
   "author": {
     "name": "ANcpLua",
     "email": ""

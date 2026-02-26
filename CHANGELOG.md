@@ -8,9 +8,12 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
-- **`exodia/skills/hades`**: Migrated from vague Teams references to explicit Teams API usage. SKILL.md now uses `TeamCreate`, `TeamDelete`, `SendMessage` (with type shutdown_request/shutdown_response), `TaskCreate`, `TaskList`, `TaskUpdate` with explicit parameters. Removed fallback subagent path and duplicate STEP -1 block. All 4 teammate templates (auditors, eliminators, verifiers, goggles) updated: vague `MESSAGE` replaced with `SendMessage (recipient: "...")`, vague `Create tasks in shared list` replaced with `TaskCreate`/`TaskUpdate`, team context preamble and shutdown_response protocol added to each
-- **`exodia`**: Bumped 2.0.0 → 2.1.0
+- **`exodia/skills/hades`**: Migrated from vague Teams references to explicit Teams API. SKILL.md now uses `TeamCreate`, `TeamDelete`, `SendMessage` (shutdown_request/shutdown_response), `TaskCreate`/`TaskList`/`TaskUpdate` with explicit parameters. Removed fallback subagent path and duplicate STEP -1 block. All 4 teammate templates (auditors, eliminators, verifiers, goggles) updated: vague `MESSAGE` → `SendMessage (recipient: "...")`, vague task list → `TaskCreate`/`TaskUpdate`, team context preamble and shutdown protocol added
+- **`exodia/eight-gates` Gate 7 EXECUTE**: Removed dual Mode A (Task subagents) / Mode B (Agent Teams) pattern. Teams API is now the single execution mode. Lane workers coordinate via `SendMessage` and claim work via `TaskCreate`/`TaskUpdate`. Collision avoidance uses teammate messaging
 - **`exodia/skills/hades` allowed-tools**: Added `TeamCreate`, `TeamDelete`, `TaskCreate`, `TaskList`, `TaskUpdate`, `SendMessage` to frontmatter
+- **`exodia`**: Bumped 2.0.0 → 2.1.0
+- **`exodia/red-blue-review`**: Migrated from fire-and-forget subagents to Teams API. Red attackers coordinate attacks via `SendMessage`, Blue defenders claim findings from shared `TaskCreate`/`TaskUpdate`, re-attackers mark verdicts. Full TeamCreate→shutdown→TeamDelete lifecycle across 3 adversarial phases
+- **`council`**: Bumped 1.1.0 → 1.2.0. Migrated from subagents to Teams API. Researcher + synthesizer cross-pollinate via `SendMessage`. Clarity asks live follow-ups instead of one-shot read. 10-step orchestration flow. Cost profile ~2.5x → ~3x
 
 ### Removed
 

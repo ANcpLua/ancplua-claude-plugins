@@ -214,7 +214,7 @@ Token costs tracked via OTel, not here.
 **FALLBACK MODES:**
 
 - Smart scripts unavailable → inline checkpointing via TodoWrite
-- Agent Teams unavailable → Task tool with `subagent_type: general-purpose`
+- Teams API unavailable → fall back to `Task` tool without `team_name` (no shared task list or messaging)
 - Trivial scope (S estimate) → compress Gates 3-5 into minimal checkpoints
   (mark as "bypassed-trivial" with rationale), then proceed to Gate 6-7
 
