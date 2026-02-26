@@ -3,23 +3,37 @@ description: >-
   Invoke the five-agent council on any complex task. Opus captain decomposes and synthesizes.
   Researcher and synthesizer run in parallel. Clarity reads their raw output.
   Haiku janitor flags bloat. Captain removes cuts and delivers.
+argument-hint: [task description]
 ---
 
 # /council [task]
 
 Invoke the council on `[task]`.
 
-## What happens
+## When to use
 
-1. `opus-captain` decomposes the task into structured subtasks
-2. Dispatches in parallel:
-   - `sonnet-researcher` — finds evidence, cites sources
-   - `sonnet-synthesizer` — reasons through logic/code/math
-3. `sonnet-clarity` reads researcher + synthesizer raw output — flags gaps,
-   assumptions, and researcher/synthesizer conflicts
-4. `opus-captain` reads all three, surfaces inconsistencies, produces draft
-5. `haiku-janitor` returns BLOAT_FLAG + CUTS list
-6. `opus-captain` removes cuts, delivers final answer
+- Question requires both evidence (research) and reasoning (logic) in parallel
+- Answer needs gap-checking before delivery
+- Task is complex enough that a single pass will miss something
+- You want Opus judgment on top of Sonnet specialist work
+
+## How it runs
+
+```text
+opus-captain receives task
+  │
+  ├── sonnet-researcher  (parallel) → FINDING/SOURCE/CONFIDENCE/GAPS
+  └── sonnet-synthesizer (parallel) → REASONING/CONCLUSION/CONFIDENCE/BREAKS
+  │
+  └── sonnet-clarity reads researcher + synthesizer raw output
+        → GAPS/ASSUMPTIONS/MISALIGNMENT/RESEARCHER_SYNTHESIZER_CONFLICT
+  │
+  └── opus-captain reads all three → produces draft answer
+        │
+        └── haiku-janitor → BLOAT_FLAG + CUTS list
+              │
+              └── opus-captain removes cuts → final output
+```
 
 ## Usage
 
@@ -35,3 +49,16 @@ Invoke the council on `[task]`.
 - Single-file code edits → use feature-dev
 - P0 bugs → use exodia:turbo-fix
 - Cleanup tasks → use exodia:hades
+
+## Cost profile
+
+| Agent | Model | Relative cost |
+|-------|-------|---------------|
+| opus-captain | opus-4.6 | High (runs three times: dispatch + clarity read + synthesis) |
+| sonnet-researcher | sonnet-4.6 | Medium |
+| sonnet-synthesizer | sonnet-4.6 | Medium |
+| sonnet-clarity | sonnet-4.6 | Low — reads output, no tool calls |
+| haiku-janitor | haiku-4.5 | Minimal |
+
+Total: ~2.5x a single Opus pass. Researcher and synthesizer run in parallel,
+clarity and haiku are lightweight sequential passes on their output.

@@ -5,7 +5,7 @@
     "url": "https://github.com/ANcpLua"
   },
   "metadata": {
-    "description": "Claude Code plugin marketplace: 8 plugins, 23 commands, 5 skills, 14 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, and .NET build enforcement."
+    "description": "Claude Code plugin marketplace: 8 plugins, 23 commands, 4 skills, 14 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, and .NET build enforcement."
   },
   "plugins": [
     {
@@ -47,7 +47,7 @@
     {
       "name": "council",
       "description": "Five-agent council: Opus captain decomposes and synthesizes, researcher + synthesizer run in parallel, clarity checks their output, Haiku janitor flags bloat. Each agent identity is inlined in its agent file — passive context, zero activation cost.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "source": "./plugins/council"
     },
     {
