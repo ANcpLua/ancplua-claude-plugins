@@ -1,7 +1,7 @@
 {
   "name": "metacognitive-guard",
   "description": "Cognitive amplification stack: epistemic hooks, competitive review, commit integrity checks, CI verification scripts, and deep-thinking agents.",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "author": {
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"
