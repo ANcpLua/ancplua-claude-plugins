@@ -6,6 +6,10 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **`docs/specs/spec-0002-qyl-claude-code-observability.md`**: Comprehensive spec for building Claude Code session observability into qyl's AI telemetry dashboard. Covers OTLP data flow (native `claude_code.*` metrics + events), DuckDB schema, 5 API endpoints, React hooks, 4 dashboard components, SSE live streaming, and 4-phase implementation plan. Zero-instrumentation approach — uses Claude Code's built-in OTLP telemetry export via 4 env vars
+
 ### Changed
 
 - **`exodia/skills/hades`**: Migrated from vague Teams references to explicit Teams API. SKILL.md now uses `TeamCreate`, `TeamDelete`, `SendMessage` (shutdown_request/shutdown_response), `TaskCreate`/`TaskList`/`TaskUpdate` with explicit parameters. Removed fallback subagent path and duplicate STEP -1 block. All 4 teammate templates (auditors, eliminators, verifiers, goggles) updated: vague `MESSAGE` → `SendMessage (recipient: "...")`, vague task list → `TaskCreate`/`TaskUpdate`, team context preamble and shutdown protocol added

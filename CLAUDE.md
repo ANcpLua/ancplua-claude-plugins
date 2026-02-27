@@ -105,7 +105,7 @@ See `docs/ARCHITECTURE.md` for the complete repository layout, plugin structure,
 
 Key paths:
 
-- Plugins: `plugins/<name>/` — 8 plugins (23 commands, 6 skills, 14 agents)
+- Plugins: `plugins/<name>/` — 8 plugins (23 commands, 4 skills, 14 agents)
 - Rules (auto-loaded): `.claude/rules/`
 - Plugin registry: `.claude-plugin/marketplace.json`
 - Docs: `docs/` (ARCHITECTURE.md, QUICK-REFERENCE.md, WORKFLOWS.md, PLUGINS.md, ENGINEERING-PRINCIPLES.md)
