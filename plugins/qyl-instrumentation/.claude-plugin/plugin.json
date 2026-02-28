@@ -1,0 +1,20 @@
+{
+  "name": "qyl-instrumentation",
+  "version": "2.0.0",
+  "description": "Teams API observability orchestration for qyl: 1 Opus captain pre-reads otelwiki semconv docs, dispatches 4 Sonnet specialists (servicedefaults, collector, genai, platform) via /observe command. Zero runtime web search.",
+  "author": {
+    "name": "ANcpLua",
+    "email": ""
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "qyl",
+    "observability",
+    "opentelemetry",
+    "teams-api",
+    "instrumentation",
+    "genai"
+  ],
+  "commands": "./commands"
+}

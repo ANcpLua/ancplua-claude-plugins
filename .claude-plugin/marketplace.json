@@ -5,7 +5,7 @@
     "url": "https://github.com/ANcpLua"
   },
   "metadata": {
-    "description": "Claude Code plugin marketplace: 8 plugins, 23 commands, 4 skills, 14 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, and .NET build enforcement."
+    "description": "Claude Code plugin marketplace: 9 plugins, 24 commands, 4 skills, 19 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, .NET build enforcement, and compile-time instrumentation."
   },
   "plugins": [
     {
@@ -55,6 +55,12 @@
       "description": "Multi-agent workflow orchestration (9 commands + 2 skills: eight-gates, hades): fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, baryon-mode. Hades, eight-gates, and red-blue-review use Teams API for reactive collaboration.",
       "version": "2.1.0",
       "source": "./plugins/exodia"
+    },
+    {
+      "name": "qyl-instrumentation",
+      "description": "Teams API observability orchestration for qyl: 1 Opus captain + 4 Sonnet specialists. Captain pre-reads otelwiki semconv docs, dispatches servicedefaults, collector, genai, and platform specialists. Zero runtime web search.",
+      "version": "2.0.0",
+      "source": "./plugins/qyl-instrumentation"
     }
   ]
 }

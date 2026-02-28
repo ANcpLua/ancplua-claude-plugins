@@ -9,6 +9,16 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 
 - **`docs/specs/spec-0002-qyl-claude-code-observability.md`**: Comprehensive spec for building Claude Code session observability into qyl's AI telemetry dashboard. Covers OTLP data flow (native `claude_code.*` metrics + events), DuckDB schema, 5 API endpoints, React hooks, 4 dashboard components, SSE live streaming, and 4-phase implementation plan. Zero-instrumentation approach — uses Claude Code's built-in OTLP telemetry export via 4 env vars
+- **`qyl-instrumentation/commands/observe.md`**: Teams API orchestration command — Opus captain pre-reads otelwiki bundled semconv docs, assembles SEMCONV_CONTEXT + SHARED_AWARENESS, spawns 4 Sonnet specialists in parallel, coordinates cross-pollination via SendMessage, synthesizes. Zero runtime web search
+- **`qyl-instrumentation/agents/opus-captain.md`**: Opus captain agent — orchestrates context assembly and team coordination, reads otelwiki docs before any specialist spawns
+- **`qyl-instrumentation/agents/qyl-platform-specialist.md`**: 4th Sonnet specialist covering MCP server, React dashboard, browser OTLP SDK, SSE streaming, and Copilot extensibility
+
+### Changed
+
+- **`qyl-instrumentation`**: Rebuilt from 3 standalone agents (v1.0.0) to Teams API orchestration (v2.0.0). 1 Opus captain + 4 Sonnet specialists. Captain pre-reads otelwiki bundled docs — specialists receive pre-assembled semconv context in spawn prompts instead of web searching at runtime
+- **`qyl-instrumentation` agents**: Removed `WebSearch` and `WebFetch` from all 3 existing specialist tool lists. Added Team Protocol sections documenting SendMessage coordination patterns and SEMCONV_CONTEXT injection
+- **`qyl-instrumentation/agents/otel-genai-architect.md`**: Convention verification now references captain's SEMCONV_CONTEXT instead of WebSearch
+- **`marketplace.json`**: Updated qyl-instrumentation description and version (1.0.0 → 2.0.0), agent count 17 → 19, command count 23 → 24
 
 ### Changed
 
