@@ -128,6 +128,68 @@ src/qyl.copilot/
 └── CopilotToolHandler.cs
 ```
 
+## MCP Tool Pattern
+
+MCP tools wrap collector REST endpoints as AI-callable functions:
+
+```csharp
+[McpServerToolType]
+public static class AgentTools
+{
+    [McpServerTool(Name = "query_spans")]
+    public static async Task<string> QuerySpans(
+        [Description("Service name filter")] string? service,
+        [Description("Time range in minutes")] int minutes = 60)
+    {
+        var spans = await CollectorHelper.GetSpans(
+            service, minutes);
+        return FormatAsMarkdownTable(spans);
+    }
+}
+```
+
+Key: MCP tools return **markdown strings** — AI agents parse tables
+natively. No JSON serialization needed at the MCP boundary.
+
+## SSE Consumption Pattern
+
+The dashboard consumes live telemetry via `EventSource`:
+
+```typescript
+// use-telemetry.ts
+export function useTelemetry() {
+  const [spans, setSpans] = useState<Span[]>([]);
+
+  useEffect(() => {
+    const source = new EventSource('/api/v1/live/spans');
+    source.onmessage = (event) => {
+      const batch: Span[] = JSON.parse(event.data);
+      setSpans(prev => [...batch, ...prev].slice(0, 100));
+    };
+    source.onerror = () => source.close();
+    return () => source.close();
+  }, []);
+
+  return { spans };
+}
+```
+
+Pattern: SSE events arrive as typed arrays. Client keeps last 100 spans.
+Query cache invalidates on new SSE batch.
+
+## End-to-End: New Attribute to AI Agent
+
+Adding a new attribute traverses 8 layers:
+
+1. **TypeSpec** — add field to `core/specs/spans.tsp`
+2. **DDL** — `nuke Generate` produces nullable DuckDB column
+3. **Collector** — `SpanStorageRow.g.cs` gets property, appender writes
+4. **API** — REST endpoints return it automatically (columnar)
+5. **SSE** — live stream includes it in JSON payload
+6. **Dashboard hook** — `useTelemetry()` receives, component renders
+7. **MCP tool** — `query_spans` includes it in markdown table
+8. **AI agent** — "how much did the secretary cost today?"
+
 ## Team Protocol
 
 When spawned via `/qyl-instrumentation:observe`, you receive:

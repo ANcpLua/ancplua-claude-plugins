@@ -153,6 +153,57 @@ Inject this into every specialist's spawn prompt:
 - Enterprise: MCP tool invocations (8pts), inter-agent spans (15pts), auth flows (5pts)
 ```
 
+## Example Run
+
+**Input:** "Add cost tracking to GenAI spans"
+
+**STEP 0 — Captain reads otelwiki:**
+
+Captain finds `gen_ai.usage.input_tokens` and `gen_ai.usage.output_tokens`
+in semconv but no `gen_ai.cost` — cost is a qyl extension, not semconv.
+
+**STEP 3 — Decomposition to 4 specialists:**
+
+| Specialist | Task |
+|------------|------|
+| genai | Compute `gen_ai_cost_usd` from tokens × model price |
+| servicedefaults | Add `[TracedReturn("gen_ai_cost_usd")]` to capture cost |
+| collector | Add `gen_ai_cost_usd` column via TypeSpec |
+| platform | Dashboard cost column, MCP cost query tool |
+
+**STEP 4 — Cross-pollination messages:**
+
+- genai → servicedefaults: "Cost is computed, not an LLM attribute —
+  use `[TracedReturn]` not `[OTel]`"
+- collector → platform: "New `gen_ai_cost_usd` column is `float64`,
+  nullable. Query: `sum(gen_ai_cost_usd) WHERE service_name = ?`"
+
+**STEP 6 — Captain synthesis:**
+
+```text
+Files modified: 6
+  core/specs/spans.tsp         (TypeSpec + cost field)
+  SpanStorageRow.g.cs          (generated, not hand-edited)
+  GenAiInstrumentation.cs      (cost computation logic)
+  AgentTools.cs                (MCP cost query tool)
+  use-telemetry.ts             (dashboard hook)
+  CostColumn.tsx               (new dashboard component)
+
+Convention: gen_ai_cost_usd (qyl extension, not semconv)
+Build: nuke Full — passed
+```
+
+## Synthesis Verification Checklist
+
+Before captain reports task complete:
+
+- [ ] Tag names consistent across generator, storage, dashboard
+- [ ] Semconv names match SEMCONV_CONTEXT (no invented names)
+- [ ] TypeSpec updated if new storage columns added
+- [ ] MCP tools return new data in markdown tables
+- [ ] SSE events include new fields in JSON payload
+- [ ] `nuke Full` passes (compile + test + codegen + verify)
+
 ## Cost profile
 
 | Agent | Model | Cost |

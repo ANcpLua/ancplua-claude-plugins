@@ -37,6 +37,49 @@ You orchestrate the qyl observability team. Your job is context assembly and coo
 | genai | `qyl-instrumentation:otel-genai-architect` | GenAI semconv, agent/LLM tracing |
 | platform | `qyl-instrumentation:qyl-platform-specialist` | MCP server, dashboard, browser SDK |
 
+## SEMCONV_CONTEXT Shape
+
+Compact attribute listing assembled from otelwiki bundled docs:
+
+```text
+GENAI TRACE: gen_ai.system, gen_ai.request.model,
+  gen_ai.response.model, gen_ai.request.max_tokens,
+  gen_ai.request.temperature, gen_ai.request.top_p,
+  gen_ai.usage.input_tokens, gen_ai.usage.output_tokens,
+  gen_ai.response.finish_reasons, gen_ai.operation.name
+
+AGENT: gen_ai.agent.name, gen_ai.agent.description,
+  gen_ai.tool.name, gen_ai.tool.description,
+  gen_ai.tool.call.id
+
+METRICS: gen_ai.client.token.usage (Histogram, {token}),
+  gen_ai.client.operation.duration (Histogram, s)
+
+DEPRECATED (do NOT use):
+  ai.model.id → gen_ai.request.model,
+  ai.usage.tokens → gen_ai.usage.input_tokens + output_tokens
+```
+
+Rule: only include attributes that qyl's generator actually emits. If a
+specialist references an attribute not in SEMCONV_CONTEXT, captain must
+verify it exists in otelwiki docs before approving.
+
+## Spawn Verification Checklist
+
+**Before spawn:**
+
+- [ ] SEMCONV_CONTEXT assembled from otelwiki docs (not from memory)
+- [ ] Freshness verified (VERSION.md < 30 days)
+- [ ] Task decomposed into specialist-appropriate work items
+- [ ] SHARED_AWARENESS block included in each spawn prompt
+
+**After convergence:**
+
+- [ ] Attribute names consistent across all specialists
+- [ ] No deprecated attribute names used
+- [ ] Build verified (`nuke` compiles without errors)
+- [ ] Cross-specialist conflicts resolved
+
 ## Key Rule
 
 You are the ONLY agent that reads otelwiki docs. Specialists receive semconv knowledge

@@ -103,6 +103,62 @@ GET /api/v1/live/spans   # Span-only stream
 
 Bounded channels per client with DropOldest backpressure. Disconnect = unsubscribe.
 
+## End-to-End: TypeSpec to Dashboard
+
+Adding a new attribute (e.g., `gen_ai_cost_usd`) flows through 5 layers:
+
+**Step 1 — TypeSpec schema** (`core/specs/spans.tsp`):
+
+```tsp
+model SpanRow {
+  // ... existing columns
+  gen_ai_cost_usd?: float64;
+}
+```
+
+**Step 2 — Generate** (`nuke Generate`):
+
+```text
+tsp compile → SpanStorageRow.g.cs (C# property)
+            → schema.sql (DuckDB column, nullable)
+            → SpanRow.ts (TypeScript type)
+```
+
+**Step 3 — Collector flat-maps** (`SpanStorageRow` → DuckDB):
+
+The collector computes `gen_ai_cost_usd` from `input_tokens * model_price`
+during OTLP ingestion. `DuckDBAppenderMap<SpanStorageRow>` writes it.
+
+**Step 4 — API exposes** (REST + SSE):
+
+Existing query endpoints return the new column automatically — DuckDB returns
+all columns in `SpanStorageRow`. SSE events include it in JSON payload.
+
+**Step 5 — Dashboard displays** (React hook → component):
+
+```typescript
+// use-telemetry.ts — already receives the field via SSE
+const { spans } = useTelemetry();
+const dailyCost = spans
+  .reduce((sum, s) => sum + (s.gen_ai_cost_usd ?? 0), 0);
+```
+
+**Schema evolution rules:**
+
+- New columns are always nullable (backward compatible)
+- `attributes_json` stores overflow attributes not in the schema
+- Indexed columns: `trace_id`, `span_id`, `service_name`, `start_time`
+
+## Performance Profile
+
+| Operation | Throughput | Notes |
+|-----------|-----------|-------|
+| OTLP ingestion | ~10K spans/sec | gRPC, batched |
+| DuckDB bulk insert | ~5K rows/batch | `DuckDBAppenderMap` |
+| SSE streaming | ~100 clients | bounded channel, DropOldest |
+| Query P95 | <50ms | columnar scan, indexed |
+| Storage per span | ~200 bytes | flat row, no nested JSON |
+
 ## Build System
 
 NUKE is the orchestrator. Key targets:

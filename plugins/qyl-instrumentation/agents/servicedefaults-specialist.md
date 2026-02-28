@@ -71,6 +71,87 @@ All in `ServiceDefaultsSourceGenerator.cs`, each gated by runtime check AND MSBu
 
 Each pipeline: syntactic pre-filter → semantic analysis → model building → code emission.
 
+## The 8-Layer Example
+
+The proactive secretary's notification handler — from annotation to AI query:
+
+**Layer 1 — Developer writes:**
+
+```csharp
+[Traced("secretary")]
+public class NotificationService
+{
+    [AgentTraced(AgentName = "secretary")]
+    public async Task<string> HandleNotification(
+        [OTel("gen_ai.request.model")] string model,
+        [TracedTag] string userId,
+        string message) { ... }
+}
+```
+
+**Layers 2-3 — Generator emits `TracedIntercepts.g.cs`:**
+
+```csharp
+[InterceptsLocation(@"NotificationService.cs", line: 12, column: 9)]
+internal static async Task<string> HandleNotification_Intercept(
+    this NotificationService target,
+    string model, string userId, string message)
+{
+    using var activity = ActivitySources.TracedSource.StartActivity(
+        "secretary.HandleNotification");
+    if (activity is not null)
+    {
+        activity.SetTag("gen_ai.request.model", model);
+        activity.SetTag("userId", userId);
+    }
+    try
+    {
+        var result = await target.HandleNotification(
+            model, userId, message);
+        return result;
+    }
+    catch (Exception ex)
+    {
+        activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+        activity?.RecordException(ex);
+        throw;
+    }
+}
+```
+
+**The 15-second async window:** First child span = quick "hold on" response
+(~200ms). Second child span = LLM processing (2-30s). Parent links both via
+`Activity.Current`. Downstream: collector stores → DuckDB indexes → API
+exposes → dashboard displays → MCP serves to AI.
+
+## Attribute Decision Tree
+
+```text
+Is it a semconv name? (gen_ai.*, db.*, http.*)
+  YES → [OTel("semconv.name")] on property/parameter
+  NO  ↓
+Is it an agent method?
+  YES → [AgentTraced(AgentName = "...")] on method
+  NO  ↓
+General method needing tracing?
+  YES → [Traced("source")] on class or method
+  NO  ↓
+Is it a metric?
+  YES → [Meter] + [Counter/Histogram/Gauge] on static partial
+  NO  → [TracedTag("name")] for custom span attributes
+```
+
+Pitfall: `[TracedTag("gen_ai.request.model")]` creates a custom tag.
+`[OTel("gen_ai.request.model")]` creates a semconv-compliant tag with
+type-safe extraction. Always prefer `[OTel]` for standard names.
+
+## Performance
+
+- **Zero-cost when nobody listens:** `StartActivity()` → `null`, ~1ns
+- **IL overhead per interceptor:** ~80-120 bytes (try/catch + tags)
+- **Compile-time cost:** ~50-200ms per pipeline, incremental
+- **Runtime with listener:** ~2-5us per span (alloc + tags + export)
+
 ## ActivitySources (lazy-initialized)
 
 | Name | Signal | Used by |

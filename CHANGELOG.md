@@ -6,6 +6,10 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **`qyl-instrumentation` (2.0.0 → 2.1.0)**: Competition-ready polish for all 6 agent/command files. Added hero scenario (proactive secretary notification handler), 8-layer trace example, attribute decision tree, performance profile, multi-turn agent trace, GenAI failure modes with 15-second async window, TypeSpec-to-dashboard end-to-end flow, MCP tool pattern, SSE consumption pattern, SEMCONV_CONTEXT shape, spawn/synthesis verification checklists, and example run walkthrough. All files stay under 250 lines
+
 ### Added
 
 - **`docs/specs/spec-0002-qyl-claude-code-observability.md`**: Comprehensive spec for building Claude Code session observability into qyl's AI telemetry dashboard. Covers OTLP data flow (native `claude_code.*` metrics + events), DuckDB schema, 5 API endpoints, React hooks, 4 dashboard components, SSE live streaming, and 4-phase implementation plan. Zero-instrumentation approach — uses Claude Code's built-in OTLP telemetry export via 4 env vars

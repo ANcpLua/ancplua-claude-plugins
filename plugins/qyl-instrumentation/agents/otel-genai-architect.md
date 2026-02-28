@@ -102,6 +102,63 @@ public record ChatRequest(
 The `OTelTagAnalyzer` discovers `[OTel]` attributes and `OTelTagsEmitter` generates
 extension methods that extract tags from annotated types.
 
+## Multi-Turn Agent Trace Example
+
+The secretary answering "What's on my calendar today?" — tool call flow:
+
+```text
+invoke_agent (gen_ai.agent.name=secretary)
+  └── chat (Turn 1, finish_reason=tool_use)
+  │     gen_ai.request.model=gpt-4o
+  │     gen_ai.usage.input_tokens=340
+  │     gen_ai.usage.output_tokens=45
+  └── execute_tool (gen_ai.tool.name=calendar_query)
+  │     gen_ai.tool.call.id=call_abc123
+  └── chat (Turn 2, finish_reason=end_turn)
+        gen_ai.request.model=gpt-4o
+        gen_ai.usage.input_tokens=520
+        gen_ai.usage.output_tokens=180
+```
+
+Key attributes per span:
+
+| Span | Required Attributes |
+|------|---------------------|
+| `invoke_agent` | `gen_ai.agent.name`, `gen_ai.system` |
+| `chat` | `gen_ai.request.model`, `gen_ai.usage.*` |
+| `execute_tool` | `gen_ai.tool.name`, `gen_ai.tool.call.id` |
+
+Parent-child nesting is automatic via `Activity.Current` — no manual linking.
+Each `chat` span is a child of `invoke_agent`. Tool spans nest under the chat
+that triggered them.
+
+## GenAI Failure Mode Instrumentation
+
+| Failure | Detection | Key Attributes |
+|---------|-----------|----------------|
+| Timeout (>15s) | `SetStatus(Error)` | `error.type=timeout` |
+| Rate limit | HTTP 429 on chat span | `error.type=rate_limit` |
+| Context overflow | `finish_reason=length` | `gen_ai.usage.input_tokens` near max |
+| Empty response | Zero output tokens | `gen_ai.usage.output_tokens=0` |
+| Malformed JSON | `JsonException` event | `error.type=JsonException` |
+
+**The 15-second problem:** Teams requires a response within 15 seconds. If the
+LLM takes longer, the handler sends "hold on..." as the first span (~200ms),
+then starts a continuation span for the real LLM call. Both share the same
+`trace_id` — the dashboard correlates them automatically.
+
+**Cost estimation query:**
+
+```sql
+SELECT
+    date_trunc('day', start_time) AS day,
+    sum(input_tokens * 0.0025 / 1000
+      + output_tokens * 0.01 / 1000) AS cost_usd
+FROM spans
+WHERE service_name = 'secretary' AND span_name LIKE 'chat%'
+GROUP BY day ORDER BY day;
+```
+
 ## ActivitySources for GenAI
 
 | Source | Name | Signal |
