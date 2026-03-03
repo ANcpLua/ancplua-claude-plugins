@@ -1,7 +1,7 @@
 {
   "name": "claude-self-obs",
-  "version": "2.0.0",
-  "description": "Self-observability for Claude Code: HTTP hooks capture every tool call and agent lifecycle event into an MCP server. Claude can query its own telemetry in real time.",
+  "version": "3.0.0",
+  "description": "Self-observability for Claude Code: HTTP hooks capture every tool call and agent lifecycle event, posting directly to qyl.collector. Query telemetry via qyl.mcp tools.",
   "author": {
     "name": "ANcpLua",
     "url": "https://github.com/ANcpLua"
@@ -11,11 +11,11 @@
   "keywords": [
     "opentelemetry",
     "observability",
-    "mcp",
     "hooks",
     "claude-code",
     "self-observability",
-    "telemetry"
+    "telemetry",
+    "qyl"
   ],
   "commands": "./commands"
 }

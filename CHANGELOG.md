@@ -6,13 +6,20 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **`docs/specs/spec-0004-mcp-connector-kit.md`**: Comprehensive spec for building an open-source MCP connector framework with identity federation. Includes: reverse-engineered Gmail MCP OAuth architecture (Anthropic's Express/GCP broker pattern), full MCP auth spec summary (OAuth 2.1 + PKCE + Dynamic Client Registration + Streamable HTTP + Resource Indicators), three-layer strategy (npm package → qyl-connector proof-of-concept → Anthropic Connectors Directory submission), `createMcpConnector()` API design with provider presets (Keycloak, Entra ID, Auth0, Google, generic OIDC), 6 qyl MCP tools for historical telemetry queries, competitive analysis vs Cloudflare `workers-oauth-provider`, security considerations, and Sentry-quality reference patterns
+- **`docs/plans/2026-03-03-claude-self-obs-v3-design.md`**: Design doc for v3.0.0 — three-gap analysis (hook ingest endpoint, qyl.mcp registration, standalone server removal), v1→v2→v3 progression table, architecture diagram, acceptance criteria
+
 ### Changed
 
+- **`claude-self-obs` (2.0.0 → 3.0.0)**: Deleted standalone TypeScript MCP server — qyl.mcp already provides `qyl.claude_code_sessions`, `qyl.claude_code_timeline`, `qyl.claude_code_tools`. Plugin is now 38 lines of declarative JSON: HTTP hooks POST raw event JSON to `qyl.collector:5100/api/v1/claude-code/hooks`. Zero TypeScript, zero npm, zero processes to manage
 - **`claude-self-obs` (1.0.0 → 2.0.0)**: Complete rewrite from bash/jq/curl hooks to HTTP hooks + MCP server. Deleted 210 lines of shell scripts (emit-span.sh, emit-agent-start.sh, emit-agent-stop.sh). Replaced with `type: "http"` hooks that POST directly to a dual-mode MCP server (stdio for Claude tools + HTTP for hook events). Claude can now query its own telemetry via 4 MCP tools: `get_status`, `get_session_timeline`, `get_tool_stats`, `search_events`. In-memory ring buffer stores last 10k events per session
 - **`marketplace.json`**: Added claude-self-obs to registry, updated plugin count (9 → 10) and command count (24 → 25)
 
 ### Removed
 
+- **`claude-self-obs` standalone server**: Deleted `server/` directory (TypeScript MCP server, node_modules, dist, package.json, tsconfig.json) and `.mcp.json` registration. ~300 lines TS + 58K npm dependencies eliminated. Query capabilities now provided by qyl.mcp (registered globally)
 - **`claude-self-obs` bash scripts**: Deleted `emit-span.sh` (83 lines), `emit-agent-start.sh` (60 lines), `emit-agent-stop.sh` (67 lines). Dependencies on `jq`, `python3`, `curl` eliminated
 
 ### Added

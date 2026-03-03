@@ -1,30 +1,28 @@
 ---
-description: Check whether the self-obs MCP server is running and show event stats.
+description: Check Claude Code observability status via qyl.mcp tools.
 ---
 
 # /claude-self-obs:status
 
-Check if the claude-self-obs MCP server is alive and reporting.
+Check if Claude Code telemetry is flowing to qyl and show session stats.
 
 ## What this does
 
-1. Calls `mcp__claude_self_obs__get_status` to check server health
-2. Calls `mcp__claude_self_obs__get_tool_stats` to show tool call breakdown
-3. Reports: **active** (server running, events flowing) or **inactive** (MCP server not connected)
+1. Calls `mcp__qyl__qyl_claude_code_sessions` to list recent sessions
+2. If the current session has events, calls `mcp__qyl__qyl_claude_code_tools` for tool breakdown
+3. Reports: **active** (events flowing) or **standby** (qyl.collector not reachable)
 
 ## Steps
 
-Use the MCP tools directly — no bash needed:
-
-1. Call `mcp__claude_self_obs__get_status` with no arguments
-2. If it succeeds, the server is active. Report uptime, total events, and session count.
-3. Call `mcp__claude_self_obs__get_tool_stats` to show tool usage breakdown.
-4. If the MCP tool call fails, report that the self-obs server is not running.
+1. Call `mcp__qyl__qyl_claude_code_sessions` with `limit=5`
+2. If it succeeds, show the sessions table
+3. For the most recent session, call `mcp__qyl__qyl_claude_code_tools` to show tool usage
+4. If the MCP tool call fails, report that qyl.mcp is not connected
 
 ## Troubleshooting
 
 | Symptom | Fix |
 |---------|-----|
-| MCP tool not found | Plugin not enabled or server failed to start. Check `claude mcp list`. |
-| Server running but no events | HTTP hooks may not be firing. Check `/hooks` menu for claude-self-obs entries. |
-| Port conflict on 5101 | Set `SELF_OBS_PORT` env var to a different port in plugin config. |
+| MCP tool not found | qyl.mcp not registered in `~/.claude/settings.json`. Add it to `mcpServers`. |
+| No sessions found | Set `CLAUDE_CODE_ENABLE_TELEMETRY=1` and OTLP env vars. |
+| qyl.collector unreachable | Start qyl.collector on `:5100`. Hook events silently fail when collector is down. |
