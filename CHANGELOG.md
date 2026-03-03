@@ -6,6 +6,10 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **`docs/specs/spec-0004-mcp-connector-kit.md`**: Comprehensive spec for building an open-source MCP connector framework with identity federation. Includes: reverse-engineered Gmail MCP OAuth architecture (Anthropic's Express/GCP broker pattern), full MCP auth spec summary (OAuth 2.1 + PKCE + Dynamic Client Registration + Streamable HTTP + Resource Indicators), three-layer strategy (npm package → qyl-connector proof-of-concept → Anthropic Connectors Directory submission), `createMcpConnector()` API design with provider presets (Keycloak, Entra ID, Auth0, Google, generic OIDC), 6 qyl MCP tools for historical telemetry queries, competitive analysis vs Cloudflare `workers-oauth-provider`, security considerations, and Sentry-quality reference patterns
+
 ### Changed
 
 - **`claude-self-obs` (1.0.0 → 2.0.0)**: Complete rewrite from bash/jq/curl hooks to HTTP hooks + MCP server. Deleted 210 lines of shell scripts (emit-span.sh, emit-agent-start.sh, emit-agent-stop.sh). Replaced with `type: "http"` hooks that POST directly to a dual-mode MCP server (stdio for Claude tools + HTTP for hook events). Claude can now query its own telemetry via 4 MCP tools: `get_status`, `get_session_timeline`, `get_tool_stats`, `search_events`. In-memory ring buffer stores last 10k events per session
