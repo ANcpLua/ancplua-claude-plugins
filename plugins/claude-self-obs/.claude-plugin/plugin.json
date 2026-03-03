@@ -1,7 +1,7 @@
 {
   "name": "claude-self-obs",
-  "version": "1.0.0",
-  "description": "Self-observability for Claude Code: every tool call becomes an OTLP span. Watch AI agents build software in real time. Zero config — silently no-ops when no collector is running.",
+  "version": "2.0.0",
+  "description": "Self-observability for Claude Code: HTTP hooks capture every tool call and agent lifecycle event into an MCP server. Claude can query its own telemetry in real time.",
   "author": {
     "name": "ANcpLua",
     "url": "https://github.com/ANcpLua"
@@ -10,12 +10,12 @@
   "license": "MIT",
   "keywords": [
     "opentelemetry",
-    "otlp",
     "observability",
-    "tracing",
+    "mcp",
     "hooks",
     "claude-code",
-    "self-observability"
+    "self-observability",
+    "telemetry"
   ],
   "commands": "./commands"
 }

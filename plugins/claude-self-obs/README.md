@@ -1,55 +1,80 @@
 # claude-self-obs
 
-**Watch AI agents build software in real time.**
+**Claude Code observes itself.**
 
-Every Claude Code tool call (Read, Edit, Bash, Grep, WebSearch, …) becomes an OTLP span.
-Agent lifecycle events (spawn, stop) become trace boundaries.
-Everything flows to your OTLP collector — zero config, zero code changes.
+Every tool call, agent spawn, and agent stop becomes a queryable event.
+Claude can ask "what tools have I used this session?" and get an answer from its own telemetry.
+
+## Architecture
+
+```text
+Claude Code session
+  │
+  │ PostToolUse / SubagentStart / SubagentStop
+  │ (type: "http" hooks — native JSON POST, no scripts)
+  │
+  ▼
+┌──────────────────────────────────┐
+│  self-obs MCP server             │
+│  (stdio MCP + :5101 HTTP)        │
+│                                  │
+│  POST /v1/events   ← hooks POST │
+│  MCP tools:        ← Claude asks │
+│    get_status()                  │
+│    get_session_timeline()        │
+│    get_tool_stats()              │
+│    search_events()               │
+│                                  │
+│  Storage: in-memory ring buffer  │
+└──────────────────────────────────┘
+```
 
 ## How it works
 
-```
-Claude Code tool call
-  → PostToolUse hook fires
-  → emit-span.sh wraps it as OTLP ExportTraceServiceRequest
-  → POST to localhost:5100/v1/traces
-  → Collector stores + streams to dashboard
-```
+1. **HTTP hooks** fire on every tool call and agent lifecycle event
+2. Claude Code POSTs the raw event JSON to `localhost:5101/v1/events`
+3. The **MCP server** stores events in a ring buffer (10k per session)
+4. Claude queries its own telemetry via MCP tools
 
-**Enable:** start your OTLP collector (qyl, Jaeger, any OTLP HTTP endpoint).
-**Disable:** stop the collector. Hook silently no-ops — never blocks the agent.
+No bash scripts, no jq, no curl, no python3. Pure HTTP + MCP.
 
-## Signals captured
+## Events captured
 
-| Hook | Span name | Key attributes |
-|------|-----------|----------------|
-| PostToolUse (Read) | `tool/Read` | `file.path` |
-| PostToolUse (Edit) | `tool/Edit` | `file.path` |
-| PostToolUse (Bash) | `tool/Bash` | `bash.command` |
-| PostToolUse (Grep) | `tool/Grep` | `search.pattern` |
-| PostToolUse (WebSearch) | `tool/WebSearch` | `search.query` |
-| PostToolUse (Task) | `tool/Task` | `task.subagent_type`, `task.prompt` |
-| SubagentStart | `agent/start:{name}` | `agent.name`, `agent.type` |
-| SubagentStop | `agent/stop:{name}` | `agent.name`, `agent.type`, `agent.id` |
+| Hook | Event type | Key fields |
+|------|-----------|------------|
+| PostToolUse | Tool call | `tool_name`, `tool_input` (file_path, command, pattern, etc.) |
+| SubagentStart | Agent spawn | `agent_name`, `agent_type` |
+| SubagentStop | Agent finish | `agent_name`, `agent_type`, `agent_id` |
 
-## Trace model
+## MCP tools
 
-All spans in a session share one `traceId` (derived from `session_id`).
-Agent start/stop spans are parent/child pairs.
-Tool call spans are flat (no timing yet — `startTime == endTime`).
+| Tool | Purpose |
+|------|---------|
+| `get_status` | Server health: uptime, event count, session count |
+| `get_session_timeline` | Ordered event list for a session |
+| `get_tool_stats` | Tool call counts grouped by name |
+| `search_events` | Search events by tool/agent/pattern |
 
 ## Commands
 
 | Command | What it does |
 |---------|-------------|
-| `/claude-self-obs:status` | Check if collector is reachable |
+| `/claude-self-obs:status` | Check server health and show tool stats |
 
 ## Configuration
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `QYL_COLLECTOR_URL` | `http://localhost:5100` | OTLP HTTP endpoint base URL |
+| `SELF_OBS_PORT` | `5101` | HTTP port for hook events |
+| `SELF_OBS_MAX_EVENTS` | `10000` | Ring buffer size per session |
 
-## Dependencies
+## Relationship to native OTLP (spec-0002)
 
-`curl`, `jq`, `python3` — all pre-installed on macOS.
+These are complementary:
+
+| Source | What it provides | Where it goes |
+|--------|-----------------|---------------|
+| Native OTLP (env vars) | Metrics (tokens, cost, LOC) + events | OTel Collector → qyl |
+| HTTP hooks → MCP server | Tool inputs, agent lifecycle, real-time query | MCP server → Claude |
+
+Native OTLP gives you the *what* (counters, costs). Hooks give you the *how* (file paths, commands, patterns).
