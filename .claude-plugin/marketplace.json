@@ -64,8 +64,8 @@
     },
     {
       "name": "claude-self-obs",
-      "description": "Self-observability via HTTP hooks + MCP server. Every tool call and agent event flows to an in-memory store that Claude can query in real time.",
-      "version": "2.0.0",
+      "description": "Self-observability for Claude Code: HTTP hooks POST every tool call and agent lifecycle event to qyl.collector. Query telemetry via qyl.mcp tools.",
+      "version": "3.0.0",
       "source": "./plugins/claude-self-obs"
     }
   ]

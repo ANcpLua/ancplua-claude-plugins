@@ -1,9 +1,9 @@
 # claude-self-obs
 
-**Claude Code observes itself.**
+**Claude Code observes itself — through qyl.**
 
-Every tool call, agent spawn, and agent stop becomes a queryable event.
-Claude can ask "what tools have I used this session?" and get an answer from its own telemetry.
+Every tool call, agent spawn, and agent stop becomes a queryable event in qyl's DuckDB.
+Claude queries its own telemetry via qyl.mcp tools.
 
 ## Architecture
 
@@ -11,32 +11,33 @@ Claude can ask "what tools have I used this session?" and get an answer from its
 Claude Code session
   │
   │ PostToolUse / SubagentStart / SubagentStop
-  │ (type: "http" hooks — native JSON POST, no scripts)
+  │ (type: "http" — native JSON POST, zero scripts)
   │
   ▼
-┌──────────────────────────────────┐
-│  self-obs MCP server             │
-│  (stdio MCP + :5101 HTTP)        │
-│                                  │
-│  POST /v1/events   ← hooks POST │
-│  MCP tools:        ← Claude asks │
-│    get_status()                  │
-│    get_session_timeline()        │
-│    get_tool_stats()              │
-│    search_events()               │
-│                                  │
-│  Storage: in-memory ring buffer  │
-└──────────────────────────────────┘
+qyl.collector (:5100)
+  │ POST /api/v1/claude-code/hooks
+  │ → transforms to DuckDB rows
+  │ → persists alongside native OTLP data
+  │
+  ▼
+qyl.mcp (STDIO MCP server)
+  │ qyl.claude_code_sessions
+  │ qyl.claude_code_timeline
+  │ qyl.claude_code_tools
+  │
+  ▼
+Claude reads own telemetry
 ```
 
 ## How it works
 
 1. **HTTP hooks** fire on every tool call and agent lifecycle event
-2. Claude Code POSTs the raw event JSON to `localhost:5101/v1/events`
-3. The **MCP server** stores events in a ring buffer (10k per session)
-4. Claude queries its own telemetry via MCP tools
+2. Claude Code POSTs the raw event JSON to qyl.collector
+3. qyl.collector transforms and stores in DuckDB
+4. Claude queries via qyl.mcp tools (registered globally)
 
-No bash scripts, no jq, no curl, no python3. Pure HTTP + MCP.
+No bash scripts. No standalone server. No npm dependencies.
+The plugin is just `hooks.json` — 38 lines of declarative JSON.
 
 ## Events captured
 
@@ -46,35 +47,44 @@ No bash scripts, no jq, no curl, no python3. Pure HTTP + MCP.
 | SubagentStart | Agent spawn | `agent_name`, `agent_type` |
 | SubagentStop | Agent finish | `agent_name`, `agent_type`, `agent_id` |
 
-## MCP tools
+## Query tools (via qyl.mcp)
 
 | Tool | Purpose |
 |------|---------|
-| `get_status` | Server health: uptime, event count, session count |
-| `get_session_timeline` | Ordered event list for a session |
-| `get_tool_stats` | Tool call counts grouped by name |
-| `search_events` | Search events by tool/agent/pattern |
+| `qyl.claude_code_sessions` | List sessions with usage stats |
+| `qyl.claude_code_timeline` | Event timeline grouped by prompt |
+| `qyl.claude_code_tools` | Tool call counts, success rates |
 
-## Commands
+## Setup
 
-| Command | What it does |
-|---------|-------------|
-| `/claude-self-obs:status` | Check server health and show tool stats |
+1. **qyl.collector** must be running on `:5100`
+1. **qyl.mcp** must be registered in `~/.claude/settings.json`:
 
-## Configuration
+   ```json
+   {
+     "mcpServers": {
+       "qyl": {
+         "command": "dotnet",
+         "args": ["run", "--project", "/path/to/qyl/src/qyl.mcp"],
+         "env": { "QYL_COLLECTOR_URL": "http://localhost:5100" }
+       }
+     }
+   }
+   ```
 
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `SELF_OBS_PORT` | `5101` | HTTP port for hook events |
-| `SELF_OBS_MAX_EVENTS` | `10000` | Ring buffer size per session |
+1. For native OTLP metrics (optional, complementary):
+
+   ```bash
+   export CLAUDE_CODE_ENABLE_TELEMETRY=1
+   export OTEL_METRICS_EXPORTER=otlp
+   export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
+   ```
 
 ## Relationship to native OTLP (spec-0002)
-
-These are complementary:
 
 | Source | What it provides | Where it goes |
 |--------|-----------------|---------------|
 | Native OTLP (env vars) | Metrics (tokens, cost, LOC) + events | OTel Collector → qyl |
-| HTTP hooks → MCP server | Tool inputs, agent lifecycle, real-time query | MCP server → Claude |
+| HTTP hooks (this plugin) | Tool inputs, agent lifecycle | qyl.collector → DuckDB |
 
 Native OTLP gives you the *what* (counters, costs). Hooks give you the *how* (file paths, commands, patterns).
