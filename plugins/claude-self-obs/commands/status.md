@@ -1,45 +1,30 @@
 ---
-description: Check whether the OTLP collector is reachable and self-observability is active.
+description: Check whether the self-obs MCP server is running and show event stats.
 ---
 
 # /claude-self-obs:status
 
-Check if the claude-self-obs plugin is actively sending spans.
+Check if the claude-self-obs MCP server is alive and reporting.
 
 ## What this does
 
-1. Reads `$QYL_COLLECTOR_URL` (default: `http://localhost:5100`)
-2. Attempts a health check against the collector
-3. Reports: **active** (spans flowing) or **standby** (silently dropping, collector unreachable)
-4. Shows the last few span names received if the collector has a sessions API
+1. Calls `mcp__claude_self_obs__get_status` to check server health
+2. Calls `mcp__claude_self_obs__get_tool_stats` to show tool call breakdown
+3. Reports: **active** (server running, events flowing) or **inactive** (MCP server not connected)
 
 ## Steps
 
-Run this in a Bash tool:
+Use the MCP tools directly — no bash needed:
 
-```bash
-COLLECTOR="${QYL_COLLECTOR_URL:-http://localhost:5100}"
+1. Call `mcp__claude_self_obs__get_status` with no arguments
+2. If it succeeds, the server is active. Report uptime, total events, and session count.
+3. Call `mcp__claude_self_obs__get_tool_stats` to show tool usage breakdown.
+4. If the MCP tool call fails, report that the self-obs server is not running.
 
-echo "Checking collector at $COLLECTOR..."
+## Troubleshooting
 
-if curl -sf "$COLLECTOR/health" > /dev/null 2>&1 \
-   || curl -sf "$COLLECTOR/api/v1/claude-code/sessions" > /dev/null 2>&1; then
-  echo "✓ ACTIVE — spans are flowing to $COLLECTOR"
-  echo ""
-  echo "Recent sessions:"
-  curl -sf "$COLLECTOR/api/v1/claude-code/sessions" | jq -r '.[] | "  \(.session_id[:8])...  \(.tool_count) spans"' 2>/dev/null || true
-else
-  echo "◌ STANDBY — collector unreachable at $COLLECTOR"
-  echo "  Spans are silently dropped. Start qyl to begin collecting."
-  echo "  To override URL: export QYL_COLLECTOR_URL=http://your-collector:port"
-fi
-```
-
-## Enable / Disable
-
-| Action | How |
-|--------|-----|
-| **Enable** | Start qyl collector (`dotnet run` in the qyl project) |
-| **Disable** | Stop the collector — hook silently no-ops |
-| **Change URL** | `export QYL_COLLECTOR_URL=http://other-host:5100` |
-| **Uninstall** | Disable plugin in Claude Code settings |
+| Symptom | Fix |
+|---------|-----|
+| MCP tool not found | Plugin not enabled or server failed to start. Check `claude mcp list`. |
+| Server running but no events | HTTP hooks may not be firing. Check `/hooks` menu for claude-self-obs entries. |
+| Port conflict on 5101 | Set `SELF_OBS_PORT` env var to a different port in plugin config. |

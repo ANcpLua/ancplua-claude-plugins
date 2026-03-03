@@ -6,6 +6,15 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **`claude-self-obs` (1.0.0 → 2.0.0)**: Complete rewrite from bash/jq/curl hooks to HTTP hooks + MCP server. Deleted 210 lines of shell scripts (emit-span.sh, emit-agent-start.sh, emit-agent-stop.sh). Replaced with `type: "http"` hooks that POST directly to a dual-mode MCP server (stdio for Claude tools + HTTP for hook events). Claude can now query its own telemetry via 4 MCP tools: `get_status`, `get_session_timeline`, `get_tool_stats`, `search_events`. In-memory ring buffer stores last 10k events per session
+- **`marketplace.json`**: Added claude-self-obs to registry, updated plugin count (9 → 10) and command count (24 → 25)
+
+### Removed
+
+- **`claude-self-obs` bash scripts**: Deleted `emit-span.sh` (83 lines), `emit-agent-start.sh` (60 lines), `emit-agent-stop.sh` (67 lines). Dependencies on `jq`, `python3`, `curl` eliminated
+
 ### Added
 
 - **`docs/specs/spec-0002-qyl-claude-code-observability.md`**: Comprehensive spec for building Claude Code session observability into qyl's AI telemetry dashboard. Covers OTLP data flow (native `claude_code.*` metrics + events), DuckDB schema, 5 API endpoints, React hooks, 4 dashboard components, SSE live streaming, and 4-phase implementation plan. Zero-instrumentation approach — uses Claude Code's built-in OTLP telemetry export via 4 env vars
