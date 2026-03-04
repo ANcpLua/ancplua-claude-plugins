@@ -8,6 +8,10 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **`design-studio` plugin (1.0.0)**: Design intelligence studio merging creative direction with data-driven recommendations. Combines `frontend-design` (Anthropic plugin — bold aesthetic philosophy, anti-generic guidelines) with `ui-ux-pro-max` (local skill — BM25 search engine, 750+ CSV rows, design system generator). Single unified workflow: creative direction → `--design-system` CLI → domain/stack searches → implementation with aesthetic precision. 50 styles, 97 palettes, 57 font pairings, 99 UX guidelines, 25 chart types, 13 stacks. Pre-delivery checklist includes creative distinctiveness check. Python stdlib-only, no pip dependencies
+
+### Added
+
 - **`docs/specs/spec-0004-mcp-connector-kit.md`**: Comprehensive spec for building an open-source MCP connector framework with identity federation. Includes: reverse-engineered Gmail MCP OAuth architecture (Anthropic's Express/GCP broker pattern), full MCP auth spec summary (OAuth 2.1 + PKCE + Dynamic Client Registration + Streamable HTTP + Resource Indicators), three-layer strategy (npm package → qyl-connector proof-of-concept → Anthropic Connectors Directory submission), `createMcpConnector()` API design with provider presets (Keycloak, Entra ID, Auth0, Google, generic OIDC), 6 qyl MCP tools for historical telemetry queries, competitive analysis vs Cloudflare `workers-oauth-provider`, security considerations, and Sentry-quality reference patterns
 - **`docs/plans/2026-03-03-claude-self-obs-v3-design.md`**: Design doc for v3.0.0 — three-gap analysis (hook ingest endpoint, qyl.mcp registration, standalone server removal), v1→v2→v3 progression table, architecture diagram, acceptance criteria
 
