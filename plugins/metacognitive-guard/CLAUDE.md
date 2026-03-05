@@ -7,7 +7,7 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 
 | Hook | Event | Script | Purpose |
 |------|-------|--------|---------|
-| Truth Beacon | SessionStart | `truth-beacon.sh` | Injects `blackboard/assertions.yaml` as authoritative facts |
+| Truth Beacon | SessionStart + InstructionsLoaded | `truth-beacon.sh` | Injects `blackboard/assertions.yaml` as authoritative facts |
 | Epistemic Guard | PreToolUse (Write/Edit) | `epistemic-guard.sh` | Blocks writes with wrong versions, banned APIs, AGENTS.md in plugins |
 | Commit Integrity | PreToolUse (Bash) | `commit-integrity-hook.sh` | Blocks `git commit` with suppressions, commented tests, deleted assertions |
 | Struggle Detector | Stop (async) | `struggle-detector.sh` | Scores response for uncertainty, writes to blackboard |
@@ -56,6 +56,7 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 - Struggle detector is a two-part system: Stop hook (async) does analysis + blackboard writes,
   UserPromptSubmit hook reads blackboard and injects `additionalContext` so Claude actually sees the
   suggestion. No latency on responses.
+- Struggle detector and Ralph Loop skip subagents via `agent_type` filtering (only lead agent matters).
 - TaskCompleted prompt hook fires on every task completion in team contexts (haiku, 15s timeout).
 - Ralph Loop fires PostToolUse on Write/Edit — two layers run in parallel:
   (1) Haiku prompt analyzes context for deep drift (over-engineering, complexity creep, premature

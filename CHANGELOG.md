@@ -8,6 +8,17 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **metacognitive-guard `InstructionsLoaded` hook**: Truth beacon now fires on both SessionStart AND InstructionsLoaded — ground truth re-injected when CLAUDE.md/rules are loaded, ensuring authoritative facts arrive after instructions context
+- **metacognitive-guard `agent_type` filtering**: Struggle detector and Ralph Loop now skip subagents via `agent_type` field in hook events — prevents wasted haiku calls and false positives from subagent responses
+
+### Changed
+
+- **`includeGitInstructions: false`**: Disabled built-in git instructions in `.claude/settings.local.json` — we have our own commit/PR workflows in CLAUDE.md, saves ~2K tokens/turn
+- **CLAUDE.md version bump docs**: Softened "DO NOT SKIP" to acknowledge `/reload-plugins` for dev workflows while keeping version bumps mandatory for releases
+- **metacognitive-guard (0.4.5 → 0.5.0)**: InstructionsLoaded hook + agent_type filtering
+
+### Added
+
 - **`design-studio` plugin (1.0.0)**: Design intelligence studio merging creative direction with data-driven recommendations. Combines `frontend-design` (Anthropic plugin — bold aesthetic philosophy, anti-generic guidelines) with `ui-ux-pro-max` (local skill — BM25 search engine, 750+ CSV rows, design system generator). Single unified workflow: creative direction → `--design-system` CLI → domain/stack searches → implementation with aesthetic precision. 50 styles, 97 palettes, 57 font pairings, 99 UX guidelines, 25 chart types, 13 stacks. Pre-delivery checklist includes creative distinctiveness check. Python stdlib-only, no pip dependencies
 
 ### Added

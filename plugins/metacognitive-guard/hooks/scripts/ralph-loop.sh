@@ -20,6 +20,10 @@ INPUT=$(cat 2>/dev/null || true)
 # Requires jq for JSON parsing
 command -v jq &>/dev/null || exit 0
 
+# Skip subagents — drift detection only matters for the lead agent
+AGENT_TYPE=$(echo "$INPUT" | jq -r '.agent_type // empty' 2>/dev/null)
+[[ "$AGENT_TYPE" == "subagent" ]] && exit 0
+
 # Extract both fields in a single jq call
 eval "$(echo "$INPUT" | jq -r '
   "FILE_PATH=" + (.tool_input.file_path // .tool_input.file // "" | @sh) +

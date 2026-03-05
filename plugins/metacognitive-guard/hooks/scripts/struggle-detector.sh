@@ -36,6 +36,10 @@ mkdir -p "$BLACKBOARD" 2>/dev/null || true
 INPUT=$(cat 2>/dev/null || true)
 [[ -z "$INPUT" ]] && exit 0
 
+# Skip subagents — only analyze the lead agent's responses
+AGENT_TYPE=$(echo "$INPUT" | jq -r '.agent_type // empty' 2>/dev/null)
+[[ "$AGENT_TYPE" == "subagent" ]] && exit 0
+
 # Extract transcript path from hook input
 TRANSCRIPT=$(echo "$INPUT" | jq -r '.transcript_path // empty' 2>/dev/null)
 [[ -z "$TRANSCRIPT" || ! -f "$TRANSCRIPT" ]] && exit 0

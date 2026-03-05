@@ -12,6 +12,18 @@
         ]
       }
     ],
+    "InstructionsLoaded": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/truth-beacon.sh",
+            "timeout": 5,
+            "statusMessage": "Re-injecting ground truth after instructions loaded..."
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Write|Edit",
