@@ -60,6 +60,9 @@ CLAUDE CODE CONVENTIONS:
 - AGENTS.md is NOT auto-loaded by plugins (dead weight - use skill descriptions)
 - hooks/hooks.json auto-loads by convention (do NOT declare in plugin.json)
 - Passive context = CLAUDE.md + skill description frontmatter + SessionStart hooks
+- Use \${CLAUDE_SKILL_DIR} for skill-local resources, \${CLAUDE_PLUGIN_ROOT} for plugin-wide
+- /reload-plugins activates plugin changes without restart (no version bump needed during dev)
+- Hook events include agent_id and agent_type — filter subagents to avoid wasted work
 
 If uncertain about versions/APIs:
 - WebSearch to verify current state

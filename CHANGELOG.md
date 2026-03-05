@@ -8,6 +8,8 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **metacognitive-guard `InstructionsLoaded` hook**: Truth beacon now fires on both SessionStart AND InstructionsLoaded — ground truth re-injected when CLAUDE.md/rules are loaded, ensuring authoritative facts arrive after instructions context
+- **metacognitive-guard `agent_type` filtering**: Struggle detector and Ralph Loop now skip subagents via `agent_type` field in hook events — prevents wasted haiku calls and false positives from subagent responses
 - **`design-studio` plugin (1.0.0)**: Design intelligence studio merging creative direction with data-driven recommendations. Combines `frontend-design` (Anthropic plugin — bold aesthetic philosophy, anti-generic guidelines) with `ui-ux-pro-max` (local skill — BM25 search engine, 750+ CSV rows, design system generator). Single unified workflow: creative direction → `--design-system` CLI → domain/stack searches → implementation with aesthetic precision. 50 styles, 97 palettes, 57 font pairings, 99 UX guidelines, 25 chart types, 13 stacks. Pre-delivery checklist includes creative distinctiveness check. Python stdlib-only, no pip dependencies
 
 ### Added
@@ -17,6 +19,9 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- **`includeGitInstructions: false`**: Disabled built-in git instructions in `.claude/settings.json` — we have our own commit/PR workflows in CLAUDE.md, saves ~2K tokens/turn
+- **CLAUDE.md version bump docs**: Softened "DO NOT SKIP" to acknowledge `/reload-plugins` for dev workflows while keeping version bumps mandatory for releases
+- **metacognitive-guard (0.4.5 → 0.5.0)**: InstructionsLoaded hook + agent_type filtering
 - **`claude-self-obs` (2.0.0 → 3.0.0)**: Deleted standalone TypeScript MCP server — qyl.mcp already provides `qyl.claude_code_sessions`, `qyl.claude_code_timeline`, `qyl.claude_code_tools`. Plugin is now 38 lines of declarative JSON: HTTP hooks POST raw event JSON to `qyl.collector:5100/api/v1/claude-code/hooks`. Zero TypeScript, zero npm, zero processes to manage
 - **`claude-self-obs` (1.0.0 → 2.0.0)**: Complete rewrite from bash/jq/curl hooks to HTTP hooks + MCP server. Deleted 210 lines of shell scripts (emit-span.sh, emit-agent-start.sh, emit-agent-stop.sh). Replaced with `type: "http"` hooks that POST directly to a dual-mode MCP server (stdio for Claude tools + HTTP for hook events). Claude can now query its own telemetry via 4 MCP tools: `get_status`, `get_session_timeline`, `get_tool_stats`, `search_events`. In-memory ring buffer stores last 10k events per session
 - **`marketplace.json`**: Added claude-self-obs to registry, updated plugin count (9 → 10) and command count (24 → 25)

@@ -463,7 +463,7 @@ For EVERY non-trivial change:
 
 **NO EXCEPTIONS.** Forgetting to update CHANGELOG = incomplete task.
 
-### ⚠️ PLUGIN VERSION BUMP - DO NOT SKIP
+### ⚠️ PLUGIN VERSION BUMP
 
 **When you modify a plugin's code (hooks, commands, skills, agents), you MUST bump its version:**
 
@@ -471,7 +471,8 @@ For EVERY non-trivial change:
 2. Increment the `version` field (patch for fixes, minor for features)
 3. The plugin cache (`~/.claude/plugins/cache/`) is version-keyed — without a bump, new sessions won't pick up changes
 
-**NO EXCEPTIONS.** Changed plugin code without version bump = users stuck on stale cache.
+**During development:** Use `/reload-plugins` to activate changes in the current session without bumping.
+**For releases:** Version bump is mandatory — other users' sessions won't pick up changes without it.
 
 </EXTREMELY_IMPORTANT>
 
