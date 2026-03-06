@@ -178,6 +178,7 @@ jobs:
 
           **Alternative reviewers:**
           - CodeRabbit (Tier 3a auto-merge)
+          - Codex Code Review
           - Human codeowner (@ANcpLua)
           - Other AI reviewers (Gemini, Copilot)
 

@@ -5,7 +5,7 @@
     "url": "https://github.com/ANcpLua"
   },
   "metadata": {
-    "description": "Claude Code plugin marketplace: 11 plugins, 26 commands, 5 skills, 19 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, .NET build enforcement, design intelligence, and self-observability."
+    "description": "Claude Code plugin marketplace: 10 plugins, 25 commands, 5 skills, 19 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, .NET build enforcement, and design intelligence."
   },
   "plugins": [
     {
@@ -61,12 +61,6 @@
       "description": "Teams API observability orchestration for qyl: 1 Opus captain + 4 Sonnet specialists. Captain pre-reads otelwiki semconv docs, dispatches servicedefaults, collector, genai, and platform specialists. Zero runtime web search.",
       "version": "2.1.0",
       "source": "./plugins/qyl-instrumentation"
-    },
-    {
-      "name": "claude-self-obs",
-      "description": "Self-observability for Claude Code: HTTP hooks POST every tool call and agent lifecycle event to qyl.collector. Query telemetry via qyl.mcp tools.",
-      "version": "3.0.0",
-      "source": "./plugins/claude-self-obs"
     },
     {
       "name": "design-studio",

@@ -45,7 +45,16 @@ Add the marketplace, then install plugins individually:
 
 8 plugins, 23 commands, 4 skills, 14 agents, 21 scripts, 7 hook configs.
 
-Tri-AI review system: Claude, Copilot, CodeRabbit all review PRs independently.
+Quad-AI review system: Claude, Codex, Copilot, and CodeRabbit review PRs independently.
+
+## GitHub review automation
+
+Codex review lives in `.github/workflows/codex-code-review.yml`.
+
+- Set the `OPENAI_API_KEY` repository secret to enable the workflow
+- Codex runs in a `read-only` sandbox with `drop-sudo`
+- The workflow posts a formal PR review from structured Codex output
+- Self-review is blocked when a PR only changes Codex review automation files
 
 ```text
 plugins/
