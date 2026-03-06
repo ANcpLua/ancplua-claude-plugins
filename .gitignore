@@ -45,6 +45,10 @@ obj/
 # --- Eight Gates runtime ---
 .eight-gates/
 
+# --- Elegance pipeline runtime state ---
+.claude/elegance_pipeline/
+.codex.backup.*
+
 # --- Metacognitive-guard runtime state ---
 .blackboard/
 

@@ -8,6 +8,14 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **`elegance-pipeline` plugin (1.0.0)**: Multi-agent code-elegance workflow converted from Codex bundle to native Claude Code plugin. 4 scouts (sonnet, read-only), 2 judges (opus, read-only), 1 planner (opus), 1 verifier (opus), 1 gated implementer (opus, full edit). Persistent state manager with stage gates and implementation signal. 3 commands (`init`, `status`, `run`), 1 skill, 5 agents. All `.codex/` paths rewritten to `${CLAUDE_PLUGIN_ROOT}`, Codex-Spark->sonnet, GPT-5.4->opus, state moved to project-local `.claude/elegance_pipeline/state/`
+
+### Fixed
+
+- **marketplace.json version mismatches**: hookify 0.2.0->0.2.1, metacognitive-guard 0.4.5->0.5.0 (synced with plugin.json)
+
+### Added
+
 - **Codex PR review automation**: Added `.github/workflows/codex-code-review.yml`, `.github/codex/prompts/review.md`, and `.github/codex/schemas/review-output.schema.json`. Codex now reviews pull requests in a read-only sandbox, returns structured verdicts, publishes formal GitHub reviews, and skips PRs that only modify Codex review automation
 - **metacognitive-guard `InstructionsLoaded` hook**: Truth beacon now fires on both SessionStart AND InstructionsLoaded — ground truth re-injected when CLAUDE.md/rules are loaded, ensuring authoritative facts arrive after instructions context
 - **metacognitive-guard `agent_type` filtering**: Struggle detector and Ralph Loop now skip subagents via `agent_type` field in hook events — prevents wasted haiku calls and false positives from subagent responses

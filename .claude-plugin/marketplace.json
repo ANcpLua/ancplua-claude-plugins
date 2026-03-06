@@ -5,13 +5,13 @@
     "url": "https://github.com/ANcpLua"
   },
   "metadata": {
-    "description": "Claude Code plugin marketplace: 10 plugins, 25 commands, 5 skills, 19 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, .NET build enforcement, and design intelligence."
+    "description": "Claude Code plugin marketplace: 11 plugins, 28 commands, 6 skills, 24 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, .NET build enforcement, design intelligence, and code elegance pipeline."
   },
   "plugins": [
     {
       "name": "metacognitive-guard",
       "description": "Cognitive amplification stack: epistemic hooks, competitive review, commit integrity checks, CI verification scripts, and deep-thinking agents.",
-      "version": "0.4.5",
+      "version": "0.5.0",
       "source": "./plugins/metacognitive-guard"
     },
     {
@@ -29,7 +29,7 @@
     {
       "name": "hookify",
       "description": "User-configurable hooks from .local.md files. Define blocking and warning rules for Bash commands, file edits, and session events.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "source": "./plugins/hookify"
     },
     {
@@ -67,6 +67,12 @@
       "description": "Design intelligence studio: creative direction + data-driven recommendations. 50 styles, 97 palettes, 57 font pairings, 99 UX guidelines, 25 chart types, 13 stacks. BM25 search engine with design system generator.",
       "version": "1.0.0",
       "source": "./plugins/design-studio"
+    },
+    {
+      "name": "elegance-pipeline",
+      "description": "Multi-agent code-elegance workflow: 4 scouts (sonnet), 2 judges (opus), 1 planner, 1 verifier, 1 gated implementer. Persistent state with stage gates.",
+      "version": "1.0.0",
+      "source": "./plugins/elegance-pipeline"
     }
   ]
 }
