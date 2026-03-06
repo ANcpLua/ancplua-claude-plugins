@@ -8,6 +8,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **`weave-validate.sh`**: Skip `claude plugin validate` inside Claude sessions (`CLAUDECODE=1`) — prevents silent hang that swallows all output. Added `timeout 15` safety net for CI
 - **`qyl-continuation` (1.0.0 → 1.0.1)**: Fixed Python 3.14 regex crash — inline `(?i)` flags mid-pattern are now errors in Python 3.14. Moved all three regex patterns (`QUESTION_RX`, `COMPLETION_RX`, `NEXT_STEP_RX`) to use `re.IGNORECASE` flag parameter instead
 
 ### Added

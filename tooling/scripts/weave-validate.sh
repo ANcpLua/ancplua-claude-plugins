@@ -29,17 +29,17 @@ elif [ -x "$HOME/.claude/bin/claude" ]; then
   CLAUDE_CMD="$HOME/.claude/bin/claude"
 fi
 
-if [ -n "$CLAUDE_CMD" ]; then
+if [ -n "$CLAUDE_CMD" ] && [ -z "${CLAUDECODE:-}" ]; then
   echo "[1/5] Plugin validation (claude CLI)"
 
-  if ! "$CLAUDE_CMD" plugin validate . 2>&1; then
+  if ! timeout 15 "$CLAUDE_CMD" plugin validate . 2>&1; then
     hard_fail "marketplace validation failed"
   fi
 
   if [ -d "plugins" ]; then
     for d in plugins/*/; do
       [ -d "$d" ] || continue
-      if ! "$CLAUDE_CMD" plugin validate "$d" 2>&1; then
+      if ! timeout 15 "$CLAUDE_CMD" plugin validate "$d" 2>&1; then
         hard_fail "plugin validation failed: $d"
       fi
     done
@@ -56,6 +56,8 @@ if [ -n "$CLAUDE_CMD" ]; then
       fi
     done
   fi
+elif [ -n "${CLAUDECODE:-}" ]; then
+  echo "[1/5] Plugin validation (SKIPPED — nested Claude session)"
 else
   echo "[1/5] Plugin validation (SKIPPED — claude CLI not found)"
 fi
