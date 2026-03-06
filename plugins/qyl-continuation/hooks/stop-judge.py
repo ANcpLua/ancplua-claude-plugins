@@ -133,8 +133,9 @@ def has_block_type(msg: dict, block_type: str) -> bool:
 # --- Phase 1: Heuristics ---
 
 NEXT_STEP_RX = re.compile(
-    r"(?i)(?:next|now) (?:I(?:'ll| will| need to)|let me)|"
-    r"moving on to|(?:still|also) need to|remaining (?:items|tasks|steps)"
+    r"(?:next|now) (?:I(?:'ll| will| need to)|let me)|"
+    r"moving on to|(?:still|also) need to|remaining (?:items|tasks|steps)",
+    re.IGNORECASE,
 )
 
 last_assistant = ""
@@ -145,9 +146,10 @@ for msg in reversed(messages):
 
 # H1: Assistant asked user a question
 QUESTION_RX = re.compile(
-    r"\?\s*$|(?i)(?:would you like|do you want|shall I|should I|"
+    r"\?\s*$|(?:would you like|do you want|shall I|should I|"
     r"what do you think|does this look|let me know|how would you like|"
-    r"which (?:one|option|approach))"
+    r"which (?:one|option|approach))",
+    re.IGNORECASE,
 )
 if last_assistant and QUESTION_RX.search(last_assistant):
     clear_throttle()
@@ -155,10 +157,11 @@ if last_assistant and QUESTION_RX.search(last_assistant):
 
 # H2: Completion signals (only if no stated next steps)
 COMPLETION_RX = re.compile(
-    r"(?i)\b(?:done|complete|finished|ready|all set)\b|"
-    r"(?i)successfully (?:created|updated|fixed|applied|installed|configured)|"
-    r"(?i)that(?:'s| should be) (?:it|all|everything)|"
-    r"(?i)here(?:'s| is) (?:the|your|a) (?:summary|result|output)"
+    r"\b(?:done|complete|finished|ready|all set)\b|"
+    r"successfully (?:created|updated|fixed|applied|installed|configured)|"
+    r"that(?:'s| should be) (?:it|all|everything)|"
+    r"here(?:'s| is) (?:the|your|a) (?:summary|result|output)",
+    re.IGNORECASE,
 )
 if last_assistant and COMPLETION_RX.search(last_assistant) and not NEXT_STEP_RX.search(last_assistant):
     clear_throttle()

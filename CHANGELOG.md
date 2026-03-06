@@ -6,6 +6,10 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+
+- **`qyl-continuation` (1.0.0 → 1.0.1)**: Fixed Python 3.14 regex crash — inline `(?i)` flags mid-pattern are now errors in Python 3.14. Moved all three regex patterns (`QUESTION_RX`, `COMPLETION_RX`, `NEXT_STEP_RX`) to use `re.IGNORECASE` flag parameter instead
+
 ### Added
 
 - **`qyl-continuation` plugin (1.0.0)**: Smart auto-continuation for Claude Code. Two-phase stop hook: heuristic pre-filter eliminates ~80% of unnecessary Haiku calls (questions, completion signals, addressed tool results, substantial text), Haiku judge handles the ambiguous ~20%. Throttled to max 3 continuations per 5-minute window. Based on double-shot-latte (MIT)
