@@ -1,0 +1,27 @@
+{
+  "name": "elegance-pipeline",
+  "version": "1.0.0",
+  "description": "Multi-agent code-elegance workflow: 4 scouts, 2 judges, 1 planner, 1 verifier, 1 gated implementer. Persistent state manager with stage gates and implementation signal.",
+  "author": {
+    "name": "ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "elegance",
+    "code-quality",
+    "multi-agent",
+    "refactoring",
+    "pipeline",
+    "scout",
+    "judge"
+  ],
+  "commands": "./commands",
+  "agents": [
+    "./agents/elegance-scout.md",
+    "./agents/elegance-judge.md",
+    "./agents/elegance-planner.md",
+    "./agents/elegance-verifier.md",
+    "./agents/elegance-implementer.md"
+  ]
+}
