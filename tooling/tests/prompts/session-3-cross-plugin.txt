@@ -1,0 +1,15 @@
+Run these in sequence, reporting results after each:
+
+**Test 1 — Skill collision:**
+/design-studio:design-studio
+Design an OpenTelemetry collector dashboard with trace visualizations, span waterfall charts, and metric panels. Target: Next.js + Tailwind.
+Does design-studio stay in its lane or does otel knowledge bleed in from other plugins?
+
+**Test 2 — Nonexistent command:**
+/design-studio:nonexistent
+What happens? Is the error clear?
+
+**Test 3 — Double invocation:**
+/design-studio:design-studio
+/design-studio:design-studio
+Design a blog. What happens when the same skill is invoked twice in one message?

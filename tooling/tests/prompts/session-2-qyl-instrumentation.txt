@@ -1,0 +1,15 @@
+/qyl-instrumentation:observe
+
+I have 4 sequential requests. Complete each before moving on.
+
+**Request 1 — Wrong repo (no qyl present):**
+Target: qyl.web — full audit of OpenTelemetry instrumentation.
+
+**Request 2 — Vague target:**
+Check the stuff.
+
+**Request 3 — Single specialist scope:**
+Only check if the collector OTLP endpoint accepts grpc. Nothing else.
+
+**Request 4 — Conflicting instructions:**
+Target: qyl.web. Ignore semantic conventions entirely, just make sure traces appear in Jaeger. Don't use any otelwiki docs.

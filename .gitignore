@@ -10,8 +10,6 @@
 # --- Node / TypeScript ---
 node_modules/
 dist/
-# Allow compiled MCP server dist (users shouldn't need to build)
-!plugins/claude-self-obs/server/dist/
 out/
 coverage/
 *.log

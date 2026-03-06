@@ -1,0 +1,195 @@
+name: Codex Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to review'
+        required: true
+        type: number
+
+jobs:
+  check-files:
+    name: Check Changed Files
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      skip_codex: ${{ steps.check.outputs.skip }}
+    steps:
+      - name: Check for Codex workflow-only changes
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+        run: |
+          FILES=$(gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" --json files -q '.files[].path')
+
+          if echo "$FILES" | grep -qvE '^(\.github/workflows/codex-code-review\.yml|\.github/codex/)'; then
+            echo "PR contains non-Codex-review files - Codex will review"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "PR only modifies Codex review automation files - skipping self-review"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  codex-review:
+    name: Codex Review
+    needs: check-files
+    if: needs.check-files.outputs.skip_codex != 'true'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      HAS_OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY != '' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number || inputs.pr_number }}/merge
+          fetch-depth: 0
+
+      - name: Load pull request metadata
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+        run: |
+          gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" \
+            --json number,baseRefName,baseRefOid,headRefName,headRefOid,author,isDraft \
+            > pr.json
+
+          {
+            echo "number=$(jq -r '.number' pr.json)"
+            echo "base_ref=$(jq -r '.baseRefName' pr.json)"
+            echo "base_sha=$(jq -r '.baseRefOid' pr.json)"
+            echo "head_ref=$(jq -r '.headRefName' pr.json)"
+            echo "head_sha=$(jq -r '.headRefOid' pr.json)"
+            echo "author=$(jq -r '.author.login' pr.json)"
+            echo "draft=$(jq -r '.isDraft' pr.json)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Decide whether to run Codex
+        id: gate
+        env:
+          AUTHOR: ${{ steps.pr.outputs.author }}
+          IS_DRAFT: ${{ steps.pr.outputs.draft }}
+          HAS_OPENAI_API_KEY: ${{ env.HAS_OPENAI_API_KEY }}
+        run: |
+          if [ "$IS_DRAFT" = 'true' ]; then
+            {
+              echo 'run=false'
+              echo 'reason=Draft pull request'
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          case "$AUTHOR" in
+            dependabot[bot]|renovate[bot]|github-actions[bot])
+              {
+                echo 'run=false'
+                echo 'reason=Bot-authored pull request'
+              } >> "$GITHUB_OUTPUT"
+              exit 0
+              ;;
+          esac
+
+          if [ "$HAS_OPENAI_API_KEY" != 'true' ]; then
+            {
+              echo 'run=false'
+              echo 'reason=OPENAI_API_KEY is unavailable for this run'
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          {
+            echo 'run=true'
+            echo 'reason=Review enabled'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Pre-fetch base and head refs
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          git fetch --no-tags origin \
+            "${{ steps.pr.outputs.base_ref }}" \
+            "+refs/pull/${{ steps.pr.outputs.number }}/head"
+
+      - name: Run Codex Review
+        if: steps.gate.outputs.run == 'true'
+        id: run_codex
+        uses: openai/codex-action@v1
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          PR_BASE_SHA: ${{ steps.pr.outputs.base_sha }}
+          PR_HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+          PR_AUTHOR: ${{ steps.pr.outputs.author }}
+          PR_HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          prompt-file: .github/codex/prompts/review.md
+          output-file: codex-review.json
+          output-schema-file: .github/codex/schemas/review-output.schema.json
+          codex-args: --full-auto
+          safety-strategy: drop-sudo
+          sandbox: read-only
+
+      - name: Post Codex review
+        if: steps.gate.outputs.run == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          jq -e '.event and .body' codex-review.json >/dev/null
+          jq -r '.body' codex-review.json > codex-review-body.md
+          REVIEW_EVENT=$(jq -r '.event' codex-review.json)
+
+          case "$REVIEW_EVENT" in
+            APPROVE) REVIEW_FLAG='--approve' ;;
+            REQUEST_CHANGES) REVIEW_FLAG='--request-changes' ;;
+            COMMENT) REVIEW_FLAG='--comment' ;;
+            *)
+              echo "::error::Unsupported review event: $REVIEW_EVENT"
+              exit 1
+              ;;
+          esac
+
+          gh pr review "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            "$REVIEW_FLAG" \
+            --body-file codex-review-body.md
+
+      - name: Log skipped Codex review
+        if: steps.gate.outputs.run != 'true'
+        run: |
+          echo "Skipping Codex review"
+          echo "Reason: ${{ steps.gate.outputs.reason }}"
+
+  skip-notification:
+    name: Skip Notification
+    needs: check-files
+    if: needs.check-files.outputs.skip_codex == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Post skip notification
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+        run: |
+          gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" --body "## Codex Code Review - Skipped
+
+          This PR only modifies Codex review automation files. Codex cannot review changes to its own workflow or prompt files.
+
+          **Alternative reviewers:**
+          - Claude Code Review
+          - CodeRabbit
+          - Human codeowner (@ANcpLua)
+
+          ---
+          *This is expected behavior, not an error.*"

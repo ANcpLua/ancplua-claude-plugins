@@ -4,7 +4,7 @@
 # 1a. Dependabot PRs: Auto-approve + auto-merge for patch/minor
 # 1b. Renovate PRs: Auto-approve + auto-merge
 # 2.  AI Agent fix PRs (copilot/, claude/): Auto-merge when CI passes
-# 3.  CodeRabbit/Claude approved PRs: Auto-merge when CI passes
+# 3.  CodeRabbit/Claude/Codex approved PRs: Auto-merge when CI passes
 #
 # Requirements:
 # - Repo setting "Allow auto-merge" must be enabled
@@ -168,4 +168,25 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           echo "Claude approved PR #$PR_NUMBER"
+          gh pr merge --auto --squash "$PR_URL"
+
+  # Tier 3c: Auto-merge PRs approved by Codex
+  # SECURITY: Requires github-actions[bot] to prevent spoofing by humans
+  codex-approved-auto-merge:
+    name: Codex approved auto-merge
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request_review' &&
+      github.event.review.state == 'approved' &&
+      github.event.review.user.login == 'github-actions[bot]' &&
+      contains(github.event.review.body, '## Codex Review')
+
+    steps:
+      - name: Enable auto-merge for Codex approved PRs
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          echo "Codex approved PR #$PR_NUMBER"
           gh pr merge --auto --squash "$PR_URL"

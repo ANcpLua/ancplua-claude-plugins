@@ -8,6 +8,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **Codex PR review automation**: Added `.github/workflows/codex-code-review.yml`, `.github/codex/prompts/review.md`, and `.github/codex/schemas/review-output.schema.json`. Codex now reviews pull requests in a read-only sandbox, returns structured verdicts, publishes formal GitHub reviews, and skips PRs that only modify Codex review automation
 - **metacognitive-guard `InstructionsLoaded` hook**: Truth beacon now fires on both SessionStart AND InstructionsLoaded — ground truth re-injected when CLAUDE.md/rules are loaded, ensuring authoritative facts arrive after instructions context
 - **metacognitive-guard `agent_type` filtering**: Struggle detector and Ralph Loop now skip subagents via `agent_type` field in hook events — prevents wasted haiku calls and false positives from subagent responses
 - **`design-studio` plugin (1.0.0)**: Design intelligence studio merging creative direction with data-driven recommendations. Combines `frontend-design` (Anthropic plugin — bold aesthetic philosophy, anti-generic guidelines) with `ui-ux-pro-max` (local skill — BM25 search engine, 750+ CSV rows, design system generator). Single unified workflow: creative direction → `--design-system` CLI → domain/stack searches → implementation with aesthetic precision. 50 styles, 97 palettes, 57 font pairings, 99 UX guidelines, 25 chart types, 13 stacks. Pre-delivery checklist includes creative distinctiveness check. Python stdlib-only, no pip dependencies
@@ -28,6 +29,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Removed
 
+- **`claude-self-obs` plugin removed from marketplace**: Hook lifecycle now managed by qyl.collector via attach/detach endpoints. qyl owns the hooks — users control observability via MCP tools (`qyl.observe_claude` / `qyl.stop_observing_claude`) or the dashboard Settings > Integrations toggle. No more error spam when collector is down
 - **`claude-self-obs` standalone server**: Deleted `server/` directory (TypeScript MCP server, node_modules, dist, package.json, tsconfig.json) and `.mcp.json` registration. ~300 lines TS + 58K npm dependencies eliminated. Query capabilities now provided by qyl.mcp (registered globally)
 - **`claude-self-obs` bash scripts**: Deleted `emit-span.sh` (83 lines), `emit-agent-start.sh` (60 lines), `emit-agent-stop.sh` (67 lines). Dependencies on `jq`, `python3`, `curl` eliminated
 
