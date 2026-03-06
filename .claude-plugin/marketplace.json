@@ -5,7 +5,7 @@
     "url": "https://github.com/ANcpLua"
   },
   "metadata": {
-    "description": "Claude Code plugin marketplace: 11 plugins, 28 commands, 6 skills, 24 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, .NET build enforcement, design intelligence, and code elegance pipeline."
+    "description": "Claude Code plugin marketplace: 12 plugins, 28 commands, 6 skills, 25 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, .NET build enforcement, design intelligence, code elegance pipeline, and code simplification."
   },
   "plugins": [
     {
@@ -73,6 +73,12 @@
       "description": "Multi-agent code-elegance workflow: 4 scouts (sonnet), 2 judges (opus), 1 planner, 1 verifier, 1 gated implementer. Persistent state with stage gates.",
       "version": "1.0.0",
       "source": "./plugins/elegance-pipeline"
+    },
+    {
+      "name": "code-simplifier",
+      "description": "Code simplification agent tuned to qyl engineering principles. Measures elegance as problem-complexity / solution-complexity. Zero suppression, compile-time over runtime, less code is better code.",
+      "version": "1.0.0",
+      "source": "./plugins/code-simplifier"
     }
   ]
 }
