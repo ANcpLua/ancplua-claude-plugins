@@ -22,6 +22,9 @@ MAX_CONTEXT_BYTES = 32_000
 JUDGE_TIMEOUT = int(os.environ.get("QYL_CONTINUATION_TIMEOUT", "30"))
 JUDGE_MODEL = os.environ.get("QYL_CONTINUATION_MODEL", "haiku")
 
+WORK_DIR = Path.home() / ".claude" / "qyl-continuation"
+WORK_DIR.mkdir(parents=True, exist_ok=True)
+
 
 def approve(reason: str) -> NoReturn:
     json.dump({"decision": "approve", "reason": reason}, sys.stdout)
@@ -39,7 +42,7 @@ if os.environ.get("CLAUDE_HOOK_JUDGE_MODE") == "true":
 event = json.loads(sys.stdin.read())
 transcript_path = event.get("transcript_path", "")
 session_id = event.get("session_id", "unknown")
-throttle_file = Path(f"/tmp/.qyl-continue-{session_id.replace('/', '_')}")
+throttle_file = WORK_DIR / f"throttle-{session_id.replace('/', '_')}"
 
 
 def read_throttle() -> tuple[int, float]:
@@ -60,13 +63,13 @@ def clear_throttle() -> None:
     throttle_file.unlink(missing_ok=True)
 
 
-if event.get("stop_hook_active", False):
-    count, last_time = read_throttle()
-    if time.time() - last_time > WINDOW_SECONDS:
-        count = 0
-    if count >= MAX_CONTINUATIONS:
-        clear_throttle()
-        approve("Max continuation cycles reached")
+# Throttle guard — always check, not gated on stop_hook_active
+count, last_time = read_throttle()
+if time.time() - last_time > WINDOW_SECONDS:
+    count = 0
+if count >= MAX_CONTINUATIONS:
+    clear_throttle()
+    approve("Max continuation cycles reached")
 
 
 # --- Load transcript ---
@@ -75,12 +78,12 @@ if not transcript_path or not Path(transcript_path).exists():
     approve("No transcript")
 
 try:
-    tail = subprocess.run(
-        ["tail", "-n", str(TAIL_LINES), transcript_path],
-        capture_output=True, text=True, timeout=5
-    )
-    lines = [l.strip() for l in tail.stdout.strip().split("\n") if l.strip()]
-except (subprocess.TimeoutExpired, OSError):
+    p = Path(transcript_path)
+    raw = p.read_bytes()
+    tail_bytes = raw[-(TAIL_LINES * 8192):] if len(raw) > TAIL_LINES * 8192 else raw
+    lines = [l.strip() for l in tail_bytes.decode("utf-8", errors="ignore").split("\n") if l.strip()]
+    lines = lines[-TAIL_LINES:]
+except OSError:
     approve("Failed to read transcript")
 
 messages: list[dict] = []
@@ -96,12 +99,19 @@ if not messages:
 
 # --- Transcript helpers ---
 
+def _get_content(msg: dict):
+    content = msg.get("content", "")
+    if not content and isinstance(msg.get("message"), dict):
+        content = msg["message"].get("content", "")
+    return content
+
+
 def role_of(msg: dict) -> str:
     return msg.get("role", msg.get("type", ""))
 
 
 def text_of(msg: dict) -> str:
-    content = msg.get("content", "")
+    content = _get_content(msg)
     if isinstance(content, str):
         return content
     if isinstance(content, list):
@@ -114,13 +124,18 @@ def text_of(msg: dict) -> str:
 
 
 def has_block_type(msg: dict, block_type: str) -> bool:
-    content = msg.get("content", "")
+    content = _get_content(msg)
     return isinstance(content, list) and any(
         isinstance(b, dict) and b.get("type") == block_type for b in content
     )
 
 
 # --- Phase 1: Heuristics ---
+
+NEXT_STEP_RX = re.compile(
+    r"(?i)(?:next|now) (?:I(?:'ll| will| need to)|let me)|"
+    r"moving on to|(?:still|also) need to|remaining (?:items|tasks|steps)"
+)
 
 last_assistant = ""
 for msg in reversed(messages):
@@ -145,15 +160,11 @@ COMPLETION_RX = re.compile(
     r"(?i)that(?:'s| should be) (?:it|all|everything)|"
     r"(?i)here(?:'s| is) (?:the|your|a) (?:summary|result|output)"
 )
-NEXT_STEP_RX = re.compile(
-    r"(?i)(?:next|now) (?:I(?:'ll| will| need to)|let me)|"
-    r"moving on to|(?:still|also) need to|remaining (?:items|tasks|steps)"
-)
 if last_assistant and COMPLETION_RX.search(last_assistant) and not NEXT_STEP_RX.search(last_assistant):
     clear_throttle()
     approve("Heuristic: completion signal")
 
-# H3: Tool result already addressed — assistant text after tool result
+# H3: Tool result already addressed — assistant text after tool result (but not if next steps stated)
 saw_tool = False
 addressed = False
 for msg in messages:
@@ -164,21 +175,27 @@ for msg in messages:
         addressed = True
 
 last_role = role_of(messages[-1]) if messages else ""
-if addressed and last_role == "assistant":
+if addressed and last_role == "assistant" and not NEXT_STEP_RX.search(last_assistant):
     clear_throttle()
     approve("Heuristic: tool results already addressed")
 
-# H4: Substantial text-only response (no pending tool calls)
+# H4: Substantial text-only response (no pending tool calls, no stated next steps)
 last_msg = messages[-1]
 if role_of(last_msg) == "assistant" and not has_block_type(last_msg, "tool_use"):
-    if len(text_of(last_msg)) > 100:
+    text = text_of(last_msg)
+    if len(text) > 100 and not NEXT_STEP_RX.search(text):
         clear_throttle()
         approve("Heuristic: substantial text-only response")
 
 
 # --- Phase 2: Haiku judge ---
 
-transcript_json = json.dumps(messages, ensure_ascii=False)[:MAX_CONTEXT_BYTES]
+raw_transcript = json.dumps(messages, ensure_ascii=False)
+transcript_bytes = raw_transcript.encode("utf-8")
+if len(transcript_bytes) > MAX_CONTEXT_BYTES:
+    transcript_json = transcript_bytes[:MAX_CONTEXT_BYTES].decode("utf-8", errors="ignore")
+else:
+    transcript_json = raw_transcript
 
 EVAL_PROMPT = f"""Does the assistant have more autonomous work to do RIGHT NOW?
 
@@ -198,8 +215,6 @@ STOP (false) in ALL other cases:
 A tool_result or image does NOT mean unaddressed work — check for assistant text AFTER it.
 Default: STOP."""
 
-work_dir = Path.home() / ".claude" / "qyl-continuation"
-work_dir.mkdir(parents=True, exist_ok=True)
 env = os.environ.copy()
 env["CLAUDE_HOOK_JUDGE_MODE"] = "true"
 
@@ -211,7 +226,7 @@ try:
          "--system-prompt", "Conversation state classifier. Output JSON only. No code, no tools.",
          "--disallowedTools", "*"],
         input=EVAL_PROMPT, capture_output=True, text=True,
-        timeout=JUDGE_TIMEOUT, cwd=str(work_dir), env=env,
+        timeout=JUDGE_TIMEOUT, cwd=str(WORK_DIR), env=env,
     )
 except (subprocess.TimeoutExpired, OSError):
     approve("Judge unavailable, allowing stop")
@@ -220,8 +235,9 @@ if proc.returncode != 0:
     approve("Judge failed, allowing stop")
 
 try:
-    evaluation = json.loads(proc.stdout).get("structured_output", {})
-except (json.JSONDecodeError, AttributeError, TypeError):
+    output = json.loads(proc.stdout)
+    evaluation = (output.get("structured_output") or {}) if isinstance(output, dict) else {}
+except json.JSONDecodeError:
     approve("Judge response unparseable, allowing stop")
 
 if evaluation.get("should_continue", False):
