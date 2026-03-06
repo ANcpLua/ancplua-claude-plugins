@@ -5,7 +5,7 @@
     "url": "https://github.com/ANcpLua"
   },
   "metadata": {
-    "description": "Claude Code plugin marketplace: 12 plugins, 28 commands, 6 skills, 25 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, .NET build enforcement, design intelligence, code elegance pipeline, and code simplification."
+    "description": "Claude Code plugin marketplace: 13 plugins, 28 commands, 6 skills, 25 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, .NET build enforcement, design intelligence, code elegance pipeline, code simplification, and smart auto-continuation."
   },
   "plugins": [
     {
@@ -79,6 +79,12 @@
       "description": "Code simplification agent tuned to qyl engineering principles. Measures elegance as problem-complexity / solution-complexity. Zero suppression, compile-time over runtime, less code is better code.",
       "version": "1.0.0",
       "source": "./plugins/code-simplifier"
+    },
+    {
+      "name": "qyl-continuation",
+      "description": "Smart auto-continuation for Claude Code. Heuristic pre-filter eliminates ~80% of unnecessary Haiku calls; improved judge prompt handles the rest. Based on double-shot-latte (MIT).",
+      "version": "1.0.0",
+      "source": "./plugins/qyl-continuation"
     }
   ]
 }
