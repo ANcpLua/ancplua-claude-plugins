@@ -17,6 +17,8 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **`tooling/templates/persistent-agent-worktree-setup.md`**: Added a reusable prompt template for role-based Claude/Codex worktree setup with `AGENTS.md` as the single source of truth and thin `CLAUDE.md`/`.codex/agent.md` pointer files
+
 - **`qyl-continuation` plugin (1.0.0)**: Smart auto-continuation for Claude Code. Two-phase stop hook: heuristic pre-filter eliminates ~80% of unnecessary Haiku calls (questions, completion signals, addressed tool results, substantial text), Haiku judge handles the ambiguous ~20%. Throttled to max 3 continuations per 5-minute window. Based on double-shot-latte (MIT)
 - **`code-simplifier` plugin (1.0.0)**: Code simplification agent tuned to qyl engineering principles. Replaces Anthropic's JS/React-centric code-simplifier with a language-agnostic version that reads CLAUDE.md for project standards. Measures elegance as problem-complexity / solution-complexity ratio. Zero suppression tolerance, compile-time over runtime, less code is better code. 1 Opus agent
 - **`elegance-pipeline` plugin (1.0.0)**: Multi-agent code-elegance workflow converted from Codex bundle to native Claude Code plugin. 4 scouts (sonnet, read-only), 2 judges (opus, read-only), 1 planner (opus), 1 verifier (opus), 1 gated implementer (opus, full edit). Persistent state manager with stage gates and implementation signal. 3 commands (`init`, `status`, `run`), 1 skill, 5 agents. All `.codex/` paths rewritten to `${CLAUDE_PLUGIN_ROOT}`, Codex-Spark->sonnet, GPT-5.4->opus, state moved to project-local `.claude/elegance_pipeline/state/`
