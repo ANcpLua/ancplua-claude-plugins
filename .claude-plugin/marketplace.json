@@ -77,7 +77,7 @@
     {
       "name": "code-simplifier",
       "description": "Code simplification agent tuned to qyl engineering principles. Measures elegance as problem-complexity / solution-complexity. Zero suppression, compile-time over runtime, less code is better code.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "source": "./plugins/code-simplifier"
     },
     {
