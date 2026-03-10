@@ -71,8 +71,10 @@ esac
 # DANGER PATTERN DETECTION
 # =============================================================================
 
-# .NET 10 preview hallucination
-if echo "$CONTENT" | grep -qiE "\.NET 10.*(preview|not.*(released|LTS|available))|\.NET 10 is still|net9\.0"; then
+# .NET 10 version hallucination
+# NOTE: .{0,15} limits match proximity to prevent false positives from NuGet
+# prerelease versions (e.g., 1.0.0-preview.260304.1) on the same line
+if echo "$CONTENT" | grep -qiE "\.NET 10.{0,15}(preview|not.{0,15}(released|LTS|available))|\.NET 10 is still|net9\.0"; then
     cat << 'EOF'
 {
   "hookSpecificOutput": {
