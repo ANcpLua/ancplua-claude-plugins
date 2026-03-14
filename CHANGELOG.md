@@ -22,9 +22,6 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Changed
 
 - **Settings cleanup**: Removed `DOTNET_ROOT` env var (unnecessary in plugin repo), removed 2 disabled external plugins from enabledPlugins (chrome-devtools-mcp, playwright)
-
-### Changed
-
 - **`code-simplifier` (1.0.0 → 1.1.0)**: Enhanced agent with Seemann-derived principles — correctness over brevity (Position 1), end-state thinking for "less code", unfamiliarity != complexity nuance, explicit rule of three for deduplication, test signal-to-noise in simplification step, decomposition paradox in stop criteria, 2 new "never do" items (weaken assertions, guess versions)
 
 ### Fixed
