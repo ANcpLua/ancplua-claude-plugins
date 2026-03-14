@@ -19,6 +19,10 @@ set -euo pipefail
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"
 [[ -z "$PLUGIN_ROOT" ]] && exit 0
 
+# Skip subagents — struggle state is lead-agent only
+AGENT_TYPE=$(jq -r '.agent_type // empty' 2>/dev/null || true)
+[[ "$AGENT_TYPE" == "subagent" ]] && exit 0
+
 BLACKBOARD="$PLUGIN_ROOT/.blackboard"
 STRUGGLE_COUNT_FILE="$BLACKBOARD/.struggle-count"
 

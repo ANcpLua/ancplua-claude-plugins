@@ -1,6 +1,6 @@
 # ancplua-claude-plugins
 
-Claude Code plugin marketplace. 8 plugins for parallel agent orchestration,
+Claude Code plugin marketplace. 13 plugins for parallel agent orchestration,
 quality gates, and automated enforcement in Claude Code sessions.
 
 ## What this does
@@ -10,16 +10,21 @@ is gated — work only advances when the gate passes. No manual babysitting.
 
 ## Plugins
 
-| Plugin | What it does in plain language |
-|--------|-------------------------------|
-| **exodia** | Summons up to 12 AI workers that tackle different parts of your code simultaneously. One finds problems, another fixes them, another reviews the fix — all at the same time |
-| **metacognitive-guard** | Watches the AI while it works. If it's about to cut corners, guess instead of verify, or say "done" when it isn't — this blocks it before the mistake happens |
-| **feature-dev** | A guided process for building new things: understand what exists, design the plan, build it, review it. No skipping steps |
-| **hookify** | Custom tripwires you set up. "Never do X" or "Always check Y before Z." The AI physically cannot proceed if it violates your rules |
-| **otelwiki** | Built-in reference for OpenTelemetry monitoring standards so the AI writes correct telemetry code instead of guessing |
-| **dotnet-architecture-lint** | Enforces .NET project structure rules automatically — catches version mismatches and structural violations before they ship |
-| **council** | Five-agent council for complex tasks. Opus captain decomposes and dispatches, three Sonnet specialists research/synthesize/check, Haiku janitor flags bloat |
-| **ancplua-project-routing** | Automatically recognizes what kind of project you're in and loads the right tools and rules. No configuration needed |
+| Plugin                       | What it does in plain language                                                                                                                                              |
+|------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **exodia**                   | Summons up to 12 AI workers that tackle different parts of your code simultaneously. One finds problems, another fixes them, another reviews the fix — all at the same time |
+| **metacognitive-guard**      | Watches the AI while it works. If it's about to cut corners, guess instead of verify, or say "done" when it isn't — this blocks it before the mistake happens               |
+| **feature-dev**              | A guided process for building new things: understand what exists, design the plan, build it, review it. No skipping steps                                                   |
+| **hookify**                  | Custom tripwires you set up. "Never do X" or "Always check Y before Z." The AI physically cannot proceed if it violates your rules                                          |
+| **otelwiki**                 | Built-in reference for OpenTelemetry monitoring standards so the AI writes correct telemetry code instead of guessing                                                       |
+| **dotnet-architecture-lint** | Enforces .NET project structure rules automatically — catches version mismatches and structural violations before they ship                                                 |
+| **council**                  | Five-agent council for complex tasks. Opus captain decomposes and dispatches, three Sonnet specialists research/synthesize/check, Haiku janitor flags bloat                 |
+| **ancplua-project-routing**  | Automatically recognizes what kind of project you're in and loads the right tools and rules. No configuration needed                                                        |
+| **design-studio**            | Design intelligence helpers for visual direction, UX patterns, and design-system generation                                                                                 |
+| **elegance-pipeline**        | Multi-agent pipeline that scores code elegance and optionally refactors the weakest files through gated stages                                                              |
+| **code-simplifier**          | Simplifies implementations while preserving behavior — measures elegance as problem-complexity / solution-complexity                                                        |
+| **qyl-instrumentation**      | Observability orchestration for OpenTelemetry instrumentation across the qyl platform                                                                                       |
+| **qyl-continuation**         | Smart continuation heuristic that reduces unnecessary model calls while preserving quality checks                                                                           |
 
 ### How does this work without failing?
 
@@ -43,9 +48,9 @@ Add the marketplace, then install plugins individually:
 
 ## Technical details
 
-8 plugins, 23 commands, 4 skills, 14 agents, 21 scripts, 7 hook configs.
+13 plugins, 28 commands, 6 skills, 25 agents.
 
-Quad-AI review system: Claude, Codex, Copilot, and CodeRabbit review PRs independently.
+Tri-AI review system: Claude, Copilot, and CodeRabbit review PRs independently.
 
 ## GitHub review automation
 
@@ -63,9 +68,14 @@ plugins/
 ├── otelwiki/                # OpenTelemetry docs + sync
 ├── hookify/                 # user-configurable behavior rules
 ├── feature-dev/             # guided feature development + code review
-├── council/                 # five-agent council (Opus captain + Sonnet specialists + Haiku janitor)
+├── council/                 # five-agent council (Teams API)
 ├── dotnet-architecture-lint/# .NET build pattern enforcement
-└── ancplua-project-routing/ # project-aware agent routing
+├── ancplua-project-routing/ # project-aware agent routing
+├── design-studio/           # design intelligence + BM25 search
+├── elegance-pipeline/       # code elegance scoring + gated refactoring
+├── code-simplifier/         # complexity reduction agent
+├── qyl-instrumentation/     # OTel observability orchestration
+└── qyl-continuation/        # smart auto-continuation
 ```
 
 ## Links
