@@ -13,6 +13,7 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 | Struggle Detector | Stop (async) | `struggle-detector.sh` | Scores response for uncertainty, writes to blackboard |
 | Struggle Inject | UserPromptSubmit | `struggle-inject.sh` | Reads blackboard, injects deep-think suggestion as `additionalContext` |
 | Ralph Loop | PostToolUse (Write/Edit) | prompt (haiku) + `ralph-loop.sh` | Two-layer drift detection: haiku analyzes context (over-engineering, complexity, premature optimization), grep catches surface patterns (TODO, suppressions, catch-all). Both inject via additionalContext. Silent when clean |
+| Compact Reinject | SessionStart (compact) | `reinject-after-compact.sh` | Re-injects workflow reminders after compaction |
 | Task Completion Gate | TaskCompleted | prompt (haiku) | Validates task completions in team workflows aren't premature |
 
 ## Commands
@@ -57,7 +58,8 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
   UserPromptSubmit hook reads blackboard and injects `additionalContext` so Claude actually sees the
   suggestion. No latency on responses.
 - Struggle detector and Ralph Loop skip subagents via `agent_type` filtering (only lead agent matters).
-- TaskCompleted prompt hook fires on every task completion in team contexts (haiku, 15s timeout).
+- TaskCompleted prompt hook fires on lead agent only (skips subagents via agent_type check).
+- Compact reinject hook fires after auto/manual compaction via SessionStart matcher "compact".
 - Ralph Loop fires PostToolUse on Write/Edit — two layers run in parallel:
   (1) Haiku prompt analyzes context for deep drift (over-engineering, complexity creep, premature
   optimization, unclear naming). (2) Grep script catches surface antipatterns instantly (TODO/HACK,

@@ -6,9 +6,22 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **`metacognitive-guard` PostCompact hook (0.5.1 → 0.6.0)**: Self-healing context after compaction. SessionStart hook with `"matcher": "compact"` fires after auto/manual compaction and re-injects workflow reminders (skill check, TDD, validation, CHANGELOG). CLAUDE.md, rules, and MEMORY.md auto-reload — this hook covers conversational context that gets lost. Script: `reinject-after-compact.sh`
+
 ### Fixed
 
+- **`metacognitive-guard` subagent filtering (0.5.1 → 0.6.0)**: Added agent_type skip to 3 hooks that were wasting Haiku calls on subagent events:
+  - TaskCompleted prompt: now skips subagents (in 8-agent teams, saves 7 Haiku calls per task completion)
+  - Ralph haiku prompt: now skips subagents (PostToolUse Write/Edit was firing for every subagent edit)
+  - struggle-inject.sh: now reads hook input and checks agent_type before blackboard read (defense-in-depth)
+- **Plugin metadata**: Standardized author objects across 5 plugins — council, qyl-instrumentation, design-studio, elegance-pipeline, code-simplifier now use `{name, url}` format (was missing url or had empty email)
 - **`metacognitive-guard` (0.5.0 → 0.5.1)**: Fixed epistemic-guard false positive — greedy `.*` in version-check regex matched NuGet prerelease suffixes (e.g., `1.0.0-preview.260304.1`) appearing on the same line. Replaced with `.{0,15}` proximity limit
+
+### Changed
+
+- **Settings cleanup**: Removed `DOTNET_ROOT` env var (unnecessary in plugin repo), removed 2 disabled external plugins from enabledPlugins (chrome-devtools-mcp, playwright)
 
 ### Changed
 

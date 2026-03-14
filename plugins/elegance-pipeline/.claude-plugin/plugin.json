@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Multi-agent code-elegance workflow: 4 scouts, 2 judges, 1 planner, 1 verifier, 1 gated implementer. Persistent state manager with stage gates and implementation signal.",
   "author": {
-    "name": "ANcpLua"
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
   },
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
   "license": "MIT",

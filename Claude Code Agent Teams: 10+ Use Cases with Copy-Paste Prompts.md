@@ -1,8 +1,3 @@
-# Claude Code Agent Teams: 10+ Use Cases with Copy-Paste Prompts
-
-Real-world agent team examples and prompts for code review, debugging, full-stack features, architecture decisions, marketing campaigns, and more. Copy, paste, run.
-
-**Problem:** You have Claude Code Agent Teams enabled and running. But "create a team to help with my project" produces unfocused results. The difference between a productive team and a token-burning mess comes down to how you structure the prompt. These agent team examples and prompt templates give you tested starting points for every common multi-agent workflow.
 
 ---
 
