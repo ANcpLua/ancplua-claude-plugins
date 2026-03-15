@@ -2,14 +2,11 @@
 """
 qyl-continuation stop hook.
 Based on double-shot-latte (MIT) by Jesse/Anthropic.
-Phase 1: Heuristic pre-filter (~80% of stops, no Haiku call).
-Phase 2: Haiku judge (ambiguous ~20% only).
+Heuristic-only mode (Phase 2 Haiku judge removed).
 """
 
 import json
-import os
 import re
-import subprocess
 import sys
 import time
 from pathlib import Path
@@ -18,9 +15,6 @@ from typing import NoReturn
 MAX_CONTINUATIONS = 3
 WINDOW_SECONDS = 300
 TAIL_LINES = 6
-MAX_CONTEXT_BYTES = 32_000
-JUDGE_TIMEOUT = int(os.environ.get("QYL_CONTINUATION_TIMEOUT", "30"))
-JUDGE_MODEL = os.environ.get("QYL_CONTINUATION_MODEL", "haiku")
 
 WORK_DIR = Path.home() / ".claude" / "qyl-continuation"
 WORK_DIR.mkdir(parents=True, exist_ok=True)
@@ -35,9 +29,6 @@ def block(reason: str) -> NoReturn:
     json.dump({"decision": "block", "reason": reason}, sys.stdout)
     sys.exit(0)
 
-
-if os.environ.get("CLAUDE_HOOK_JUDGE_MODE") == "true":
-    approve("Judge mode, allowing stop")
 
 event = json.loads(sys.stdin.read())
 transcript_path = event.get("transcript_path", "")
@@ -191,64 +182,16 @@ if role_of(last_msg) == "assistant" and not has_block_type(last_msg, "tool_use")
         approve("Heuristic: substantial text-only response")
 
 
-# --- Phase 2: Haiku judge ---
+# --- Phase 2 disabled: heuristic-only mode ---
+# Haiku LLM judge removed — if no heuristic matched, check for stated next steps
+# and default to allowing the stop.
 
-raw_transcript = json.dumps(messages, ensure_ascii=False)
-transcript_bytes = raw_transcript.encode("utf-8")
-if len(transcript_bytes) > MAX_CONTEXT_BYTES:
-    transcript_json = transcript_bytes[:MAX_CONTEXT_BYTES].decode("utf-8", errors="ignore")
-else:
-    transcript_json = raw_transcript
-
-EVAL_PROMPT = f"""Does the assistant have more autonomous work to do RIGHT NOW?
-
-Conversation:
-{transcript_json}
-
-CONTINUE (true) ONLY IF ALL true:
-1. Assistant explicitly stated next action ("Next I need to...", "Now I'll...")
-2. That action has NOT been performed yet
-3. No user input needed
-
-STOP (false) in ALL other cases:
-- Completion signals, questions to user, presenting results
-- Tool results/images the assistant ALREADY responded to
-- Errors, blockers, offering optional follow-ups
-
-A tool_result or image does NOT mean unaddressed work — check for assistant text AFTER it.
-Default: STOP."""
-
-env = os.environ.copy()
-env["CLAUDE_HOOK_JUDGE_MODE"] = "true"
-
-try:
-    proc = subprocess.run(
-        ["claude", "--print", "--model", JUDGE_MODEL,
-         "--output-format", "json",
-         "--json-schema", '{"type":"object","properties":{"should_continue":{"type":"boolean"},"reasoning":{"type":"string"}},"required":["should_continue","reasoning"]}',
-         "--system-prompt", "Conversation state classifier. Output JSON only. No code, no tools.",
-         "--disallowedTools", "*"],
-        input=EVAL_PROMPT, capture_output=True, text=True,
-        timeout=JUDGE_TIMEOUT, cwd=str(WORK_DIR), env=env,
-    )
-except (subprocess.TimeoutExpired, OSError):
-    approve("Judge unavailable, allowing stop")
-
-if proc.returncode != 0:
-    approve("Judge failed, allowing stop")
-
-try:
-    output = json.loads(proc.stdout)
-    evaluation = (output.get("structured_output") or {}) if isinstance(output, dict) else {}
-except json.JSONDecodeError:
-    approve("Judge response unparseable, allowing stop")
-
-if evaluation.get("should_continue", False):
+if last_assistant and NEXT_STEP_RX.search(last_assistant):
     count, last_time = read_throttle()
     if time.time() - last_time > WINDOW_SECONDS:
         count = 0
     write_throttle(count + 1)
-    block(f"Judge: {evaluation.get('reasoning', '')}")
-else:
-    clear_throttle()
-    approve(f"Judge: {evaluation.get('reasoning', '')}")
+    block("Heuristic: assistant stated next steps")
+
+clear_throttle()
+approve("Heuristic: no continuation signal detected")
