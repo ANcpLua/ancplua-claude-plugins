@@ -8,6 +8,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **`.github/workflows/claude-code-review.yml`**: Automated PR code review workflow using Claude Code Action. Reviews all PRs on open/sync/ready for code quality, bugs, security, and CLAUDE.md compliance. Uses bundled code-review plugin with restricted tools for security
 - ~~`metacognitive-guard` PostCompact hook (0.5.1 → 0.6.0)~~ — **Removed in 0.6.1**: Manual testing confirmed the SessionStart `"matcher": "compact"` hook never fired after `/compact`. Native recovery (compaction summaries + CLAUDE.md auto-reload) handles context recovery without it. Dead code deleted: `reinject-after-compact.sh` + hooks.json entry
 
 ### Fixed
