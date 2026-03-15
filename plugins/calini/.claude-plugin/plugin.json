@@ -1,0 +1,30 @@
+{
+  "name": "calini",
+  "version": "0.1.0",
+  "description": "Carlini-style parallel agent teams for qyl AI observability platform development. 8 specialized agents working autonomously on a shared codebase with git-based task locking.",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "agent-teams",
+    "parallel",
+    "autonomous",
+    "qyl",
+    "observability",
+    "carlini"
+  ],
+  "commands": "./commands",
+  "agents": [
+    "./agents/collector.md",
+    "./agents/dashboard.md",
+    "./agents/generators.md",
+    "./agents/integration.md",
+    "./agents/test-engineer.md",
+    "./agents/quality.md",
+    "./agents/docs.md",
+    "./agents/general.md"
+  ]
+}
