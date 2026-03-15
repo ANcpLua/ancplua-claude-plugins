@@ -42,7 +42,7 @@ The seed becomes a Definition of Done (DOD) — a list of observable outcomes.
 ```
 
 Workers run in parallel. Each validates independently. No orchestrator aggregates — each worker
-checks the DOD file directly and picks unclaimed work.
+receives their items in the spawn prompt and works autonomously.
 
 ## The Fuel (Apply More Tokens)
 
@@ -61,9 +61,9 @@ Errors are information. More tokens on the problem means more approaches explore
 
 | Technique | Source | What It Does |
 |-----------|--------|-------------|
-| Filesystem coordination | Carlini | File locks for task claiming, no orchestrator |
-| Worktree isolation | Carlini | Each worker gets an isolated git worktree |
-| Self-directed selection | Carlini | Workers choose their own tasks from the DOD |
+| Prompt-embedded DOD | Carlini (adapted) | Pre-partition items across workers, embed in spawn prompt |
+| Worktree isolation | Carlini (adapted) | Each worker gets an isolated git worktree |
+| Autonomous execution | Carlini | Workers self-direct implementation and verification |
 | Loop detection | Zechner | If same 3 tool calls repeat, force different approach |
 | Context hygiene | Zechner | Errors to files, short stdout, avoid context bloat |
 | Pyramid summaries | Zechner | Progressive summarization for long-running context |
