@@ -31,10 +31,19 @@ Pick the first unclaimed, unlocked item.
 
 ## Step 2 — Claim Work
 
-Create a lock file: `.carlini-jr/current_tasks/item-<N>.lock`
+Claim an item using an **atomic** file-create so only one worker can win:
 
-Write your agent ID or a unique identifier into the lock file. First writer wins — if the file
-already exists when you try to create it, skip that item and pick the next one.
+```bash
+# bash noclobber: fails with EEXIST if the file already exists (O_CREAT|O_EXCL semantics)
+# Run in a subshell so noclobber does not bleed into subsequent operations.
+WORKER_ID="worker-$$-$RANDOM"   # unique per-process identifier
+( set -o noclobber; echo "$WORKER_ID" > .carlini-jr/current_tasks/item-<N>.lock )
+```
+
+If the subshell exits non-zero (the file already existed), the item is already
+claimed — skip it and try the next one. Do **not** check for the file's existence first and then
+write; that creates a TOCTOU race. The `noclobber` flag makes creation and the ownership claim
+a single atomic operation.
 
 ## Step 3 — Implement
 
@@ -63,9 +72,13 @@ Never trust build output or test results as proof. Only screenshots.
 
 If the screenshot passes:
 
-- Remove your lock file: delete `.carlini-jr/current_tasks/item-<N>.lock`
-- Update `.carlini-jr/dod.md` — mark the item as `[x]` and set status to `done`
-- Go back to Step 1 — pick the next unclaimed item
+1. Write to `.carlini-jr/dod/<worker-id>.md` — append (`>>`) the item result with status `done`
+2. Delete your lock file: `.carlini-jr/current_tasks/item-<N>.lock`
+3. Go back to Step 1 — pick the next unclaimed item
+
+**Order matters:** always persist the result first, then release the lock. Releasing the lock
+before writing the result creates a window where another worker can reclaim the item and
+overwrite a partially-written or missing status entry.
 
 If the screenshot fails:
 
@@ -121,7 +134,8 @@ The only coordination mechanism is the filesystem:
 
 | File | Purpose |
 |------|---------|
-| `.carlini-jr/dod.md` | Full DOD with item statuses |
+| `.carlini-jr/dod.md` | Full DOD with item definitions (read-only after creation) |
+| `.carlini-jr/dod/<worker-id>.md` | Per-worker results — each worker appends its own outcomes |
 | `.carlini-jr/current_tasks/item-<N>.lock` | Claim on item N (contains worker ID) |
 
 No SendMessage. No shared databases. No APIs. Files only.

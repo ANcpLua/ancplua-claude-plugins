@@ -40,7 +40,7 @@ User can override by saying "use 6 agents" in the prompt.
 ### Step 3 — Create Coordination Substrate
 
 ```bash
-mkdir -p .carlini-jr/current_tasks/
+mkdir -p .carlini-jr/current_tasks/ .carlini-jr/dod/
 ```
 
 This directory is the entire coordination mechanism. No databases, no message queues, no APIs.
@@ -49,7 +49,8 @@ Add `.carlini-jr/` to `.gitignore` if not already present.
 
 ### Step 4 — Write DOD File
 
-Write `.carlini-jr/dod.md` with all items and their status:
+Write `.carlini-jr/dod.md` as a **read-only reference** — item definitions only, no mutable status
+table. Workers never modify this file; they write their own results to per-worker files.
 
 ```markdown
 # Definition of Done
@@ -60,16 +61,12 @@ Write `.carlini-jr/dod.md` with all items and their status:
 - [ ] 2. Chart 1 rendered with data
 - [ ] 3. Chart 2 rendered with data
 - [ ] 4. Chart 3 rendered with data
-
-## Status
-
-| Item | Worker | Status |
-|------|--------|--------|
-| 1 | — | unclaimed |
-| 2 | — | unclaimed |
-| 3 | — | unclaimed |
-| 4 | — | unclaimed |
 ```
+
+Workers write outcomes to `.carlini-jr/dod/<worker-id>.md` (one file per worker, using `>>`
+redirection to append new item entries at the end). This removes contention: no two workers ever
+write the same file, so no locking or merging is needed for status updates. The launcher
+aggregates results at Step 6 by reading all per-worker files.
 
 ### Step 5 — Spawn Workers
 
@@ -96,11 +93,12 @@ All workers launch in ONE message — maximum parallelism.
 
 The lead does NOT monitor workers. Workers are autonomous.
 
-When all workers return, report:
+When all workers return, aggregate results by reading all `.carlini-jr/dod/*.md` files, then
+report:
 
 - Which DOD items passed (with screenshot evidence)
 - Which items failed (with last screenshot showing the failure)
-- Any items that were never claimed
+- Any items that were never claimed (no entry in any per-worker file)
 
 ## Failure Conditions
 
