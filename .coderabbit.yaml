@@ -8,10 +8,9 @@
 
 language: en-US
 tone_instructions: >-
-  Review like a principal-level engineer. Be direct and concise. Flag structural
-  violations as blocking. Prefer one actionable sentence over three hedging ones.
-  Do not praise obvious correctness. This is a plugin marketplace — every file
-  is consumed by AI agents, so clarity and correctness are paramount.
+  Principal-engineer review. Direct, concise. Flag structural violations as blocking.
+  One actionable sentence over three hedging ones. No praise for obvious correctness.
+  Plugin marketplace — files consumed by AI agents, clarity is paramount.
 early_access: true
 
 reviews:
@@ -350,26 +349,12 @@ reviews:
           SKILL.md changes, or all SKILL.md files have valid frontmatter.
           Fail if: a SKILL.md lacks frontmatter or required fields.
       - mode: warning
-        name: Plugin version bumped
+        name: Plugin version and marketplace sync
         instructions: >-
           If this PR modifies plugin code (skills, commands, hooks, agents,
-          scripts) under plugins/<name>/, verify that the corresponding
-          plugin.json version was incremented. Pass if: no plugin code changes,
-          or version was bumped. Fail if: plugin code changed but version
-          in plugin.json is unchanged.
-      - mode: warning
-        name: Marketplace sync
-        instructions: >-
-          If this PR adds or removes a plugin, or changes a plugin's version
-          in plugin.json, verify that .claude-plugin/marketplace.json is
-          updated to match. Pass if: no plugin additions/removals/version
-          changes. Fail if: marketplace.json is out of sync.
-      - mode: warning
-        name: Shell scripts use strict mode
-        instructions: >-
-          If this PR adds or modifies .sh files, verify they start with
-          set -euo pipefail (or equivalent). Pass if: no shell script changes,
-          or all scripts use strict mode. Fail if: a script lacks strict mode.
+          scripts) under plugins/<name>/, verify: (1) plugin.json version was
+          bumped, (2) .claude-plugin/marketplace.json matches. Pass if: no
+          plugin code changes, or both are updated. Fail if: either is stale.
 
   # ── Tools ─────────────────────────────────────────────────────────────────
   # Strategy: enable tools relevant to Markdown + Shell + YAML + JSON stack.
