@@ -5,7 +5,7 @@
     "url": "https://github.com/ANcpLua"
   },
   "metadata": {
-    "description": "Claude Code plugin marketplace: 13 plugins, 28 commands, 6 skills, 25 agents. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, .NET build enforcement, design intelligence, code elegance pipeline, code simplification, and smart auto-continuation."
+    "description": "Claude Code plugin marketplace. Multi-agent orchestration, cognitive amplification, OpenTelemetry docs, .NET build enforcement, design intelligence, code elegance pipeline, code simplification, smart auto-continuation, and leaderless agent swarms."
   },
   "plugins": [
     {
@@ -85,6 +85,12 @@
       "description": "Smart auto-continuation for Claude Code. Heuristic pre-filter eliminates ~80% of unnecessary Haiku calls; improved judge prompt handles the rest. Based on double-shot-latte (MIT).",
       "version": "1.0.1",
       "source": "./plugins/qyl-continuation"
+    },
+    {
+      "name": "ancplua",
+      "description": "Agent operating system — leaderless swarms with Playwright oracle. Code is opaque weights; correctness inferred exclusively from externally observable behavior.",
+      "version": "0.1.0",
+      "source": "./plugins/ancplua"
     }
   ]
 }

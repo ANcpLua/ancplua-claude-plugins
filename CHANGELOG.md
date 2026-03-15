@@ -8,6 +8,8 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **`ancplua` plugin (0.1.0)**: Agent operating system — leaderless multi-agent swarms. First skill: `carlini-jr` — spawns 2-8 workers that self-select DOD items, implement, and verify via Playwright MCP screenshots. No orchestrator. Code is opaque — only observable behavior matters. Inspired by Carlini's C compiler team + Zechner's agent loop spec
+
 - ~~`metacognitive-guard` PostCompact hook (0.5.1 → 0.6.0)~~ — **Removed in 0.6.1**: Manual testing confirmed the SessionStart `"matcher": "compact"` hook never fired after `/compact`. Native recovery (compaction summaries + CLAUDE.md auto-reload) handles context recovery without it. Dead code deleted: `reinject-after-compact.sh` + hooks.json entry
 
 ### Fixed
