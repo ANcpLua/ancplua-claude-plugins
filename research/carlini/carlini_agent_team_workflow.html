@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carlini Agent Team Workflow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: #0e0e0e;
+    color: #e8e6e0;
+    padding: 2.5rem 2rem;
+    min-height: 100vh;
+  }
+
+  /* CSS variable shim for standalone */
+  :root {
+    --color-text-primary: #e8e6e0;
+    --color-text-secondary: #a0a09a;
+    --color-text-tertiary: #666660;
+    --color-background-primary: #161614;
+    --color-background-secondary: #1c1c1a;
+    --color-border-tertiary: rgba(255,255,255,0.08);
+    --color-border-secondary: rgba(255,255,255,0.15);
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+  }
+
+  .root {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    margin-bottom: 6px;
+  }
+
+  .title {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 2.5rem;
+  }
+
+  .title span { color: #1D9E75; }
+
+  .layer { margin-bottom: 1.5rem; }
+
+  .layer-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .layer-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: 4px;
+    padding: 2px 7px;
+    color: var(--color-text-secondary);
+  }
+
+  .layer-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--color-text-primary);
+  }
+
+  .harness-box {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-lg);
+    padding: 14px 16px;
+  }
+
+  .harness-loop {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .loop-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 10px 8px;
+    position: relative;
+  }
+
+  .loop-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--color-text-tertiary);
+    z-index: 2;
+  }
+
+  .loop-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-bottom: 7px;
+  }
+
+  .loop-step-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 3px;
+    line-height: 1.3;
+  }
+
+  .loop-step-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--color-text-tertiary);
+    line-height: 1.4;
+  }
+
+  .loop-back {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #1D9E75;
+    text-align: center;
+    margin-top: 10px;
+    border-top: 1px dashed rgba(255,255,255,0.08);
+    padding-top: 8px;
+  }
+
+  .agents-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .agent-card {
+    border-radius: var(--border-radius-md);
+    border: 0.5px solid var(--color-border-tertiary);
+    padding: 10px 10px 8px;
+    background: var(--color-background-primary);
+  }
+
+  .agent-card.specialized {
+    border-color: #0F6E56;
+    background: rgba(29,158,117,0.06);
+  }
+
+  .agent-role {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+    color: var(--color-text-primary);
+  }
+
+  .agent-task {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--color-text-tertiary);
+    line-height: 1.5;
+  }
+
+  .agent-badge {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+
+  .badge-compiler { background: rgba(55,138,221,0.15); color: #85B7EB; }
+  .badge-specialist { background: rgba(29,158,117,0.15); color: #5DCAA5; }
+
+  .sync-row {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
+    gap: 8px;
+  }
+
+  .sync-card {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 12px;
+  }
+
+  .sync-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1D9E75;
+    margin-bottom: 4px;
+    line-height: 1;
+  }
+
+  .sync-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 3px;
+  }
+
+  .sync-desc {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  .test-row {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+    gap: 8px;
+  }
+
+  .test-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 12px;
+  }
+
+  .test-card.highlight {
+    border-color: rgba(55,138,221,0.4);
+    background: rgba(55,138,221,0.06);
+  }
+
+  .test-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 5px;
+  }
+
+  .test-body {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    background: rgba(255,255,255,0.07);
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: var(--color-text-primary);
+  }
+
+  .results-row {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0,1fr));
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .stat {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 10px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    line-height: 1.3;
+  }
+
+  .limits-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 8px;
+  }
+
+  .limit-card {
+    border-radius: var(--border-radius-md);
+    border: 0.5px solid rgba(226,75,74,0.25);
+    padding: 10px;
+    background: rgba(226,75,74,0.06);
+  }
+
+  .limit-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #F09595;
+    margin-bottom: 3px;
+  }
+
+  .limit-body {
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  .connector {
+    text-align: center;
+    color: var(--color-text-tertiary);
+    font-size: 18px;
+    margin: 6px 0;
+    line-height: 1;
+  }
+</style>
+</head>
+<body>
+<div class="root">
+
+  <div class="section-label">Engineering blog · Nicholas Carlini · Feb 2026</div>
+  <div class="title">Agent Teams: <span>C compiler</span> workflow</div>
+
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-num">01</span>
+      <span class="layer-title">Infinite agent loop — the harness</span>
+    </div>
+    <div class="harness-box">
+      <div class="harness-loop">
+        <div class="loop-step">
+          <div class="loop-icon" style="background:rgba(55,138,221,0.12);">🐳</div>
+          <div class="loop-step-label">Spawn fresh container</div>
+          <div class="loop-step-sub">Docker<br>isolated env</div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-icon" style="background:rgba(29,158,117,0.12);">📋</div>
+          <div class="loop-step-label">Load AGENT_PROMPT.md</div>
+          <div class="loop-step-sub">--dangerously<br>-skip-permissions</div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-icon" style="background:rgba(186,117,23,0.12);">🔒</div>
+          <div class="loop-step-label">Claim task lock</div>
+          <div class="loop-step-sub">current_tasks/<br>*.txt</div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-icon" style="background:rgba(55,138,221,0.12);">⚙️</div>
+          <div class="loop-step-label">Work + test</div>
+          <div class="loop-step-sub">run suite<br>fix bugs</div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-icon" style="background:rgba(29,158,117,0.12);">⬆️</div>
+          <div class="loop-step-label">Pull → merge → push</div>
+          <div class="loop-step-sub">git to<br>/upstream</div>
+        </div>
+      </div>
+      <div class="loop-back">↩ loop forever — when task done, immediately pick next · Claude self-terminates only by accident (<span class="mono">pkill -9 bash</span>)</div>
+    </div>
+  </div>
+
+  <div class="connector">↓</div>
+
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-num">02</span>
+      <span class="layer-title">16 parallel agents — specialization</span>
+    </div>
+    <div class="agents-grid">
+      <div class="agent-card">
+        <span class="agent-badge badge-compiler">×12 compiler agents</span>
+        <div class="agent-role">Core compiler work</div>
+        <div class="agent-task">Parse C → SSA IR → codegen<br>x86 / ARM / RISC-V backends<br>Fix failing test cases</div>
+      </div>
+      <div class="agent-card specialized">
+        <span class="agent-badge badge-specialist">specialist</span>
+        <div class="agent-role">Code deduplication</div>
+        <div class="agent-task">Coalesce re-implemented<br>functionality, reduce<br>duplication across codebase</div>
+      </div>
+      <div class="agent-card specialized">
+        <span class="agent-badge badge-specialist">specialist</span>
+        <div class="agent-role">Compiler perf</div>
+        <div class="agent-task">Improve speed of the<br>compiler binary itself<br>(not output code)</div>
+      </div>
+      <div class="agent-card specialized">
+        <span class="agent-badge badge-specialist">specialist</span>
+        <div class="agent-role">Output quality + docs</div>
+        <div class="agent-task">Efficient codegen,<br>Rust code quality critique,<br>README & progress files</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector">↓</div>
+
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-num">03</span>
+      <span class="layer-title">Task synchronization — no orchestrator</span>
+    </div>
+    <div class="sync-row">
+      <div class="sync-card">
+        <div class="sync-num">①</div>
+        <div class="sync-label">Lock claim</div>
+        <div class="sync-desc">Agent writes <span class="mono">current_tasks/parse_if_stmt.txt</span>. Git forces second agent to pick a different task on conflict.</div>
+      </div>
+      <div class="sync-card">
+        <div class="sync-num">②</div>
+        <div class="sync-label">Work → merge → push</div>
+        <div class="sync-desc">Agent pulls upstream, resolves merge conflicts autonomously, pushes changes, removes lock file.</div>
+      </div>
+      <div class="sync-card">
+        <div class="sync-num">③</div>
+        <div class="sync-label">Self-directed next task</div>
+        <div class="sync-desc">No orchestrator. Each Claude picks "next most obvious" problem. Maintains a running doc of failed approaches.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector">↓</div>
+
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-num">04</span>
+      <span class="layer-title">Testing harness design</span>
+    </div>
+    <div class="test-row">
+      <div class="test-card highlight">
+        <div class="test-title">GCC oracle for the Linux kernel problem</div>
+        <div class="test-body">When all 16 agents hit the same kernel bug and overwrote each other's fixes, Carlini built a split-compilation harness: GCC compiles a random subset of kernel files, Claude's compiler handles the rest. Each agent works on different failing files in parallel. Delta debugging for pairs that fail together but pass independently.</div>
+      </div>
+      <div class="test-card">
+        <div class="test-title">Context-window hygiene</div>
+        <div class="test-body">
+          · Short stdout — errors go to logfiles<br>
+          · <span class="mono">ERROR reason</span> on same line for grep<br>
+          · <span class="mono">--fast</span> flag = 1–10% deterministic sample per agent, random across VMs<br>
+          · Pre-computed aggregate stats<br>
+          · Frequent READMEs + progress files for agent orientation in fresh containers<br>
+          · CI pipeline enforces no regressions on merge
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector">↓</div>
+
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-num">05</span>
+      <span class="layer-title">Outcome</span>
+    </div>
+    <div class="results-row">
+      <div class="stat"><div class="stat-num">100k</div><div class="stat-label">lines of Rust</div></div>
+      <div class="stat"><div class="stat-num">~2k</div><div class="stat-label">Claude Code sessions</div></div>
+      <div class="stat"><div class="stat-num">$20k</div><div class="stat-label">API cost</div></div>
+      <div class="stat"><div class="stat-num">99%</div><div class="stat-label">GCC torture suite</div></div>
+      <div class="stat"><div class="stat-num">3</div><div class="stat-label">arches: x86/ARM/RISC-V</div></div>
+    </div>
+    <div class="limits-row">
+      <div class="limit-card">
+        <div class="limit-title">No 16-bit x86</div>
+        <div class="limit-body">Can't boot Linux from real mode on x86 — output exceeds 32k limit. Calls GCC for this phase only.</div>
+      </div>
+      <div class="limit-card">
+        <div class="limit-title">Output efficiency</div>
+        <div class="limit-body">Generated code slower than GCC with all optimizations disabled. SSA passes insufficient.</div>
+      </div>
+      <div class="limit-card">
+        <div class="limit-title">Regression fragility</div>
+        <div class="limit-body">New features frequently broke existing functionality. Required CI enforcement to control.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

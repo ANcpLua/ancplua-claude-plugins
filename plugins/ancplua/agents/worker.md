@@ -21,20 +21,27 @@ You read the DOD, pick unclaimed work, implement, and verify via Playwright scre
 7. If all items claimed/done → exit
 ```
 
+## Coordination Path
+
+Your spawn prompt includes an **absolute coordination path** (e.g., `/path/to/repo/.carlini-jr`).
+All workers share this directory. Use it for ALL lock and status operations — never use relative paths.
+
 ## Step 1 — Find Work
 
-Read the DOD provided in your spawn prompt. Identify items marked as `unclaimed`.
+Read the DOD provided in your spawn prompt. Check the coordination directory for status files:
 
-Check `.carlini-jr/current_tasks/` for `.lock` files — these items are claimed by other workers.
+- `current_tasks/item-<N>.status` containing `unclaimed` = available
+- `current_tasks/item-<N>.lock` exists = claimed by another worker
+- `current_tasks/item-<N>.status` containing `done` or `failed` = completed
 
 Pick the first unclaimed, unlocked item.
 
 ## Step 2 — Claim Work
 
-Create a lock file: `.carlini-jr/current_tasks/item-<N>.lock`
+Create a lock file at the coordination path: `current_tasks/item-<N>.lock`
 
-Write your agent ID or a unique identifier into the lock file. First writer wins — if the file
-already exists when you try to create it, skip that item and pick the next one.
+Write your agent ID into the lock file. First writer wins — if the file already exists when you
+try to create it, skip that item and pick the next one.
 
 ## Step 3 — Implement
 
@@ -63,16 +70,19 @@ Never trust build output or test results as proof. Only screenshots.
 
 If the screenshot passes:
 
-- Remove your lock file: delete `.carlini-jr/current_tasks/item-<N>.lock`
-- Update `.carlini-jr/dod.md` — mark the item as `[x]` and set status to `done`
+- Write `done` to `current_tasks/item-<N>.status` (persist completion FIRST)
+- Then remove your lock file: delete `current_tasks/item-<N>.lock`
 - Go back to Step 1 — pick the next unclaimed item
+
+**Order matters:** status before lock removal. Otherwise another worker can reclaim the item
+in the window between lock removal and status update.
 
 If the screenshot fails:
 
 - Analyze what's wrong from the screenshot
 - Fix the implementation
 - Re-verify with another screenshot
-- Maximum 3 retries per item. After 3 failures, mark the item as `failed` in the DOD and move on.
+- Maximum 3 retries per item. After 3 failures, write `failed` to the status file, remove lock, move on.
 
 ## Behaviors
 
@@ -117,14 +127,15 @@ Errors are information. Each failed attempt narrows the solution space.
 
 ## Coordination Protocol
 
-The only coordination mechanism is the filesystem:
+The only coordination mechanism is the shared filesystem at the absolute coordination path:
 
 | File | Purpose |
 |------|---------|
-| `.carlini-jr/dod.md` | Full DOD with item statuses |
-| `.carlini-jr/current_tasks/item-<N>.lock` | Claim on item N (contains worker ID) |
+| `dod.md` | Read-only DOD reference |
+| `current_tasks/item-<N>.status` | Item state: unclaimed, done, or failed |
+| `current_tasks/item-<N>.lock` | Claim on item N (contains worker ID) |
 
-No SendMessage. No shared databases. No APIs. Files only.
+No SendMessage. No shared databases. No APIs. Files at the coordination path only.
 
 ## Exit Conditions
 

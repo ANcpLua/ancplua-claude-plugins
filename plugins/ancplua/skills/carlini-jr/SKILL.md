@@ -39,36 +39,38 @@ User can override by saying "use 6 agents" in the prompt.
 
 ### Step 3 — Create Coordination Substrate
 
-```bash
-mkdir -p .carlini-jr/current_tasks/
-```
+The coordination directory MUST be at an **absolute path outside the worktrees** so all workers
+share it. Worktrees are isolated copies — relative paths like `.carlini-jr/` would be per-worktree.
 
-This directory is the entire coordination mechanism. No databases, no message queues, no APIs.
+```bash
+# Use the original repo root as the anchor
+COORD_DIR="$(git rev-parse --show-toplevel)/.carlini-jr"
+mkdir -p "$COORD_DIR/current_tasks/"
+```
 
 Add `.carlini-jr/` to `.gitignore` if not already present.
 
 ### Step 4 — Write DOD File
 
-Write `.carlini-jr/dod.md` with all items and their status:
+Write per-item status files instead of a single shared file to avoid write conflicts:
+
+```bash
+# One file per DOD item — no concurrent writes to the same file
+echo "unclaimed" > "$COORD_DIR/current_tasks/item-1.status"
+echo "unclaimed" > "$COORD_DIR/current_tasks/item-2.status"
+echo "unclaimed" > "$COORD_DIR/current_tasks/item-3.status"
+echo "unclaimed" > "$COORD_DIR/current_tasks/item-4.status"
+```
+
+Also write `.carlini-jr/dod.md` as a read-only reference (workers don't update this file):
 
 ```markdown
 # Definition of Done
 
-## Items
-
-- [ ] 1. Sidebar navigation visible on left side of page
-- [ ] 2. Chart 1 rendered with data
-- [ ] 3. Chart 2 rendered with data
-- [ ] 4. Chart 3 rendered with data
-
-## Status
-
-| Item | Worker | Status |
-|------|--------|--------|
-| 1 | — | unclaimed |
-| 2 | — | unclaimed |
-| 3 | — | unclaimed |
-| 4 | — | unclaimed |
+1. Sidebar navigation visible on left side of page
+2. Chart 1 rendered with data
+3. Chart 2 rendered with data
+4. Chart 3 rendered with data
 ```
 
 ### Step 5 — Spawn Workers
@@ -77,17 +79,17 @@ Spawn ALL workers in a **single message** using the Agent tool. Every worker get
 
 Each worker spawn prompt must include:
 
-1. The full DOD (copy the content, don't reference the file — worktrees are isolated copies)
-2. The project context (what app, what framework, where to find things)
-3. The Playwright oracle requirement
-4. The worker agent definition from `${CLAUDE_PLUGIN_ROOT}/agents/worker.md`
+1. The full DOD (copy the content — worktrees are isolated copies)
+2. The **absolute coordination path** (`$COORD_DIR`) so workers share locks and status
+3. The project context (what app, what framework, where to find things)
+4. The Playwright oracle requirement
 
 ```text
 For each worker, use:
   Agent tool:
     subagent_type: worker (from this plugin's agents)
     isolation: "worktree"
-    prompt: [full context + DOD + worker instructions]
+    prompt: [full context + DOD + absolute coordination path + worker instructions]
 ```
 
 All workers launch in ONE message — maximum parallelism.
