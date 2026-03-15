@@ -2,6 +2,14 @@
 
 Agent operating system — leaderless multi-agent swarms with Playwright oracle.
 
+## Prerequisites
+
+- **Playwright MCP** must be configured and available in Claude Code before using this plugin.
+  Workers use Playwright MCP to take screenshots that serve as the verification oracle — without
+  it, no DOD item can be verified and all workers will fail at Step 4.
+  See the [Playwright MCP setup guide](https://github.com/microsoft/playwright-mcp) for
+  installation instructions and how to add it to your Claude Code MCP configuration.
+
 ## Usage
 
 ```text

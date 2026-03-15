@@ -34,14 +34,23 @@ Read the DOD provided in your spawn prompt. Check the coordination directory for
 - `current_tasks/item-<N>.lock` exists = claimed by another worker
 - `current_tasks/item-<N>.status` containing `done` or `failed` = completed
 
-Pick the first unclaimed, unlocked item.
+Pick the first available item.
 
 ## Step 2 — Claim Work
 
-Create a lock file at the coordination path: `current_tasks/item-<N>.lock`
+Claim an item using an **atomic** file-create so only one worker can win:
 
-Write your agent ID into the lock file. First writer wins — if the file already exists when you
-try to create it, skip that item and pick the next one.
+```bash
+# bash noclobber: fails with EEXIST if the file already exists (O_CREAT|O_EXCL semantics)
+# Run in a subshell so noclobber does not bleed into subsequent operations.
+WORKER_ID="worker-$$-$RANDOM"   # unique per-process identifier
+( set -o noclobber; echo "$WORKER_ID" > "$COORD_DIR/current_tasks/item-<N>.lock" )
+```
+
+If the subshell exits non-zero (the file already existed), the item is already
+claimed — skip it and try the next one. Do **not** check for the file's existence first and then
+write; that creates a TOCTOU race. The `noclobber` flag makes creation and the ownership claim
+a single atomic operation.
 
 ## Step 3 — Implement
 
@@ -141,6 +150,6 @@ No SendMessage. No shared databases. No APIs. Files at the coordination path onl
 
 Exit when:
 
-- All DOD items are `done` or `failed`
-- All unclaimed items are locked by other workers
+- All DOD items have a status of `done` or `failed`
+- All remaining items are locked by other workers
 - You have nothing left to work on

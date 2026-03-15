@@ -98,11 +98,12 @@ All workers launch in ONE message — maximum parallelism.
 
 The lead does NOT monitor workers. Workers are autonomous.
 
-When all workers return, report:
+When all workers return, aggregate results by reading status files in `$COORD_DIR/current_tasks/`,
+then report:
 
 - Which DOD items passed (with screenshot evidence)
 - Which items failed (with last screenshot showing the failure)
-- Any items that were never claimed
+- Any items still unclaimed
 
 ## Failure Conditions
 
