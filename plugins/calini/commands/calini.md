@@ -34,8 +34,8 @@ That's 7 workers + you (the captain) = 8 total.
 
 Before spawning anyone:
 
-1. Read `/Users/ancplua/qyl/CHANGELOG.md` — current state, unreleased work
-2. Read `/Users/ancplua/qyl/PROGRESS.md` if it exists — priorities, dead ends
+1. Read `CHANGELOG.md` in the repo root — current state, unreleased work
+2. Read `PROGRESS.md` in the repo root if it exists — priorities, dead ends
 3. Read `current_tasks/` if it exists — any stale locks
 4. Understand the goal the user gave you
 
@@ -86,7 +86,7 @@ Then spawn all agents in ONE message (critical for parallelism):
 
 Each agent gets this context in their prompt:
 
-1. The qyl project lives at `/Users/ancplua/qyl/`
+1. The qyl project root (use `git rev-parse --show-toplevel` to resolve it)
 2. Their assigned task(s) from Phase 2
 3. Their file ownership boundaries
 4. The task locking protocol (below)
@@ -117,7 +117,7 @@ git pull --rebase origin main && git push origin main
 Every agent MUST know these:
 
 ```
-PROJECT: /Users/ancplua/qyl/
+PROJECT: $(git rev-parse --show-toplevel)
 RUNTIME: .NET 10.0 LTS, C# 14, net10.0
 FRONTEND: React 19, Vite 7, Tailwind CSS 4, Base UI (NEVER Radix UI)
 DATABASE: DuckDB 1.5.0 (columnar, upsert ON CONFLICT)

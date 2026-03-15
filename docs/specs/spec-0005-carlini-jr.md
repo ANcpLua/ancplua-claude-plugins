@@ -76,12 +76,12 @@ Auto-scaled: `min(max(2, ceil(dod_items / 2)), 8)`
 ## Plugin structure
 
 ```text
-plugins/carlini-jr/
+plugins/ancplua/
 ├── .claude-plugin/plugin.json
 ├── CLAUDE.md
 ├── README.md
 ├── skills/
-│   └── harness/
+│   └── carlini-jr/
 │       └── SKILL.md          # The launcher skill
 └── agents/
     └── worker.md             # Worker agent template

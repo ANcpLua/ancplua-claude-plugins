@@ -317,7 +317,7 @@ reviews:
         Include scope matching plugin name or area: (exodia), (metacognitive-guard),
         (otelwiki), (hookify), (feature-dev), (dotnet-lint), (routing), (council),
         (design-studio), (elegance), (code-simplifier), (qyl-instrumentation),
-        (qyl-continuation), (infra), (docs), (ci).
+        (qyl-continuation), (ancplua), (calini), (infra), (docs), (ci).
         Under 72 characters. No trailing period.
         Examples: feat(exodia): add baryon-mode command, fix(hookify): escape regex in rule matching
     custom_checks:
