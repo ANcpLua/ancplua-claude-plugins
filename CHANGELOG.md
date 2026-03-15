@@ -8,7 +8,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- **`metacognitive-guard` PostCompact hook (0.5.1 → 0.6.0)**: Self-healing context after compaction. SessionStart hook with `"matcher": "compact"` fires after auto/manual compaction and re-injects workflow reminders (skill check, TDD, validation, CHANGELOG). CLAUDE.md, rules, and MEMORY.md auto-reload — this hook covers conversational context that gets lost. Script: `reinject-after-compact.sh`
+- ~~`metacognitive-guard` PostCompact hook (0.5.1 → 0.6.0)~~ — **Removed in 0.6.1**: Manual testing confirmed the SessionStart `"matcher": "compact"` hook never fired after `/compact`. Native recovery (compaction summaries + CLAUDE.md auto-reload) handles context recovery without it. Dead code deleted: `reinject-after-compact.sh` + hooks.json entry
 
 ### Fixed
 
