@@ -13,7 +13,7 @@ You read the DOD, pick unclaimed work, implement, and verify via Playwright scre
 
 ```text
 1. Read DOD → find unclaimed items
-2. Claim an item → create lock file
+2. Claim an item → atomic mkdir lock
 3. Implement the item
 4. Verify with Playwright → take screenshot
 5. If pass → mark done, pick next unclaimed
@@ -31,17 +31,31 @@ All workers share this directory. Use it for ALL lock and status operations — 
 Read the DOD provided in your spawn prompt. Check the coordination directory for status files:
 
 - `current_tasks/item-<N>.status` containing `unclaimed` = available
-- `current_tasks/item-<N>.lock` exists = claimed by another worker
+- `current_tasks/item-<N>.lock/` directory exists = claimed by another worker (do not attempt `mkdir`)
 - `current_tasks/item-<N>.status` containing `done` or `failed` = completed
 
 Pick the first unclaimed, unlocked item.
 
 ## Step 2 — Claim Work
 
-Create a lock file at the coordination path: `current_tasks/item-<N>.lock`
+Acquire the lock for an item using an **atomic exclusive-create**. Never write a file directly —
+that is not atomic and two workers can overwrite each other simultaneously.
 
-Write your agent ID into the lock file. First writer wins — if the file already exists when you
-try to create it, skip that item and pick the next one.
+**Use `mkdir` for locking** — directory creation is atomic on POSIX filesystems:
+
+```bash
+# Attempt atomic acquisition — succeeds only if the lock dir does not yet exist
+if mkdir "$COORD_PATH/current_tasks/item-$N.lock" 2>/dev/null; then
+  # We own the lock — write our ID inside the lock directory
+  echo "$AGENT_ID" > "$COORD_PATH/current_tasks/item-$N.lock/owner"
+else
+  # mkdir failed → another worker already holds the lock — skip this item
+  continue
+fi
+```
+
+If `mkdir` returns exit code 0, you own the lock. If it fails (lock dir already exists), skip
+that item immediately and pick the next unclaimed one. Do not poll or retry the same item.
 
 ## Step 3 — Implement
 
@@ -71,7 +85,7 @@ Never trust build output or test results as proof. Only screenshots.
 If the screenshot passes:
 
 - Write `done` to `current_tasks/item-<N>.status` (persist completion FIRST)
-- Then remove your lock file: delete `current_tasks/item-<N>.lock`
+- Then release your lock: `rm "$COORD_PATH/current_tasks/item-$N.lock/owner" && rmdir "$COORD_PATH/current_tasks/item-$N.lock"`
 - Go back to Step 1 — pick the next unclaimed item
 
 **Order matters:** status before lock removal. Otherwise another worker can reclaim the item
@@ -82,7 +96,7 @@ If the screenshot fails:
 - Analyze what's wrong from the screenshot
 - Fix the implementation
 - Re-verify with another screenshot
-- Maximum 3 retries per item. After 3 failures, write `failed` to the status file, remove lock, move on.
+- Maximum 3 retries per item. After 3 failures, write `failed` to the status file, release lock (same `rm owner && rmdir` sequence), move on.
 
 ## Behaviors
 
@@ -129,11 +143,12 @@ Errors are information. Each failed attempt narrows the solution space.
 
 The only coordination mechanism is the shared filesystem at the absolute coordination path:
 
-| File | Purpose |
-|------|---------|
+| File/Dir | Purpose |
+|----------|---------|
 | `dod.md` | Read-only DOD reference |
 | `current_tasks/item-<N>.status` | Item state: unclaimed, done, or failed |
-| `current_tasks/item-<N>.lock` | Claim on item N (contains worker ID) |
+| `current_tasks/item-<N>.lock/` | Lock directory — atomically created via `mkdir`; existence means item is claimed |
+| `current_tasks/item-<N>.lock/owner` | Worker ID of the claiming agent (written after `mkdir` succeeds) |
 
 No SendMessage. No shared databases. No APIs. Files at the coordination path only.
 
