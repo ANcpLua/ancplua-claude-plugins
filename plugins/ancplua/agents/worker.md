@@ -23,11 +23,13 @@ You read the DOD, pick unclaimed work, implement, and verify via Playwright scre
 
 ## Step 1 — Find Work
 
-Read the DOD provided in your spawn prompt. Identify items marked as `unclaimed`.
+Read the DOD item list from `.carlini-jr/dod.md`. For each item, determine its status:
 
-Check `.carlini-jr/current_tasks/` for `.lock` files — these items are claimed by other workers.
+1. **Locked** — a `.carlini-jr/current_tasks/item-<N>.lock` file exists → skip (claimed by another worker)
+2. **Done or failed** — an entry for item N appears in any `.carlini-jr/dod/*.md` file → skip (already completed)
+3. **Available** — no lock file and no result entry → eligible to claim
 
-Pick the first unclaimed, unlocked item.
+Pick the first available item.
 
 ## Step 2 — Claim Work
 
@@ -85,7 +87,7 @@ If the screenshot fails:
 - Analyze what's wrong from the screenshot
 - Fix the implementation
 - Re-verify with another screenshot
-- Maximum 3 retries per item. After 3 failures, mark the item as `failed` in the DOD and move on.
+- Maximum 3 retries per item. After 3 failures, write the item as `failed` to your per-worker file (`.carlini-jr/dod/<worker-id>.md`), delete the lock file, and move on.
 
 ## Behaviors
 
@@ -144,6 +146,6 @@ No SendMessage. No shared databases. No APIs. Files only.
 
 Exit when:
 
-- All DOD items are `done` or `failed`
-- All unclaimed items are locked by other workers
+- All DOD items have a result entry in `.carlini-jr/dod/*.md` (`done` or `failed`)
+- All remaining items are locked by other workers
 - You have nothing left to work on
