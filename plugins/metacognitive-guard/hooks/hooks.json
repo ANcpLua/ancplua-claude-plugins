@@ -10,17 +10,6 @@
             "statusMessage": "Loading authoritative facts..."
           }
         ]
-      },
-      {
-        "matcher": "compact",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/reinject-after-compact.sh",
-            "timeout": 5,
-            "statusMessage": "Re-injecting context after compaction..."
-          }
-        ]
       }
     ],
     "InstructionsLoaded": [
