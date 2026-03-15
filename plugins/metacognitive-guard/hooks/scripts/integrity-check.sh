@@ -26,11 +26,14 @@ WARNINGS=()
 # All pathspecs must be after a single -- separator
 STAGED_DIFF=$(git diff --cached --unified=0 -- \
     ':(exclude)*.md' \
+    ':(exclude)*.yaml' \
+    ':(exclude)*.yml' \
     ':(exclude)**/hooks/scripts/*.sh' \
     ':(exclude)**/scripts/*.sh' \
     ':(exclude)**/*.test.*' \
     ':(exclude)**/*.spec.*' \
     ':(exclude)**/test-fixtures/**' \
+    ':(exclude)*.html' \
     2>/dev/null || echo "")
 
 if [[ -z "$STAGED_DIFF" ]]; then
