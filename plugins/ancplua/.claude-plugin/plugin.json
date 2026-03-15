@@ -1,0 +1,23 @@
+{
+  "name": "ancplua",
+  "version": "0.1.0",
+  "description": "Agent operating system — leaderless swarms with Playwright oracle. Code is opaque weights; correctness inferred exclusively from externally observable behavior.",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "leaderless",
+    "swarm",
+    "playwright",
+    "oracle",
+    "multi-agent",
+    "worktree"
+  ],
+  "skills": "./skills",
+  "agents": [
+    "./agents/worker.md"
+  ]
+}
