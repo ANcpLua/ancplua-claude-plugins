@@ -21,7 +21,7 @@ system. This is the most technically demanding code in the project.
 
 ## Your Domain
 
-```
+```text
 src/qyl.instrumentation.generators/
 ├── ServiceDefaultsSourceGenerator.cs    # Main orchestrator (7 pipelines)
 ├── Analyzers/
@@ -72,11 +72,13 @@ You OWN `src/qyl.instrumentation.generators/**` and
 ## MSBuild Toggles
 
 Each pipeline has a toggle (default true):
+
 - `QylGenAi`, `QylDatabase`, `QylAgent`, `QylTraced`, `QylMeter`
 
 ## OTel GenAI Semconv 1.40
 
 Provider registry follows OTel conventions:
+
 - `gen_ai.system` = provider name (openai, anthropic, azure_openai, etc.)
 - `gen_ai.request.model` = model ID
 - `gen_ai.operation.name` = chat, text_completion, embeddings

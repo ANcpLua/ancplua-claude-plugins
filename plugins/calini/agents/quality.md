@@ -34,6 +34,7 @@ currently locked by another agent.
 ## What to Look For
 
 ### Banned Patterns (immediate fix)
+
 - `DateTime.Now` or `DateTime.UtcNow` -> `TimeProvider.System.GetUtcNow()`
 - `object _lock` -> `Lock _lock = new()`
 - `Newtonsoft.Json` -> `System.Text.Json`
@@ -45,6 +46,7 @@ currently locked by another agent.
 - Runtime reflection -> source generators
 
 ### Code Smells
+
 - Methods longer than 50 lines
 - Classes with more than one responsibility
 - Duplicated logic across stores/endpoints
@@ -52,6 +54,7 @@ currently locked by another agent.
 - Inconsistent error handling
 
 ### Dashboard-Specific
+
 - Radix UI imports (must be Base UI)
 - `asChild` or `Slot` usage (Base UI doesn't have these)
 - Inline styles (should be Tailwind classes)

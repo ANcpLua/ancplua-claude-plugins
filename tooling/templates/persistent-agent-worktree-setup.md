@@ -42,6 +42,7 @@ Layers must never be conflated.
 ## Agent roles
 
 `agent-collector`
+
 - Role: OTLP collector maintainer
 - Scope: `src/qyl.collector`
 - Focus: OTLP ingestion, DuckDB batching, SSE streaming lifecycle
@@ -49,6 +50,7 @@ Layers must never be conflated.
 - Default model: Claude Sonnet 4.6 (`high`)
 
 `agent-generator`
+
 - Role: Roslyn pipeline maintainer
 - Scope: `src/qyl.servicedefaults.generator`
 - Focus: incremental pipeline behavior, generator correctness, compile-time interception design
@@ -56,6 +58,7 @@ Layers must never be conflated.
 - Default model: Claude Opus 4.6 (`max`)
 
 `agent-schema`
+
 - Role: schema generator maintainer
 - Scope: `eng/build/SchemaGenerator.cs`
 - Focus: OpenAPI to C# scalar/enum generation, DuckDB DDL emission
@@ -63,17 +66,20 @@ Layers must never be conflated.
 - Default model: Claude Opus 4.6 (`max`)
 
 `agent-investigator`
+
 - Role: cross-layer debugging agent
 - Allowed scope: generator, runtime, collector
 - Tasks: incident investigation, telemetry tracing, root cause analysis, cross-layer fault isolation
 - Default model: Claude Opus 4.6 (`max`)
 
 `agent-architect`
+
 - Role: repository architecture engineer
 - Tasks: cross-module cleanup, architecture improvements, multi-file changes, cross-cutting concern reduction
 - Default model: Claude Opus 4.6 (`max`)
 
 `agent-gardener`
+
 - Role: repository gardener
 - Tasks: small correctness fixes, comment cleanup, verification improvements, documentation accuracy
 - Default model: Claude Sonnet 4.6 (`high`)
@@ -81,16 +87,19 @@ Layers must never be conflated.
 ## Required generated files per worktree
 
 Create/refresh:
+
 - `AGENTS.md`
 - `CLAUDE.md`
 - `.codex/agent.md`
 
 `CLAUDE.md` content:
+
 ```text
 Read and follow AGENTS.md in this worktree.
 ```
 
 `.codex/agent.md` content:
+
 ```text
 Read and follow AGENTS.md in this worktree.
 ```

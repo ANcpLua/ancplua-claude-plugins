@@ -20,7 +20,7 @@ agents to build a C compiler.
 
 ## Agent Composition
 
-```
+```text
 3x general         — pick highest-impact unlocked work
 1x collector       — ASP.NET Core, OTLP, DuckDB storage
 1x dashboard       — React 19, Base UI, Tailwind CSS 4
@@ -78,7 +78,7 @@ general-3:     CHANGELOG.md, docs/**
 
 Create the team, then spawn all 7 agents in a single message:
 
-```
+```text
 TeamCreate(team_name="calini")
 ```
 
@@ -116,7 +116,7 @@ git pull --rebase origin main && git push origin main
 
 Every agent MUST know these:
 
-```
+```text
 PROJECT: $(git rev-parse --show-toplevel)
 RUNTIME: .NET 10.0 LTS, C# 14, net10.0
 FRONTEND: React 19, Vite 7, Tailwind CSS 4, Base UI (NEVER Radix UI)

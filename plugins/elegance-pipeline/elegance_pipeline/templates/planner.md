@@ -12,14 +12,19 @@ Task:
 Convert the combined judge verdicts into actionable engineering work only when the evidence justifies real change.
 
 Important:
+
 - Do not invent work just to stay busy.
 - If the judge outputs are purely praise or ranking with no actionable weakness, say "No implementation warranted."
-- But if the judges identify concrete weaknesses, hidden costs, over-abstraction, exception-driven control flow, duplication, poor file compression, or opportunities to extract/restructure, convert those into explicit change requests.
+- But if the judges identify concrete weaknesses, hidden costs,
+  over-abstraction, exception-driven control flow, duplication,
+  poor file compression, or opportunities to extract/restructure,
+  convert those into explicit change requests.
 
 Goal:
 Produce at most 3 implementation tasks that are actually justified by the judge outputs.
 
 For each task, provide:
+
 1. Title
 2. Why this change is justified from the judge text
 3. Target files
@@ -29,6 +34,7 @@ For each task, provide:
 7. Priority: high / medium / low
 
 Decision rules:
+
 - Prefer narrow, high-confidence refactors
 - Ignore vague aesthetic complaints
 - Do not propose changes to files the judges praised unless a judge explicitly identified a flaw
@@ -63,7 +69,7 @@ Implementation warranted: yes/no
 
 If no work is warranted, output only:
 
-## Verdict
+## Final Verdict
 
 Implementation warranted: no
 

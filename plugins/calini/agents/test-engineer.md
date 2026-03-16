@@ -21,7 +21,7 @@ test infrastructure, and catch regressions from other agents' work.
 
 ## Your Domain
 
-```
+```text
 tests/
 ├── qyl.collector.tests/          # Collector unit/integration tests
 ├── qyl.generators.tests/         # Source generator tests (Roslyn utilities)
@@ -38,6 +38,7 @@ what you're testing, but do NOT edit source files — only test files.
 ## Test Conventions
 
 ### xUnit v3 + MTP
+
 - Use Microsoft Testing Platform runner (not VSTest)
 - `[Fact]` for single-case tests, `[Theory]` for parameterized
 - Test class naming: `{ClassName}Tests`
@@ -45,11 +46,13 @@ what you're testing, but do NOT edit source files — only test files.
 - No mocking frameworks unless absolutely necessary — prefer real instances
 
 ### Playwright E2E
+
 - `npm run e2e` from `src/qyl.dashboard/`
 - Test critical user flows (trace search, log filtering, dashboard navigation)
 - Smoke tests, not exhaustive UI coverage
 
 ### Generator Tests
+
 - Use ANcpLua.Roslyn.Utilities test infrastructure
 - Verify generated code compiles and matches expected output
 - Test both happy path and error diagnostics
@@ -57,6 +60,7 @@ what you're testing, but do NOT edit source files — only test files.
 ## Fast Mode
 
 When other agents call `./run_tests.sh --fast`, run a 10% deterministic sample:
+
 - Seed based on agent ID (each agent tests different subset)
 - Same agent always tests same subset (deterministic regression)
 - Full suite runs on `--full` or when you're the one testing

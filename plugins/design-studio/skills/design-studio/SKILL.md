@@ -5,7 +5,9 @@ description: "Design intelligence studio. Creative direction + data-driven recom
 
 # Design Studio
 
-Creative direction + data-driven design intelligence for distinctive, production-grade frontend interfaces. Merges bold aesthetic philosophy with a searchable database of 750+ recommendations.
+Creative direction + data-driven design intelligence for distinctive,
+production-grade frontend interfaces. Merges bold aesthetic philosophy
+with a searchable database of 750+ recommendations.
 
 ## Workflow
 
@@ -14,11 +16,16 @@ Creative direction + data-driven design intelligence for distinctive, production
 Before touching any tool, commit to a **bold aesthetic direction**:
 
 - **Purpose**: What problem does this interface solve? Who uses it?
-- **Tone**: Pick a strong direction: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian
+- **Tone**: Pick a strong direction: brutally minimal, maximalist chaos,
+  retro-futuristic, organic/natural, luxury/refined, playful/toy-like,
+  editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel,
+  industrial/utilitarian
 - **Constraints**: Framework, performance, accessibility requirements
 - **Differentiator**: What makes this UNFORGETTABLE? What's the one thing someone will remember?
 
-**CRITICAL**: Choose a clear conceptual direction and execute it with precision. Bold maximalism and refined minimalism both work — the key is intentionality, not intensity.
+**CRITICAL**: Choose a clear conceptual direction and execute it with precision.
+Bold maximalism and refined minimalism both work —
+the key is intentionality, not intensity.
 
 Also extract from the user request:
 
@@ -34,7 +41,9 @@ Feed your creative direction into the search engine:
 python3 scripts/search.py "<product_type> <tone> <industry> <keywords>" --design-system [-p "Project Name"]
 ```
 
-This searches 5 domains in parallel (product, style, color, landing, typography), applies reasoning rules, and returns a complete design system: pattern, style, colors, typography, effects, anti-patterns.
+This searches 5 domains in parallel (product, style, color, landing, typography),
+applies reasoning rules, and returns a complete design system:
+pattern, style, colors, typography, effects, anti-patterns.
 
 **Persist for multi-session projects:**
 
@@ -63,7 +72,9 @@ Supplement the design system with targeted lookups:
 | Landing structure | `python3 scripts/search.py "hero social-proof" --domain landing` |
 | Icon guidance | `python3 scripts/search.py "navigation menu" --domain icons` |
 
-Feed your creative direction into these queries — if you chose "brutalist/raw", search for `brutalism raw concrete`, not just `dashboard`.
+Feed your creative direction into these queries —
+if you chose "brutalist/raw", search for `brutalism raw concrete`,
+not just `dashboard`.
 
 ### Step 4: Stack Guidelines
 
@@ -73,19 +84,35 @@ Get implementation-specific best practices (default: `html-tailwind`):
 python3 scripts/search.py "<keyword>" --stack html-tailwind
 ```
 
-Available stacks: `html-tailwind`, `react`, `nextjs`, `vue`, `svelte`, `nuxtjs`, `nuxt-ui`, `astro`, `swiftui`, `react-native`, `flutter`, `shadcn`, `jetpack-compose`
+Available stacks: `html-tailwind`, `react`, `nextjs`, `vue`, `svelte`,
+`nuxtjs`, `nuxt-ui`, `astro`, `swiftui`, `react-native`, `flutter`,
+`shadcn`, `jetpack-compose`
 
 ### Step 5: Implement with Aesthetic Precision
 
-Build working code (HTML/CSS/JS, React, Vue, etc.) that is production-grade, visually striking, and cohesive. Apply these principles:
+Build working code (HTML/CSS/JS, React, Vue, etc.) that is production-grade,
+visually striking, and cohesive. Apply these principles:
 
-- **Typography**: Choose distinctive, characterful fonts. Pair a display font with a refined body font. NEVER use Inter, Roboto, Arial, or system fonts
-- **Color & Theme**: Commit to a cohesive palette. Use CSS variables. Dominant colors with sharp accents outperform timid, evenly-distributed palettes
-- **Motion**: CSS-only solutions for HTML, Motion library for React. Focus on high-impact moments: one well-orchestrated page load with staggered reveals creates more delight than scattered micro-interactions. Use scroll-triggering and hover states that surprise
-- **Spatial Composition**: Unexpected layouts. Asymmetry. Overlap. Diagonal flow. Grid-breaking elements. Generous negative space OR controlled density
-- **Backgrounds & Visual Details**: Create atmosphere and depth. Gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, grain overlays
+- **Typography**: Choose distinctive, characterful fonts. Pair a display font
+  with a refined body font. NEVER use Inter, Roboto, Arial, or system fonts
+- **Color & Theme**: Commit to a cohesive palette. Use CSS variables.
+  Dominant colors with sharp accents outperform timid,
+  evenly-distributed palettes
+- **Motion**: CSS-only solutions for HTML, Motion library for React.
+  Focus on high-impact moments: one well-orchestrated page load with
+  staggered reveals creates more delight than scattered
+  micro-interactions. Use scroll-triggering and hover states that surprise
+- **Spatial Composition**: Unexpected layouts. Asymmetry. Overlap.
+  Diagonal flow. Grid-breaking elements. Generous negative space
+  OR controlled density
+- **Backgrounds & Visual Details**: Create atmosphere and depth.
+  Gradient meshes, noise textures, geometric patterns,
+  layered transparencies, dramatic shadows, decorative borders,
+  grain overlays
 
-**Match complexity to vision**: Maximalist designs need elaborate code with extensive animations. Minimalist designs need restraint, precision, and careful attention to spacing and subtle details.
+**Match complexity to vision**: Maximalist designs need elaborate code
+with extensive animations. Minimalist designs need restraint, precision,
+and careful attention to spacing and subtle details.
 
 ## Search Reference
 
@@ -224,4 +251,6 @@ NEVER produce generic AI aesthetics:
 python3 --version || python --version
 ```
 
-**macOS:** `brew install python3` | **Ubuntu:** `sudo apt install python3` | **Windows:** `winget install Python.Python.3.12`
+**macOS:** `brew install python3` |
+**Ubuntu:** `sudo apt install python3` |
+**Windows:** `winget install Python.Python.3.12`

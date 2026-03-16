@@ -9,9 +9,13 @@ Inputs from all 4 scouts:
 {scout_outputs}
 
 Task:
-Use the scout results as a shortlist, then verify the finalists directly in the codebase and produce the final top 5 most elegant source files in the entire solution.
+Use the scout results as a shortlist,
+then verify the finalists directly in the codebase
+and produce the final top 5 most elegant source files
+in the entire solution.
 
 Definition of elegant:
+
 - Every line earns its place
 - No code that should obviously be extracted into a helper
 - No manual repetition that a loop, generics, or a pattern could solve
@@ -25,6 +29,7 @@ Score by difficulty x cleanliness.
 A clean solution to a hard problem beats a clean solution to a trivial one.
 
 Process:
+
 1. Read the scout outputs
 2. Build a shortlist of serious contenders
 3. Re-open and verify the shortlisted files directly
@@ -34,6 +39,7 @@ Process:
 
 Output format:
 For each of your 5 picks:
+
 1. File path
 2. One sentence: what hard problem does it solve cleanly?
 3. One specific line range that demonstrates the elegance
@@ -41,10 +47,14 @@ For each of your 5 picks:
 
 Then add a final section:
 "Why these 5 beat the others"
+
 - 5 short bullets total
-- each bullet must name a rejected candidate pattern, such as "clean but trivial", "smart but over-abstracted", "good local code but weak overall compression"
+- each bullet must name a rejected candidate pattern,
+  such as "clean but trivial", "smart but over-abstracted",
+  "good local code but weak overall compression"
 
 Rules:
+
 - No honorable mentions
 - No ties
 - No hedging
