@@ -60,7 +60,7 @@ Auto-merge tiers: Dependabot patch/minor -> Copilot fix+CI -> Claude fix+CI+1 ap
 | Adversarial security review | `/exodia:red-blue-review` (Red attacks, Blue defends) |
 | .NET warning extermination | `/exodia:baryon-mode` (1 Invoker + 8 aspects, one-shot T0) |
 
-Skill priority: Superpowers skills > repo skills > plugin skills.
+Skill priority: Superpowers > repo > plugin skills.
 If repo skill conflicts with Superpowers, prefer the more specific one and create an ADR.
 
 ## Plugin Constraints

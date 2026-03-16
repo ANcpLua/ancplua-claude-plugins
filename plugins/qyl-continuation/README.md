@@ -1,8 +1,7 @@
 # qyl-continuation
 
-Smart auto-continuation for Claude Code.
-Heuristic pre-filter eliminates ~80% of unnecessary Haiku calls;
-improved judge prompt handles the rest.
+Smart auto-continuation for Claude Code. Heuristic pre-filter eliminates ~80% of unnecessary
+Haiku calls; improved judge prompt handles the rest.
 
 Based on [double-shot-latte](https://github.com/anthropics/claude-code-plugins/tree/main/plugins/double-shot-latte) (MIT).
 

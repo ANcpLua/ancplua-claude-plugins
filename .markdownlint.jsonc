@@ -1,6 +1,7 @@
 {
   // ancplua-claude-plugins markdownlint configuration
-  // Merged from .markdownlint.json + .markdownlint.jsonc (was split across two files)
+  // Agent prompts, skills, commands are excluded via .markdownlintignore
+  // This config only applies to actual documentation (README, CLAUDE.md, docs/)
   "default": true,
 
   // MD013: Line length — 120 for prose, relaxed for code/tables/headings
@@ -11,11 +12,6 @@
     "code_blocks": false,
     "tables": false,
     "headings": false
-  },
-
-  // MD007: Unordered list indent — 2 spaces
-  "MD007": {
-    "indent": 2
   },
 
   // MD024: Duplicate headings — allowed under different parents (CHANGELOG pattern)
@@ -33,22 +29,17 @@
     "style": "ordered"
   },
 
-  // MD033: Inline HTML — disabled (Claude plugin files use XML tags extensively)
+  // MD033: Inline HTML — disabled (CLAUDE.md uses XML tags for emphasis)
   "MD033": false,
 
-  // MD041: First line heading — disabled (files have YAML frontmatter)
+  // MD041: First line heading — disabled (YAML frontmatter)
   "MD041": false,
-
-  // MD046: Code fence style — fenced (not indented)
-  "MD046": {
-    "style": "fenced"
-  },
 
   // MD050: Strong style — asterisks
   "MD050": {
     "style": "asterisk"
   },
 
-  // MD060: Table column style — disabled (too noisy for mixed table formats)
+  // MD060: Table column style — disabled
   "MD060": false
 }
