@@ -25,4 +25,5 @@ Elegance = problem complexity / solution complexity. High ratio is good. This ag
 
 ## Usage
 
-The agent activates when the skill `simplify` is invoked. It reads the project's CLAUDE.md, identifies recent changes, scores elegance, and simplifies candidates.
+The agent activates when the skill `simplify` is invoked. It reads the project's CLAUDE.md,
+identifies recent changes, scores elegance, and simplifies candidates.

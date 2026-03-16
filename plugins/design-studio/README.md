@@ -5,8 +5,10 @@ Design intelligence studio for Claude Code. Combines bold creative direction wit
 ## What It Does
 
 1. **Creative Direction** — Commit to a bold aesthetic tone before touching code
-2. **Data-Driven Recommendations** — BM25 search across 50 styles, 97 palettes, 57 font pairings, 99 UX guidelines, 25 chart types
-3. **Stack-Specific Guidelines** — Best practices for 13 frameworks (React, Next.js, Vue, Svelte, Flutter, SwiftUI, Tailwind, shadcn/ui, Astro, Nuxt, React Native, Jetpack Compose)
+2. **Data-Driven Recommendations** — BM25 search across 50 styles, 97 palettes,
+   57 font pairings, 99 UX guidelines, 25 chart types
+3. **Stack-Specific Guidelines** — Best practices for 13 frameworks
+   (React, Next.js, Vue, Svelte, Flutter, SwiftUI, Tailwind, shadcn/ui, Astro, Nuxt, React Native, Jetpack Compose)
 4. **Implementation** — Production-grade code with distinctive aesthetics and accessibility
 
 ## Usage

@@ -60,11 +60,13 @@ Auto-merge tiers: Dependabot patch/minor -> Copilot fix+CI -> Claude fix+CI+1 ap
 | Adversarial security review | `/exodia:red-blue-review` (Red attacks, Blue defends) |
 | .NET warning extermination | `/exodia:baryon-mode` (1 Invoker + 8 aspects, one-shot T0) |
 
-Skill priority: Superpowers skills > repo skills > plugin skills. If repo skill conflicts with Superpowers, prefer the more specific one and create an ADR.
+Skill priority: Superpowers > repo > plugin skills.
+If repo skill conflicts with Superpowers, prefer the more specific one and create an ADR.
 
 ## Plugin Constraints
 
-- When adding/renaming/removing a plugin: update `.claude-plugin/marketplace.json`, run `claude plugin validate .`, update `docs/PLUGINS.md`, add CHANGELOG entry.
+- When adding/renaming/removing a plugin: update `.claude-plugin/marketplace.json`,
+  run `claude plugin validate .`, update `docs/PLUGINS.md`, add CHANGELOG entry.
 - SKILL.md files require YAML frontmatter with `name` (kebab-case, max 64 chars) and `description` (max 1024 chars).
 - During development use `/reload-plugins` to activate changes without version bump.
 

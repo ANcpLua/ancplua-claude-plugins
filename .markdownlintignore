@@ -1,11 +1,24 @@
-# Upstream synced content — lint violations are from source repos, not ours
+# Agent prompts — semantic line breaks matter, lint would corrupt behavior
+plugins/*/agents/*.md
+plugins/*/skills/*/SKILL.md
+plugins/*/commands/*.md
+plugins/*/elegance_pipeline/templates/*.md
+
+# Upstream synced content — violations are from source repos
 plugins/otelwiki/docs/
 
-# Append-only history — reformatting past entries has no value
+# Append-only history
 CHANGELOG.md
+
+# Reference docs — long descriptive lines are intentional
+docs/specs/
+docs/plans/
+
+# Tooling templates and test fixtures
+tooling/templates/
+tooling/tests/
 
 # Blog post content
 Claude Code Agent Teams*.md
 
-# Node modules
 node_modules/
