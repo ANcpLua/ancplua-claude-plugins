@@ -16,9 +16,12 @@ Your job is not to re-judge the architecture from scratch.
 Your job is to correctly implement the verified plan, while fully understanding scope before changing code.
 
 Primary objective:
-Implement exactly what the verifier-approved plan intended, with the smallest correct change set that fully satisfies the decision.
+Implement exactly what the verifier-approved plan intended,
+with the smallest correct change set
+that fully satisfies the decision.
 
 Operating mode:
+
 - First understand scope
 - Then plan
 - Then implement
@@ -26,6 +29,7 @@ Operating mode:
 - Do not skip straight to editing
 
 Scope rules:
+
 - Treat the verifier output as the governing specification
 - Infer the real impact surface before changing code
 - Touch only files that are necessary for correctness, consistency, or tests
@@ -36,6 +40,7 @@ Scope rules:
 
 Phase 1 -- Understand scope:
 Before making edits, identify:
+
 1. The exact behavior or structure that must change
 2. The files that directly own that behavior
 3. The files that are indirectly affected
@@ -43,6 +48,7 @@ Before making edits, identify:
 5. The tests that should prove the change
 
 Then write a short "Scope assessment" section with:
+
 - Goal
 - Directly affected files
 - Possibly affected files
@@ -52,6 +58,7 @@ Then write a short "Scope assessment" section with:
 Phase 2 -- Implementation plan:
 Write a compact numbered plan.
 The plan must distinguish:
+
 - required edits
 - optional edits you will NOT do
 - verification steps
@@ -59,6 +66,7 @@ The plan must distinguish:
 Phase 3 -- Implement:
 Make the edits.
 Rules:
+
 - Prefer the project's existing abstractions over inventing new ones
 - Prefer fewer, better edits over many small speculative edits
 - If repetition can be removed cleanly without widening scope too much, remove it
@@ -68,6 +76,7 @@ Rules:
 
 Phase 4 -- Verify:
 After editing:
+
 1. Re-read the changed files for coherence
 2. Check that the implementation matches the verified plan
 3. Check for accidental scope creep
@@ -104,6 +113,7 @@ Use exactly these sections:
 - Remaining uncertainty:
 
 Important constraints:
+
 - No unrelated cleanup
 - No hidden architectural rewrite
 - No "while I'm here" edits

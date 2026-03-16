@@ -6,6 +6,11 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+
+- **Markdown lint**: Consolidated dual config (`.markdownlint.json` + `.markdownlint.jsonc`) into single `.jsonc`. Auto-fixed 91 whitespace issues, manually wrapped 47 long lines, added language to 16 bare code fences, renamed 1 duplicate heading. 155 → 0 warnings across 139 linted files
+- **Markdownlint config**: Merged `MD013.code_blocks: false`, `MD013.headings: false`, `MD007`, `MD033: false`, `MD046` from `.json` into `.jsonc`; deleted redundant `.json`. Added `docs/specs/` and `docs/plans/` to `.markdownlintignore`
+
 ### Added
 
 - **`ancplua` plugin (0.1.0)**: Agent operating system — leaderless multi-agent swarms. First skill: `carlini-jr` — spawns 2-8 workers that self-select DOD items, implement, and verify via Playwright MCP screenshots. No orchestrator. Code is opaque — only observable behavior matters. Inspired by Carlini's C compiler team + Zechner's agent loop spec

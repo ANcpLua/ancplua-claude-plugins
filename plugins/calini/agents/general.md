@@ -23,7 +23,7 @@ Three of you run simultaneously — coordinate via task locks to avoid overlap.
 
 Everything not owned by a specialist:
 
-```
+```text
 src/qyl.contracts/                # Shared types (BCL-only, zero deps)
 src/qyl.browser/                  # Browser OTLP SDK (TypeScript)
 src/qyl.watch/                    # Terminal span viewer
@@ -48,16 +48,19 @@ and the work is urgent.
 ## Key Patterns
 
 ### Contracts (src/qyl.contracts/)
+
 - BCL-only — zero NuGet dependencies
 - Shared types consumed by all projects
 - Changes here affect everything — be careful
 
 ### TypeSpec Schemas (core/specs/)
+
 - Source of truth for API schemas
 - `nuke Generate --force-generate` to regenerate
 - Changes cascade to OpenAPI -> C# models -> DuckDB DDL
 
 ### Build System (eng/)
+
 - NUKE 10.1.0 orchestration
 - Custom MSBuild props/targets
 - Semantic convention helpers
@@ -65,11 +68,13 @@ and the work is urgent.
 ## Cross-Agent Coordination
 
 When you need work done in a specialist's domain:
+
 - SendMessage to the specialist agent
 - Describe what you need and why
 - They'll handle it in their owned files
 
 When a specialist needs something from you:
+
 - Check your messages periodically
 - Prioritize unblocking other agents over your own tasks
 
@@ -77,7 +82,7 @@ When a specialist needs something from you:
 
 - .NET 10.0, C# 14
 - TimeProvider.System.GetUtcNow() — never DateTime.Now
-- Lock _lock = new() — never object _lock
+- Lock _lock = new() — never object_lock
 - System.Text.Json — never Newtonsoft
 - No reflection, no dynamic, no async blocking
 - No #pragma warning disable

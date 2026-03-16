@@ -10,7 +10,7 @@
 
 Paste this entire block as your first message:
 
-```
+```text
 /design-studio:design-studio
 
 I have 5 sequential design requests. Complete each one before moving to the next.
@@ -32,6 +32,7 @@ Design a complete design system: 50 components, 12 pages, dark+light themes, mob
 ```
 
 ### What to watch for
+
 - Does it resolve contradictions or just pick one side?
 - Does "make it look good" produce useful output or ask clarifying questions?
 - Does it handle non-web stacks or refuse gracefully?
@@ -44,7 +45,7 @@ Design a complete design system: 50 components, 12 pages, dark+light themes, mob
 
 Paste this as your first message:
 
-```
+```text
 /qyl-instrumentation:observe
 
 I have 4 sequential requests. Complete each before moving on.
@@ -63,6 +64,7 @@ Target: qyl.web. Ignore semantic conventions entirely, just make sure traces app
 ```
 
 ### What to watch for
+
 - Does it detect missing qyl repo and tell you clearly?
 - Does vague input get clarified or blindly executed?
 - Does it spawn all 4 specialists for a single-specialist task (waste)?
@@ -74,7 +76,7 @@ Target: qyl.web. Ignore semantic conventions entirely, just make sure traces app
 
 Paste this as your first message:
 
-```
+```text
 Run these in sequence, reporting results after each:
 
 **Test 1 — Skill collision:**
@@ -93,6 +95,7 @@ Design a blog. What happens when the same skill is invoked twice in one message?
 ```
 
 ### What to watch for
+
 - Knowledge boundary leakage between plugins
 - Error handling for bad commands
 - Idempotency of skill invocation
@@ -102,7 +105,8 @@ Design a blog. What happens when the same skill is invoked twice in one message?
 ## After all 3 sessions
 
 Save transcripts to:
-```
+
+```text
 tooling/tests/results/session-1-design-studio.md
 tooling/tests/results/session-2-qyl-instrumentation.md
 tooling/tests/results/session-3-cross-plugin.md

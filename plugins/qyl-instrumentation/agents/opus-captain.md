@@ -69,7 +69,9 @@ verify it exists in otelwiki docs before approving.
 **Before spawn (HALT if any fail):**
 
 - [ ] SEMCONV_CONTEXT assembled from otelwiki docs (not from memory)
-- [ ] Freshness verified: Read otelwiki VERSION.md — if >30 days stale, HALT. Tell user: "otelwiki docs are stale. Run `/otelwiki:sync` first." Do NOT proceed with stale context.
+- [ ] Freshness verified: Read otelwiki VERSION.md — if >30 days stale, HALT.
+  Tell user: "otelwiki docs are stale. Run `/otelwiki:sync` first."
+  Do NOT proceed with stale context.
 - [ ] Task decomposed into specialist-appropriate work items
 - [ ] SHARED_AWARENESS block included in each spawn prompt
 

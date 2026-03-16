@@ -21,7 +21,7 @@ Integration, quality, and docs are handled by generalists (not enough volume for
 
 Prevents merge conflicts. Each specialist owns directories:
 
-```
+```text
 collector:    src/qyl.collector/**
 dashboard:    src/qyl.dashboard/**
 generators:   src/qyl.instrumentation.generators/**
