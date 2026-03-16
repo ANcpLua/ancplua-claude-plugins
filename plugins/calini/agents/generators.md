@@ -90,12 +90,23 @@ Provider registry follows OTel conventions:
 - No #pragma warning disable
 - Update CHANGELOG.md before committing
 
+## Semconv Freshness (mandatory before any OTel work)
+
+Before modifying GenAI attributes, interceptor pipelines, or semconv-related code:
+
+1. Glob for `**/otelwiki/docs/semantic-conventions/gen-ai/*.md`
+2. Read the attribute tables — these are the source of truth, not the hardcoded list above
+3. If otelwiki docs are missing or VERSION.md shows >30 days stale, STOP and tell the user to run `/otelwiki:sync`
+
+The OTel GenAI Semconv section above is a snapshot. The otelwiki bundled docs are authoritative.
+
 ## Task Protocol
 
 1. Read PROGRESS.md for your assigned task
 2. Lock the task via `current_tasks/*.lock`
-3. Do the work in your owned directories
-4. Run `dotnet build` on the generator projects to verify
-5. Run generator tests if they exist
-6. Update CHANGELOG.md
-7. Commit, pull --rebase, push, unlock
+3. If task touches OTel attributes: run Semconv Freshness check above
+4. Do the work in your owned directories
+5. Run `dotnet build` on the generator projects to verify
+6. Run generator tests if they exist
+7. Update CHANGELOG.md
+8. Commit, pull --rebase, push, unlock

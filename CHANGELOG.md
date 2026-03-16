@@ -14,6 +14,8 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **`calini` generators semconv freshness (0.1.0 → 0.1.1)**: generators agent now reads otelwiki bundled docs before any OTel attribute work. Halts if docs >30 days stale. Prevents operating on hardcoded semconv snapshot when fresher docs exist
+- **`qyl-instrumentation` opus-captain stale docs (2.1.0 → 2.1.1)**: Captain now HALTs on stale otelwiki docs instead of warning. Prevents spawning 4 specialists with stale semconv context
 - **`metacognitive-guard` subagent filtering (0.5.1 → 0.6.0)**: Added agent_type skip to 3 hooks that were wasting Haiku calls on subagent events:
   - TaskCompleted prompt: now skips subagents (in 8-agent teams, saves 7 Haiku calls per task completion)
   - Ralph haiku prompt: now skips subagents (PostToolUse Write/Edit was firing for every subagent edit)
