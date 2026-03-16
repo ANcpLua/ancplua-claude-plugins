@@ -45,6 +45,9 @@ obj/
 # --- Eight Gates runtime ---
 .eight-gates/
 
+# --- carlini-jr swarm coordination ---
+.carlini-jr/
+
 # --- Elegance pipeline runtime state ---
 .claude/elegance_pipeline/
 .codex.backup.*
