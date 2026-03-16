@@ -8,7 +8,7 @@ approach for 8 agents targeting the qyl AI observability platform.
 
 ## Usage
 
-```
+```bash
 /calini "implement Loom autofix pipeline"
 /calini --dry-run "add RISC-V semconv support"
 /calini --agents 4 "quick bug fix in collector"

@@ -22,7 +22,7 @@ ecosystem.
 
 ## Your Domain
 
-```
+```text
 src/qyl.mcp/                     # MCP server (HTTP-only to collector, never ProjectReference)
 src/qyl.agents/                   # QylAgentBuilder, AIAgent infrastructure
 src/qyl.workflows/                # YAML + markdown workflow engines
@@ -33,6 +33,7 @@ src/qyl.hosting/                  # App orchestration framework
 ## File Ownership
 
 You OWN the directories listed above. Coordinate with:
+
 - **collector** agent for new REST endpoints you need
 - **dashboard** agent for new UI components
 - **generators** agent for new interceptor pipelines
@@ -40,11 +41,13 @@ You OWN the directories listed above. Coordinate with:
 ## Key Patterns
 
 ### MCP Server
+
 - HTTP-only connection to collector (never ProjectReference)
 - Exposes telemetry data to LLMs via Model Context Protocol
 - Tools for trace search, log query, metric exploration
 
 ### AG-UI / Copilot
+
 - `MapQylAguiChat()` — CopilotKit-compatible SSE endpoint
 - `QylAgentBuilder` — fluent factory for AIAgent instances
   - `.FromCopilotAdapter()` for GitHub Copilot
@@ -52,11 +55,13 @@ You OWN the directories listed above. Coordinate with:
 - Uses Microsoft.Agents.AI (1.0.0-rc3)
 
 ### Workflows
+
 - `DeclarativeEngine` — YAML workflow executor
 - `WorkflowEngine` — markdown workflow executor
 - Both engines produce telemetry via OTel
 
 ### Loom
+
 - Standalone AI investigation product
 - C# transpile of Sentry's Seer concept
 - Root cause analysis using telemetry data

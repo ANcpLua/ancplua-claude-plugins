@@ -1,6 +1,10 @@
 # elegance-pipeline
 
-Multi-agent code-elegance workflow for Claude Code. Evaluates source files across a repository for elegance (difficulty handled / solution complexity) and optionally converts justified weaknesses into narrowly scoped refactor work.
+Multi-agent code-elegance workflow for Claude Code.
+Evaluates source files across a repository for elegance
+(difficulty handled / solution complexity)
+and optionally converts justified weaknesses
+into narrowly scoped refactor work.
 
 ## Pipeline
 
@@ -40,4 +44,7 @@ State is project-local at `.claude/elegance_pipeline/state/`. Not committed to g
 
 ## Origin
 
-Converted from the Codex `elegance-pipeline-bundle.zip`. All `.codex/` references rewritten to Claude Code native plugin structure. Codex-Spark -> sonnet, GPT-5.4 -> opus. Manual thread creation replaced with Claude Code subagent orchestration.
+Converted from the Codex `elegance-pipeline-bundle.zip`.
+All `.codex/` references rewritten to Claude Code native plugin structure.
+Codex-Spark -> sonnet, GPT-5.4 -> opus.
+Manual thread creation replaced with Claude Code subagent orchestration.

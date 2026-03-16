@@ -9,6 +9,7 @@ Your scope for this thread:
 {package_or_folder_scope}
 
 State:
+
 - Shared implementation signal: {implementation_signal}
 - Ready agents according to state manager: {ready_agents}
 
@@ -18,6 +19,7 @@ Task:
 Inspect every meaningful source file in your assigned scope and identify the strongest candidates for elegance.
 
 Definition of elegant:
+
 - Every line earns its place
 - No code that should obviously be extracted into a helper
 - No manual repetition that a loop, generics, or a reusable pattern could remove
@@ -27,6 +29,7 @@ Definition of elegant:
 - Elegance = difficulty handled / solution complexity
 
 What to do:
+
 1. Read the files in this scope
 2. Ignore trivial files like constants-only, marker types, empty implementations, ultra-thin wrappers
 3. Rank the best 3 candidates in this scope by difficulty x cleanliness
@@ -43,6 +46,7 @@ What to do:
    - "Weaknesses in scope:" 2-4 bullets about common anti-patterns you saw in nearby files
 
 Rules:
+
 - Be skeptical
 - Do not nominate files just because they are short
 - Prefer files that compress real complexity well

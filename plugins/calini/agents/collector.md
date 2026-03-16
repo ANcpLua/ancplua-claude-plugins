@@ -21,7 +21,7 @@ ingests OTLP telemetry, stores it in DuckDB, and serves the REST API.
 
 ## Your Domain
 
-```
+```text
 src/qyl.collector/
 ├── Program.cs                    # App startup, endpoint mapping
 ├── OtlpConverter.cs              # gRPC/HTTP OTLP normalization
@@ -53,7 +53,7 @@ SendMessage to a general agent.
 
 - .NET 10.0, C# 14
 - TimeProvider.System.GetUtcNow() — never DateTime.Now
-- Lock _lock = new() — never object _lock
+- Lock _lock = new() — never object_lock
 - System.Text.Json — never Newtonsoft
 - No reflection, no dynamic, no async blocking (.Result/.Wait())
 - No #pragma warning disable

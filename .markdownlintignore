@@ -4,6 +4,10 @@ plugins/otelwiki/docs/
 # Append-only history — reformatting past entries has no value
 CHANGELOG.md
 
+# Design specs — reference docs with intentionally long descriptive lines
+docs/specs/
+docs/plans/
+
 # Blog post content
 Claude Code Agent Teams*.md
 

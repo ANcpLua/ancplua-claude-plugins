@@ -21,7 +21,7 @@ OpenTelemetry traces, logs, and metrics with GenAI observability focus.
 
 ## Your Domain
 
-```
+```text
 src/qyl.dashboard/
 ├── src/
 │   ├── components/               # Shared UI components
