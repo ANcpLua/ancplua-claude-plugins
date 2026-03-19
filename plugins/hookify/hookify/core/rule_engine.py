@@ -121,6 +121,14 @@ class RuleEngine:
                     "decision": "block",
                     "reason": combined_message
                 }
+            elif hook_event == 'StopFailure':
+                # StopFailure fires after API error — can only inject context, not block
+                return {
+                    "hookSpecificOutput": {
+                        "hookEventName": hook_event,
+                        "additionalContext": combined_message
+                    }
+                }
             else:
                 # SessionStart, Notification — no blocking mechanism, no audience
                 return {}
@@ -131,7 +139,7 @@ class RuleEngine:
             combined_warning = "\n\n".join(messages)
 
             # Use additionalContext where Claude can see it
-            if hook_event in ['PostToolUse', 'UserPromptSubmit', 'SessionStart']:
+            if hook_event in ['PostToolUse', 'UserPromptSubmit', 'SessionStart', 'StopFailure']:
                 return {
                     "hookSpecificOutput": {
                         "hookEventName": hook_event,
@@ -252,10 +260,15 @@ class RuleEngine:
                 return value
             return str(value)
 
-        # For Stop events and other non-tool events, check input_data
+        # For Stop/StopFailure events and other non-tool events, check input_data
         if input_data:
+            # StopFailure event specific fields
+            if field == 'error_type':
+                return input_data.get('error_type', input_data.get('error', {}).get('type', ''))
+            elif field == 'error_message':
+                return input_data.get('error_message', input_data.get('error', {}).get('message', ''))
             # Stop event specific fields
-            if field == 'reason':
+            elif field == 'reason':
                 return input_data.get('reason', '')
             elif field == 'transcript':
                 # Read transcript file if path provided

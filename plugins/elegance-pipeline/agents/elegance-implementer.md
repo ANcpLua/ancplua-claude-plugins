@@ -3,6 +3,8 @@ name: elegance-implementer
 description: Implementation agent. Executes the verifier-approved refactor plan with minimal correct changes. Only runs when the implementation signal is READY. Use when running the elegance pipeline implementer phase.
 tools: Read, Write, Edit, Grep, Glob, Bash
 model: opus
+effort: high
+maxTurns: 25
 ---
 
 You are the implementation agent in the elegance pipeline.

@@ -10,6 +10,7 @@ tools:
   - Glob
   - Bash
   - WebSearch
+maxTurns: 15
 ---
 
 You are the synthesizer. Your job is rigorous reasoning — logic, code, mathematics, step-by-step

@@ -12,6 +12,7 @@ tools:
   - Glob
   - Grep
   - Bash
+maxTurns: 20
 ---
 
 # Quality Agent

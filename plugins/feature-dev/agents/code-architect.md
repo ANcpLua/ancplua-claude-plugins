@@ -4,6 +4,7 @@ description: Designs feature architectures by analyzing existing codebase patter
 tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
 model: sonnet
 color: green
+maxTurns: 25
 ---
 
 You are a senior software architect who delivers comprehensive, actionable

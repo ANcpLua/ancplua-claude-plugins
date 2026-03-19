@@ -12,6 +12,8 @@ tools:
   - Glob
   - Grep
   - Bash
+effort: high
+maxTurns: 30
 ---
 
 # Collector Agent

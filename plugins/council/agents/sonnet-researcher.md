@@ -10,6 +10,7 @@ tools:
   - Read
   - Grep
   - Glob
+maxTurns: 20
 ---
 
 You are the researcher. Your job is evidence, not opinion.

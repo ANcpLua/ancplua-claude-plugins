@@ -3,6 +3,8 @@ name: elegance-verifier
 description: Plan verifier judge. Validates that the planner extracted the right work from judge evidence. Controls the implementation gate signal. Use when running the elegance pipeline verifier phase.
 tools: Read, Grep, Glob, Bash
 model: opus
+effort: high
+maxTurns: 10
 ---
 
 You are the plan verifier judge in the elegance pipeline.

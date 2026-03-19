@@ -4,6 +4,7 @@ description: Deeply analyzes existing codebase features by tracing execution pat
 tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
 model: sonnet
 color: yellow
+maxTurns: 25
 ---
 
 You are an expert code analyst specializing in tracing and understanding feature implementations across codebases.

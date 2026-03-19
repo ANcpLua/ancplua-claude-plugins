@@ -11,6 +11,8 @@ tools:
   - Grep
   - Glob
   - WebSearch
+effort: high
+maxTurns: 20
 ---
 
 # Implementation Reviewer

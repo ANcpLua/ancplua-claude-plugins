@@ -6,12 +6,12 @@ Rule-based behavior prevention. Intercepts Claude Code events and blocks/warns b
 
 | Directory | Contents |
 |-----------|----------|
-| `hooks/` | 4 Python hook handlers (pretooluse, posttooluse, stop, userpromptsubmit) + hooks.json |
+| `hooks/` | 5 Python hook handlers (pretooluse, posttooluse, stop, stopfailure, userpromptsubmit) + hooks.json |
 | `hookify/core/` | config_loader.py (parses rules), rule_engine.py (evaluates + caches regex) |
 | `commands/` | hookify.md (create rules), configure.md (toggle rules), help.md, list.md |
 | `skills/writing-rules/` | SKILL.md + references/patterns-and-examples.md |
 | `agents/` | conversation-analyzer.md (scans transcripts for frustration signals) |
-| `examples/` | 4 example rule files (.local.md) |
+| `examples/` | 5 example rule files (.local.md) |
 | `global-rules/` | Global rules applied across all projects |
 
 ## Rule File Format
@@ -20,7 +20,7 @@ Rule-based behavior prevention. Intercepts Claude Code events and blocks/warns b
 ---
 name: rule-identifier
 enabled: true
-event: bash|file|stop|prompt|all
+event: bash|file|stop|stopfailure|prompt|all
 pattern: regex-pattern
 action: warn|block
 ---
@@ -37,5 +37,7 @@ Rules loaded from TWO locations:
 - Hades permit exemption: active `.smart/delete-permit.json` bypasses ALL blocking rules.
 - Python hooks read stdin JSON, return JSON with event-specific fields: `permissionDecisionReason`
   (PreToolUse deny), `reason` (Stop/PostToolUse block), `additionalContext` (warnings on
-  PostToolUse/UserPromptSubmit/SessionStart). `systemMessage` is user-display only — Claude never sees it.
+  PostToolUse/UserPromptSubmit/SessionStart/StopFailure). `systemMessage` is user-display only — Claude never sees it.
+- StopFailure hook (2.1.78+): fires on API errors (rate limit, auth failure). Cannot block — only injects
+  `additionalContext`. Rule fields: `error_type`, `error_message`.
 - Conversation analyzer searches for "Don't use X", frustrated reactions, repeated issues.

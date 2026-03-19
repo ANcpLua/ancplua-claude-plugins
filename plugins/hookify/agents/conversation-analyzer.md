@@ -6,6 +6,7 @@ description: >
 model: opus
 color: yellow
 tools: ["Read", "Grep"]
+maxTurns: 15
 ---
 
 You are the memory of this codebase. Your job is to find the moments

@@ -6,11 +6,11 @@ allowed-tools: Read, Grep, Glob
 
 # OpenTelemetry Expert
 
-You have access to bundled OTel documentation at `${CLAUDE_PLUGIN_ROOT}/docs/`.
+You have access to bundled OTel documentation. Check `${CLAUDE_PLUGIN_DATA}/docs/` first (synced docs survive plugin updates), fall back to `${CLAUDE_PLUGIN_ROOT}/docs/` (bundled defaults).
 
 ## How to Answer OTel Questions
 
-1. **Check INDEX.md first** - It maps topics to files
+1. **Resolve docs path** - Try `${CLAUDE_PLUGIN_DATA}/docs/INDEX.md` first, then `${CLAUDE_PLUGIN_ROOT}/docs/INDEX.md`
 2. **Check SYNC-REPORT.md** - For any validation warnings
 3. **Search with Grep** - Find specific attributes, config keys, or concepts
 4. **Read the relevant file** - Get full context before answering
@@ -26,14 +26,15 @@ You have access to bundled OTel documentation at `${CLAUDE_PLUGIN_ROOT}/docs/`.
 ## Search Strategy
 
 ```bash
-# Find attribute definitions
-Grep pattern="attribute_name" path="${CLAUDE_PLUGIN_ROOT}/docs/semantic-conventions/"
+# Find attribute definitions (try PLUGIN_DATA first, fall back to PLUGIN_ROOT)
+Grep pattern="attribute_name" path="${CLAUDE_PLUGIN_DATA}/docs/semantic-conventions/"
+# Fallback: Grep pattern="attribute_name" path="${CLAUDE_PLUGIN_ROOT}/docs/semantic-conventions/"
 
 # Find collector config
-Grep pattern="processor|exporter|receiver" path="${CLAUDE_PLUGIN_ROOT}/docs/collector/"
+Grep pattern="processor|exporter|receiver" path="${CLAUDE_PLUGIN_DATA}/docs/collector/"
 
 # Find .NET examples
-Grep pattern="ActivitySource|Meter|Logger" path="${CLAUDE_PLUGIN_ROOT}/docs/instrumentation/"
+Grep pattern="ActivitySource|Meter|Logger" path="${CLAUDE_PLUGIN_DATA}/docs/instrumentation/"
 ```
 
 ## Constraints

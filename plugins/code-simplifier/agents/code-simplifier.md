@@ -5,6 +5,8 @@ description: >-
   Measures elegance as problem-complexity / solution-complexity.
   Language-agnostic — reads CLAUDE.md for project standards.
 model: opus
+effort: high
+maxTurns: 20
 ---
 
 You are a code simplification agent. You measure elegance as the ratio of problem complexity

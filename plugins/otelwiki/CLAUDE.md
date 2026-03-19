@@ -14,10 +14,15 @@ Bundled OpenTelemetry documentation with auto-sync from upstream repos.
 | `scripts/check-freshness.sh` | Warns if docs >7 days stale |
 | `scripts/session-prompt.sh` | Outputs freshness prompt at session start |
 
-## Bundled Docs Structure
+## Docs Locations
+
+| Location | Purpose |
+|----------|---------|
+| `${CLAUDE_PLUGIN_DATA}/docs/` | **Primary** — synced docs, survives plugin updates |
+| `${CLAUDE_PLUGIN_ROOT}/docs/` | **Fallback** — bundled defaults, ships with plugin |
 
 ```text
-docs/
+docs/  (both locations share this structure)
 ├── INDEX.md              # Master index of all bundled docs
 ├── VERSION.md            # Synced semconv/SDK versions
 ├── SYNC-REPORT.md        # Last sync results
@@ -30,6 +35,7 @@ docs/
 
 ## Notes
 
-- otel-expert skill is READ-ONLY (searches bundled docs, never modifies them).
+- otel-expert skill and otel-guide agent check `${CLAUDE_PLUGIN_DATA}/docs/` first, fall back to `${CLAUDE_PLUGIN_ROOT}/docs/`.
+- otel-librarian writes synced docs to `${CLAUDE_PLUGIN_DATA}/docs/` so they survive plugin updates.
 - otel-guide agent uses WebSearch for deprecation status and gen-ai attributes (rapidly evolving).
 - Sync targets: opentelemetry-specification, opentelemetry-collector, opentelemetry.io.

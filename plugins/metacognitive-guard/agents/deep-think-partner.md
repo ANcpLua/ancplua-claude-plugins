@@ -33,6 +33,8 @@ tools:
     - Glob
     - WebSearch
     - WebFetch
+effort: high
+maxTurns: 40
 ---
 
 # Deep Think Partner
