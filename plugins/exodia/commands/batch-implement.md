@@ -1,6 +1,7 @@
 ---
 description: "IF implementing multiple similar items THEN use this. Pattern extraction->parallel implement (1 agent per item)->consistency review->verify. Endpoints, tests, migrations, fixes."
 allowed-tools: Task, Bash, TodoWrite
+effort: high
 ---
 
 # BATCH IMPLEMENT — Parallel Items with Shared Pattern

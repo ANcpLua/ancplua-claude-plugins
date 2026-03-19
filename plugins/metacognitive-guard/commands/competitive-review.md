@@ -1,5 +1,6 @@
 ---
 description: Dispatch two competing reviewers (arch-reviewer and impl-reviewer) before deep analysis. Competition produces more thorough results. Use before creating code, modifying architecture, or making technical decisions.
+effort: high
 ---
 
 # Competitive Review

@@ -33,3 +33,29 @@
 Plugins orchestrate behavior via Skills. No C# or .NET code belongs in this repository.
 
 See `docs/ARCHITECTURE.md` Section 3 for the full plugin structure reference.
+
+## Installing plugins from this marketplace
+
+### Option A: Add marketplace via CLI
+
+```bash
+claude plugin marketplace add ANcpLua/ancplua-claude-plugins
+claude plugin install <plugin-name>
+```
+
+### Option B: Inline in settings.json (Claude Code 2.1.80+)
+
+Add to your `settings.json` (project or user scope):
+
+```json
+{
+  "extraKnownMarketplaces": [
+    {
+      "type": "git",
+      "url": "https://github.com/ANcpLua/ancplua-claude-plugins.git"
+    }
+  ]
+}
+```
+
+Then install individual plugins with `/plugin install <plugin-name>`.

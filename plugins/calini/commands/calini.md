@@ -1,6 +1,7 @@
 ---
 description: Launch Carlini-style agent team for qyl development (8 agents, parallel, autonomous)
 argument-hint: [goal] [--agents N] [--dry-run]
+effort: high
 ---
 
 # /calini [goal]

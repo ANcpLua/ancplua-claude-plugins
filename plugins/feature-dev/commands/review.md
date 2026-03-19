@@ -1,6 +1,7 @@
 ---
 name: review
 description: Perform a comprehensive code review on specified files or changes
+effort: medium
 ---
 
 Review code for security vulnerabilities, style issues, performance problems, and best practices.

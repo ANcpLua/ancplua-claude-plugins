@@ -6,6 +6,7 @@ description: >
 model: opus
 color: yellow
 tools: ["Read", "Grep"]
+effort: medium
 maxTurns: 15
 ---
 

@@ -1,5 +1,6 @@
 ---
 description: Monitors Claude's responses for struggle signals and suggests escalation to deep-thinking agents when complexity exceeds comfortable reasoning capacity.
+effort: low
 ---
 
 # Metacognitive Guard

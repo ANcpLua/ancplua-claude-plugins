@@ -1,6 +1,7 @@
 ---
 description: "IF multiple valid approaches THEN use this. N agents compete, judge picks winner by penalty scoring. For trade-offs without competition -> deep-think."
 allowed-tools: Task, Bash, TodoWrite
+effort: high
 ---
 
 # TOURNAMENT — Competitive Coding with Penalty Scoring

@@ -1,6 +1,7 @@
 ---
 description: "IF complex problem needing multi-perspective analysis THEN use this. 5 agents, 3 phases: understand->synthesize->recommend. No implementation. For competing implementations -> tournament."
 allowed-tools: Task, TodoWrite
+effort: medium
 ---
 
 # DEEP THINK — Multi-Perspective Reasoning Before Action

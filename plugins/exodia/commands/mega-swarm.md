@@ -1,6 +1,7 @@
 ---
 description: "IF codebase audit or release readiness check THEN use this. 6-12 agents scan in parallel. Full(12), quick(6), focused(8). Feed findings into fix-pipeline."
 allowed-tools: Task, TodoWrite
+effort: high
 ---
 
 # MEGA SWARM — Parallel Codebase Audit

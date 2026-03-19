@@ -6,6 +6,7 @@ arguments:
     description: Force sync even if docs are fresh (optional)
     required: false
 allowed-tools: Bash, Read, Write, Grep, Glob, WebFetch
+effort: medium
 ---
 
 # OTel Documentation Sync

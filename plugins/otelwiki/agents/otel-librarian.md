@@ -10,6 +10,7 @@ tools:
   - WebFetch
   - WebSearch
 model: opus
+effort: medium
 maxTurns: 30
 ---
 

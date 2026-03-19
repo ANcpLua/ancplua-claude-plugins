@@ -1,6 +1,7 @@
 ---
 description: "IF fixing audit findings THEN use this. 7 agents, 4 gated phases: analyze->design->implement->verify. For ad-hoc bugs -> fix. For P0 -> turbo-fix."
 allowed-tools: Task, Bash, TodoWrite
+effort: high
 ---
 
 # FIX PIPELINE — Systematic Resolution from Audit Findings

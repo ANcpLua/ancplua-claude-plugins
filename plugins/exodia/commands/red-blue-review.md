@@ -1,6 +1,7 @@
 ---
 description: "IF adversarial security/quality review needed THEN use this. Red team attacks, Blue team defends, Red re-attacks. Scored. Release recommendation. For broad audit -> mega-swarm."
 allowed-tools: Task, Bash, TodoWrite
+effort: high
 ---
 
 # RED BLUE REVIEW — Adversarial Attack/Defense with Scoring
