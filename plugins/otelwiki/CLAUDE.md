@@ -10,9 +10,6 @@ Bundled OpenTelemetry documentation with auto-sync from upstream repos.
 | `agents/otel-guide.md` | Answers OTel questions from bundled docs, validates semconv |
 | `agents/otel-librarian.md` | Syncs from upstream repos, filters for .NET, strips Hugo frontmatter |
 | `commands/sync.md` | `/otelwiki:sync` entry point to spawn librarian |
-| `hooks/hooks.json` | SessionStart hooks for freshness warnings |
-| `scripts/check-freshness.sh` | Warns if docs >7 days stale |
-| `scripts/session-prompt.sh` | Outputs freshness prompt at session start |
 
 ## Docs Locations
 

@@ -264,9 +264,9 @@ class RuleEngine:
         if input_data:
             # StopFailure event specific fields
             if field == 'error_type':
-                return input_data.get('error_type', input_data.get('error', {}).get('type', ''))
+                return input_data.get('error_type', (input_data.get('error') or {}).get('type', ''))
             elif field == 'error_message':
-                return input_data.get('error_message', input_data.get('error', {}).get('message', ''))
+                return input_data.get('error_message', (input_data.get('error') or {}).get('message', ''))
             # Stop event specific fields
             elif field == 'reason':
                 return input_data.get('reason', '')
