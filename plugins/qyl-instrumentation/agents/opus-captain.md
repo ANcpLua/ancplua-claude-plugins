@@ -11,6 +11,8 @@ tools:
   - Grep
   - Glob
   - Bash
+effort: high
+maxTurns: 30
 ---
 
 # qyl Observability Captain

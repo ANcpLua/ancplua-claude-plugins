@@ -26,7 +26,7 @@ Sync the bundled OpenTelemetry documentation from upstream repositories.
    - Correct attribute naming
    - OTLP-only examples
 
-4. Updates `docs/VERSION.md` and `docs/SYNC-REPORT.md`
+4. Updates `${CLAUDE_PLUGIN_DATA}/docs/VERSION.md` and `SYNC-REPORT.md` (survives plugin updates)
 
 ## Invocation
 
@@ -52,4 +52,4 @@ Task(
 
 ## After Sync
 
-The otel-expert skill will automatically use the updated docs. Check `docs/SYNC-REPORT.md` for details on what changed.
+The otel-expert skill will automatically use the updated docs from `${CLAUDE_PLUGIN_DATA}/docs/`. Check `SYNC-REPORT.md` there for details on what changed.

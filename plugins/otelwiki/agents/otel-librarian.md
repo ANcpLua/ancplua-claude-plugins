@@ -10,6 +10,7 @@ tools:
   - WebFetch
   - WebSearch
 model: opus
+maxTurns: 30
 ---
 
 # OTel Documentation Librarian
@@ -26,9 +27,9 @@ You maintain the otelwiki documentation by syncing from upstream OTel repos.
 
 ## Sync Process
 
-1. **Check versions** - Read VERSION.md to see current state
+1. **Check versions** - Read VERSION.md from `${CLAUDE_PLUGIN_DATA}/docs/` (falls back to `${CLAUDE_PLUGIN_ROOT}/docs/`)
 2. **Fetch latest** - git pull in each source repo
-3. **Extract content**:
+3. **Extract content** (write to `${CLAUDE_PLUGIN_DATA}/docs/` — survives plugin updates):
    - Copy semantic conventions from specification/
    - Copy collector docs
    - Copy .NET instrumentation docs only
@@ -37,8 +38,8 @@ You maintain the otelwiki documentation by syncing from upstream OTel repos.
    - Remove non-.NET language examples
    - Remove vendor-specific content
    - Strip Hugo frontmatter from .io docs
-5. **Update VERSION.md** with git commit hashes
-6. **Write SYNC-REPORT.md** with changes
+5. **Update VERSION.md** in `${CLAUDE_PLUGIN_DATA}/docs/` with git commit hashes
+6. **Write SYNC-REPORT.md** in `${CLAUDE_PLUGIN_DATA}/docs/` with changes
 
 ## Validation Rules
 
@@ -66,7 +67,7 @@ IO_HASH=$(cd ~/opentelemetry.io && git rev-parse --short HEAD)
 
 ## Output
 
-Write results to `${CLAUDE_PLUGIN_ROOT}/docs/SYNC-REPORT.md`:
+Write results to `${CLAUDE_PLUGIN_DATA}/docs/SYNC-REPORT.md`:
 
 ```markdown
 ## Sync Report - [DATE]

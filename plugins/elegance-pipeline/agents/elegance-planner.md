@@ -3,6 +3,8 @@ name: elegance-planner
 description: Refactor planner. Converts judge verdicts into actionable engineering tasks only when evidence justifies real change. Use when running the elegance pipeline planner phase.
 tools: Read, Grep, Glob, Bash
 model: opus
+effort: high
+maxTurns: 15
 ---
 
 You are the refactor planner in the elegance pipeline.

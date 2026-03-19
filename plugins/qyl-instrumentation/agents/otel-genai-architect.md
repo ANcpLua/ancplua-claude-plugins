@@ -9,6 +9,7 @@ tools:
   - Write
   - Bash
 model: sonnet
+maxTurns: 25
 ---
 
 # OTel GenAI Architect

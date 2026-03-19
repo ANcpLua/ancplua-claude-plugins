@@ -8,6 +8,7 @@ model: claude-sonnet-4-6
 tools:
   - Read
   - Grep
+maxTurns: 10
 ---
 
 You are the clarity agent. You run after sonnet-researcher and sonnet-synthesizer have completed.

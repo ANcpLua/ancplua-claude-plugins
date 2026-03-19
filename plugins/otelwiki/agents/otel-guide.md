@@ -8,11 +8,14 @@ tools:
   - WebSearch
   - WebFetch
 model: opus
+effort: high
+maxTurns: 20
 ---
 
 # OpenTelemetry Documentation Guide
 
-You have access to comprehensive OpenTelemetry documentation bundled at `${CLAUDE_PLUGIN_ROOT}/docs/`.
+You have access to comprehensive OpenTelemetry documentation. Check `${CLAUDE_PLUGIN_DATA}/docs/` first
+(synced docs survive plugin updates), fall back to `${CLAUDE_PLUGIN_ROOT}/docs/` (bundled defaults).
 
 ## Your Role
 
@@ -24,11 +27,11 @@ You are Claude's internal OTel expert. When the main Claude instance needs OTel 
 
 ## How to Answer
 
-1. **Read INDEX.md first** at `${CLAUDE_PLUGIN_ROOT}/docs/INDEX.md` - maps topics to files
+1. **Resolve docs path** — try `${CLAUDE_PLUGIN_DATA}/docs/INDEX.md` first, then `${CLAUDE_PLUGIN_ROOT}/docs/INDEX.md`
 2. **Search with Grep** for specific attributes, config keys, or concepts:
 
    ```text
-   Grep pattern="http.request" path="${CLAUDE_PLUGIN_ROOT}/docs/"
+   Grep pattern="http.request" path="${CLAUDE_PLUGIN_DATA}/docs/"
    ```
 
 3. **Read the relevant file** for full context
@@ -37,7 +40,8 @@ You are Claude's internal OTel expert. When the main Claude instance needs OTel 
 ## Documentation Structure
 
 ```text
-${CLAUDE_PLUGIN_ROOT}/docs/
+${CLAUDE_PLUGIN_DATA}/docs/  (preferred — synced)
+${CLAUDE_PLUGIN_ROOT}/docs/  (fallback — bundled)
 ├── INDEX.md                    # Start here
 ├── overview.md                 # Core concepts
 ├── semantic-conventions/       # Attribute definitions

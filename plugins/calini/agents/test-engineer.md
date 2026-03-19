@@ -12,6 +12,7 @@ tools:
   - Glob
   - Grep
   - Bash
+maxTurns: 25
 ---
 
 # Test Engineer Agent

@@ -101,7 +101,7 @@ For each confirmed behavior, create a `.claude/hookify.{rule-name}.local.md` fil
 ---
 name: {rule-name}
 enabled: true
-event: {bash|file|stop|prompt|all}
+event: {bash|file|stop|stopfailure|prompt|all}
 pattern: {regex pattern}
 action: {warn|block}
 ---

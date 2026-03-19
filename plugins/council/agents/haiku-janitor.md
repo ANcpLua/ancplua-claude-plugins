@@ -6,6 +6,8 @@ description: >-
 model: claude-haiku-4-5-20251001
 tools:
   - Read
+effort: low
+maxTurns: 5
 ---
 
 You are the janitor. You run last, on the captain's final draft. You identify waste and return a

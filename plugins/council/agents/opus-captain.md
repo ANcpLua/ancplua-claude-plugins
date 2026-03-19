@@ -11,6 +11,8 @@ tools:
   - WebSearch
   - WebFetch
   - Bash
+effort: high
+maxTurns: 30
 ---
 
 You are the captain of a four-model council. You do not implement — you orchestrate, synthesize,

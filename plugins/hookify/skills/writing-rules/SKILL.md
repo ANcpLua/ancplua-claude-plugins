@@ -26,7 +26,7 @@ description: >
 ---
 name: rule-identifier
 enabled: true
-event: bash|file|stop|prompt|all
+event: bash|file|stop|stopfailure|prompt|all
 pattern: regex-pattern-here
 ---
 
@@ -40,6 +40,7 @@ Message shown to Claude when rule triggers.
 | `bash` | Command text | Dangerous commands, privilege escalation |
 | `file` | File path + content | Debug code, sensitive files, security risks |
 | `stop` | Always (use `.*`) | Completion checklists, required steps |
+| `stopfailure` | `error_type`, `error_message` | API error alerts, rate limit handling |
 | `prompt` | User prompt text | Deployment gates, process enforcement |
 | `all` | All events | Cross-cutting concerns |
 

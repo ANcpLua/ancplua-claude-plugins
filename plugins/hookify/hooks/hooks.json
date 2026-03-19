@@ -27,6 +27,19 @@
           }
         ]
       }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/stopfailure.py",
+            "timeout": 10,
+            "async": true,
+            "statusMessage": "Processing API failure..."
+          }
+        ]
+      }
     ]
   }
 }

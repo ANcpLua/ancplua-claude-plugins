@@ -4,6 +4,7 @@ description: >-
   Self-directing worker for carlini-jr swarms. Implements assigned DOD items
   in an isolated worktree, verifies via Playwright MCP screenshots.
 model: sonnet
+maxTurns: 30
 ---
 
 # Worker Agent
