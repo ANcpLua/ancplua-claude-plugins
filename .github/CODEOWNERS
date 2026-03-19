@@ -5,7 +5,10 @@
 # 2. CodeRabbit (Tier 3a) can still approve for auto-merge
 # 3. Human review is always available as fallback
 
-# All workflow files require codeowner
+# Default: Claude reviews everything
+* @anthropic-code-agent
+
+# All workflow files require codeowner (overrides default)
 .github/workflows/ @ANcpLua
 
 # Claude-specific workflows (extra protection)
