@@ -3,12 +3,6 @@ name: Claude Code Review
 on:
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
-    # Optional: Only run on specific file changes
-    # paths:
-    #   - "src/**/*.ts"
-    #   - "src/**/*.tsx"
-    #   - "src/**/*.js"
-    #   - "src/**/*.jsx"
 
 jobs:
   claude-review:
@@ -18,7 +12,7 @@ jobs:
 
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
       issues: read
       id-token: write
@@ -28,6 +22,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
+          ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 1
 
       - name: Run Claude Code Review
@@ -50,10 +45,7 @@ jobs:
             5. CHANGELOG.md — entry under [Unreleased] for non-trivial changes
             6. No hardcoded absolute paths, no leaked secrets, no stale references
 
-            Use gh pr diff to read changes. Post a single summary comment via gh pr comment.
-            Use inline comments (with confirmed: true) only for specific issues worth fixing.
-            Skip nitpicks. If everything looks good, say so in one sentence.
-
-          claude_args: |
-            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
-
+            **Review-fix loop:** If you find fixable issues, fix them directly and push.
+            If you pushed fixes, summarize what you changed in a PR comment.
+            If everything looks good, approve the PR.
+            Skip nitpicks — only fix things that matter.

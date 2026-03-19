@@ -75,6 +75,7 @@ jobs:
           PLUGIN_COUNT=$(jq '.plugins | length' "$MANIFEST")
           echo "Marketplace declares $PLUGIN_COUNT plugins"
 
+          if [ "$PLUGIN_COUNT" -gt 0 ]; then
           for i in $(seq 0 $((PLUGIN_COUNT - 1))); do
             for field in name source description; do
               VALUE=$(jq -r ".plugins[$i].$field // empty" "$MANIFEST")
@@ -93,6 +94,7 @@ jobs:
               exit 1
             fi
           done
+          fi
           echo "Marketplace structure valid"
 
       - name: Validate SKILL.md frontmatter
