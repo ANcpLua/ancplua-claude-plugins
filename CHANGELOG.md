@@ -14,9 +14,9 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Agent effort gap-fill**: Added `effort` to 8 additional agents not covered by the 2.1.78 migration: 5 calini agents (quality/integration/dashboard/test-engineer → high, docs → medium), otel-librarian → medium, conversation-analyzer → medium, elegance-scout → low
 - **Skill/command effort levels** (Claude Code 2.1.80+): Added `effort` frontmatter to 7 skills and 26 commands across 12 plugins. Orchestration skills/commands (exodia, council, calini, elegance-pipeline, feature-dev, qyl-instrumentation, competitive-review) → `high`. Analysis (deep-think, deep-analysis, review, design-studio, sync) → `medium`. Lookups/toggles (lint-dotnet, hookify list/help/configure, epistemic-checkpoint, verification-before-completion, metacognitive-guard, status) → `low`. 3 elegance-pipeline commands with `disable-model-invocation` skipped (effort is irrelevant)
 - **`calini` marketplace listing**: Added calini plugin (v0.1.3) to marketplace.json — was missing despite being a functional plugin with 8 agents and 1 command
-- **Installation docs**: Added `source: 'settings'` inline marketplace install method to docs/PLUGINS.md (Claude Code 2.1.80+)
+- **Installation docs**: Documented `extraKnownMarketplaces` inline marketplace install method in docs/PLUGINS.md (Claude Code 2.1.80+)
 - **Marketplace version sync**: Synced all 15 marketplace.json versions to match plugin.json (13 were stale)
-- **`weave-validate.sh`**: Added 2 new checks (5→7 total). [6/7] Version sync: hard-fails if marketplace.json version differs from plugin.json, or if a plugin dir is missing from marketplace. [7/7] Orphaned plugins: soft-warns for plugin dirs not in marketplace. Would have caught the 13 stale versions and missing calini entry
+- **`weave-validate.sh`**: Added version sync check (5→6 total). [6/6] Hard-fails on marketplace.json↔plugin.json version mismatches, soft-warns for plugin dirs not in marketplace. Guards `seq` against empty marketplace. Would have caught the 13 stale versions and missing calini entry
 
 ### Fixed
 
