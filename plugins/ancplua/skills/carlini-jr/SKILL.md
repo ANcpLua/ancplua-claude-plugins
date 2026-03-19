@@ -5,6 +5,7 @@ description: >-
   isolated worktrees with pre-partitioned DOD items. Workers implement and
   verify via screenshots. No orchestrator, no shared state.
 allowed-tools: Agent, Bash, Read, Glob, Grep, TodoWrite
+effort: high
 ---
 
 # carlini-jr

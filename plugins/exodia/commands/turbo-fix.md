@@ -1,6 +1,7 @@
 ---
 description: "IF P0 critical bug THEN use this. 13 agents, 4 phases, maximum parallelism. For P1-P3 → use fix. From audit → fix-pipeline."
 allowed-tools: Task, Bash, TodoWrite
+effort: high
 ---
 
 # TURBO FIX — Maximum Parallelism Emergency Pipeline

@@ -1,6 +1,7 @@
 ---
 name: design-studio
 description: "Design intelligence studio: creative direction + data-driven recommendations for distinctive frontend interfaces"
+effort: medium
 ---
 
 $ARGUMENTS

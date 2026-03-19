@@ -3,6 +3,7 @@ description: >-
   Observability team: Opus captain pre-reads otelwiki semconv docs, then dispatches
   4 Sonnet specialists via Teams API. Zero runtime web search — all context pre-assembled.
 argument-hint: [task description]
+effort: high
 ---
 
 # /qyl-instrumentation:observe [task]

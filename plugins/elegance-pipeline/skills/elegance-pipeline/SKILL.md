@@ -5,6 +5,7 @@ description: >-
   1 planner, 1 verifier, and 1 gated implementer. Use when evaluating source-file
   elegance across a repository and optionally converting weaknesses into refactor work.
 allowed-tools: Read, Grep, Glob, Bash, Agent
+effort: high
 ---
 
 # Elegance Pipeline

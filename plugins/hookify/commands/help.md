@@ -1,6 +1,7 @@
 ---
 description: Get help with the hookify plugin
 allowed-tools: ["Read"]
+effort: low
 ---
 
 # Hookify Plugin Help

@@ -1,5 +1,6 @@
 ---
 description: Run .NET architecture linter to check for MSBuild/CPM violations
+effort: low
 ---
 
 # /lint-dotnet

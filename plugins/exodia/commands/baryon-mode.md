@@ -1,6 +1,7 @@
 ---
 description: "IF .NET warnings need extermination THEN use this. One-shot Noble Phantasm: snapshots reality (Rider MCP + NuGet MCP), 8 aspects burst at T0, headless/reckless, cross-repo. Full MCP access."
 allowed-tools: Task, Bash, TodoWrite, WebFetch, WebSearch
+effort: high
 ---
 
 # BARYON MODE — One-Shot Warning Exterminator

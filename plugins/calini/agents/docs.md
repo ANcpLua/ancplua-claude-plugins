@@ -12,6 +12,7 @@ tools:
   - Glob
   - Grep
   - Bash
+effort: medium
 maxTurns: 20
 ---
 

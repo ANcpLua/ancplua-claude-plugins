@@ -11,6 +11,12 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **`otelwiki` (1.0.6 -> 1.1.0)**: Synced docs now write to `${CLAUDE_PLUGIN_DATA}/docs/` so they survive plugin updates. otel-expert skill and otel-guide agent check PLUGIN_DATA first, fall back to PLUGIN_ROOT bundled defaults
 - **`hookify` (0.2.1 -> 0.3.0)**: StopFailure hook event support (Claude Code 2.1.78+). New `stopfailure.py` handler, `stopfailure` event type for rules, `error_type`/`error_message` fields for matching API errors. Example rule: `api-failure-alert.local.md`
 - **Agent frontmatter**: Added `effort` and `maxTurns` to 34 agents across 10 plugins (Claude Code 2.1.78+). `effort: high` on deep-thinking agents (opus captains, reviewers, deep-think-partner), `effort: low` on haiku-janitor. `maxTurns` caps prevent runaway agents (5 for janitor, 10-15 for scouts/verifiers, 20-25 for reviewers/specialists, 30-40 for captains/librarians)
+- **Agent effort gap-fill**: Added `effort` to 8 additional agents not covered by the 2.1.78 migration: 5 calini agents (quality/integration/dashboard/test-engineer → high, docs → medium), otel-librarian → medium, conversation-analyzer → medium, elegance-scout → low
+- **Skill/command effort levels** (Claude Code 2.1.80+): Added `effort` frontmatter to 7 skills and 26 commands across 12 plugins. Orchestration skills/commands (exodia, council, calini, elegance-pipeline, feature-dev, qyl-instrumentation, competitive-review) → `high`. Analysis (deep-think, deep-analysis, review, design-studio, sync) → `medium`. Lookups/toggles (lint-dotnet, hookify list/help/configure, epistemic-checkpoint, verification-before-completion, metacognitive-guard, status) → `low`. 3 elegance-pipeline commands with `disable-model-invocation` skipped (effort is irrelevant)
+- **`calini` marketplace listing**: Added calini plugin (v0.1.3) to marketplace.json — was missing despite being a functional plugin with 8 agents and 1 command
+- **Installation docs**: Added `source: 'settings'` inline marketplace install method to docs/PLUGINS.md (Claude Code 2.1.80+)
+- **Marketplace version sync**: Synced all 15 marketplace.json versions to match plugin.json (13 were stale)
+- **`weave-validate.sh`**: Added 2 new checks (5→7 total). [6/7] Version sync: hard-fails if marketplace.json version differs from plugin.json, or if a plugin dir is missing from marketplace. [7/7] Orphaned plugins: soft-warns for plugin dirs not in marketplace. Would have caught the 13 stale versions and missing calini entry
 
 ### Fixed
 

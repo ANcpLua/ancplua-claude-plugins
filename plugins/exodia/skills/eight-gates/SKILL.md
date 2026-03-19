@@ -7,6 +7,7 @@ description: >-
   and hades infrastructure (HAKAI — ledger + permits). Not max chaos — max discipline.
 argument-hint: "[objective] [scope] [gate-limit]"
 allowed-tools: Task, Bash, TodoWrite, Read, Grep, Glob, WebSearch
+effort: high
 ---
 
 # EIGHT GATES — Progressive Discipline Orchestration

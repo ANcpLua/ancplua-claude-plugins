@@ -4,6 +4,7 @@ description: >-
   Researcher and synthesizer run in parallel and cross-pollinate via SendMessage.
   Clarity reads their output and asks follow-ups. Haiku janitor flags bloat. Captain removes cuts and delivers.
 argument-hint: [task description]
+effort: high
 ---
 
 # /council [task]

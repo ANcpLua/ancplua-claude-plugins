@@ -1,5 +1,6 @@
 ---
 description: Structured 4-phase analysis with transparent reasoning and adversarial self-review. Use for complex decisions, architecture choices, debugging dead-ends, or any problem where jumping straight to implementation would be premature.
+effort: medium
 ---
 
 # Deep Analysis

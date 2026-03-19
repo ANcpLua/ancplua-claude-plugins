@@ -1,6 +1,7 @@
 ---
 description: "IF bug fix needed THEN use this. 4 gated phases, 8 agents (standard) or 16 (maximum). For P0 critical → turbo-fix. From audit findings → fix-pipeline."
 allowed-tools: Task, Bash, TodoWrite
+effort: high
 ---
 
 # FIX — Gated Bug Resolution Pipeline
