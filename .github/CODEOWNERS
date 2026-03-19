@@ -1,15 +1,13 @@
-# CODEOWNERS - Require human approval for sensitive files
+# CODEOWNERS - Auto-request reviewers
 #
-# Workflow files require codeowner approval. This ensures:
-# 1. Claude can't self-modify its own workflow (security)
-# 2. CodeRabbit (Tier 3a) can still approve for auto-merge
-# 3. Human review is always available as fallback
+# Default: Claude reviews all PRs automatically.
+# Workflow and security files require human (owner) approval.
 
-# All workflow files require codeowner
+# Default: Claude reviews everything
+* @anthropic-code-agent
+
+# Workflow files require owner (overrides default, includes claude*.yml)
 .github/workflows/ @ANcpLua
-
-# Claude-specific workflows (extra protection)
-.github/workflows/claude*.yml @ANcpLua
 
 # Security-sensitive files
 .github/CODEOWNERS @ANcpLua

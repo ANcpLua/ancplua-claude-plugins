@@ -28,6 +28,31 @@
         ]
       }
     ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/stop.py",
+            "timeout": 10,
+            "async": true,
+            "statusMessage": "Running stop hookify rules..."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/userpromptsubmit.py",
+            "timeout": 10,
+            "statusMessage": "Checking prompt hookify rules..."
+          }
+        ]
+      }
+    ],
     "StopFailure": [
       {
         "hooks": [
