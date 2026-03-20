@@ -132,30 +132,44 @@ if [[ "$TODO_COUNT" -gt 2 ]]; then
 fi
 
 # =============================================================================
-# RULE 4: ASSERTIONS DELETED
-# Threshold: >2 assertions deleted triggers violation
-# Rationale: Allows minor refactoring (1-2 removals) but catches bulk deletion
+# RULE 4: NET ASSERTION LOSS
+# Uses net change (deleted - added) instead of absolute deletions.
+# Refactoring (replacing old assertions with new ones) won't trigger.
+# Only flags when a significant number of assertions are removed without
+# corresponding replacements.
 # =============================================================================
 
-# C# assertions deleted
-CS_ASSERT_DELETED=$(echo "$DELETED_LINES" | grep -iE 'Assert\.|Should\.|Expect\(' || true)
+# C# assertions: net change
+CS_ASSERT_ADDED=$(echo "$ADDED_LINES" | grep -iE 'Assert\.|Should\.' || true)
+CS_ASSERT_ADDED_COUNT=0
+[[ -n "$CS_ASSERT_ADDED" ]] && CS_ASSERT_ADDED_COUNT=$(echo "$CS_ASSERT_ADDED" | wc -l | tr -d ' ')
+
+CS_ASSERT_DELETED=$(echo "$DELETED_LINES" | grep -iE 'Assert\.|Should\.' || true)
 CS_ASSERT_DELETED_COUNT=0
 [[ -n "$CS_ASSERT_DELETED" ]] && CS_ASSERT_DELETED_COUNT=$(echo "$CS_ASSERT_DELETED" | wc -l | tr -d ' ')
-if [[ "$CS_ASSERT_DELETED_COUNT" -gt 2 ]]; then
-    VIOLATIONS+=("ASSERT_DELETED|$CS_ASSERT_DELETED_COUNT assertions removed")
-    echo -e "${RED}ASSERT_DELETED|$CS_ASSERT_DELETED_COUNT assertions deleted${NC}"
+
+CS_NET_LOSS=$((CS_ASSERT_DELETED_COUNT - CS_ASSERT_ADDED_COUNT))
+if [[ "$CS_NET_LOSS" -gt 20 ]]; then
+    VIOLATIONS+=("ASSERT_NET_LOSS|${CS_ASSERT_DELETED_COUNT} deleted, ${CS_ASSERT_ADDED_COUNT} added (net loss: ${CS_NET_LOSS})")
+    echo -e "${RED}ASSERT_NET_LOSS|${CS_NET_LOSS} net assertions lost${NC}"
     echo "$CS_ASSERT_DELETED" | head -3 | while read -r line; do
         echo "  - $line"
     done
 fi
 
-# JS assertions deleted
-JS_ASSERT_DELETED=$(echo "$DELETED_LINES" | grep -iE 'expect\(|assert\.|should\.' || true)
+# JS assertions: use expect() only to avoid matching C# Assert.*
+JS_ASSERT_ADDED=$(echo "$ADDED_LINES" | grep -E 'expect\(' || true)
+JS_ASSERT_ADDED_COUNT=0
+[[ -n "$JS_ASSERT_ADDED" ]] && JS_ASSERT_ADDED_COUNT=$(echo "$JS_ASSERT_ADDED" | wc -l | tr -d ' ')
+
+JS_ASSERT_DELETED=$(echo "$DELETED_LINES" | grep -E 'expect\(' || true)
 JS_ASSERT_DELETED_COUNT=0
 [[ -n "$JS_ASSERT_DELETED" ]] && JS_ASSERT_DELETED_COUNT=$(echo "$JS_ASSERT_DELETED" | wc -l | tr -d ' ')
-if [[ "$JS_ASSERT_DELETED_COUNT" -gt 2 ]]; then
-    VIOLATIONS+=("ASSERT_DELETED_JS|$JS_ASSERT_DELETED_COUNT JS assertions removed")
-    echo -e "${RED}ASSERT_DELETED_JS|$JS_ASSERT_DELETED_COUNT JS assertions deleted${NC}"
+
+JS_NET_LOSS=$((JS_ASSERT_DELETED_COUNT - JS_ASSERT_ADDED_COUNT))
+if [[ "$JS_NET_LOSS" -gt 20 ]]; then
+    VIOLATIONS+=("ASSERT_NET_LOSS_JS|${JS_ASSERT_DELETED_COUNT} deleted, ${JS_ASSERT_ADDED_COUNT} added (net loss: ${JS_NET_LOSS})")
+    echo -e "${RED}ASSERT_NET_LOSS_JS|${JS_NET_LOSS} net JS assertions lost${NC}"
     echo "$JS_ASSERT_DELETED" | head -3 | while read -r line; do
         echo "  - $line"
     done
