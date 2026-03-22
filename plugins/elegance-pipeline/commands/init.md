@@ -8,7 +8,7 @@ Initialize the elegance pipeline state manager.
 Run:
 
 ```bash
-python ${CLAUDE_PLUGIN_ROOT}/elegance_pipeline/pipeline.py init \
+python ${CLAUDE_PLUGIN_ROOT}/elegance_pipeline/pipeline.py [--state-dir <dir>] init \
   --project-anchor $ARGUMENTS \
   --scope <scope-1> \
   --scope <scope-2> \
@@ -20,3 +20,4 @@ If `$ARGUMENTS` is empty, ask the user for the project anchor file and 4 scout s
 
 The project anchor is any meaningful root file (e.g., `CLAUDE.md`, `package.json`, `*.sln`).
 Scout scopes are directories that each scout will analyze independently.
+Use `--state-dir` when you want one isolated pipeline per spec instead of reusing the shared default state.

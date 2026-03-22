@@ -26,6 +26,17 @@
     ],
     "PostToolUse": [
       {
+        "matcher": "Bash|Task|Read|Grep|Glob|Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/objective-watch.py",
+            "timeout": 5,
+            "statusMessage": "Checking objective drift..."
+          }
+        ]
+      },
+      {
         "matcher": "Write|Edit",
         "hooks": [
           {
@@ -33,6 +44,18 @@
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/ralph-loop.sh",
             "timeout": 5,
             "statusMessage": "Ralph scanning..."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/objective-watch.py",
+            "timeout": 5,
+            "statusMessage": "Refreshing active objective..."
           }
         ]
       }

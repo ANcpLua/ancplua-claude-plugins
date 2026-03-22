@@ -13,6 +13,7 @@ import argparse
 import json
 import os
 import re
+import shlex
 import sys
 from dataclasses import dataclass, asdict, field
 from pathlib import Path
@@ -20,10 +21,7 @@ from typing import Dict, List, Optional
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 TEMPLATE_DIR = SCRIPT_DIR / "templates"
-STATE_DIR = Path.cwd() / ".claude" / "elegance_pipeline" / "state"
-CONFIG_PATH = STATE_DIR / "config.json"
-STATE_PATH = STATE_DIR / "workflow_state.json"
-PIPELINE_CMD = f"python {SCRIPT_DIR / 'pipeline.py'}"
+DEFAULT_STATE_DIR = Path.cwd() / ".claude" / "elegance_pipeline" / "state"
 
 SCOUT_COUNT = 4
 JUDGE_COUNT = 2
@@ -54,28 +52,39 @@ class WorkflowState:
 
 
 class FileStore:
+    def __init__(self, state_dir: Path) -> None:
+        self.state_dir = state_dir
+
+    @property
+    def config_path(self) -> Path:
+        return self.state_dir / "config.json"
+
+    @property
+    def state_path(self) -> Path:
+        return self.state_dir / "workflow_state.json"
+
     def ensure_dirs(self) -> None:
-        STATE_DIR.mkdir(parents=True, exist_ok=True)
-        (STATE_DIR / "outputs").mkdir(parents=True, exist_ok=True)
+        self.state_dir.mkdir(parents=True, exist_ok=True)
+        (self.state_dir / "outputs").mkdir(parents=True, exist_ok=True)
 
     def load_config(self) -> WorkflowConfig:
-        if not CONFIG_PATH.exists():
+        if not self.config_path.exists():
             raise SystemExit(
-                f"Missing config: {CONFIG_PATH}. Run init first."
+                f"Missing config: {self.config_path}. Run init first."
             )
-        data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+        data = json.loads(self.config_path.read_text(encoding="utf-8"))
         return WorkflowConfig(**data)
 
     def save_config(self, cfg: WorkflowConfig) -> None:
         self.ensure_dirs()
-        CONFIG_PATH.write_text(json.dumps(asdict(cfg), indent=2), encoding="utf-8")
+        self.config_path.write_text(json.dumps(asdict(cfg), indent=2), encoding="utf-8")
 
     def load_state(self, cfg: WorkflowConfig) -> WorkflowState:
-        if not STATE_PATH.exists():
+        if not self.state_path.exists():
             state = self._fresh_state(cfg)
             self.save_state(state)
             return state
-        raw = json.loads(STATE_PATH.read_text(encoding="utf-8"))
+        raw = json.loads(self.state_path.read_text(encoding="utf-8"))
         agents = {
             key: AgentRecord(**value)
             for key, value in raw.get("agents", {}).items()
@@ -93,7 +102,7 @@ class FileStore:
             "verifier_signal_source": state.verifier_signal_source,
             "agents": {k: asdict(v) for k, v in state.agents.items()},
         }
-        STATE_PATH.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        self.state_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
     def _fresh_state(self, cfg: WorkflowConfig) -> WorkflowState:
         agents: Dict[str, AgentRecord] = {}
@@ -120,9 +129,22 @@ class TemplateRenderer:
 
 
 class WorkflowCoordinator:
-    def __init__(self) -> None:
-        self.store = FileStore()
+    def __init__(self, state_dir: Path, explicit_state_dir: bool) -> None:
+        self.store = FileStore(state_dir)
         self.renderer = TemplateRenderer()
+        self.explicit_state_dir = explicit_state_dir
+
+    def _state_dir_label(self) -> str:
+        if self.explicit_state_dir:
+            return str(self.store.state_dir)
+        return f"{self.store.state_dir} (default shared state)"
+
+    def _pipeline_cmd(self) -> str:
+        script = shlex.quote(str(SCRIPT_DIR / "pipeline.py"))
+        if not self.explicit_state_dir:
+            return f"python {script}"
+        state_dir = shlex.quote(str(self.store.state_dir))
+        return f"python {script} --state-dir {state_dir}"
 
     def init(self, project_anchor: str, scopes: List[str], project_root: Optional[str]) -> None:
         scopes = [scope.strip() for scope in scopes if scope.strip()]
@@ -137,10 +159,16 @@ class WorkflowCoordinator:
             scopes=scopes[:SCOUT_COUNT],
             project_root=(project_root or os.getcwd()).strip(),
         )
+        if not self.explicit_state_dir and self.store.config_path.exists():
+            print(
+                f"Warning: reusing default shared state at {self.store.state_dir}. "
+                "Use --state-dir for one team per spec."
+            )
         self.store.save_config(cfg)
         state = self.store._fresh_state(cfg)
         self.store.save_state(state)
         print(f"Initialized elegance pipeline for {cfg.project_anchor}")
+        print(f"State dir: {self._state_dir_label()}")
         print("Scout scopes:")
         for index, scope in enumerate(cfg.scopes, start=1):
             print(f"  scout-{index}: {scope}")
@@ -150,6 +178,7 @@ class WorkflowCoordinator:
         state = self.store.load_state(cfg)
         print(f"Project anchor: {cfg.project_anchor}")
         print(f"Project root: {cfg.project_root}")
+        print(f"State dir: {self._state_dir_label()}")
         print(f"Implementation signal: {'READY' if state.implementation_signal else 'BLOCKED'}")
         print("")
         for key in sorted(state.agents.keys()):
@@ -195,7 +224,7 @@ class WorkflowCoordinator:
         state = self.store.load_state(cfg)
         record = self._record_for_slot(state, slot, role)
         output_rel = f"outputs/{slot}.md"
-        output_path = STATE_DIR / output_rel
+        output_path = self.store.state_dir / output_rel
         output_path.write_text(text, encoding="utf-8")
         record.status = "submitted"
         record.output_file = str(output_rel)
@@ -248,7 +277,7 @@ class WorkflowCoordinator:
         record = state.agents.get(slot)
         if not record or not record.output_file:
             return ""
-        path = STATE_DIR / record.output_file
+        path = self.store.state_dir / record.output_file
         if not path.exists():
             return ""
         return path.read_text(encoding="utf-8").strip()
@@ -276,7 +305,7 @@ class WorkflowCoordinator:
             "verifier_output": verifier_output or "<none yet>",
             "implementation_signal": "READY" if state.implementation_signal else "BLOCKED",
             "ready_agents": ", ".join(self.ready_agents(state)) or "<none>",
-            "pipeline_cmd": PIPELINE_CMD,
+            "pipeline_cmd": self._pipeline_cmd(),
         }
 
     @staticmethod
@@ -297,6 +326,7 @@ def _read_submission_text(file_path: Optional[str], use_stdin: bool) -> str:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Elegance pipeline state manager")
+    parser.add_argument("--state-dir")
     sub = parser.add_subparsers(dest="command", required=True)
 
     p_init = sub.add_parser("init", help="Initialize or reset the workflow")
@@ -325,7 +355,8 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
-    coordinator = WorkflowCoordinator()
+    state_dir = DEFAULT_STATE_DIR if not args.state_dir else Path(args.state_dir).expanduser().resolve()
+    coordinator = WorkflowCoordinator(state_dir=state_dir, explicit_state_dir=bool(args.state_dir))
 
     if args.command == "init":
         coordinator.init(args.project_anchor, args.scope, args.project_root)

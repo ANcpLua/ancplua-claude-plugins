@@ -8,6 +8,10 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **`metacognitive-guard` objective drift watchdog**: Added advisory `objective-watch.py` hook on `UserPromptSubmit` and `PostToolUse` to track one lead-agent anchor in `.blackboard/objective.json` and inject short reminders before silent pivots to other specs, orchestration flows, or shipping steps
+- **`elegance-pipeline` isolated state roots**: Added `--state-dir` support to `pipeline.py` so multiple spec-specific pipelines can run in parallel without clobbering `.claude/elegance_pipeline/state/`. Prompt rendering now carries the selected state dir forward to subagent submit commands
+- **`exodia/eight-gates` primary-anchor guidance**: Documented `.eight-gates/` and `.smart/` as singleton defaults, added `GATES_DIR` and `SMART_DIR` examples for per-spec isolation, and made Gate 1 record one primary anchor with explicit re-anchor requirement
+
 - **`otelwiki` (1.0.6 -> 1.1.0)**: Synced docs now write to `${CLAUDE_PLUGIN_DATA}/docs/` so they survive plugin updates. otel-expert skill and otel-guide agent check PLUGIN_DATA first, fall back to PLUGIN_ROOT bundled defaults
 - **`hookify` (0.2.1 -> 0.3.0)**: StopFailure hook event support (Claude Code 2.1.78+). New `stopfailure.py` handler, `stopfailure` event type for rules, `error_type`/`error_message` fields for matching API errors. Example rule: `api-failure-alert.local.md`
 - **Agent frontmatter**: Added `effort` and `maxTurns` to 34 agents across 10 plugins (Claude Code 2.1.78+). `effort: high` on deep-thinking agents (opus captains, reviewers, deep-think-partner), `effort: low` on haiku-janitor. `maxTurns` caps prevent runaway agents (5 for janitor, 10-15 for scouts/verifiers, 20-25 for reviewers/specialists, 30-40 for captains/librarians)
