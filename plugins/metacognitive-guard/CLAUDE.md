@@ -12,6 +12,7 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 | Commit Integrity | PreToolUse (Bash) | `commit-integrity-hook.sh` | Blocks `git commit` with suppressions, commented tests, deleted assertions |
 | Struggle Detector | Stop (async) | `struggle-detector.sh` | Scores response for uncertainty, writes to blackboard |
 | Struggle Inject | UserPromptSubmit | `struggle-inject.sh` | Reads blackboard, injects deep-think suggestion as `additionalContext` |
+| Objective Watch | UserPromptSubmit + PostToolUse (Bash/Task/Read/Grep/Glob/Write/Edit) | `objective-watch.py` | Tracks one lead-agent anchor in `.blackboard/objective.json` and injects a short reminder before silent pivots to another spec, orchestration flow, or shipping step |
 | Ralph Loop | PostToolUse (Write/Edit) | prompt (haiku) + `ralph-loop.sh` | Two-layer drift detection: haiku analyzes context (over-engineering, complexity, premature optimization), grep catches surface patterns (TODO, suppressions, catch-all). Both inject via additionalContext. Silent when clean |
 | Task Completion Gate | TaskCompleted | prompt (haiku) | Validates task completions in team workflows aren't premature |
 
@@ -45,7 +46,8 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 
 - `blackboard/assertions.yaml`: Ground truth (runtime versions, banned APIs, conventions)
 - `.blackboard/`: Runtime state (struggle count, signals) - gitignored
-- `hooks/scripts/`: 7 shell scripts (4 hook handlers + 3 utility scripts)
+- `.blackboard/objective.json`: Active lead-agent anchor (objective text + optional spec/ADR path)
+- `hooks/scripts/`: hook handlers + utility scripts, including `objective-watch.py`
 
 ## Notes
 
@@ -57,6 +59,7 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
   UserPromptSubmit hook reads blackboard and injects `additionalContext` so Claude actually sees the
   suggestion. No latency on responses.
 - Struggle detector and Ralph Loop skip subagents via `agent_type` filtering (only lead agent matters).
+- Objective Watch is advisory only. It never blocks. It only injects short anchor reminders when the lead agent appears to pivot without explicitly re-anchoring.
 - TaskCompleted prompt hook fires on lead agent only (skips subagents via agent_type check).
 - Ralph Loop fires PostToolUse on Write/Edit — two layers run in parallel:
   (1) Haiku prompt analyzes context for deep drift (over-engineering, complexity creep, premature

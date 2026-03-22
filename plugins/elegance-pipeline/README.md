@@ -20,7 +20,7 @@ weaknesses into narrowly scoped refactor work.
 ## Setup
 
 ```bash
-python plugins/elegance-pipeline/elegance_pipeline/pipeline.py init \
+python plugins/elegance-pipeline/elegance_pipeline/pipeline.py --state-dir .claude/elegance_pipeline/dashboard init \
   --project-anchor CLAUDE.md \
   --scope plugins/exodia \
   --scope plugins/metacognitive-guard \
@@ -38,7 +38,14 @@ python plugins/elegance-pipeline/elegance_pipeline/pipeline.py init \
 
 ## State
 
-State is project-local at `.claude/elegance_pipeline/state/`. Not committed to git.
+Default state is project-local at `.claude/elegance_pipeline/state/`. Not committed to git.
+Use `--state-dir` to isolate parallel runs per spec, for example `.claude/elegance_pipeline/dashboard`
+and `.claude/elegance_pipeline/mcp`.
+
+Subagent names should be treated as fully qualified runtime IDs:
+`elegance-pipeline:elegance-scout`, `elegance-pipeline:elegance-judge`,
+`elegance-pipeline:elegance-planner`, `elegance-pipeline:elegance-verifier`,
+and `elegance-pipeline:elegance-implementer`.
 
 ## Origin
 

@@ -30,6 +30,7 @@ wc -l < .eight-gates/artifacts/scope.txt
 | Field | Value |
 |-------|-------|
 | **Goal** | What are we trying to achieve? (one sentence) |
+| **Primary anchor** | One objective owner, ideally one spec/ADR file when applicable |
 | **In scope** | Files, directories, components (explicit list) |
 | **Out of scope** | What we will NOT touch (explicit list) |
 | **Success criteria** | How do we know we're done? (testable) |
@@ -41,6 +42,9 @@ The stop condition is critical. Examples:
 - "HALT if root cause not found after 3 agents"
 - "HALT if scope grows beyond 50 files"
 - "HALT if build fails twice after fix attempt"
+
+If the work is anchored to a spec or ADR, record exactly one primary anchor here.
+Switching to a different spec before Gate 8 requires an explicit re-anchor decision.
 
 ### 3. Estimate Work + Agent Ceiling
 
@@ -92,6 +96,7 @@ Log these counts — they inform agent selection at later gates.
   },
   "objective": {
     "goal": "one sentence",
+    "primary_anchor": "<spec path or NONE>",
     "type": "BUG|AUDIT|FEATURE|CLEANUP|CUSTOM",
     "success_criteria": "testable statement",
     "stop_condition": "when to halt"
