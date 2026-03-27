@@ -9,7 +9,7 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 |------|-------|--------|---------|
 | Truth Beacon | SessionStart + InstructionsLoaded | `truth-beacon.sh` | Injects `blackboard/assertions.yaml` as authoritative facts |
 | Epistemic Guard | PreToolUse (Write/Edit) | `epistemic-guard.sh` | Blocks writes with wrong versions, banned APIs, AGENTS.md in plugins |
-| Commit Integrity | PreToolUse (Bash) | `commit-integrity-hook.sh` | Blocks `git commit` with suppressions, commented tests, deleted assertions |
+| Commit Integrity | PreToolUse (Bash), `if: "Bash(git commit*)"` | `commit-integrity-hook.sh` | Blocks `git commit` with suppressions, commented tests, deleted assertions |
 | Struggle Detector | Stop (async) | `struggle-detector.sh` | Scores response for uncertainty, writes to blackboard |
 | Struggle Inject | UserPromptSubmit | `struggle-inject.sh` | Reads blackboard, injects deep-think suggestion as `additionalContext` |
 | Objective Watch | UserPromptSubmit + PostToolUse (Bash/Task/Read/Grep/Glob/Write/Edit) | `objective-watch.py` | Tracks one lead-agent anchor in `.blackboard/objective.json` and injects a short reminder before silent pivots to another anchor document, orchestration flow, or shipping step |
@@ -51,7 +51,7 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 
 ## Notes
 
-- Commit integrity hook fires on every Bash tool call but exits immediately unless the command is `git commit`.
+- Commit integrity hook uses `if: "Bash(git commit*)"` (2.1.85) so the harness skips the process spawn entirely for non-commit Bash calls. The script still keeps its own early-exit guard as defense-in-depth for older Claude Code versions.
 - verify-local.sh and wait-for-ci.sh are utility scripts for the verification workflow, not hook triggers.
 - Hades god mode: active delete permit causes epistemic-guard to exit early.
 - Struggle detector tracks consecutive struggling responses via `.blackboard/.struggle-count`.
