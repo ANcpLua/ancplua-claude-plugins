@@ -53,3 +53,10 @@ When answering OTel questions:
 2. **Attributes table** - If applicable (name, type, description)
 3. **Code example** - .NET 10 syntax preferred
 4. **Source reference** - Which doc file the answer came from
+
+## If Connectors Available
+
+- ~~github~~ Search the project's own instrumentation code for context before answering
+- ~~opentelemetry-collector~~ Validate suggested collector config against a live instance
+- ~~honeycomb~~ Cross-reference attribute recommendations against real trace data in the environment
+- ~~datadog~~ Check whether suggested semconv attributes are indexed in the configured backend

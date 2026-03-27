@@ -8,6 +8,7 @@ GATES_DIR="${GATES_DIR:-.eight-gates}"
 SESSION_FILE="${GATES_DIR}/session.json"
 ARTIFACTS_DIR="${GATES_DIR}/artifacts"
 DECISIONS_FILE="${GATES_DIR}/decisions.jsonl"
+FINDINGS_FILE="${ARTIFACTS_DIR}/findings.json"
 
 # shellcheck source=lib.sh
 source "${BASH_SOURCE[0]%/*}/lib.sh"
@@ -25,6 +26,7 @@ create() {
   local session_id="${1:?Usage: session-state.sh create <session-id> [ttl-seconds]}"
   local ttl="${2:-7200}"
 
+  cleanup >/dev/null 2>&1 || true
   mkdir -p "$ARTIFACTS_DIR"
   touch "$DECISIONS_FILE"
 
@@ -116,6 +118,47 @@ expire() {
   fi
 
   echo "Session expired."
+}
+
+cleanup() {
+  if [ ! -d "$GATES_DIR" ]; then
+    return
+  fi
+
+  local should_clean="false"
+  local now expires_epoch status
+  now="$(date -u +%s)"
+
+  if [ ! -f "$SESSION_FILE" ]; then
+    should_clean="true"
+  elif command -v jq &>/dev/null; then
+    expires_epoch="$(jq -r '.expires_epoch' "$SESSION_FILE")"
+    status="$(jq -r '.status' "$SESSION_FILE")"
+    if [ "$status" = "expired" ] || [ "$now" -gt "$expires_epoch" ]; then
+      should_clean="true"
+    fi
+  else
+    expires_epoch="$(grep -o '"expires_epoch":[0-9]*' "$SESSION_FILE" | cut -d: -f2)"
+    status="$(grep -o '"status":"[^"]*"' "$SESSION_FILE" | cut -d'"' -f4)"
+    if [ "$status" = "expired" ] || [ "$now" -gt "$expires_epoch" ]; then
+      should_clean="true"
+    fi
+  fi
+
+  if [ "$should_clean" != "true" ]; then
+    echo "State still active."
+    return
+  fi
+
+  rm -f "$SESSION_FILE" "$DECISIONS_FILE"
+
+  if [ -d "$ARTIFACTS_DIR" ]; then
+    find "$ARTIFACTS_DIR" -mindepth 1 -maxdepth 1 -type f ! -path "$FINDINGS_FILE" -delete
+    find "$ARTIFACTS_DIR" -mindepth 1 -type d -exec rm -rf {} +
+  fi
+
+  find "$GATES_DIR" -type d -empty -delete 2>/dev/null || true
+  echo "Expired runtime state cleaned."
 }
 
 artifact_add() {
@@ -210,6 +253,7 @@ case "${1:-}" in
   validate) validate ;;
   extend)   shift; extend "$@" ;;
   expire)   expire ;;
+  cleanup)  cleanup ;;
   artifact)
     shift
     case "${1:-}" in
@@ -240,6 +284,7 @@ case "${1:-}" in
     echo "  validate                            Check if session is valid" >&2
     echo "  extend <seconds>                    Extend session TTL" >&2
     echo "  expire                              Mark session expired" >&2
+    echo "  cleanup                             Remove expired runtime state, preserve findings.json" >&2
     echo "  artifact add <key> <value>          Cache artifact" >&2
     echo "  artifact get <key>                  Retrieve cached artifact" >&2
     echo "  artifact list                       List all artifacts" >&2

@@ -62,6 +62,8 @@ Hookify guard templates in `scripts/smart/hookify-rules/`:
 
 - All commands/skills use blockquote teammate pattern (`> subagent: ... | model: ...`).
 - Descriptions encode IF/THEN routing (Vercel pattern).
+- Compaction notes are runtime-only. Store them in `.eight-gates/artifacts/` via `session-state.sh artifact add`, never as tracked `.md` files like `.exodia/*` or `thoughts/*`.
+- `session-state.sh cleanup` preserves `findings.json` but clears expired analysis/decision residue. Run it before creating new short-lived compaction artifacts.
 - Eight Gates composes all others: mega-swarm (MAP) -> fix pipelines (EXECUTE) -> hades (HAKAI).
 - Baryon Mode is a Noble Phantasm: one-shot T0 burst for .NET warnings. No gates, no permission. Invoker + 8 aspects.
 - Exodia creates, Hades judges. They compose: mega-swarm -> hades.

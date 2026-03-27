@@ -70,3 +70,10 @@ If you want one dedicated team per spec, give each run its own `--state-dir`.
 python ${CLAUDE_PLUGIN_ROOT}/elegance_pipeline/pipeline.py [--state-dir <dir>] signal on
 python ${CLAUDE_PLUGIN_ROOT}/elegance_pipeline/pipeline.py [--state-dir <dir>] signal off
 ```
+
+## If Connectors Available
+
+- ~~github~~ Post elegance score deltas as PR review comments
+- ~~linear~~ Create refactor tasks from planner output when implementer gate opens
+- ~~slack~~ Notify on pipeline completion with verdict and scout findings summary
+- ~~jira~~ Log verifier decision and refactor scope as a Jira ticket

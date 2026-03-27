@@ -70,6 +70,26 @@ Wait for completion. Synthesize. Report.
 
 ---
 
+## AUDITOR OUTPUT FORMAT
+
+Each auditor MUST structure output as a table for instant cross-auditor merge:
+
+```text
+## [Auditor Name] Findings
+
+| # | Severity | Issue | Location | Fix | Effort |
+|---|----------|-------|----------|-----|--------|
+| 1 | P0 | [title] | file:line | [suggested fix] | S/M/L |
+| 2 | P1 | [title] | file:line | [suggested fix] | S/M/L |
+
+**Total: [N] findings | P0: [n] P1: [n] P2: [n] P3: [n]**
+```
+
+Include this format instruction in every auditor prompt. Unstructured prose wastes
+the orchestrator's context budget during synthesis.
+
+---
+
 ## AUDITORS
 
 Each scans SCOPE=$0 through its lens. Output: issues with severity P0-P3.

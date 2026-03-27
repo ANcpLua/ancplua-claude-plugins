@@ -4,6 +4,7 @@ description: >-
   Leaderless multi-agent swarm with Playwright oracle. Spawns N workers in
   isolated worktrees with pre-partitioned DOD items. Workers implement and
   verify via screenshots. No orchestrator, no shared state.
+argument-hint: "<task description with observable outcomes>"
 allowed-tools: Agent, Bash, Read, Glob, Grep, TodoWrite
 effort: high
 ---
@@ -11,6 +12,8 @@ effort: high
 # carlini-jr
 
 Leaderless swarm launcher. Workers implement and verify via Playwright MCP screenshots.
+
+Building: @$1
 
 ## Coordination Model
 
