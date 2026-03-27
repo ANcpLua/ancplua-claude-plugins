@@ -238,6 +238,13 @@ Token costs tracked via OTel, not here.
 
 </CRITICAL_EXECUTION_REQUIREMENT>
 
+## If Connectors Available
+
+- ~~github~~ Open PRs from Gate 7 lanes and enforce Gate 8 merge rules via branch protection
+- ~~linear~~ Sync Gate 3 MAP findings as issues, close them on Gate 8 HAKAI
+- ~~slack~~ Post gate transition announcements and HALT notifications to a team channel
+- ~~jira~~ Create and transition tickets matching the Gate 6 work queue execution order
+
 ---
 
 ## GATE SUMMARIES

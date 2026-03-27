@@ -75,3 +75,9 @@ All conditions must match for the rule to trigger.
 - **Naming:** Start with verb: `warn-dangerous-rm`, `block-console-log`, `require-tests`
 
 See `references/` for regex patterns, examples, and common pitfalls.
+
+## If Connectors Available
+
+- ~~github~~ Commit generated rule files and open a PR for team review
+- ~~slack~~ Notify the team when a new blocking rule is added to the project
+- ~~linear~~ Track rule creation as a task linked to the behavior it guards against

@@ -485,6 +485,15 @@ SMART_ID: [value]
 
 ---
 
+## If Connectors Available
+
+- ~~github~~ Open a cleanup PR from Gate 1 output and block merge until Gate 2 passes
+- ~~sonarqube~~ Push post-cleanup metrics for suppression count, duplication ratio, and coverage
+- ~~slack~~ Post the final HADES CLEANUP REPORT summary to a team channel
+- ~~linear~~ Auto-close suppression and dead-code issues resolved by the elimination phase
+
+---
+
 ## FINAL REPORT
 
 ```text

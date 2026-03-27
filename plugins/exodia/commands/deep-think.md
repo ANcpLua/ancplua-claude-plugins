@@ -104,6 +104,41 @@ Launch ALL 3 in ONE message.
 
 ---
 
+### Phase 1 Compaction
+
+Do not persist a repo file by default. Only if context pressure is real, write a short-lived
+runtime artifact instead:
+
+```bash
+plugins/exodia/scripts/smart/session-state.sh cleanup
+plugins/exodia/scripts/smart/session-state.sh validate >/dev/null 2>&1 || \
+  plugins/exodia/scripts/smart/session-state.sh create "${SESSION_ID:-$(plugins/exodia/scripts/smart/smart-id.sh generate)}" 3600
+```
+
+Cache compact understanding to `.eight-gates/artifacts/understanding.md`:
+
+```bash
+plugins/exodia/scripts/smart/session-state.sh artifact add "understanding.md" \
+"# Understanding: [problem]
+
+## Problem Decomposition
+[from debugger-mind: actual vs perceived problem, top 3 hypotheses with confidence]
+
+## Architectural Context
+[from architect-mind: where it fits, boundaries, invariants at risk]
+
+## Code Map
+[from explorer-mind: top 10 relevant file:line references]
+
+## Open Questions
+[unresolved unknowns for Phase 2 to address]"
+```
+
+Phase 2 agents should receive the cached artifact content, not raw Phase 1 transcripts and not a
+tracked repo file. The artifact expires with session cleanup.
+
+---
+
 ## PHASE 2: SOLUTION SYNTHESIS — 2 Agents
 
 Launch BOTH in ONE message.

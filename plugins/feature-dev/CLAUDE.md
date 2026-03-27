@@ -12,6 +12,7 @@ and integrated code review.
 | `agents/code-reviewer.md` | Reviews for bugs, security, quality (confidence-based, only reports >=80%) |
 | `commands/feature-dev.md` | `/feature-dev` command: 7-phase workflow |
 | `commands/review.md` | `/review [target]` command: standalone code review with severity levels, checklist, and common vulnerability patterns |
+| `scripts/runtime-state.sh` | Gitignored runtime cache for short-lived research and plan notes |
 
 ## 7-Phase Workflow
 
@@ -35,3 +36,4 @@ Use `/review [target]` for standalone reviews outside the feature-dev workflow:
 
 - Origin: Sid Bidasaria (Anthropic).
 - Agents use sonnet model with tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput.
+- Temporary research and plan notes live under `.feature-dev/`, not in tracked repo paths. Clear them when the workflow ends; stale state is auto-pruned on the next run.

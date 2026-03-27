@@ -11,7 +11,7 @@
     {
       "name": "metacognitive-guard",
       "description": "Cognitive amplification stack: epistemic hooks, competitive review, commit integrity checks, CI verification scripts, and deep-thinking agents.",
-      "version": "0.6.2",
+      "version": "0.6.3",
       "source": "./plugins/metacognitive-guard"
     },
     {
@@ -35,7 +35,7 @@
     {
       "name": "feature-dev",
       "description": "Guided feature development with specialized agents for codebase exploration, architecture design, code review, and quality assurance.",
-      "version": "1.2.1",
+      "version": "1.2.2",
       "source": "./plugins/feature-dev"
     },
     {
@@ -53,7 +53,7 @@
     {
       "name": "exodia",
       "description": "Multi-agent workflow orchestration (9 commands + 2 skills: eight-gates, hades): fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, baryon-mode. Hades, eight-gates, and red-blue-review use Teams API for reactive collaboration.",
-      "version": "2.1.1",
+      "version": "2.1.2",
       "source": "./plugins/exodia"
     },
     {

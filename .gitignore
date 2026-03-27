@@ -55,6 +55,9 @@ obj/
 # --- Metacognitive-guard runtime state ---
 .blackboard/
 
+# --- Feature-dev runtime state ---
+.feature-dev/
+
 # --- Existing .NET-specific entries (kept) ---
 [Dd]ebug/
 [Dd]ebugPublic/

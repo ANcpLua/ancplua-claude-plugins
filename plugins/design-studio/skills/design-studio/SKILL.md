@@ -1,6 +1,7 @@
 ---
 name: design-studio
 description: "Design intelligence studio. Creative direction + data-driven recommendations for distinctive frontend interfaces. 50 styles, 97 palettes, 57 font pairings, 99 UX guidelines, 25 chart types, 13 stacks (React, Next.js, Vue, Svelte, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui, Astro, Nuxt, Jetpack Compose). Actions: plan, build, create, design, implement, review, fix, improve, optimize, enhance, refactor, check UI/UX code. Projects: website, landing page, dashboard, admin panel, e-commerce, SaaS, portfolio, blog, mobile app, .html, .tsx, .vue, .svelte. Styles: glassmorphism, claymorphism, minimalism, brutalism, neumorphism, bento grid, dark mode, responsive, skeuomorphism, flat design. Topics: color palette, accessibility, animation, layout, typography, font pairing, spacing, hover, shadow, gradient."
+argument-hint: "<project type and description>"
 effort: medium
 ---
 
@@ -9,6 +10,8 @@ effort: medium
 Creative direction + data-driven design intelligence for distinctive,
 production-grade frontend interfaces. Merges bold aesthetic philosophy
 with a searchable database of 750+ recommendations.
+
+Designing: @$1
 
 ## Workflow
 
@@ -245,6 +248,13 @@ NEVER produce generic AI aesthetics:
 - [ ] Does this look genuinely designed for the context, or like template output?
 - [ ] Would someone remember this design? What's the unforgettable element?
 - [ ] Is the aesthetic direction executed with precision and intentionality?
+
+## If Connectors Available
+
+- ~~figma~~ Export generated design tokens and component specs to a Figma file
+- ~~playwright~~ Screenshot the implemented interface for visual QA
+- ~~github~~ Open a PR with the generated code and design system files
+- ~~vercel~~ Deploy the implementation for live preview
 
 ## Prerequisites
 

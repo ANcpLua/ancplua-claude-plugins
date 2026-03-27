@@ -72,6 +72,28 @@ Phase 1 agent prompts as pre-existing context. Skip re-discovery of already-know
 
 ---
 
+## AGENT OUTPUT FORMAT
+
+Every agent MUST include this instruction in their prompt and structure their response as:
+
+```text
+## [Role Name]
+
+### Finding
+[1-2 sentence core finding]
+
+### Evidence
+- `file:line` — [what it shows]
+
+### Confidence: [X]%
+### Impact: [LOW|MEDIUM|HIGH|CRITICAL]
+### Recommendation: [1 sentence action]
+```
+
+This format enables efficient cross-agent synthesis and prevents context bloat from unstructured exploration.
+
+---
+
 ## PHASE 1: ANALYSIS
 
 Standard: 3 agents. Maximum ($2=maximum): all 6. Launch ALL in ONE message.
@@ -173,6 +195,40 @@ GATE 1: ANALYSIS → [status]
 | Otherwise → HALT                            |
 +--------------------------------------------+
 ```
+
+### Gate 1 Compaction
+
+Do not create a tracked analysis file. Only if Gate 1 output would crowd out design work, cache a
+short-lived runtime artifact instead:
+
+```bash
+plugins/exodia/scripts/smart/session-state.sh cleanup
+plugins/exodia/scripts/smart/session-state.sh validate >/dev/null 2>&1 || \
+  plugins/exodia/scripts/smart/session-state.sh create "${SESSION_ID:-$(plugins/exodia/scripts/smart/smart-id.sh generate)}" 3600
+```
+
+Then cache compact analysis to `.eight-gates/artifacts/analysis.md`:
+
+```bash
+plugins/exodia/scripts/smart/session-state.sh artifact add "analysis.md" \
+"# Analysis: [issue]
+
+## Root Cause
+[from root-cause-hunter, 2-3 sentences max]
+
+## Impact
+[from impact-assessor: local/systemic, affected components]
+
+## Relevant Files
+| File:Line | Role |
+|-----------|------|
+[from code-explorer, top 10 most relevant]
+
+## Confidence: [X]%"
+```
+
+Phase 2 agents should receive the cached artifact content instead of raw Phase 1 output. The
+artifact is runtime-only and gets cleared by session cleanup.
 
 ---
 

@@ -70,6 +70,52 @@ Initial request: $ARGUMENTS
 
 ---
 
+## Phase 2.5: Ephemeral Research Cache
+
+**Goal**: Capture codebase understanding only when context pressure is real
+
+**Why**: Durable repo files like `thoughts/` become ambiguous residue. Keep research internal by default.
+Only persist a compact note when a fresh-window handoff is actually needed, and write it to a
+gitignored runtime path that gets cleared when the workflow finishes.
+
+**Actions**:
+
+1. If no handoff or compaction is needed, skip this phase entirely.
+2. If a handoff is needed:
+   - Derive a stable lowercase kebab-case `feature-slug`
+   - Run `plugins/feature-dev/scripts/runtime-state.sh prune`
+   - Resolve `RESEARCH_PATH="$(plugins/feature-dev/scripts/runtime-state.sh path "$FEATURE_SLUG" research)"`
+   - Write the structured note to `RESEARCH_PATH` with the Write tool
+
+   ```markdown
+   # Research: {feature name}
+
+   ## Goal
+   [1-2 sentence feature description]
+
+   ## Relevant Code
+   | File:Line | Purpose | Patterns to follow |
+   |-----------|---------|-------------------|
+   | path:line | what it does | conventions found |
+
+   ## Architecture Constraints
+   - [constraint from codebase exploration]
+
+   ## Integration Points
+   - [where new code connects to existing code]
+
+   ## Testing Approach
+   - [how similar features are tested in this codebase]
+
+   ## Open Questions
+   - [anything unresolved for clarifying questions phase]
+   ```
+
+3. Treat `RESEARCH_PATH` as scratch state only. It lives under `.feature-dev/`, is gitignored,
+   and should be deleted at the end of the workflow.
+
+---
+
 ## Phase 3: Clarifying Questions
 
 **Goal**: Fill in gaps and resolve all ambiguities before designing
@@ -104,6 +150,47 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 ---
 
+## Phase 4.5: Ephemeral Plan Cache
+
+**Goal**: Keep the implementation plan reloadable without leaving tracked clutter
+
+**Why**: A plan artifact is useful during implementation, but a tracked `plan.md` or `thoughts/`
+file reads like unfinished product work. Persist the plan only as short-lived runtime state.
+
+**Actions**:
+
+1. Resolve `PLAN_PATH="$(plugins/feature-dev/scripts/runtime-state.sh path "$FEATURE_SLUG" plan)"`.
+2. Write the structured plan to `PLAN_PATH` with the Write tool:
+
+   ```markdown
+   # Plan: {feature name}
+
+   ## Summary
+   [1-2 sentence approach from architecture design]
+
+   ## Phases
+
+   ### Phase A: [name]
+   - **Files**: [files to create/modify]
+   - **Changes**: [what to do in each file]
+   - **Verify**: [how to verify this phase works before moving on]
+
+   ### Phase B: [name]
+   - **Files**: [files to create/modify]
+   - **Changes**: [what to do in each file]
+   - **Verify**: [checkpoint for this phase]
+
+   ## Testing Strategy
+   - [test approach per phase]
+
+   ## Risks
+   - [known risks and mitigations]
+   ```
+
+3. Present the plan to the user. This is the last review gate before implementation.
+
+---
+
 ## Phase 5: Implementation
 
 **Goal**: Build the feature
@@ -113,11 +200,14 @@ If the user says "whatever you think is best", provide your recommendation and g
 **Actions**:
 
 1. Wait for explicit user approval
-2. Read all relevant files identified in previous phases
-3. Implement following chosen architecture
-4. Follow codebase conventions strictly
-5. Write clean, well-documented code
-6. Update todos as you progress
+2. Reload `PLAN_PATH` if you created one in Phase 4.5
+3. Reload `RESEARCH_PATH` if you created one in Phase 2.5
+4. Implement phase by phase, following the plan exactly
+5. After each plan phase, verify the checkpoint passes before continuing
+6. Follow codebase conventions strictly
+7. Write clean, well-documented code
+8. Update todos as you progress
+9. If context gets crowded mid-implementation, update the runtime plan note, not a tracked repo file
 
 ---
 
@@ -143,7 +233,9 @@ If the user says "whatever you think is best", provide your recommendation and g
 **Actions**:
 
 1. Mark all todos complete
-2. Summarize:
+2. If `FEATURE_SLUG` was created, run `plugins/feature-dev/scripts/runtime-state.sh clear "$FEATURE_SLUG"`
+3. Confirm no runtime note still looks like product work
+4. Summarize:
    - What was built
    - Key decisions made
    - Files modified

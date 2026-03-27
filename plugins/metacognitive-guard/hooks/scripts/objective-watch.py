@@ -12,7 +12,10 @@ BLACKBOARD_DIR = Path(".blackboard")
 STATE_PATH = BLACKBOARD_DIR / "objective.json"
 WARNING_COOLDOWN_SECONDS = 45
 
-ANCHOR_PATH_RE = re.compile(r"((?:specs|docs/decisions)/[A-Za-z0-9_./-]+\.md)", re.IGNORECASE)
+ANCHOR_PATH_RE = re.compile(
+    r"((?:docs|plugins|\.feature-dev|\.eight-gates(?:/artifacts)?|\.smart(?:/artifacts)?)/[A-Za-z0-9_./-]+\.md)",
+    re.IGNORECASE,
+)
 MARKDOWN_NAME_RE = re.compile(r"\b([A-Za-z0-9][A-Za-z0-9._-]*\.md)\b", re.IGNORECASE)
 ANCHORABLE_PROMPT_RE = re.compile(
     r"\b(fix|finish|update|implement|review|migrate|refactor|audit|clean|delete|continue|resume|launch|run|investigate)\b",

@@ -6,6 +6,20 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **Scratch-state cleanup**: `feature-dev` now writes optional research/plan notes only into gitignored `.feature-dev/` runtime state with prune/clear helpers instead of durable `thoughts/` files
+- **`exodia` runtime compaction**: `fix` and `deep-think` now cache compaction artifacts in `.eight-gates/artifacts/` via `session-state.sh`, and `session-state.sh cleanup` clears expired analysis/decision residue while preserving `findings.json`
+- **`metacognitive-guard` objective anchors**: `objective-watch.py` now tracks general markdown anchors, including `.feature-dev/` and `.eight-gates/artifacts/`, instead of only spec/ADR paths
+
+### Fixed
+
+- **README.md**: Removed an accidentally pasted Codex conversion transcript from the GitHub review automation section
+
+### Removed
+
+- **Manual session-test residue**: Deleted `tooling/tests/` prompt harness files and the unused `tooling/templates/persistent-agent-worktree-setup.md` template
+
 ### Added
 
 - **`metacognitive-guard` objective drift watchdog**: Added advisory `objective-watch.py` hook on `UserPromptSubmit` and `PostToolUse` to track one lead-agent anchor in `.blackboard/objective.json` and inject short reminders before silent pivots to other specs, orchestration flows, or shipping steps

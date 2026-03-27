@@ -32,6 +32,12 @@ and quality review. Includes standalone `/review` command for code review outsid
 | `/feature-dev [description]` | Start the guided 7-phase workflow |
 | `/review [target]` | Standalone code review (uncommitted changes, file, directory, staged, branch) |
 
+## Runtime state
+
+Short-lived research and plan artifacts belong under `.feature-dev/`, which is gitignored and
+auto-pruned on later runs. The workflow should not create tracked `thoughts/`, `plans/`, or
+other ambiguous half-finished repo files.
+
 ## Code Review
 
 The `/review` command provides comprehensive code review covering:
