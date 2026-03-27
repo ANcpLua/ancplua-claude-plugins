@@ -8,6 +8,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- **`metacognitive-guard` hook `if` filtering (2.1.85)**: Commit integrity hook now uses `if: "Bash(git commit*)"` so the harness skips the process spawn entirely for non-commit Bash calls. Script-level early-exit retained for backward compatibility with older Claude Code versions
 - **Scratch-state cleanup**: `feature-dev` now writes optional research/plan notes only into gitignored `.feature-dev/` runtime state with prune/clear helpers instead of durable `thoughts/` files
 - **`exodia` runtime compaction**: `fix` and `deep-think` now cache compaction artifacts in `.eight-gates/artifacts/` via `session-state.sh`, and `session-state.sh cleanup` clears expired analysis/decision residue while preserving `findings.json`
 - **`metacognitive-guard` objective anchors**: `objective-watch.py` now tracks general markdown anchors, including `.feature-dev/` and `.eight-gates/artifacts/`, instead of only spec/ADR paths
