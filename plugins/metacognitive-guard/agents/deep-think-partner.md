@@ -34,6 +34,7 @@ tools:
     - WebSearch
     - WebFetch
 effort: high
+background: true
 maxTurns: 40
 ---
 

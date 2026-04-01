@@ -2,12 +2,24 @@
   "hooks": {
     "SessionStart": [
       {
+        "once": true,
         "hooks": [
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/smart/findings-inject.sh",
             "timeout": 5,
             "statusMessage": "Checking for prior scan findings..."
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Check if there is an active exodia workflow in progress (eight-gates, fix-pipeline, mega-swarm, etc). If so, output a brief JSON summary of: {\"workflow\": \"name\", \"current_phase\": \"phase\", \"completed_steps\": [...], \"remaining_steps\": [...]}. If no active workflow, output nothing.",
+            "model": "haiku"
           }
         ]
       }

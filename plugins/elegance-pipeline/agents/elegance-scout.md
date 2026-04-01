@@ -4,6 +4,7 @@ description: Read-only code elegance scout. Inspects an assigned scope for the m
 tools: Read, Grep, Glob, Bash
 model: sonnet
 effort: low
+disallowedTools: [Edit, Write]
 maxTurns: 15
 ---
 

@@ -4,6 +4,7 @@ description: Code elegance judge. Verifies scout findings against the actual cod
 tools: Read, Grep, Glob, Bash
 model: opus
 effort: high
+disallowedTools: [Edit, Write]
 maxTurns: 15
 ---
 

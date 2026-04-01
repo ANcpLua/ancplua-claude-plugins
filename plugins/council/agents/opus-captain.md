@@ -12,6 +12,7 @@ tools:
   - WebFetch
   - Bash
 effort: high
+memory: project
 maxTurns: 30
 ---
 

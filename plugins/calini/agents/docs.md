@@ -13,6 +13,8 @@ tools:
   - Grep
   - Bash
 effort: medium
+isolation: worktree
+memory: project
 maxTurns: 20
 ---
 

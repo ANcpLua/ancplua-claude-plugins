@@ -4,6 +4,7 @@ description: Reviews code for bugs, logic errors, security vulnerabilities, code
 tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
 model: sonnet
 color: red
+effort: medium
 maxTurns: 20
 ---
 

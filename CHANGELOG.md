@@ -6,6 +6,19 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **Frontmatter modernization (13 plugins)**: Cross-referenced Claude Code 2.1.x release notes against all 15 plugins and applied 12 modernization items:
+  - `effort:` on 11 agents that lacked it (council sonnet-*, feature-dev *, qyl-instrumentation specialists)
+  - `disallowedTools: [Edit, Write]` on 3 read-only agents (elegance-scout, elegance-judge, code-explorer)
+  - `background: true` on deep-think-partner (2.1.60+)
+  - `isolation: worktree` on 9 swarm agents (ancplua worker + 8 calini agents) (2.1.49+)
+  - `memory: project` on 10 agents (8 calini + 2 opus-captains) (2.1.33+)
+  - `if:` conditional hook filtering on 3 PreToolUse hooks (dotnet-architecture-lint, metacognitive-guard, hookify) (2.1.85+)
+  - `once: true` on 3 SessionStart hooks (ancplua-project-routing, dotnet-architecture-lint, exodia)
+  - PostCompact prompt hook on exodia for workflow state recovery after compaction (2.1.76+)
+  - Skill descriptions trimmed to ≤250 chars on 4 skills (design-studio, hades, eight-gates, otel-expert) (2.1.86 cap)
+
 ### Changed
 
 - **`metacognitive-guard` hook `if` filtering (2.1.85)**: Commit integrity hook now uses `if: "Bash(git commit*)"` so the harness skips the process spawn entirely for non-commit Bash calls. Script-level early-exit retained for backward compatibility with older Claude Code versions.

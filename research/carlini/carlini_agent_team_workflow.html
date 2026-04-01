@@ -332,6 +332,107 @@
     margin: 6px 0;
     line-height: 1;
   }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--color-border-secondary);
+    margin: 2.5rem 0;
+  }
+
+  .modern-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    background: rgba(168,85,247,0.15);
+    color: #C4A5F0;
+    padding: 2px 7px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+
+  .migrate-grid {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) 28px minmax(0,1fr);
+    gap: 8px;
+    align-items: start;
+  }
+
+  .migrate-arrow {
+    font-size: 16px;
+    color: var(--color-text-tertiary);
+    text-align: center;
+    padding-top: 22px;
+  }
+
+  .migrate-card {
+    border-radius: var(--border-radius-md);
+    border: 0.5px solid var(--color-border-tertiary);
+    padding: 10px 12px;
+    background: var(--color-background-primary);
+  }
+
+  .migrate-card.old {
+    opacity: 0.5;
+  }
+
+  .migrate-card.modern {
+    border-color: rgba(168,85,247,0.3);
+    background: rgba(168,85,247,0.04);
+  }
+
+  .migrate-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 3px;
+  }
+
+  .migrate-body {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--color-text-tertiary);
+    line-height: 1.5;
+  }
+
+  .modern-harness-loop {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .modern-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #C4A5F0;
+    text-align: center;
+    margin-top: 10px;
+    border-top: 1px dashed rgba(168,85,247,0.2);
+    padding-top: 8px;
+  }
+
+  .badge-native { background: rgba(168,85,247,0.15); color: #C4A5F0; }
+
+  .frontmatter-box {
+    background: rgba(255,255,255,0.03);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 10px 12px;
+    margin-top: 8px;
+  }
+
+  .frontmatter-box pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre;
+  }
+
+  .frontmatter-box .fm-key { color: #C4A5F0; }
+  .frontmatter-box .fm-val { color: #5DCAA5; }
+  .frontmatter-box .fm-comment { color: var(--color-text-tertiary); }
 </style>
 </head>
 <body>
@@ -486,6 +587,188 @@
       <div class="limit-card">
         <div class="limit-title">Regression fragility</div>
         <div class="limit-body">New features frequently broke existing functionality. Required CI enforcement to control.</div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-label">Modern equivalent · Claude Code 2.1.85 · Mar 2026</div>
+  <div class="title">Same workflow, <span>zero external harness</span></div>
+
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-num">01</span>
+      <span class="layer-title">The harness is now native</span>
+    </div>
+    <div class="harness-box" style="border-color:rgba(168,85,247,0.3);">
+      <div class="modern-harness-loop">
+        <div class="loop-step">
+          <div class="loop-icon" style="background:rgba(168,85,247,0.12);">🌳</div>
+          <div class="loop-step-label">Git worktree</div>
+          <div class="loop-step-sub">isolation: "worktree"<br>in agent frontmatter</div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-icon" style="background:rgba(168,85,247,0.12);">📋</div>
+          <div class="loop-step-label">Agent definition</div>
+          <div class="loop-step-sub">.claude/agents/<br>compiler.md</div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-icon" style="background:rgba(168,85,247,0.12);">📌</div>
+          <div class="loop-step-label">TaskCreate</div>
+          <div class="loop-step-sub">native task<br>coordination</div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-icon" style="background:rgba(168,85,247,0.12);">⚙️</div>
+          <div class="loop-step-label">Work + test</div>
+          <div class="loop-step-sub">sandbox mode<br>auto-compact</div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-icon" style="background:rgba(168,85,247,0.12);">💬</div>
+          <div class="loop-step-label">SendMessage</div>
+          <div class="loop-step-sub">report back<br>to lead</div>
+        </div>
+      </div>
+      <div class="modern-note">No Docker · No external Python · No pkill · Proper lifecycle via TeamCreate + TeammateIdle hooks</div>
+    </div>
+  </div>
+
+  <div class="connector">↓</div>
+
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-num">02</span>
+      <span class="layer-title">Agent definitions replace AGENT_PROMPT.md</span>
+    </div>
+    <div class="frontmatter-box">
+<pre><span class="fm-comment">---</span>
+<span class="fm-key">name:</span> <span class="fm-val">compiler-worker</span>
+<span class="fm-key">description:</span> <span class="fm-val">Core C compiler agent — parse, SSA, codegen</span>
+<span class="fm-key">model:</span> <span class="fm-val">sonnet</span>
+<span class="fm-key">isolation:</span> <span class="fm-val">worktree</span>                     <span class="fm-comment"># each agent gets its own branch</span>
+<span class="fm-key">permissionMode:</span> <span class="fm-val">bypassPermissions</span>       <span class="fm-comment"># replaces --dangerously-skip-permissions</span>
+<span class="fm-key">effort:</span> <span class="fm-val">high</span>
+<span class="fm-key">memory:</span> <span class="fm-val">project</span>                        <span class="fm-comment"># replaces progress READMEs</span>
+<span class="fm-key">background:</span> <span class="fm-val">true</span>                       <span class="fm-comment"># runs while lead continues</span>
+<span class="fm-key">hooks:</span>
+  <span class="fm-key">PostToolUse:</span>
+    - <span class="fm-key">matcher:</span> <span class="fm-val">Bash</span>
+      <span class="fm-key">if:</span> <span class="fm-val">"Bash(cargo test*)"</span>           <span class="fm-comment"># only fire on test runs</span>
+      <span class="fm-key">hooks:</span>
+        - <span class="fm-key">type:</span> <span class="fm-val">command</span>
+          <span class="fm-key">command:</span> <span class="fm-val">./check-regressions.sh</span>  <span class="fm-comment"># inline CI, not post-merge</span>
+<span class="fm-comment">---</span>
+
+You are a compiler engineer working on a C-to-machine-code compiler...
+</pre>
+    </div>
+  </div>
+
+  <div class="connector">↓</div>
+
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-num">03</span>
+      <span class="layer-title">What changed — pattern by pattern</span>
+    </div>
+
+    <div class="migrate-grid" style="margin-bottom:8px;">
+      <div class="migrate-card old">
+        <div class="migrate-label">Docker containers</div>
+        <div class="migrate-body">Spawn fresh container per<br>agent. External Python loop.</div>
+      </div>
+      <div class="migrate-arrow">→</div>
+      <div class="migrate-card modern">
+        <div class="migrate-label">Git worktrees</div>
+        <div class="migrate-body"><span class="mono">isolation: "worktree"</span><br>Each agent gets isolated branch.<br>No Docker, no merge conflicts.</div>
+      </div>
+    </div>
+
+    <div class="migrate-grid" style="margin-bottom:8px;">
+      <div class="migrate-card old">
+        <div class="migrate-label">Git file locking</div>
+        <div class="migrate-body"><span class="mono">current_tasks/*.txt</span><br>Push conflicts = retry.</div>
+      </div>
+      <div class="migrate-arrow">→</div>
+      <div class="migrate-card modern">
+        <div class="migrate-label">TaskCreate + dependencies</div>
+        <div class="migrate-body">Native task tracking with<br>dependency graphs. No lock<br>files, no git conflicts.</div>
+      </div>
+    </div>
+
+    <div class="migrate-grid" style="margin-bottom:8px;">
+      <div class="migrate-card old">
+        <div class="migrate-label">pkill -9 bash</div>
+        <div class="migrate-body">Accidental self-termination.<br>External loop restarts.</div>
+      </div>
+      <div class="migrate-arrow">→</div>
+      <div class="migrate-card modern">
+        <div class="migrate-label">TeammateIdle + SendMessage</div>
+        <div class="migrate-body">Hook fires when agent idles.<br>SendMessage auto-resumes<br>stopped agents.</div>
+      </div>
+    </div>
+
+    <div class="migrate-grid" style="margin-bottom:8px;">
+      <div class="migrate-card old">
+        <div class="migrate-label">Progress READMEs</div>
+        <div class="migrate-body">Manually written orientation<br>files for fresh containers.</div>
+      </div>
+      <div class="migrate-arrow">→</div>
+      <div class="migrate-card modern">
+        <div class="migrate-label">Auto-memory</div>
+        <div class="migrate-body"><span class="mono">memory: project</span><br>Agent remembers across sessions.<br>No manual progress files.</div>
+      </div>
+    </div>
+
+    <div class="migrate-grid" style="margin-bottom:8px;">
+      <div class="migrate-card old">
+        <div class="migrate-label">Stdout hygiene</div>
+        <div class="migrate-body">Errors to logfiles. Grep-able<br>format. Manual truncation.</div>
+      </div>
+      <div class="migrate-arrow">→</div>
+      <div class="migrate-card modern">
+        <div class="migrate-label">Auto disk persistence</div>
+        <div class="migrate-body">Tool results &gt;50K chars auto-<br>saved to disk. Auto-compact<br>manages context pressure.</div>
+      </div>
+    </div>
+
+    <div class="migrate-grid">
+      <div class="migrate-card old">
+        <div class="migrate-label">CI-only regression gates</div>
+        <div class="migrate-body">Post-merge pipeline catches<br>regressions after the fact.</div>
+      </div>
+      <div class="migrate-arrow">→</div>
+      <div class="migrate-card modern">
+        <div class="migrate-label">Inline hook gates</div>
+        <div class="migrate-body"><span class="mono">if: "Bash(cargo test*)"</span><br>TaskCompleted hook validates<br>before agent marks done.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector">↓</div>
+
+  <div class="layer">
+    <div class="layer-header">
+      <span class="layer-num">04</span>
+      <span class="layer-title">What stays the same</span>
+    </div>
+    <div class="sync-row">
+      <div class="sync-card">
+        <div class="sync-num">🧠</div>
+        <div class="sync-label">No orchestrator</div>
+        <div class="sync-desc">Carlini's core insight holds. Agents self-direct to "next most obvious" task. TeamCreate enables coordination without mandating a central brain.</div>
+      </div>
+      <div class="sync-card">
+        <div class="sync-num">🔀</div>
+        <div class="sync-label">Specialization mix</div>
+        <div class="sync-desc">12 generalists + 4 specialists is the same ratio. Different agent definitions, same strategy of mostly-fungible workers + focused roles.</div>
+      </div>
+      <div class="sync-card">
+        <div class="sync-num">🧪</div>
+        <div class="sync-label">Oracle-based testing</div>
+        <div class="sync-desc">GCC as reference compiler is still the right move. Split-compilation and delta debugging remain the best approach for kernel-scale testing.</div>
       </div>
     </div>
   </div>

@@ -12,6 +12,7 @@ tools:
   - Glob
   - Bash
 effort: high
+memory: project
 maxTurns: 30
 ---
 
