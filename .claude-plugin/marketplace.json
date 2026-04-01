@@ -57,10 +57,10 @@
       "source": "./plugins/exodia"
     },
     {
-      "name": "qyl-instrumentation",
-      "description": "Teams API observability orchestration for qyl: 1 Opus captain + 4 Sonnet specialists. Captain pre-reads otelwiki semconv docs, dispatches servicedefaults, collector, genai, and platform specialists. Zero runtime web search.",
-      "version": "2.1.3",
-      "source": "./plugins/qyl-instrumentation"
+      "name": "qyl",
+      "description": "Unified qyl AI observability platform plugin. Ground truth authority, dead API blocker, MAF RC patterns, parallel agent swarm, observability orchestration, auto-continuation.",
+      "version": "1.0.0",
+      "source": "./plugins/qyl"
     },
     {
       "name": "design-studio",
@@ -81,22 +81,10 @@
       "source": "./plugins/code-simplifier"
     },
     {
-      "name": "qyl-continuation",
-      "description": "Smart auto-continuation for Claude Code. Heuristic pre-filter eliminates ~80% of unnecessary Haiku calls; improved judge prompt handles the rest. Based on double-shot-latte (MIT).",
-      "version": "1.0.2",
-      "source": "./plugins/qyl-continuation"
-    },
-    {
       "name": "ancplua",
       "description": "Agent operating system — leaderless swarms with Playwright oracle. Code is opaque weights; correctness inferred exclusively from externally observable behavior.",
       "version": "0.1.2",
       "source": "./plugins/ancplua"
-    },
-    {
-      "name": "calini",
-      "description": "Carlini-style parallel agent teams for qyl AI observability platform. 8 specialized agents with file ownership boundaries and git-based coordination.",
-      "version": "0.1.5",
-      "source": "./plugins/calini"
     }
   ]
 }

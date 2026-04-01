@@ -1,0 +1,43 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "once": true,
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/inject-ground-truth.sh",
+            "timeout": 5,
+            "statusMessage": "Loading qyl ground truth..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "if": "Edit(*.cs) || Write(*.cs) || Edit(*.csproj) || Write(*.csproj)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-dead-api.py",
+            "timeout": 5,
+            "statusMessage": "Checking for dead MAF API usage..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/stop-judge.py",
+            "timeout": 35,
+            "statusMessage": "Evaluating continuation..."
+          }
+        ]
+      }
+    ]
+  }
+}
