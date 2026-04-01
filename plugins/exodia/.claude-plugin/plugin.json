@@ -1,6 +1,6 @@
 {
   "name": "exodia",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Multi-agent workflow orchestration: 9 commands (fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, baryon-mode) + 2 skills (eight-gates, hades).",
   "author": {
     "name": "AncpLua",

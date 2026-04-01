@@ -8,6 +8,7 @@ model: claude-sonnet-4-6
 tools:
   - Read
   - Grep
+effort: medium
 maxTurns: 10
 ---
 

@@ -4,6 +4,8 @@ description: Deeply analyzes existing codebase features by tracing execution pat
 tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
 model: sonnet
 color: yellow
+effort: medium
+disallowedTools: [Edit, Write]
 maxTurns: 25
 ---
 

@@ -9,6 +9,7 @@ tools:
   - Write
   - Bash
 model: sonnet
+effort: medium
 maxTurns: 25
 ---
 

@@ -1,6 +1,6 @@
 {
   "name": "council",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Five-agent council using Teams API: Opus captain orchestrates, researcher + synthesizer cross-pollinate via SendMessage, clarity asks live follow-ups, Haiku janitor flags bloat. Reactive collaboration instead of fire-and-forget subagents.",
   "author": {
     "name": "ANcpLua",

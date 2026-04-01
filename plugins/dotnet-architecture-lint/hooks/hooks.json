@@ -2,6 +2,7 @@
   "hooks": {
     "SessionStart": [
       {
+        "once": true,
         "hooks": [
           {
             "type": "command",
@@ -15,6 +16,7 @@
     "PreToolUse": [
       {
         "matcher": "Write|Edit",
+        "if": "Edit(*.csproj) || Edit(*.props) || Write(*.csproj) || Write(*.props) || Edit(*Directory.Packages.props) || Write(*Directory.Packages.props)",
         "hooks": [
           {
             "type": "command",

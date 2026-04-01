@@ -10,6 +10,7 @@ tools:
   - Glob
   - Bash
   - WebSearch
+effort: medium
 maxTurns: 15
 ---
 

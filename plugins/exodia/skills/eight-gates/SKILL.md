@@ -2,9 +2,8 @@
 name: eight-gates
 description: >-
   IF maximum disciplined orchestration needed THEN use this. 8 progressive gates —
-  each unlocks more capability only if the workflow proves it can stay honest, testable,
-  and resumable. Composes mega-swarm agents (MAP), fix pipeline patterns (EXECUTE),
-  and hades infrastructure (HAKAI — ledger + permits). Not max chaos — max discipline.
+  each unlocks more capability only if the workflow stays honest, testable, and resumable.
+  Composes mega-swarm (MAP), fix pipeline (EXECUTE), hades (HAKAI).
 argument-hint: "[objective] [scope] [gate-limit]"
 allowed-tools: Task, Bash, TodoWrite, Read, Grep, Glob, WebSearch
 effort: high

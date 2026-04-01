@@ -1,6 +1,6 @@
 {
   "name": "calini",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Carlini-style parallel agent teams for qyl AI observability platform development. 8 specialized agents working autonomously on a shared codebase with git-based task locking.",
   "author": {
     "name": "AncpLua",

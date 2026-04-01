@@ -1,6 +1,6 @@
 ---
 name: hades
-description: "IF cleanup/elimination needed THEN use this. IF zero suppressions THEN this. IF dead code THEN this. IF duplication THEN this. IF frontend design quality audit THEN use this with --goggles. Smart-Hades: every session gets a Smart ID, deletion permit, and audit ledger. Team lead skill — spawns 4 debate teammates per phase (+3 goggles teammates when equipped). Ignores public API, semver, changelog. Pure functional destruction. Idempotent: same input, same output. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1."
+description: "IF cleanup/elimination needed THEN use this. IF zero suppressions THEN this. IF dead code THEN this. IF duplication THEN this. IF frontend design audit THEN --goggles. Smart-Hades: Smart ID, deletion permit, audit ledger. 4 teammates per phase."
 argument-hint: "[scope] [focus] [intensity] [--goggles]"
 allowed-tools: Task, Bash, TodoWrite, TeamCreate, TeamDelete, TaskCreate, TaskList, TaskUpdate, SendMessage
 effort: high
