@@ -15,8 +15,6 @@ verify finalists directly in the codebase,
 and produce the definitive top-5 most elegant source files.
 You score by difficulty times cleanliness.
 
-You are read-only. Do not edit, create, or delete any files.
-
 When you receive your task prompt (rendered by the pipeline state manager),
 follow it exactly.
 Submit your results through the pipeline state manager command

@@ -117,20 +117,17 @@ def check_violations(file_path: str, content: str) -> list[str]:
 def _hades_permit_active() -> bool:
     """Hades god mode — active permit bypasses all checks.
 
-    Delegates to canonical permit.sh active check (single source of truth).
+    Checks for .smart/delete-permit.json directly instead of shelling out to permit.sh.
     """
-    import subprocess
-    import glob
-    matches = glob.glob('plugins/exodia/scripts/smart/permit.sh')
-    if not matches:
+    permit = Path('.smart/delete-permit.json')
+    if not permit.exists():
         return False
     try:
-        result = subprocess.run(
-            ['bash', matches[0], 'active'],
-            capture_output=True, timeout=5
-        )
-        return result.returncode == 0
-    except (subprocess.TimeoutExpired, OSError):
+        import time
+        data = json.loads(permit.read_text())
+        expires = data.get('expires_at', 0)
+        return time.time() < expires
+    except (json.JSONDecodeError, OSError, TypeError):
         return False
 
 
@@ -148,9 +145,8 @@ def main():
     tool_name = input_data.get("tool_name", "")
     tool_input = input_data.get("tool_input", {})
 
-    # Only process Edit and Write
-    if tool_name not in ("Edit", "Write"):
-        sys.exit(0)
+    # Tool name filtering handled by hooks.json `if:` condition — harness
+    # guarantees only Edit/Write on .csproj/.props files reach this script.
 
     file_path = tool_input.get("file_path", "")
 

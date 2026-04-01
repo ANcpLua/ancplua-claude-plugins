@@ -1,6 +1,6 @@
 {
   "name": "qyl-continuation",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Smart auto-continuation for Claude Code. Heuristic pre-filter eliminates ~80% of unnecessary Haiku calls; improved judge prompt handles the rest. Based on double-shot-latte (MIT).",
   "author": {
     "name": "AncpLua",

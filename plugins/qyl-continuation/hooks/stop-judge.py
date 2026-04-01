@@ -6,6 +6,7 @@ Heuristic-only mode (Phase 2 Haiku judge removed).
 """
 
 import json
+import os
 import re
 import sys
 import time
@@ -16,7 +17,7 @@ MAX_CONTINUATIONS = 3
 WINDOW_SECONDS = 300
 TAIL_LINES = 6
 
-WORK_DIR = Path.home() / ".claude" / "qyl-continuation"
+WORK_DIR = Path(os.environ.get("CLAUDE_PLUGIN_DATA", str(Path.home() / ".claude" / "qyl-continuation")))
 WORK_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -32,7 +33,7 @@ def block(reason: str) -> NoReturn:
 
 event = json.loads(sys.stdin.read())
 transcript_path = event.get("transcript_path", "")
-session_id = event.get("session_id", "unknown")
+session_id = os.environ.get("CLAUDE_SESSION_ID") or event.get("session_id") or "unknown"
 throttle_file = WORK_DIR / f"throttle-{session_id.replace('/', '_')}"
 
 

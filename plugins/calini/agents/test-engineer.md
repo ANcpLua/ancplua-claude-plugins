@@ -65,8 +65,8 @@ what you're testing, but do NOT edit source files — only test files.
 
 When other agents call `./run_tests.sh --fast`, run a 10% deterministic sample:
 
-- Seed based on agent ID (each agent tests different subset)
-- Same agent always tests same subset (deterministic regression)
+- Seed using `${CLAUDE_SESSION_ID}` (each agent session gets a unique, stable ID)
+- Same session always tests same subset (deterministic regression)
 - Full suite runs on `--full` or when you're the one testing
 
 ## Key Responsibilities
