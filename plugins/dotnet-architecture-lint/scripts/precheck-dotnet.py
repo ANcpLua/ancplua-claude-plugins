@@ -125,8 +125,8 @@ def _hades_permit_active() -> bool:
     try:
         import time
         data = json.loads(permit.read_text())
-        expires = data.get('expires_at', 0)
-        return time.time() < expires
+        expires = data.get('expires_epoch', 0)
+        return time.time() < float(expires)
     except (json.JSONDecodeError, OSError, TypeError):
         return False
 

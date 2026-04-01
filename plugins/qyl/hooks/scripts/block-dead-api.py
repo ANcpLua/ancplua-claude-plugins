@@ -24,6 +24,12 @@ DEAD_PATTERNS: list[tuple[str, str]] = [
     (r'from\s+["\']phosphor-react', "Phosphor icons replaced by lucide-react"),
 ]
 
+from pathlib import Path
+
+# Only fire in qyl project directories
+if not Path("qyl.slnx").exists() and "/qyl" not in str(Path.cwd()):
+    sys.exit(0)
+
 try:
     event = json.load(sys.stdin)
 except json.JSONDecodeError:
