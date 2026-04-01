@@ -18,6 +18,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - `once: true` on 3 SessionStart hooks (ancplua-project-routing, dotnet-architecture-lint, exodia)
   - PostCompact prompt hook on exodia for workflow state recovery after compaction (2.1.76+)
   - Skill descriptions trimmed to ≤250 chars on 4 skills (design-studio, hades, eight-gates, otel-expert) (2.1.86 cap)
+- **Unified `qyl` plugin (1.0.0)**: Merged qyl-instrumentation + qyl-continuation + calini into one plugin. 10 agents, 2 commands (/observe, /calini), 3 hooks (SessionStart ground truth, PreToolUse dead API blocker, Stop auto-continuation). All ghost projects eliminated (qyl.protocol, qyl.servicedefaults, qyl.browser, etc). MAF RC API embedded from agent-framework.pdf: both hosted (AddAIAgent/IHostedAgentBuilder) and standalone (AsAIAgent) patterns documented. Dead custom APIs blocked (QylAgentBuilder, MapQylAguiChat). Correct tech stack: Base UI 1.3.0 (not shadcn), lucide-react (not Phosphor), OTel SDK 1.15.0 + Semconv 1.40 (distinct version tracks). Replaces: qyl-instrumentation (2.1.3), qyl-continuation (1.0.2), calini (0.1.5)
 - **Legacy workaround cleanup (7 plugins)**: Replaced script-level workarounds with native Claude Code features:
   - `hookify`, `design-studio`: Replaced prose "Load the skill" with `skills:` frontmatter (2.0.43)
   - `qyl-continuation`: `${CLAUDE_PLUGIN_DATA}` for state path (2.1.78), `${CLAUDE_SESSION_ID}` for session ID (2.1.9)
