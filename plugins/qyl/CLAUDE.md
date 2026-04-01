@@ -179,6 +179,27 @@ any (TypeScript)                → proper types
 as casts (TypeScript)           → type guards
 ```
 
+## MAF Usage Guide (overrides stale specs)
+
+If any spec in qyl/specs/ contradicts this section, update the spec — not the code.
+Migrate incrementally: when you touch a file that uses an old pattern, update it then.
+
+**Authority chain**: `.claude/agent-framework.pdf` (C# only) > this file > qyl/specs/*.
+
+| When you need... | Use this | Where it lives |
+|---|---|---|
+| AI agent inside qyl.collector (ASP.NET Core) | `builder.AddAIAgent("name", instructions, chatClientServiceKey)` — registers in DI, returns builder for config | `Microsoft.Agents.AI.Hosting` |
+| AI agent inside qyl.loom (Console App) | `chatClient.AsAIAgent(new ChatClientAgentOptions { ... })` — no DI needed | `Microsoft.Agents.AI` |
+| Agent exposed to web browsers / CopilotKit | `app.MapAGUI("/path", agent)` — handles SSE streaming, session IDs, state sync, human-approval flows automatically | `Microsoft.Agents.AI.Hosting.AGUI.AspNetCore` |
+| Agent talking to other agents over network | `builder.Services.AddA2AServer()` + `app.MapA2AServer()` — Google A2A protocol | `Microsoft.Agents.AI.Hosting` |
+| Multi-step deterministic pipeline (Loom triage) | `AgentWorkflowBuilder` — define steps as `Executor` classes, connect them with typed routes, run with streaming or checkpointing | `Microsoft.Agents.AI.Workflows` |
+| OTel traces on every agent call | `.WithOpenTelemetry(sourceName: "qyl")` — automatically emits spans for agent invocation, LLM calls, and tool execution | `Microsoft.Agents.AI` |
+| Agent remembers conversation across turns | `InMemoryChatHistoryProvider` (gone on restart) or `CosmosChatHistoryProvider` (survives restart, needs Azure Cosmos) | `Microsoft.Agents.AI` |
+| Agent loads domain knowledge from SKILL.md files | `FileAgentSkillsProvider(skillPath)` — scans directories, advertises skills to LLM, agent decides when to load full content | `Microsoft.Agents.AI` |
+| Agent returns typed C# object | `agent.RunAsync<PersonInfo>("describe John")` — deserializes LLM JSON into your type | `Microsoft.Agents.AI` |
+| Long-running agent work (minutes, not seconds) | `AgentRunOptions { AllowBackgroundResponses = true }` — returns immediately with continuation token, poll for completion | `Microsoft.Agents.AI` |
+| Intercept/modify every agent call | `agent.AsBuilder().Use(myMiddleware).Build()` — wraps agent in decorator pipeline (logging, auth, transforms) | `Microsoft.Agents.AI` |
+
 ## Architecture Boundaries
 
 - Collector owns DuckDB. Loom/MCP read via HTTP (CollectorClient), NEVER direct DB access
