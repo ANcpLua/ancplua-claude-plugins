@@ -18,6 +18,13 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - `once: true` on 3 SessionStart hooks (ancplua-project-routing, dotnet-architecture-lint, exodia)
   - PostCompact prompt hook on exodia for workflow state recovery after compaction (2.1.76+)
   - Skill descriptions trimmed to ≤250 chars on 4 skills (design-studio, hades, eight-gates, otel-expert) (2.1.86 cap)
+- **Legacy workaround cleanup (7 plugins)**: Replaced script-level workarounds with native Claude Code features:
+  - `hookify`, `design-studio`: Replaced prose "Load the skill" with `skills:` frontmatter (2.0.43)
+  - `qyl-continuation`: `${CLAUDE_PLUGIN_DATA}` for state path (2.1.78), `${CLAUDE_SESSION_ID}` for session ID (2.1.9)
+  - `metacognitive-guard`: Removed redundant script-level git commit guard — handled by `if:` in hooks.json (2.1.85)
+  - `dotnet-architecture-lint`: Removed redundant tool name guard — handled by `if:`; simplified hades permit to direct file check
+  - `elegance-pipeline`: Removed redundant "read-only" prose — enforced by `disallowedTools: [Edit, Write]`
+  - `calini`: Replaced git-based `.lock` task coordination with SendMessage protocol; `${CLAUDE_SESSION_ID}` for test seeding
 
 ### Changed
 

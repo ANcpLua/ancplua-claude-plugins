@@ -93,25 +93,16 @@ Each agent gets this context in their prompt:
 4. The task locking protocol (below)
 5. Key qyl conventions (below)
 
-## Task Locking Protocol
+## Task Coordination
 
-Every agent must follow this before starting work:
+Agents run in isolated worktrees (`isolation: worktree` in agent frontmatter),
+so file conflicts are eliminated — each agent has its own copy of the repo.
 
-```bash
-# Claim task
-TASK="descriptive_name"
-echo "Agent: [name] | Started: $(date -u) | Task: $TASK" > current_tasks/${TASK}.lock
-git add current_tasks/${TASK}.lock
-git commit -m "lock: $TASK [agent-name]"
-git pull --rebase origin main && git push origin main
-# If push fails: another agent claimed it. Pick different task.
+Task claiming uses SendMessage to the captain:
 
-# When done
-git rm current_tasks/${TASK}.lock
-git add -A
-git commit -m "done: $TASK [agent-name]"
-git pull --rebase origin main && git push origin main
-```
+1. Before starting: `SendMessage(to="captain", content="Claiming: [task description]")`
+2. Captain tracks assignments and rejects duplicates
+3. When done: commit in worktree, SendMessage(to="captain", content="Done: [task]")
 
 ## qyl Conventions (include in every agent prompt)
 
