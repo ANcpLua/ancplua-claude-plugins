@@ -4,6 +4,7 @@
 import json as _json
 import os
 import re
+import shlex
 import sys
 import time
 from functools import lru_cache
@@ -82,13 +83,19 @@ class RuleEngine:
             return {}
 
         hook_event = input_data.get('hook_event_name', '')
+        tool_input = input_data.get('tool_input', {})
         blocking_rules = []
         warning_rules = []
+        execute_rules = []
 
         for rule in rules:
             if self._rule_matches(rule, input_data):
                 if rule.action == 'block':
                     blocking_rules.append(rule)
+                elif rule.action == 'execute':
+                    # Execute only on PostToolUse — silently skip on all other events
+                    if hook_event == 'PostToolUse':
+                        execute_rules.append(rule)
                 else:
                     warning_rules.append(rule)
 
@@ -133,6 +140,32 @@ class RuleEngine:
                 # SessionStart, Notification — no blocking mechanism, no audience
                 return {}
 
+        # Execute commands — engine returns the decision, hook_runner executes
+        if execute_rules:
+            commands = []
+            for rule in execute_rules:
+                if rule.command:
+                    interpolated = self._interpolate_command(rule.command, tool_input, input_data)
+                    commands.append({
+                        "command": interpolated,
+                        "name": rule.name,
+                        "message": rule.message
+                    })
+
+            result = {}
+            if commands:
+                result["_execute_commands"] = commands
+
+            # Include warnings alongside execute results
+            if warning_rules:
+                messages = [f"**[{r.name}]**\n{r.message}" for r in warning_rules]
+                result["hookSpecificOutput"] = {
+                    "hookEventName": hook_event,
+                    "additionalContext": "\n\n".join(messages)
+                }
+
+            return result
+
         # If only warnings, show them but allow operation
         if warning_rules:
             messages = [f"**[{r.name}]**\n{r.message}" for r in warning_rules]
@@ -153,6 +186,21 @@ class RuleEngine:
 
         # No matches - allow operation
         return {}
+
+    def _interpolate_command(self, command: str, tool_input: Dict[str, Any],
+                              input_data: Dict[str, Any]) -> str:
+        """Replace ${variable} placeholders with values from hook input.
+
+        Values are shell-quoted to prevent command injection.
+        """
+        tool_name = input_data.get('tool_name', '')
+
+        def replacer(match: re.Match) -> str:
+            var_name = match.group(1)
+            value = self._extract_field(var_name, tool_name, tool_input, input_data)
+            return shlex.quote(str(value)) if value else "''"
+
+        return re.sub(r'\$\{(\w+)\}', replacer, command)
 
     def _rule_matches(self, rule: Rule, input_data: Dict[str, Any]) -> bool:
         """Check if rule matches input data.

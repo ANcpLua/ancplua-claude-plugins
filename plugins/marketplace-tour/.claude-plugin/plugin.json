@@ -1,0 +1,18 @@
+{
+  "name": "marketplace-tour",
+  "version": "1.0.0",
+  "description": "Interactive live demos of all marketplace plugins with version-gated features.",
+  "author": {
+    "name": "AncpLua",
+    "email": "ancplua@pm.me"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "marketplace",
+    "tour",
+    "onboarding",
+    "demo"
+  ],
+  "commands": "./commands"
+}

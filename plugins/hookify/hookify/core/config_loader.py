@@ -36,7 +36,8 @@ class Rule:
     event: str  # "bash", "file", "stop", "all", etc.
     pattern: Optional[str] = None  # Simple pattern (legacy)
     conditions: List[Condition] = field(default_factory=list)
-    action: str = "warn"  # "warn" or "block" (future)
+    action: str = "warn"  # "warn", "block", or "execute"
+    command: Optional[str] = None  # Shell command for action: execute (PostToolUse only)
     tool_matcher: Optional[str] = None  # Override tool matching
     message: str = ""  # Message body from markdown
 
@@ -71,13 +72,21 @@ class Rule:
                 pattern=simple_pattern
             )]
 
+        action = frontmatter.get('action', 'warn')
+        command = frontmatter.get('command')
+
+        # Validate: execute requires a command
+        if action == 'execute' and not command:
+            raise ValueError(f"Rule '{frontmatter.get('name', 'unnamed')}': action 'execute' requires a 'command' field")
+
         return cls(
             name=frontmatter.get('name', 'unnamed'),
             enabled=frontmatter.get('enabled', True),
             event=frontmatter.get('event', 'all'),
             pattern=simple_pattern,
             conditions=conditions,
-            action=frontmatter.get('action', 'warn'),
+            action=action,
+            command=command,
             tool_matcher=frontmatter.get('tool_matcher'),
             message=message.strip()
         )
