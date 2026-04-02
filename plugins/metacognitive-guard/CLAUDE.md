@@ -51,7 +51,8 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 
 ## Notes
 
-- Commit integrity hook uses `if: "Bash(git commit*)"` (2.1.85) so the harness skips the process spawn entirely for non-commit Bash calls. The script still keeps its own early-exit guard as defense-in-depth for older Claude Code versions.
+- Commit integrity hook uses `if: "Bash(git commit*)"` (2.1.85) so the harness skips the process spawn entirely
+  for non-commit Bash calls. Script-level early-exit removed — harness guarantees filtering.
 - verify-local.sh and wait-for-ci.sh are utility scripts for the verification workflow, not hook triggers.
 - Hades god mode: active delete permit causes epistemic-guard to exit early.
 - Struggle detector tracks consecutive struggling responses via `.blackboard/.struggle-count`.
@@ -59,7 +60,11 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
   UserPromptSubmit hook reads blackboard and injects `additionalContext` so Claude actually sees the
   suggestion. No latency on responses.
 - Struggle detector and Ralph Loop skip subagents via `agent_type` filtering (only lead agent matters).
-- Objective Watch is advisory only. It never blocks. It only injects short anchor reminders when the lead agent appears to pivot without explicitly re-anchoring.
+- Objective Watch is advisory only. It never blocks. It only injects short anchor reminders when the lead agent
+  appears to pivot without explicitly re-anchoring. Anchors only on spec-like paths (docs/specs/, docs/decisions/,
+  docs/designs/, .feature-dev/, .eight-gates/artifacts/, .smart/artifacts/) and spec-like filenames (spec-*, adr-*,
+  design-*, plan-*, rfc-*, proposal-*). Infrastructure files (CLAUDE.md, README.md, CHANGELOG.md, plugin code)
+  never become anchors. Cooldown is per-anchor (60s), not per-target-file.
 - TaskCompleted prompt hook fires on lead agent only (skips subagents via agent_type check).
 - Ralph Loop fires PostToolUse on Write/Edit — two layers run in parallel:
   (1) Haiku prompt analyzes context for deep drift (over-engineering, complexity creep, premature

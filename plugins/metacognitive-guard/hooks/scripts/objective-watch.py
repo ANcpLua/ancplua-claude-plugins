@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+"""Objective drift watchdog for lead-agent focus tracking.
+
+Tracks one anchor document (spec, ADR, design doc) and warns when the agent
+silently pivots to a different one without explicit re-anchoring.
+
+Fixed in this rewrite:
+- ANCHOR_PATH_RE no longer matches `plugins/` from within repo names like
+  `ancplua-claude-plugins/CHANGELOG.md` (added negative lookbehind)
+- Narrowed anchor paths to spec-like locations only (docs/specs/, docs/decisions/,
+  docs/designs/, .feature-dev/, .eight-gates/artifacts/, .smart/artifacts/)
+- Switched from filename blocklist to allowlist for anchorable names
+- Cooldown is per-anchor, not per-target-file (stops warning floods)
+- Anchor paths are validated against disk before setting
+"""
 
 from __future__ import annotations
 
@@ -10,13 +24,29 @@ from pathlib import Path
 
 BLACKBOARD_DIR = Path(".blackboard")
 STATE_PATH = BLACKBOARD_DIR / "objective.json"
-WARNING_COOLDOWN_SECONDS = 45
+WARNING_COOLDOWN_SECONDS = 60
 
+# Matches spec-like paths ONLY — not infrastructure files (CLAUDE.md, README.md, etc.)
+# Negative lookbehind prevents matching `plugins/` from within words like `ancplua-claude-plugins/`
 ANCHOR_PATH_RE = re.compile(
-    r"((?:docs|plugins|\.feature-dev|\.eight-gates(?:/artifacts)?|\.smart(?:/artifacts)?)/[A-Za-z0-9_./-]+\.md)",
+    r"(?<![a-zA-Z0-9_-])"
+    r"("
+    r"(?:docs/(?:specs|decisions|designs|superpowers/specs)"
+    r"|\.feature-dev"
+    r"|\.eight-gates/artifacts"
+    r"|\.smart/artifacts"
+    r")/[A-Za-z0-9_./-]+\.md"
+    r")",
     re.IGNORECASE,
 )
-MARKDOWN_NAME_RE = re.compile(r"\b([A-Za-z0-9][A-Za-z0-9._-]*\.md)\b", re.IGNORECASE)
+
+# Only spec-like filenames can become anchors by name
+# (replaces blocklist approach — allowlist is safer against false anchoring)
+ANCHORABLE_NAME_RE = re.compile(
+    r"\b((?:spec|adr|design|plan|rfc|proposal)-[A-Za-z0-9_.-]+\.md)\b",
+    re.IGNORECASE,
+)
+
 ANCHORABLE_PROMPT_RE = re.compile(
     r"\b(fix|finish|update|implement|review|migrate|refactor|audit|clean|delete|continue|resume|launch|run|investigate)\b",
     re.IGNORECASE,
@@ -30,50 +60,15 @@ ORCHESTRATION_RE = re.compile(
     re.IGNORECASE,
 )
 SHIP_RE = re.compile(
-    r"\b(git\s+commit|git\s+push|gh\s+pr\s+create|railway\s+up|npm\s+publish|dotnet\s+nuget\s+push)\b",
+    r"\b(gh\s+pr\s+create|npm\s+publish|dotnet\s+nuget\s+push)\b",
     re.IGNORECASE,
 )
 
-IGNORED_MARKDOWN_NAMES = {
-    "agents.md",
-    "changelog.md",
-    "claude.md",
-    "license.md",
-    "memory.md",
-    "readme.codex.md",
-    "readme.md",
-    "release-notes.md",
-    "skill.md",
-}
 TOKEN_STOPWORDS = {
-    "about",
-    "after",
-    "agent",
-    "anchor",
-    "change",
-    "codex",
-    "continue",
-    "current",
-    "drift",
-    "finish",
-    "focus",
-    "implement",
-    "issue",
-    "move",
-    "next",
-    "objective",
-    "path",
-    "plan",
-    "please",
-    "primary",
-    "review",
-    "session",
-    "spec",
-    "switch",
-    "task",
-    "this",
-    "update",
-    "work",
+    "about", "after", "agent", "anchor", "change", "codex", "continue",
+    "current", "drift", "finish", "focus", "implement", "issue", "move",
+    "next", "objective", "path", "plan", "please", "primary", "review",
+    "session", "spec", "switch", "task", "this", "update", "work",
 }
 
 
@@ -116,6 +111,7 @@ def normalize_anchor_path(value: str) -> str:
 
 
 def extract_anchor_paths(text: str) -> list[str]:
+    """Extract spec-like paths from text. Only matches narrowed spec locations."""
     seen: set[str] = set()
     paths: list[str] = []
     for match in ANCHOR_PATH_RE.findall(text or ""):
@@ -126,13 +122,12 @@ def extract_anchor_paths(text: str) -> list[str]:
     return paths
 
 
-def extract_markdown_names(text: str) -> list[str]:
+def extract_anchorable_names(text: str) -> list[str]:
+    """Extract spec-like markdown names (spec-*, adr-*, design-*, plan-*, rfc-*, proposal-*)."""
     seen: set[str] = set()
     names: list[str] = []
-    for match in MARKDOWN_NAME_RE.findall(text or ""):
+    for match in ANCHORABLE_NAME_RE.findall(text or ""):
         name = match.lower()
-        if name in IGNORED_MARKDOWN_NAMES:
-            continue
         if name not in seen:
             seen.add(name)
             names.append(name)
@@ -163,7 +158,17 @@ def anchor_display(anchor: dict) -> str:
     return compact[:77] + "..."
 
 
+def validate_path(path: str | None) -> str | None:
+    """Return path only if it resolves to an actual file on disk."""
+    if not path:
+        return None
+    if Path(path).exists():
+        return path
+    return None
+
+
 def set_anchor(state: dict, text: str, path: str | None, name: str | None) -> None:
+    path = validate_path(path)
     anchor_name = name or (Path(path).name.lower() if path else None)
     state["anchor"] = {
         "text": (text or "").strip()[:400],
@@ -200,7 +205,10 @@ def is_anchor_related(anchor: dict, text: str) -> bool:
     return False
 
 
-def should_emit_warning(state: dict, key: str) -> bool:
+def should_emit_warning(state: dict, category: str) -> bool:
+    """Cooldown per anchor+category, not per target file."""
+    anchor = state.get("anchor", {})
+    key = f"{category}:{anchor_display(anchor)}"
     now = int(time.time())
     if state.get("last_warning_key") == key and now - int(state.get("last_warning_at") or 0) < WARNING_COOLDOWN_SECONDS:
         return False
@@ -212,8 +220,14 @@ def should_emit_warning(state: dict, key: str) -> bool:
 def warning_text(anchor: dict, target: str | None, action: str) -> str:
     prefix = f"Primary anchor is still `{anchor_display(anchor)}`."
     if target:
-        return f"{prefix} Do not branch to `{target}` for {action} yet. Finish it, explicitly re-anchor, or tell the user you are abandoning it."
-    return f"{prefix} Do not start {action} yet. Finish it, explicitly re-anchor, or tell the user you are abandoning it."
+        return (
+            f"{prefix} Do not branch to `{target}` for {action} yet. "
+            f"Finish it, explicitly re-anchor, or tell the user you are abandoning it."
+        )
+    return (
+        f"{prefix} Do not start {action} yet. "
+        f"Finish it, explicitly re-anchor, or tell the user you are abandoning it."
+    )
 
 
 def handle_user_prompt(event: dict, state: dict) -> str | None:
@@ -222,7 +236,7 @@ def handle_user_prompt(event: dict, state: dict) -> str | None:
         return None
 
     paths = extract_anchor_paths(prompt)
-    names = extract_markdown_names(prompt)
+    names = extract_anchorable_names(prompt)
     new_path = paths[0] if paths else None
     new_name = names[0] if names else None
     explicit_switch = bool(REANCHOR_RE.search(prompt))
@@ -244,7 +258,7 @@ def handle_user_prompt(event: dict, state: dict) -> str | None:
             set_anchor(state, prompt, new_path, new_name)
             return None
         target = new_path or new_name
-        if should_emit_warning(state, f"user-pivot:{anchor_display(anchor)}:{target}"):
+        if should_emit_warning(state, "user-pivot"):
             return warning_text(anchor, target, "a new spec")
         return None
 
@@ -255,13 +269,12 @@ def handle_user_prompt(event: dict, state: dict) -> str | None:
 
 
 def handle_post_tool(event: dict, state: dict) -> str | None:
-    tool_name = event.get("tool_name", "")
     tool_input = event.get("tool_input") or {}
     serialized_input = json.dumps(tool_input, sort_keys=True)
     anchor = state.get("anchor")
 
     paths = extract_anchor_paths(serialized_input)
-    names = extract_markdown_names(serialized_input)
+    names = extract_anchorable_names(serialized_input)
     new_path = paths[0] if paths else None
     new_name = names[0] if names else None
 
@@ -278,17 +291,18 @@ def handle_post_tool(event: dict, state: dict) -> str | None:
             set_anchor(state, anchor.get("text") or "", anchor.get("path") or new_path, anchor.get("name") or new_name)
             return None
         target = new_path or new_name
-        if should_emit_warning(state, f"tool-pivot:{tool_name}:{anchor_display(anchor)}:{target}"):
+        if should_emit_warning(state, "tool-pivot"):
             return warning_text(anchor, target, "a different spec")
         return None
 
+    tool_name = event.get("tool_name", "")
     command = (tool_input.get("command") or tool_input.get("cmd") or "").strip()
     if tool_name == "Bash" and command:
         if ORCHESTRATION_RE.search(command) and not is_anchor_related(anchor, command):
-            if should_emit_warning(state, f"tool-orchestration:{anchor_display(anchor)}"):
+            if should_emit_warning(state, "orchestration"):
                 return warning_text(anchor, None, "a new orchestration flow")
-        if SHIP_RE.search(command):
-            if should_emit_warning(state, f"tool-ship:{anchor_display(anchor)}"):
+        if SHIP_RE.search(command) and not is_anchor_related(anchor, command):
+            if should_emit_warning(state, "ship"):
                 return warning_text(anchor, None, "shipping or completion")
 
     return None
