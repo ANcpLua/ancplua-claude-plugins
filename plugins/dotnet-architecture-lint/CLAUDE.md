@@ -23,7 +23,9 @@ Enforces .NET MSBuild patterns via 3 layers: passive context injection, pre-writ
 ## 3-Layer Architecture
 
 1. **SessionStart** (inject-dotnet-rules.sh): Claude knows rules BEFORE writing code
-2. **PreToolUse** (precheck-dotnet.py): Blocks violations on Write/Edit (exit code 2 = block)
+2. **PreToolUse** (precheck-dotnet.py): Blocks violations on Write/Edit (exit code 2 = block).
+   Requires Claude Code >= 2.1.90 — JSON stdout + exit code 2 blocking was broken before this version.
+   Layer 1 compensates on older versions (passive context prevents most violations).
 3. **Post-hoc** (lint-dotnet.sh): Deterministic scan of all files (rules A/B/C/G)
 
 ## Notes

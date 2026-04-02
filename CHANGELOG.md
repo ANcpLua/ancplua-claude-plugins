@@ -11,6 +11,11 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **`hookify` action: execute (0.4.0)**: New third action type alongside `warn` and `block`. Runs a shell command after Write/Edit/MultiEdit via PostToolUse. Rule engine stays pure — returns `{action: "execute", command: "..."}`, hook_runner.py executes via subprocess. Hard constraint: PostToolUse only, silently ignored on all other events. Variables (`${file_path}`, etc.) are shell-quoted to prevent injection. Command failure returns `additionalContext` warning, never crashes. Requires Claude Code >= 2.1.90 (PostToolUse format-on-save fix). Three example templates: `format-cs.local.md`, `format-prettier.local.md`, `format-python.local.md`.
 - **`marketplace-tour` plugin (1.0.0)**: Interactive live demos of all marketplace plugins. Version-gates features requiring Claude Code >= 2.1.90. Reads marketplace.json for plugin discovery, runs guided walkthroughs per plugin with cleanup. Invoked via `/marketplace-tour:tour`.
 - **Environment variable documentation**: Added section 9 to `docs/ARCHITECTURE.md` documenting `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE` (keeps marketplace cache on git pull failure, useful offline) and `CLAUDE_GLOBAL_RULES_DIR` (hookify global rules override).
+- **`dotnet-architecture-lint` version note**: Documented that PreToolUse Layer 2 blocking requires Claude Code >= 2.1.90 (JSON stdout + exit code 2 fix). Layer 1 (SessionStart passive context) compensates on older versions.
+
+### Fixed
+
+- **`metacognitive-guard` objective-watch false anchoring**: Ground-up rewrite. Root cause: `ANCHOR_PATH_RE` had no word boundary, so repo name `ancplua-claude-plugins/CHANGELOG.md` matched as `plugins/CHANGELOG.md` — a path that doesn't exist. Fix: (1) negative lookbehind prevents matching within repo names, (2) narrowed regex to spec-like paths only, (3) filename allowlist instead of blocklist, (4) per-anchor cooldown (60s), (5) anchor path disk validation, (6) removed `git commit`/`git push` from ship detection.
 
 ### Added
 
@@ -35,7 +40,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
-- **`metacognitive-guard` hook `if` filtering (2.1.85)**: Commit integrity hook now uses `if: "Bash(git commit*)"` so the harness skips the process spawn entirely for non-commit Bash calls. Script-level early-exit retained for backward compatibility with older Claude Code versions.
+- **`metacognitive-guard` hook `if` filtering (2.1.85)**: Commit integrity hook now uses `if: "Bash(git commit*)"` so the harness skips the process spawn entirely for non-commit Bash calls. Script-level early-exit removed — harness guarantees filtering.
 - **Scratch-state cleanup**: `feature-dev` now writes optional research/plan notes only into gitignored `.feature-dev/` runtime state with prune/clear helpers instead of durable `thoughts/` files
 - **`exodia` runtime compaction**: `fix` and `deep-think` now cache compaction artifacts in `.eight-gates/artifacts/` via `session-state.sh`, and `session-state.sh cleanup` clears expired analysis/decision residue while preserving `findings.json`
 - **`metacognitive-guard` objective anchors**: `objective-watch.py` now tracks general markdown anchors, including `.feature-dev/` and `.eight-gates/artifacts/`, instead of only spec/ADR paths
