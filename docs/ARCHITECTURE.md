@@ -210,4 +210,19 @@ every step gated.
 
 ---
 
-**Last Verified:** 2026-02-20
+## 9. Environment variables
+
+| Variable | Purpose | Default |
+|----------|---------|---------|
+| `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE` | Keep existing marketplace cache when `git pull` fails during plugin sync. Prevents plugin loss in offline environments, flaky networks, or private repos with expired tokens. | unset (cache is cleared on failure) |
+| `CLAUDE_GLOBAL_RULES_DIR` | Override directory for hookify global rules. | `~/.claude/global-rules/` |
+
+Set in your shell profile (`~/.zshrc`, `~/.bashrc`):
+
+```bash
+export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
+```
+
+---
+
+**Last Verified:** 2026-04-02

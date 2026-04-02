@@ -28,8 +28,8 @@
     },
     {
       "name": "hookify",
-      "description": "User-configurable hooks from .local.md files. Define blocking and warning rules for Bash commands, file edits, and session events.",
-      "version": "0.3.2",
+      "description": "User-configurable hooks from .local.md files. Define blocking, warning, and execute rules for Bash commands, file edits, and session events.",
+      "version": "0.4.0",
       "source": "./plugins/hookify"
     },
     {
@@ -85,6 +85,12 @@
       "description": "Agent operating system — leaderless swarms with Playwright oracle. Code is opaque weights; correctness inferred exclusively from externally observable behavior.",
       "version": "0.1.2",
       "source": "./plugins/ancplua"
+    },
+    {
+      "name": "marketplace-tour",
+      "description": "Interactive live demos of all marketplace plugins with version-gated features.",
+      "version": "1.0.0",
+      "source": "./plugins/marketplace-tour"
     }
   ]
 }
