@@ -8,6 +8,8 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- **`qyl` skill package: MCP docs, evals, agent adapter**: Added `mcp.md` (serving-plane MCP server reference with connection config, result size override, and tool categories), `evals/evals.json` (4 Loom architecture evals: instrument-with-loom, bridge-to-maf, workflow-not-prompt, subsystem-boundary), and `agents/openai.yml` (OpenAI agent interface adapter).
+
 - **`hookify` action: execute (0.4.0)**: New third action type alongside `warn` and `block`. Runs a shell command after Write/Edit/MultiEdit via PostToolUse. Rule engine stays pure — returns `{action: "execute", command: "..."}`, hook_runner.py executes via subprocess. Hard constraint: PostToolUse only, silently ignored on all other events. Variables (`${file_path}`, etc.) are shell-quoted to prevent injection. Command failure returns `additionalContext` warning, never crashes. Requires Claude Code >= 2.1.90 (PostToolUse format-on-save fix). Three example templates: `format-cs.local.md`, `format-prettier.local.md`, `format-python.local.md`.
 - **`marketplace-tour` plugin (1.0.0)**: Interactive live demos of all marketplace plugins. Version-gates features requiring Claude Code >= 2.1.90. Reads marketplace.json for plugin discovery, runs guided walkthroughs per plugin with cleanup. Invoked via `/marketplace-tour:tour`.
 - **Environment variable documentation**: Added section 9 to `docs/ARCHITECTURE.md` documenting `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE` (keeps marketplace cache on git pull failure, useful offline) and `CLAUDE_GLOBAL_RULES_DIR` (hookify global rules override).

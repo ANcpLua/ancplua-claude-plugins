@@ -1,0 +1,8 @@
+interface:
+  display_name: "qyl"
+  short_description: "Compile-time OS for agent workflows — Loom compiler, MAF execution, telemetry governance."
+  categories:
+    - agent-platform
+    - observability
+    - dotnet
+    - opentelemetry
