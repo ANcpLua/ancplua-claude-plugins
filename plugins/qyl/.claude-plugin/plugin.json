@@ -1,7 +1,7 @@
 {
   "name": "qyl",
-  "version": "1.1.0",
-  "description": "Unified qyl AI observability platform plugin. Ground truth authority, dead API blocker, parallel agent swarm, observability orchestration, auto-continuation.",
+  "version": "1.2.0",
+  "description": "Unified qyl AI observability platform plugin. Ground truth authority, dead API blocker, architectural audit, parallel agent swarm, observability orchestration.",
   "author": {
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"
