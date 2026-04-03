@@ -1,0 +1,21 @@
+{
+  "name": "qyl-lsp",
+  "version": "0.1.0",
+  "description": "LSP code intelligence surface for qyl. SessionStart hook detects missing LSP tools in qyl.mcp and injects implementation guidance. Skill encodes placement, tool definitions, runtime stack, registration, and Loom bridge patterns.",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "qyl",
+    "lsp",
+    "code-intelligence",
+    "mcp",
+    "loom",
+    "dotnet"
+  ],
+  "skills": "./skills",
+  "hooks": "./hooks"
+}

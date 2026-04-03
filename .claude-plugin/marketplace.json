@@ -91,6 +91,12 @@
       "description": "Interactive live demos of all marketplace plugins with version-gated features.",
       "version": "1.0.0",
       "source": "./plugins/marketplace-tour"
+    },
+    {
+      "name": "qyl-lsp",
+      "description": "LSP code intelligence surface for qyl. SessionStart hook detects missing LSP tools in qyl.mcp and injects implementation guidance.",
+      "version": "0.1.0",
+      "source": "./plugins/qyl-lsp"
     }
   ]
 }
