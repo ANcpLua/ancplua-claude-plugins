@@ -21,6 +21,8 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **`metacognitive-guard` objective-watch `.blackboard/` path pollution (0.6.8)**: `CLAUDE_PLUGIN_ROOT` is now required; script exits silently (`sys.exit(0)`) when the variable is unset instead of falling back to `"."` (cwd). Eliminates the residual `.blackboard/` creation in project roots when the plugin is invoked outside a properly configured environment.
+
 - **`metacognitive-guard` objective-watch false anchoring**: Ground-up rewrite. Root cause: `ANCHOR_PATH_RE` had no word boundary, so repo name `ancplua-claude-plugins/CHANGELOG.md` matched as `plugins/CHANGELOG.md` — a path that doesn't exist. Fix: (1) negative lookbehind prevents matching within repo names, (2) narrowed regex to spec-like paths only, (3) filename allowlist instead of blocklist, (4) per-anchor cooldown (60s), (5) anchor path disk validation, (6) removed `git commit`/`git push` from ship detection.
 
 ### Added
