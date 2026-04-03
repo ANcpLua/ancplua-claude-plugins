@@ -7,9 +7,9 @@ Enforces .NET MSBuild patterns via 3 layers: passive context injection, pre-writ
 | File | Purpose |
 |------|---------|
 | `hooks/hooks.json` | Declares SessionStart + PreToolUse hooks |
-| `hooks/scripts/inject-dotnet-rules.sh` | SessionStart: injects 4 rules as passive context |
-| `scripts/precheck-dotnet.py` | PreToolUse: validates Write/Edit on .props/.csproj files (rules A/B/G) |
-| `scripts/lint-dotnet.sh` | Post-hoc linter checking all 4 rules (A/B/C/G) |
+| `bin/inject-dotnet-rules` | SessionStart: injects 4 rules as passive context |
+| `bin/precheck-dotnet` | PreToolUse: validates Write/Edit on .props/.csproj files (rules A/B/G) |
+| `commands/lint-dotnet.md` | Post-hoc linter command checking all 4 rules (A/B/C/G) |
 
 ## Rules
 
