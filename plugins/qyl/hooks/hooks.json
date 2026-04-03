@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/inject-ground-truth.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/inject-ground-truth",
             "timeout": 5,
             "statusMessage": "Loading qyl ground truth..."
           }
@@ -20,7 +20,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/block-dead-api.py",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/block-dead-api",
             "timeout": 5,
             "statusMessage": "Checking for dead MAF API usage..."
           }
@@ -32,7 +32,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/stop-judge.py",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/stop-judge",
             "timeout": 35,
             "statusMessage": "Evaluating continuation..."
           }

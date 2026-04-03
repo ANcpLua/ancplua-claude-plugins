@@ -6,6 +6,10 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+
+- **Hook scripts migrated to `bin/` executables (v2.1.91)**: All 16 hook scripts across 6 plugins moved from scattered directories (`hooks/scripts/`, `hooks/`, `scripts/smart/`, `scripts/`) to standardized `bin/` directories. Commands updated from `bash/python3 ${CLAUDE_PLUGIN_ROOT}/...` to `${CLAUDE_PLUGIN_ROOT}/bin/<name>` (shebang-based execution). Old files removed, empty directories cleaned up. Affected plugins: qyl (3 scripts), dotnet-architecture-lint (2), hookify (5), metacognitive-guard (4), exodia (1), ancplua-project-routing (1). Version bumps: dotnet-architecture-lint 1.1.4, hookify 0.4.1, metacognitive-guard 0.6.7, exodia 2.1.4, ancplua-project-routing 2.0.2.
+
 ### Added
 
 - **`qyl` skill package: MCP docs, evals, agent adapter**: Added `mcp.md` (serving-plane MCP server reference with connection config, result size override, and tool categories), `evals/evals.json` (4 Loom architecture evals: instrument-with-loom, bridge-to-maf, workflow-not-prompt, subsystem-boundary), and `agents/openai.yml` (OpenAI agent interface adapter).

@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/epistemic-guard.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/epistemic-guard",
             "timeout": 5,
             "statusMessage": "Checking epistemic constraints..."
           }
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/commit-integrity-hook.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/commit-integrity-hook",
             "timeout": 10,
             "statusMessage": "Checking commit integrity..."
           }
@@ -32,7 +32,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/objective-watch.py",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/objective-watch",
             "timeout": 5,
             "statusMessage": "Checking objective drift..."
           }
@@ -43,7 +43,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/ralph-loop.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/ralph-loop",
             "timeout": 5,
             "statusMessage": "Ralph scanning..."
           }
@@ -55,7 +55,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/objective-watch.py",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/objective-watch",
             "timeout": 5,
             "statusMessage": "Refreshing active objective..."
           }

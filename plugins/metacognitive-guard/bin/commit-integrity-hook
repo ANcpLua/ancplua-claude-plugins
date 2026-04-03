@@ -10,5 +10,4 @@ set -euo pipefail
 
 cat > /dev/null  # consume stdin (not needed by integrity-check.sh)
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-exec bash "${SCRIPT_DIR}/integrity-check.sh"
+exec bash "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/integrity-check.sh"
