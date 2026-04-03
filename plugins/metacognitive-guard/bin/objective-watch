@@ -24,12 +24,17 @@ import sys
 import time
 from pathlib import Path
 
+_PLUGIN_ROOT = os.environ.get("CLAUDE_PLUGIN_ROOT")
+if not _PLUGIN_ROOT:
+    # No plugin root → cannot persist state without polluting cwd; exit silently
+    sys.exit(0)
+
+
 def _resolve_blackboard_dir() -> Path:
     """Scope state per workspace + session to prevent anchor bleed."""
-    plugin_root = Path(os.environ.get("CLAUDE_PLUGIN_ROOT", "."))
     cwd_hash = hashlib.sha256(os.getcwd().encode()).hexdigest()[:12]
     session_id = os.environ.get("CLAUDE_SESSION_ID", "default")
-    return plugin_root / ".blackboard" / f"{cwd_hash}-{session_id}"
+    return Path(_PLUGIN_ROOT) / ".blackboard" / f"{cwd_hash}-{session_id}"
 
 
 BLACKBOARD_DIR = _resolve_blackboard_dir()
