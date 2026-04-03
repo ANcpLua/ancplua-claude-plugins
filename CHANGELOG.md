@@ -6,20 +6,11 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
-### Changed
-
-- **Plugin template migrated to `bin/` convention (v2.1.91)**: Replaced `scripts/example-script.sh` with `bin/example-check` executable. Updated `hooks.json` command from `bash ${CLAUDE_PLUGIN_ROOT}/scripts/example-script.sh` to `${CLAUDE_PLUGIN_ROOT}/bin/example-check`. Updated `CLAUDE.md` files table. Removed `scripts/` directory.
-
 ### Added
 
-- **ADR-0002: Three-layer distribution model for qyl**: Documents the decision to distribute qyl knowledge across three layers: Skills (governing authority in this repo), Netagents (.NET packages in qyl repo), and MCP Server (live telemetry). Makes architectural knowledge portable across AI agent platforms.
-
-
-- **Hook scripts migrated to `bin/` executables (v2.1.91)**: All 16 hook scripts across 6 plugins moved from scattered directories (`hooks/scripts/`, `hooks/`, `scripts/smart/`, `scripts/`) to standardized `bin/` directories. Commands updated from `bash/python3 ${CLAUDE_PLUGIN_ROOT}/...` to `${CLAUDE_PLUGIN_ROOT}/bin/<name>` (shebang-based execution). Old files removed, empty directories cleaned up. Affected plugins: qyl (3 scripts), dotnet-architecture-lint (2), hookify (5), metacognitive-guard (4), exodia (1), ancplua-project-routing (1). Version bumps: dotnet-architecture-lint 1.1.4, hookify 0.4.1, metacognitive-guard 0.6.7, exodia 2.1.4, ancplua-project-routing 2.0.2.
-
-### Added
-
-- **`qyl` skill package: MCP docs, evals, agent adapter**: Added `mcp.md` (serving-plane MCP server reference with connection config, result size override, and tool categories), `evals/evals.json` (4 Loom architecture evals: instrument-with-loom, bridge-to-maf, workflow-not-prompt, subsystem-boundary), and `agents/openai.yml` (OpenAI agent interface adapter).
+- **`qyl` governing skill (1.1.0)**: Three-layer distribution model for qyl (ADR-0002). Core skill encodes qyl as a compile-time OS for agent workflows — the Loom compiler pipeline (attributes → generator → descriptors → AIFunction via AIFunctionFactoryOptions), 7 bounded planes (data, serving, intelligence, agent/control, ledger/governance, UI/protocol, compiler), MAF execution model (function/agent/workflow decision rule), and 5 architectural invariants. Supporting docs: loom.md (full compiler pipeline from actual source), rules/ (architecture, maf, invariants, frontend), mcp.md (100+ tools with v2.1.91 500K result persistence). 4 Loom-grounded evals. OpenAI agent adapter. MCP server config (.mcp.json). Distributable via `npx skills add` format.
+- **Plugin executables `bin/` (v2.1.91)**: Migrated all 16 hook scripts across 6 plugins from scattered directories to `bin/` with shebangs. Commands no longer need `bash`/`python3` prefix. Updated plugin template with `bin/` convention. Version bumps: dotnet-architecture-lint 1.1.4, hookify 0.4.1, metacognitive-guard 0.6.7, exodia 2.1.4, ancplua-project-routing 2.0.2.
+- **Orphan cleanup**: Deleted `plugins/qyl-continuation/`, `plugins/qyl-instrumentation/`, `plugins/calini/` — merged into `plugins/qyl/` in v1.0.0 but directories were never removed.
 
 - **`hookify` action: execute (0.4.0)**: New third action type alongside `warn` and `block`. Runs a shell command after Write/Edit/MultiEdit via PostToolUse. Rule engine stays pure — returns `{action: "execute", command: "..."}`, hook_runner.py executes via subprocess. Hard constraint: PostToolUse only, silently ignored on all other events. Variables (`${file_path}`, etc.) are shell-quoted to prevent injection. Command failure returns `additionalContext` warning, never crashes. Requires Claude Code >= 2.1.90 (PostToolUse format-on-save fix). Three example templates: `format-cs.local.md`, `format-prettier.local.md`, `format-python.local.md`.
 - **`marketplace-tour` plugin (1.0.0)**: Interactive live demos of all marketplace plugins. Version-gates features requiring Claude Code >= 2.1.90. Reads marketplace.json for plugin discovery, runs guided walkthroughs per plugin with cleanup. Invoked via `/marketplace-tour:tour`.
