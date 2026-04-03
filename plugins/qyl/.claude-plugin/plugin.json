@@ -1,6 +1,6 @@
 {
   "name": "qyl",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Unified qyl AI observability platform plugin. Ground truth authority, dead API blocker, parallel agent swarm, observability orchestration, auto-continuation.",
   "author": {
     "name": "AncpLua",
@@ -31,5 +31,7 @@
     "./agents/integration.md",
     "./agents/docs.md",
     "./agents/general.md"
-  ]
+  ],
+  "skills": "./skills",
+  "mcpServers": "./.mcp.json"
 }

@@ -59,7 +59,7 @@
     {
       "name": "qyl",
       "description": "Unified qyl AI observability platform plugin. Ground truth authority, dead API blocker, MAF RC patterns, parallel agent swarm, observability orchestration, auto-continuation.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "source": "./plugins/qyl"
     },
     {
