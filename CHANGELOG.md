@@ -8,6 +8,9 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- **Plugin template migrated to `bin/` convention (v2.1.91)**: Replaced `scripts/example-script.sh` with `bin/example-check` executable. Updated `hooks.json` command from `bash ${CLAUDE_PLUGIN_ROOT}/scripts/example-script.sh` to `${CLAUDE_PLUGIN_ROOT}/bin/example-check`. Updated `CLAUDE.md` files table. Removed `scripts/` directory.
+
+
 - **Hook scripts migrated to `bin/` executables (v2.1.91)**: All 16 hook scripts across 6 plugins moved from scattered directories (`hooks/scripts/`, `hooks/`, `scripts/smart/`, `scripts/`) to standardized `bin/` directories. Commands updated from `bash/python3 ${CLAUDE_PLUGIN_ROOT}/...` to `${CLAUDE_PLUGIN_ROOT}/bin/<name>` (shebang-based execution). Old files removed, empty directories cleaned up. Affected plugins: qyl (3 scripts), dotnet-architecture-lint (2), hookify (5), metacognitive-guard (4), exodia (1), ancplua-project-routing (1). Version bumps: dotnet-architecture-lint 1.1.4, hookify 0.4.1, metacognitive-guard 0.6.7, exodia 2.1.4, ancplua-project-routing 2.0.2.
 
 ### Added
