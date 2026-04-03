@@ -28,6 +28,7 @@ STAGED_DIFF=$(git diff --cached --unified=0 -- \
     ':(exclude)*.md' \
     ':(exclude)**/hooks/scripts/*.sh' \
     ':(exclude)**/scripts/*.sh' \
+    ':(exclude)**/bin/*' \
     ':(exclude)**/*.test.*' \
     ':(exclude)**/*.spec.*' \
     ':(exclude)**/test-fixtures/**' \

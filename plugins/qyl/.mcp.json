@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "qyl": {
+      "type": "http",
+      "url": "https://mcp.qyl.info/mcp"
+    }
+  }
+}

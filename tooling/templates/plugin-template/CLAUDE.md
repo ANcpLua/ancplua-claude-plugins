@@ -9,7 +9,7 @@ One-line description of what this plugin does.
 | `commands/example-command.md` | `/example-command` slash command |
 | `skills/example-skill/SKILL.md` | Skill description |
 | `hooks/hooks.json` | Lifecycle hooks (if any) |
-| `scripts/example-script.sh` | Helper scripts |
+| `bin/example-check` | Executable scripts (v2.1.91+) |
 
 ## Notes
 

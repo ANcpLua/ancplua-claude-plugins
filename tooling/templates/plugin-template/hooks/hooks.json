@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/example-script.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/example-check",
             "timeout": 5,
             "statusMessage": "Running example check..."
           }

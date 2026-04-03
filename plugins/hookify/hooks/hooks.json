@@ -8,7 +8,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.py",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/hookify-pretooluse",
             "timeout": 10,
             "statusMessage": "Checking hookify rules..."
           }
@@ -21,7 +21,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse.py",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/hookify-posttooluse",
             "timeout": 10,
             "async": true,
             "statusMessage": "Running post-action hookify rules..."
@@ -34,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/stop.py",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/hookify-stop",
             "timeout": 10,
             "async": true,
             "statusMessage": "Running stop hookify rules..."
@@ -47,7 +47,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/userpromptsubmit.py",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/hookify-userpromptsubmit",
             "timeout": 10,
             "statusMessage": "Checking prompt hookify rules..."
           }
@@ -59,7 +59,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/stopfailure.py",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/hookify-stopfailure",
             "timeout": 10,
             "async": true,
             "statusMessage": "Processing API failure..."

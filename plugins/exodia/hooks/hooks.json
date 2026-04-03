@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/smart/findings-inject.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/findings-inject",
             "timeout": 5,
             "statusMessage": "Checking for prior scan findings..."
           }
