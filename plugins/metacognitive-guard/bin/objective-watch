@@ -16,13 +16,23 @@ Fixed in this rewrite:
 
 from __future__ import annotations
 
+import hashlib
 import json
+import os
 import re
 import sys
 import time
 from pathlib import Path
 
-BLACKBOARD_DIR = Path(".blackboard")
+def _resolve_blackboard_dir() -> Path:
+    """Scope state per workspace + session to prevent anchor bleed."""
+    plugin_root = Path(os.environ.get("CLAUDE_PLUGIN_ROOT", "."))
+    cwd_hash = hashlib.sha256(os.getcwd().encode()).hexdigest()[:12]
+    session_id = os.environ.get("CLAUDE_SESSION_ID", "default")
+    return plugin_root / ".blackboard" / f"{cwd_hash}-{session_id}"
+
+
+BLACKBOARD_DIR = _resolve_blackboard_dir()
 STATE_PATH = BLACKBOARD_DIR / "objective.json"
 WARNING_COOLDOWN_SECONDS = 60
 
