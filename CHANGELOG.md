@@ -6,6 +6,11 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- **`otelhook` plugin (0.1.0)**: Hook-only plugin that injects OTel GenAI semantic conventions (v1.40.0) as passive context on SessionStart. Condensed reference covering span types (inference, create_agent, invoke_agent, execute_tool), attribute tables, operation/provider name enums, events (operation.details, evaluation.result), metrics (token.usage, operation.duration, server TPOT/TTFT), message JSON schemas (part types, roles, modalities), and content recording rules. Separated from otelwiki because GenAI semconv changes every 1-2 releases.
+- **`otelwiki` version lookup protocol (1.1.2)**: Added stable canonical URLs to otel-guide agent — GitHub release pages for all 5 OTel repos, NuGet package pages for 6 .NET SDK packages, and key facts (semconv vs SDK version tracks, dual collector versioning, OTLP port numbers). Agent no longer needs to discover these via WebSearch.
+
 ### Fixed
 
 - **Claude Code Review workflow**: Allow `dependabot[bot]` and `renovate[bot]` PRs to be reviewed by adding `allowed_bots` to `claude-code-action`. Previously, bot-authored PRs were rejected with "non-human actor" error.

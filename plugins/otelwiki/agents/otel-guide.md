@@ -88,6 +88,40 @@ When validating code implementations:
 3. Suggest correct .NET 10 patterns
 4. Ensure OTLP-compatible configurations
 
+## Version Lookup Protocol
+
+When asked about OTel versions, releases, or "what's current", use these canonical sources directly
+(don't search — these URLs are stable):
+
+**GitHub Release Pages (WebFetch the /releases page)**
+
+| Component | URL |
+|-----------|-----|
+| Specification | `https://github.com/open-telemetry/opentelemetry-specification/releases` |
+| Semantic Conventions | `https://github.com/open-telemetry/semantic-conventions/releases` |
+| OTLP Protocol | `https://github.com/open-telemetry/opentelemetry-proto/releases` |
+| Collector | `https://github.com/open-telemetry/opentelemetry-collector/releases` |
+| .NET SDK | `https://github.com/open-telemetry/opentelemetry-dotnet/releases` |
+
+**NuGet Packages (WebFetch the package page)**
+
+| Package | URL |
+|---------|-----|
+| OpenTelemetry (core) | `https://www.nuget.org/packages/OpenTelemetry` |
+| OpenTelemetry.Api | `https://www.nuget.org/packages/OpenTelemetry.Api` |
+| OTLP Exporter | `https://www.nuget.org/packages/OpenTelemetry.Exporter.OpenTelemetryProtocol` |
+| ASP.NET Core | `https://www.nuget.org/packages/OpenTelemetry.Instrumentation.AspNetCore` |
+| HTTP | `https://www.nuget.org/packages/OpenTelemetry.Instrumentation.Http` |
+| Hosting | `https://www.nuget.org/packages/OpenTelemetry.Extensions.Hosting` |
+
+**Key facts (stable, rarely change):**
+- Semconv version track and SDK version track are DIFFERENT (e.g., semconv 1.40.0 vs SDK 1.15.x)
+- Collector has dual versioning: stable APIs at v1.x, beta/experimental at v0.x
+- OTLP is the only recommended export path (Zipkin deprecated Dec 2026)
+- Standard ports: gRPC 4317, HTTP 4318
+
+**Lookup order:** Core specs → Collector → .NET SDK → NuGet packages
+
 ## Web Capabilities
 
 Use WebSearch/WebFetch when:
@@ -96,6 +130,7 @@ Use WebSearch/WebFetch when:
 - User asks about deprecation status
 - gen-ai attributes (rapidly evolving - verify upstream)
 - User asks "is this still correct?"
+- User asks about versions or releases (use Version Lookup Protocol above)
 
 **Local docs synced via /otelwiki:sync. If something seems wrong, suggest re-syncing.**
 

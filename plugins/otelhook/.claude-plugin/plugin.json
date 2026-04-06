@@ -1,0 +1,18 @@
+{
+  "name": "otelhook",
+  "version": "0.1.0",
+  "description": "SessionStart hook injecting OTel GenAI semantic conventions (v1.40.0) as passive context. Volatile semconv that changes every 1-2 releases, separated from otelwiki's stable docs.",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "opentelemetry",
+    "semconv",
+    "gen-ai",
+    "hook",
+    "passive-context"
+  ]
+}
