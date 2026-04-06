@@ -63,7 +63,6 @@ I need to...
 | **hookify** | User-configurable behavior rules |
 | **otelwiki** | Bundled OpenTelemetry docs + sync |
 | **dotnet-architecture-lint** | .NET MSBuild/CPM pattern enforcement |
-| **ancplua-project-routing** | Routes to specialist agents per project |
 
 ## Exodia Commands
 

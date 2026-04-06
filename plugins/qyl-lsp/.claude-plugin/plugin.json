@@ -1,6 +1,6 @@
 {
   "name": "qyl-lsp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "LSP code intelligence surface for qyl. SessionStart hook detects missing LSP tools in qyl.mcp and injects implementation guidance. Skill encodes placement, tool definitions, runtime stack, registration, and Loom bridge patterns.",
   "author": {
     "name": "AncpLua",
@@ -16,6 +16,5 @@
     "loom",
     "dotnet"
   ],
-  "skills": "./skills",
-  "hooks": "./hooks"
+  "skills": "./skills"
 }

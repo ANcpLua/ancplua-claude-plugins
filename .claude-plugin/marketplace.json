@@ -39,12 +39,6 @@
       "source": "./plugins/feature-dev"
     },
     {
-      "name": "ancplua-project-routing",
-      "description": "Auto-routes to specialist agents, commands, and skills based on current project. Injects cross-repo dependency graph for the ancplua .NET ecosystem.",
-      "version": "2.0.2",
-      "source": "./plugins/ancplua-project-routing"
-    },
-    {
       "name": "council",
       "description": "Five-agent council using Teams API: Opus captain orchestrates, researcher + synthesizer cross-pollinate via SendMessage, clarity asks live follow-ups, Haiku janitor flags bloat. Reactive collaboration instead of fire-and-forget subagents.",
       "version": "1.2.2",
@@ -95,7 +89,7 @@
     {
       "name": "qyl-lsp",
       "description": "LSP code intelligence surface for qyl. SessionStart hook detects missing LSP tools in qyl.mcp and injects implementation guidance.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "source": "./plugins/qyl-lsp"
     }
   ]

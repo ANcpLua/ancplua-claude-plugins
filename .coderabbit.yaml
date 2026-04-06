@@ -46,8 +46,6 @@ reviews:
       instructions: Apply when the PR modifies files under plugins/feature-dev/.
     - label: area:dotnet-lint
       instructions: Apply when the PR modifies files under plugins/dotnet-architecture-lint/.
-    - label: area:routing
-      instructions: Apply when the PR modifies files under plugins/ancplua-project-routing/.
     - label: area:council
       instructions: Apply when the PR modifies files under plugins/council/.
     - label: area:design-studio
