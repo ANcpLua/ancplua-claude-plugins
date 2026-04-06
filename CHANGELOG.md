@@ -8,6 +8,7 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **Claude Code Review workflow**: Allow `dependabot[bot]` and `renovate[bot]` PRs to be reviewed by adding `allowed_bots` to `claude-code-action`. Previously, bot-authored PRs were rejected with "non-human actor" error.
 - **`qyl-lsp` hooks schema (0.1.1)**: Fixed two issues preventing plugin installation. Removed invalid `"hooks"` field from plugin.json (hooks are auto-discovered from `hooks/hooks.json`). Rewrote hooks.json from flat array format to correct nested object schema matching all working plugins.
 
 ### Added
