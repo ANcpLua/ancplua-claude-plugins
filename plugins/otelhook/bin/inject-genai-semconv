@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# SessionStart: inject OTel GenAI semantic conventions as passive context
+cat "${CLAUDE_PLUGIN_ROOT}/data/genai-semconv.md"

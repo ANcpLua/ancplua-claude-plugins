@@ -17,7 +17,7 @@
     {
       "name": "otelwiki",
       "description": "OpenTelemetry documentation with auto-sync. Semantic conventions, collector config, .NET instrumentation.",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "source": "./plugins/otelwiki"
     },
     {
@@ -91,6 +91,12 @@
       "description": "LSP code intelligence surface for qyl. SessionStart hook detects missing LSP tools in qyl.mcp and injects implementation guidance.",
       "version": "0.1.1",
       "source": "./plugins/qyl-lsp"
+    },
+    {
+      "name": "otelhook",
+      "description": "SessionStart hook injecting OTel GenAI semantic conventions as passive context. Volatile semconv separated from otelwiki.",
+      "version": "0.1.0",
+      "source": "./plugins/otelhook"
     }
   ]
 }
