@@ -6,6 +6,10 @@ and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+
+- **`qyl-lsp` hooks schema (0.1.1)**: Fixed two issues preventing plugin installation. Removed invalid `"hooks"` field from plugin.json (hooks are auto-discovered from `hooks/hooks.json`). Rewrote hooks.json from flat array format to correct nested object schema matching all working plugins.
+
 ### Added
 
 - **`qyl-lsp` plugin (0.1.0)**: LSP code intelligence blueprint for qyl. SessionStart hook detects missing `src/qyl.mcp/Tools/Lsp/` surface and injects implementation guidance. Skill encodes the full construction plan: 6 deterministic function tools (goto-definition, find-references, symbols, diagnostics, prepare-rename, rename), 12-file runtime stack (process, transport, client, cleanup), DI/skill-bucket registration following DebugTools/RiderMcpProxy pattern, server targets (csharp-ls + typescript-language-server), and phase-2 Loom bridge with stacked attribute pattern. Placement rule: qyl.mcp serving plane, NOT qyl.collector.

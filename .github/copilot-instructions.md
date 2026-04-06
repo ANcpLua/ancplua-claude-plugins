@@ -82,7 +82,6 @@ ancplua-claude-plugins/
 │   ├── dotnet-architecture-lint/# .NET build pattern enforcement
 │   ├── hookify/                 # User-configurable hooks
 │   ├── feature-dev/             # Guided feature development + code review
-│   ├── ancplua-project-routing/ # Auto-routes to specialist agents
 │   └── exodia/                  # Multi-agent orchestration (v2.0.0)
 │
 ├── docs/

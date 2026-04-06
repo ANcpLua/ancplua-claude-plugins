@@ -42,7 +42,6 @@ ancplua-claude-plugins/
 │   ├── hookify/                 # User-configurable rule-based hooks
 │   ├── feature-dev/             # Guided feature development + code review
 │   ├── dotnet-architecture-lint/# .NET build pattern enforcement
-│   └── ancplua-project-routing/ # Cross-repo specialist agent routing
 │
 ├── docs/
 │   ├── ARCHITECTURE.md          # This file

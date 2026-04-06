@@ -80,10 +80,6 @@ For each selected plugin, run a guided demo. Explain what you're about to do, do
 1. Explain that this is project-specific (qyl AI observability platform)
 2. Show the observe command and captain-specialist pattern
 
-### ancplua-project-routing
-1. Explain cross-repo dependency awareness
-2. Show how it auto-routes to specialists based on current project
-
 ### ancplua (carlini-jr)
 1. Explain leaderless swarms with Playwright oracle
 2. Show the concept: code as opaque weights, correctness from observable behavior
