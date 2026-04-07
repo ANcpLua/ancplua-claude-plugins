@@ -38,7 +38,6 @@ ancplua-claude-plugins/
 ├── plugins/                     # 8 plugins (23 commands, 6 skills, 14 agents)
 │   ├── exodia/                  # Multi-agent orchestration (9 commands + 2 skills: eight-gates, hades)
 │   ├── metacognitive-guard/     # Cognitive amplification + commit integrity + CI
-│   ├── otelwiki/                # OpenTelemetry documentation + auto-sync
 │   ├── hookify/                 # User-configurable rule-based hooks
 │   ├── feature-dev/             # Guided feature development + code review
 │   ├── dotnet-architecture-lint/# .NET build pattern enforcement

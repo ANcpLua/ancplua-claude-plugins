@@ -34,7 +34,7 @@ IF building a new feature
   → use feature-dev plugin (code-architect → code-explorer → code-reviewer)
 
 IF writing telemetry/observability code
-  → read otel-expert skill, spawn otel-guide agent
+  → otelhook provides passive GenAI semconv context, qyl genai-architect agent
 
 IF CI verification before merge
   → use metacognitive-guard verify-local.sh + wait-for-ci.sh scripts
@@ -89,19 +89,16 @@ IF zero-tolerance cleanup needed
 |feature-dev/commands:{feature-dev.md,review.md}
 |hookify/commands:{help.md,list.md,configure.md,hookify.md}
 |metacognitive-guard/commands:{metacognitive-guard.md,competitive-review.md,deep-analysis.md,epistemic-checkpoint.md,verification-before-completion.md}
-|otelwiki/commands:{sync.md}
 
 [Skills]|root: ./plugins (only for skills needing hooks/argument-hint)
 |exodia/skills/eight-gates:{SKILL.md}
 |exodia/skills/hades:{SKILL.md,templates/}
 |feature-dev/skills/code-review:{SKILL.md,references/common-patterns.md}
 |hookify/skills/writing-rules:{SKILL.md,references/patterns-and-examples.md}
-|otelwiki/skills/otel-expert:{SKILL.md}
 
 [Agents]|root: ./plugins
 |Spawn via Task tool with subagent_type matching agent name
 |metacognitive-guard/agents:{arch-reviewer.md,impl-reviewer.md,deep-think-partner.md}
-|otelwiki/agents:{otel-guide.md,otel-librarian.md}
 |feature-dev/agents:{code-architect.md,code-explorer.md,code-reviewer.md}
 |hookify/agents:{conversation-analyzer.md}
 

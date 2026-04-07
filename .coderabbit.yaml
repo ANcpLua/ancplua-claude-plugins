@@ -38,9 +38,7 @@ reviews:
       instructions: Apply when the PR modifies files under plugins/exodia/.
     - label: area:metacognitive-guard
       instructions: Apply when the PR modifies files under plugins/metacognitive-guard/.
-    - label: area:otelwiki
-      instructions: Apply when the PR modifies files under plugins/otelwiki/.
-    - label: area:hookify
+- label: area:hookify
       instructions: Apply when the PR modifies files under plugins/hookify/.
     - label: area:feature-dev
       instructions: Apply when the PR modifies files under plugins/feature-dev/.
@@ -54,11 +52,7 @@ reviews:
       instructions: Apply when the PR modifies files under plugins/elegance-pipeline/.
     - label: area:code-simplifier
       instructions: Apply when the PR modifies files under plugins/code-simplifier/.
-    - label: area:qyl-instrumentation
-      instructions: Apply when the PR modifies files under plugins/qyl-instrumentation/.
-    - label: area:qyl-continuation
-      instructions: Apply when the PR modifies files under plugins/qyl-continuation/.
-    - label: area:ancplua
+- label: area:ancplua
       instructions: Apply when the PR modifies files under plugins/ancplua/.
     - label: area:infra
       instructions: Apply when the PR modifies .github/, tooling/, or build infrastructure files.
@@ -188,15 +182,7 @@ reviews:
         thresholds are reasonable. Flag any guard that could silently pass
         when it should block.
 
-    - path: plugins/otelwiki/**
-      instructions: >-
-        OpenTelemetry documentation plugin with auto-sync from upstream repos.
-        Review for: correct semantic convention references, that sync scripts
-        properly fetch from open-telemetry GitHub repos, and that bundled
-        docs stay current. Flag hardcoded version strings that should be
-        dynamically resolved.
-
-    - path: plugins/hookify/**
+- path: plugins/hookify/**
       instructions: >-
         User-configurable hook engine. Review for: correct rule schema,
         that rule matching logic handles edge cases (empty patterns, regex
@@ -312,9 +298,9 @@ reviews:
       requirements: >-
         Conventional commits: feat|fix|refactor|chore|docs|test|ci|perf.
         Include scope matching plugin name or area: (exodia), (metacognitive-guard),
-        (otelwiki), (hookify), (feature-dev), (dotnet-lint), (routing), (council),
-        (design-studio), (elegance), (code-simplifier), (qyl-instrumentation),
-        (qyl-continuation), (ancplua), (calini), (infra), (docs), (ci).
+        (hookify), (feature-dev), (dotnet-lint), (routing), (council),
+        (design-studio), (elegance), (code-simplifier), (qyl), (otelhook),
+        (qyl-lsp), (ancplua), (infra), (docs), (ci).
         Under 72 characters. No trailing period.
         Examples: feat(exodia): add baryon-mode command, fix(hookify): escape regex in rule matching
     custom_checks:

@@ -1,31 +1,35 @@
 # otelhook
 
-Hook-only plugin that injects OTel GenAI semantic conventions as passive context on SessionStart.
-
-## Why separate from otelwiki?
-
-GenAI semconv changes every 1-2 semconv releases. otelwiki bundles stable docs (collector, instrumentation,
-protocol, general semconv). This plugin isolates the volatile part so updating gen-ai conventions
-doesn't require touching otelwiki.
+Hook-only plugin that injects OTel GenAI + MCP semantic conventions as passive context on SessionStart.
 
 ## What it injects
 
-`data/genai-semconv.md` — condensed from semantic-conventions v1.40.0:
-- Span types: inference, create_agent, invoke_agent, execute_tool
-- Attribute tables with requirement levels
+`data/genai-semconv.md` — condensed from YAML registry at semantic-conventions v1.40.0:
+
+**GenAI** (from `model/gen-ai/*.yaml`):
+- Span types: inference, embeddings, retrieval (RAG), create_agent, invoke_agent, execute_tool
+- Full attribute tables with requirement levels
 - Operation names and provider names enums
+- Tool types enum (function, extension, datastore)
 - Events: operation.details, evaluation.result
-- Metrics: token.usage, operation.duration, server metrics
-- Message JSON schemas: part types, roles, modalities, finish reasons
-- Content recording rules (opt-in, sensitive data)
+- Metrics: token.usage, operation.duration, server TPOT/TTFT
+- Anthropic-specific token counting rules (cache_read + cache_creation)
+- Message JSON schemas: 8 part types, roles, modalities, finish reasons
+- Retrieval documents schema
+
+**MCP** (from `model/mcp/*.yaml`):
+- Client and server spans with method-based naming
+- All 26 MCP method names by category
+- MCP metrics: operation.duration, session.duration (client + server)
+- MCP/GenAI span compatibility rules (don't double-trace)
 
 ## When to update this plugin
 
-When open-telemetry/semantic-conventions cuts a new release that changes gen-ai/ docs.
+When `open-telemetry/semantic-conventions` cuts a new release that changes `model/gen-ai/` or `model/mcp/`.
 Check: https://github.com/open-telemetry/semantic-conventions/releases
 
 Update checklist:
-1. Read new gen-ai/ docs from the release tag
+1. Fetch new YAML files from the release tag (`model/gen-ai/*.yaml`, `model/mcp/*.yaml`)
 2. Update `data/genai-semconv.md` with changes
 3. Update version tag in genai-semconv.md and hooks.json statusMessage
 4. Bump plugin version in plugin.json
@@ -37,10 +41,11 @@ Update checklist:
 |------|---------|
 | `hooks/hooks.json` | SessionStart hook (once: true) |
 | `bin/inject-genai-semconv` | Cats data/genai-semconv.md |
-| `data/genai-semconv.md` | Condensed GenAI semconv v1.40.0 |
+| `data/genai-semconv.md` | Condensed GenAI + MCP semconv v1.40.0 |
 
 ## Known gaps vs upstream
 
-- `gen-ai-retrieval-documents.json` — not in v1.40.0 bundled docs, may appear in v1.41+
-- OpenAI-specific semconv (`openai.md`) — not included, check otelwiki bundled docs
-- AWS Bedrock, Azure-specific semconv — not included
+- OpenAI-specific semconv (`model/openai/`) — not included
+- AWS Bedrock-specific (`aws.bedrock.guardrail.id`, `aws.bedrock.knowledge_base.id`) — not included
+- Azure AI Inference-specific — not included
+- Provider-specific pages in `docs/gen-ai/` (anthropic.md, aws-bedrock.md, etc.) — core rules extracted, provider detail omitted

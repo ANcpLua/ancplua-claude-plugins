@@ -78,7 +78,6 @@ ancplua-claude-plugins/
 │   │   ├── agents/
 │   │   └── blackboard/
 │   │
-│   ├── otelwiki/                # OpenTelemetry documentation
 │   ├── dotnet-architecture-lint/# .NET build pattern enforcement
 │   ├── hookify/                 # User-configurable hooks
 │   ├── feature-dev/             # Guided feature development + code review

@@ -4,9 +4,6 @@ plugins/*/skills/*/SKILL.md
 plugins/*/commands/*.md
 plugins/*/elegance_pipeline/templates/*.md
 
-# Upstream synced content — violations are from source repos
-plugins/otelwiki/docs/
-
 # Append-only history
 CHANGELOG.md
 

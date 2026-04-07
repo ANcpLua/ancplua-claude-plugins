@@ -14,13 +14,7 @@
       "version": "0.6.8",
       "source": "./plugins/metacognitive-guard"
     },
-    {
-      "name": "otelwiki",
-      "description": "OpenTelemetry documentation with auto-sync. Semantic conventions, collector config, .NET instrumentation.",
-      "version": "1.1.2",
-      "source": "./plugins/otelwiki"
-    },
-    {
+{
       "name": "dotnet-architecture-lint",
       "description": "Enforces .NET build patterns: Version.props symlinks, CPM, and single-owner imports. Prevents AI agents from breaking centralized version management.",
       "version": "1.1.4",
@@ -94,7 +88,7 @@
     },
     {
       "name": "otelhook",
-      "description": "SessionStart hook injecting OTel GenAI semantic conventions as passive context. Volatile semconv separated from otelwiki.",
+      "description": "SessionStart hook injecting OTel GenAI + MCP semantic conventions (v1.40.0) as passive context. Source: YAML registry.",
       "version": "0.1.0",
       "source": "./plugins/otelhook"
     }

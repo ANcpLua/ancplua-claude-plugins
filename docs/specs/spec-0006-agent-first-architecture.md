@@ -84,15 +84,15 @@ The bar shifts from "correct code" to "correctable code."
 Revised from original "stay on subagents" after reflection. Reasoning:
 - Token cost is not a constraint (Max plan, Opus 4.6)
 - Teams already enabled via CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
-- calini plugin already uses TeamCreate/SendMessage
+- qyl plugin already uses TeamCreate/SendMessage
 - v2.1.72 prompts show Teams deeply integrated (643 fragments, not bolted on)
 - Teams give real coordination (SendMessage, broadcast, graceful shutdown)
   that subagents cannot do (spawn and forget)
-- Orchestration-heavy plugins (exodia, calini, carlini-jr, council) are
+- Orchestration-heavy plugins (exodia, qyl, council) are
   fighting subagent limitations already
 
-Migration order: exodia first (most complex orchestration), then calini,
-then council. Leave simple plugins (feature-dev, otelwiki, metacognitive-guard)
+Migration order: exodia first (most complex orchestration), then qyl,
+then council. Leave simple plugins (feature-dev, metacognitive-guard)
 as subagents — they don't need coordination.
 
 ---
