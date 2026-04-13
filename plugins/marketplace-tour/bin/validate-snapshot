@@ -25,7 +25,10 @@ validate_one() {
     '.version | type == "string" and length > 0 | .' \
     '.truth_source | type == "string" and length > 0 | .' \
     '.truth_identity | type == "string" | .' \
-    '.drift.status | type == "string" and test("^(FRESH|MISSING|UNKNOWN|STALE_[0-9]+d)$") | .' \
+    '.drift.status | type == "string" and test("^(FRESH|MISSING|UNKNOWN|METADATA_DRIFT|CONTENT_DRIFT|STALE_[0-9]+d)$") | .' \
+    '.drift.metadata_sync | type == "boolean" | .' \
+    '.drift.truth_overlap_pct | type == "number" and . >= 0 and . <= 100 | .' \
+    '.drift.mtime_delta_days | type == "number" and . >= 0 | .' \
     '.commands | type == "array" | .' \
     '.agents | type == "array" | .' \
     '.skills | type == "array" | .' \

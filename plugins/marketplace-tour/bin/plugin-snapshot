@@ -18,6 +18,35 @@ plugin_arg="${1:?usage: plugin-snapshot <name|all>}"
 repo_root="$(git rev-parse --show-toplevel)"
 marketplace="$repo_root/.claude-plugin/marketplace.json"
 
+# jaccard_pct — token-set jaccard similarity as integer percent (0–100).
+# Lowercases, splits on non-alphanumeric, drops words < 3 chars and common stopwords.
+# Returns 0 if both inputs are empty / all stopwords.
+jaccard_pct() {
+  awk -v A="$1" -v B="$2" '
+  BEGIN {
+    stop = "|the|and|for|with|from|that|this|not|are|was|has|have|its|can|will|use|all|any|one|into|per|via|also|just|only|more|each|such|been|were|does|did|made|out|off|down|over|under|between|within|while|after|before|during|against|upon|them|they|their|your|our|his|her|but|who|how|what|when|where|why|which|than|then|some|too|very|same|own|"
+    n = split(tolower(A), wa, /[^a-z0-9]+/)
+    m = split(tolower(B), wb, /[^a-z0-9]+/)
+    for (i=1; i<=n; i++) {
+      w = wa[i]
+      if (length(w) < 3) continue
+      if (index(stop, "|" w "|") > 0) continue
+      set_a[w] = 1
+    }
+    for (i=1; i<=m; i++) {
+      w = wb[i]
+      if (length(w) < 3) continue
+      if (index(stop, "|" w "|") > 0) continue
+      set_b[w] = 1
+    }
+    inter = 0; union = 0
+    for (w in set_a) { union++; if (w in set_b) inter++ }
+    for (w in set_b) { if (!(w in set_a)) union++ }
+    if (union == 0) { print 0; exit }
+    printf "%d\n", (inter * 100) / union
+  }'
+}
+
 snapshot_one() {
   local name="$1"
   local dir="$repo_root/plugins/$name"
@@ -112,15 +141,42 @@ snapshot_one() {
   fi
 
   local drift_status="UNKNOWN"
+  local metadata_sync="unknown"
+  local truth_overlap=0
+  local mtime_delta_days=0
+
   if [ -z "$mp_desc" ]; then
     drift_status="MISSING"
   else
+    # Layer 1: metadata sync — plugin.json description should equal marketplace.json description.
+    # If they diverge, someone bumped plugin.json without syncing marketplace.json (the most common drift).
+    if [ "$description" = "$mp_desc" ]; then
+      metadata_sync="true"
+    else
+      metadata_sync="false"
+    fi
+
+    # Layer 2: content overlap — marketplace description should share meaningful tokens with CLAUDE.md first paragraph.
+    # Low overlap means the description still reflects old framing even if both metadata files agree.
+    if [ -n "$truth_identity" ]; then
+      truth_overlap=$(jaccard_pct "$mp_desc" "$truth_identity")
+    fi
+
+    # Layer 3: mtime drift — only reported when both content checks passed.
     local mp_mtime cm_mtime
     mp_mtime=$(cd "$repo_root" && git log -1 --format=%ct -- .claude-plugin/marketplace.json 2>/dev/null || echo 0)
     cm_mtime=$(cd "$repo_root" && git log -1 --format=%ct -- "$truth_source" 2>/dev/null || echo 0)
     if [ "$cm_mtime" -gt "$mp_mtime" ] && [ "$cm_mtime" -gt 0 ]; then
-      local delta_days=$(( (cm_mtime - mp_mtime) / 86400 ))
-      drift_status="STALE_${delta_days}d"
+      mtime_delta_days=$(( (cm_mtime - mp_mtime) / 86400 ))
+    fi
+
+    # Priority order: content beats mtime.
+    if [ "$metadata_sync" = "false" ]; then
+      drift_status="METADATA_DRIFT"
+    elif [ "$truth_overlap" -lt 30 ]; then
+      drift_status="CONTENT_DRIFT"
+    elif [ "$mtime_delta_days" -gt 14 ]; then
+      drift_status="STALE_${mtime_delta_days}d"
     else
       drift_status="FRESH"
     fi
@@ -135,6 +191,9 @@ snapshot_one() {
     --arg marketplace_description "$mp_desc" \
     --arg marketplace_version "$mp_version" \
     --arg drift_status "$drift_status" \
+    --arg metadata_sync "$metadata_sync" \
+    --argjson truth_overlap "$truth_overlap" \
+    --argjson mtime_delta_days "$mtime_delta_days" \
     --argjson commands "$commands" \
     --argjson agents "$agents" \
     --argjson skills "$skills" \
@@ -149,7 +208,12 @@ snapshot_one() {
       plugin_json_description: $plugin_json_description,
       marketplace_description: $marketplace_description,
       marketplace_version: $marketplace_version,
-      drift: { status: $drift_status },
+      drift: {
+        status: $drift_status,
+        metadata_sync: ($metadata_sync == "true"),
+        truth_overlap_pct: $truth_overlap,
+        mtime_delta_days: $mtime_delta_days
+      },
       commands: $commands,
       agents: $agents,
       skills: $skills,

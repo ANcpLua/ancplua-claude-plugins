@@ -33,11 +33,21 @@ Validator passes JSON through on success, exits 1 + prints violation on schema f
 
 ## Output Fields
 
-`plugin`, `version`, `truth_source`, `truth_identity`, `plugin_json_description`, `marketplace_description`, `marketplace_version`, `drift.status`, `commands[]`, `agents[]`, `skills[]`, `hooks[]`, `keywords[]`, `recent_commits[{date,subject}]`
+`plugin`, `version`, `truth_source`, `truth_identity`, `plugin_json_description`, `marketplace_description`, `marketplace_version`, `drift.{status, metadata_sync, truth_overlap_pct, mtime_delta_days}`, `commands[]`, `agents[]`, `skills[]`, `hooks[]`, `keywords[]`, `recent_commits[{date,subject}]`
 
-`drift.status`: `FRESH` | `STALE_<N>d` | `MISSING` | `UNKNOWN`
+**`drift.status`** is computed in three layers, in priority order:
 
-`STALE_<N>d` means the truth file is N days newer than marketplace.json by mtime — the description is probably outdated. `FRESH` only means marketplace was edited recently, not that its content matches truth.
+| Status | Meaning |
+|---|---|
+| `MISSING` | plugin not in marketplace.json |
+| `METADATA_DRIFT` | plugin.json description ≠ marketplace.json description (someone bumped plugin.json but did not sync marketplace) |
+| `CONTENT_DRIFT` | metadata in sync, but `truth_overlap_pct < 30` — marketplace and plugin.json both agree on a description that shares <30% meaningful tokens with the CLAUDE.md first paragraph (both metadata files are stale together) |
+| `STALE_<N>d` | content checks passed, but truth file's git mtime is N>14 days newer than marketplace.json (soft signal) |
+| `FRESH` | all three checks passed |
+
+`truth_overlap_pct` is the jaccard similarity (0–100) of the lowercased, stopword-filtered token sets of marketplace_description vs truth_identity. A value below 30 almost always means the description is describing an old version of the plugin.
+
+`metadata_sync` is a boolean: true when `plugin_json_description == marketplace_description` verbatim.
 
 ## Present To User
 
