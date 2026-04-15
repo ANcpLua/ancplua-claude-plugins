@@ -1,9 +1,11 @@
 # spec-0004: MCP Connector Kit
 
-**Status:** Draft
+**Status:** Parked (2026-04-15)
 **Author:** Alexander + Claude Opus 4.6
 **Date:** 2026-03-03
 **Target repos:** `mcp-connector-kit` (new, npm package) + `qyl` (connector implementation) + `ancplua-claude-plugins` (plugin wrapper)
+
+> **Parked note (2026-04-15):** Cold since 2026-03-03, ~6 weeks with zero activity. Author could not recall the motivation when asked. The broader MCP landscape has shifted meaningfully in the intervening weeks (new first-party Anthropic connectors, spec revisions), so this draft is likely stale in its prior-art section. Do not treat this as an active anchor — if the MCP Connector Kit becomes priority again, re-verify the prior-art table against current state before resuming. Re-anchoring should be explicit (new status + new date).
 
 ---
 

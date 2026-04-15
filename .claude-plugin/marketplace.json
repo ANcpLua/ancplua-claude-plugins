@@ -22,8 +22,8 @@
     },
     {
       "name": "hookify",
-      "description": "User-configurable hooks from .local.md files. Define blocking, warning, and execute rules for Bash commands, file edits, and session events.",
-      "version": "0.4.1",
+      "description": "User-configurable hooks from .local.md files. Define warn, block, and execute rules for Bash commands, file edits, and session events. Fork with global rules support ($HOME/.claude/global-rules/).",
+      "version": "0.4.2",
       "source": "./plugins/hookify"
     },
     {
@@ -41,7 +41,7 @@
     {
       "name": "exodia",
       "description": "Multi-agent workflow orchestration (9 commands + 2 skills: eight-gates, hades): fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, baryon-mode. Hades, eight-gates, and red-blue-review use Teams API for reactive collaboration.",
-      "version": "2.1.4",
+      "version": "2.1.5",
       "source": "./plugins/exodia"
     },
     {
@@ -53,13 +53,13 @@
     {
       "name": "design-studio",
       "description": "Design intelligence studio: creative direction + data-driven recommendations. 50 styles, 97 palettes, 57 font pairings, 99 UX guidelines, 25 chart types, 13 stacks. BM25 search engine with design system generator.",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "source": "./plugins/design-studio"
     },
     {
       "name": "elegance-pipeline",
       "description": "Multi-agent code-elegance workflow: 4 scouts (sonnet), 2 judges (opus), 1 planner, 1 verifier, 1 gated implementer. Persistent state with stage gates.",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "source": "./plugins/elegance-pipeline"
     },
     {
@@ -82,14 +82,14 @@
     },
     {
       "name": "qyl-lsp",
-      "description": "LSP code intelligence surface for qyl. SessionStart hook detects missing LSP tools in qyl.mcp and injects implementation guidance.",
+      "description": "LSP code intelligence surface for qyl. SessionStart hook detects missing LSP tools in qyl.mcp and injects implementation guidance. Skill encodes placement, tool definitions, runtime stack, registration, and Loom bridge patterns.",
       "version": "0.1.1",
       "source": "./plugins/qyl-lsp"
     },
     {
       "name": "otelhook",
       "description": "SessionStart hook injecting OTel GenAI + MCP semantic conventions (v1.40.0) as passive context. Source: YAML registry.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "source": "./plugins/otelhook"
     }
   ]
