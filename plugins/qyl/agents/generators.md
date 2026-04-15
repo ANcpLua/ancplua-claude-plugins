@@ -60,9 +60,9 @@ Token attributes: `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`.
 
 ## Semconv Freshness (mandatory before OTel work)
 
-1. Glob for `**/otelwiki/docs/semantic-conventions/gen-ai/*.md`
+1. Glob for `**/otelhook/data/genai-semconv.md`
 2. Read attribute tables — these are source of truth, not hardcoded lists
-3. If otelwiki docs missing or VERSION.md >30 days stale, STOP and tell user to run `/otelwiki:sync`
+3. If otelhook data missing, STOP and tell user to install the otelhook plugin
 
 ## Banned Patterns
 

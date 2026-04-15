@@ -10,16 +10,23 @@ Older entries live in [docs/archive/CHANGELOG-history.md](docs/archive/CHANGELOG
 
 ### Added
 
-- **`otelhook` plugin (0.1.0)**: Hook-only plugin that injects OTel GenAI semantic conventions
-  (v1.40.0) as passive context on SessionStart. Condensed reference covering span types
-  (inference, create_agent, invoke_agent, execute_tool), attribute tables, operation/provider
-  name enums, events (operation.details, evaluation.result), metrics (token.usage,
-  operation.duration, server TPOT/TTFT), message JSON schemas (part types, roles, modalities),
-  and content recording rules. Separated from otelwiki because GenAI semconv changes every 1-2
-  releases.
-- **`otelwiki` version lookup protocol (1.1.2)**: Added stable canonical URLs to otel-guide
-  agent — GitHub release pages for 5 OTel repos, NuGet package pages for 6 .NET SDK packages,
-  and key facts. Agent no longer needs to discover these via WebSearch.
+- **`.claude/rules/engineering-principles.md`**: Agent-relevant subset (10 of 26) of Alexander's engineering principles, formatted as `IF <situation> → <principle>` triggers for fast in-session lookup. Auto-loaded by Claude Code from `.claude/rules/`. Pointer to full narrative at `docs/ENGINEERING-PRINCIPLES.md`.
+- **`marketplace-tour` capability-snapshot skill (1.1.0)**: Deterministic plugin capability extraction. `bin/plugin-snapshot <name|all>` walks truth files (`CLAUDE.md` → `README.md` → `plugin.json`) + git log + hooks.json and emits structured JSON; `bin/validate-snapshot` enforces the schema with jq and fails loud on drift. Refuses to read `marketplace.json` descriptions as truth — those are stale install metadata. Three-layer drift detection: `METADATA_DRIFT` (plugin.json ≠ marketplace.json), `CONTENT_DRIFT` (jaccard overlap with CLAUDE.md first paragraph <30%), `STALE_<N>d` (mtime soft signal). First run against 14 plugins found only 2 clean (code-simplifier, feature-dev); 6 `METADATA_DRIFT`, 6 `CONTENT_DRIFT`. Fixes: SIGPIPE on `git log | head -10` under `pipefail` (replaced with `git log -n 10`), first-paragraph identity extraction instead of bare heading.
+- **`otelhook` plugin (0.1.0)**: Hook-only plugin that injects OTel GenAI + MCP semantic conventions (v1.40.0) as passive context on SessionStart. Sourced from YAML registry (`model/gen-ai/*.yaml`, `model/mcp/*.yaml`), not generated markdown. Covers: GenAI spans (inference, embeddings, retrieval/RAG, create_agent, invoke_agent, execute_tool), MCP spans (client/server with 26 method names), full attribute tables, operation/provider/tool-type enums, events, metrics (GenAI token.usage + duration, MCP operation + session duration), Anthropic token counting rules (cache_read + cache_creation), message JSON schemas, retrieval documents schema, and MCP/GenAI span compatibility rules.
+
+### Removed
+
+- **`.claude/agent-framework.pdf`**: Reference binary that was tracked but no longer needed; the canonical MAF source-of-truth lives in `~/.claude/skills/microsoft-agent-framework/SKILL.md` and the upstream repo.
+- **`otelwiki` plugin**: Replaced entirely by `otelhook` (passive GenAI+MCP semconv) for the volatile parts. Stable reference URLs now live in qyl's `genai-architect` agent. All otelwiki references in qyl agents/commands rewired to otelhook.
+
+### Fixed
+
+- **`docs/ARCHITECTURE.md` `.claude/` tree**: Listed `rules/`, `settings.json`, and `settings.local.json` together (previously documented only one or the other depending on which session touched the file).
+- **Claude Code Review workflow**: Allow `dependabot[bot]` and `renovate[bot]` PRs to be reviewed by adding `allowed_bots` to `claude-code-action`. Previously, bot-authored PRs were rejected with "non-human actor" error.
+- **`qyl-lsp` hooks schema (0.1.1)**: Fixed two issues preventing plugin installation. Removed invalid `"hooks"` field from plugin.json (hooks are auto-discovered from `hooks/hooks.json`). Rewrote hooks.json from flat array format to correct nested object schema matching all working plugins.
+
+### Added (older — pre-merge from main)
+
 - **`qyl-lsp` plugin (0.1.0)**: LSP code intelligence blueprint for qyl. SessionStart hook
   detects missing `src/qyl.mcp/Tools/Lsp/` surface and injects implementation guidance. Skill
   encodes the full construction plan: 6 deterministic function tools (goto-definition,

@@ -8,23 +8,15 @@ effort: high
 
 Orchestrate the qyl observability team on `[task]`.
 
-## Step 1 — Captain Pre-Reads otelwiki Docs
+## Step 1 — Captain Pre-Reads otelhook Semconv Data
 
 Before spawning anyone, assemble SEMCONV_CONTEXT:
 
 ```text
-1. Glob for **/otelwiki/**/docs/**/*.md
-2. Read key files:
-   - semantic-conventions/gen-ai/gen-ai-spans.md
-   - semantic-conventions/gen-ai/gen-ai-metrics.md
-   - semantic-conventions/gen-ai/gen-ai-events.md
-   - semantic-conventions/gen-ai/gen-ai-agent-spans.md
-   - semantic-conventions/database/database-spans.md
-   - semantic-conventions/dotnet/README.md
-   - instrumentation/traces-api.md
-   - instrumentation/metrics-api.md
+1. Glob for **/otelhook/data/genai-semconv.md
+2. Read GenAI semconv data (spans, metrics, events, attributes).
 3. Extract attribute tables, metric instruments, event names into SEMCONV_CONTEXT.
-4. If otelwiki missing: warn user, proceed with built-in knowledge.
+4. If otelhook missing: warn user, proceed with built-in knowledge.
 ```
 
 ## Step 2 — TeamCreate + Spawn 4 Specialists (ONE message)
@@ -105,6 +97,6 @@ Real projects ONLY: qyl.collector, qyl.contracts, qyl.instrumentation,
 ## When NOT to use
 
 - Single-file attribute change -- spawn the specialist directly
-- Reading OTel docs -- `/otelwiki:otel-expert`
+- Reading OTel docs -- otelhook provides passive GenAI semconv context
 - P0 bug -- `/exodia:turbo-fix`
 - Cleanup -- `/exodia:hades`

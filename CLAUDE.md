@@ -51,7 +51,7 @@ Only required check: GitGuardian. All AI reviews are advisory.
 | Complex decision / dead-end | deep-analysis skill (4-phase) |
 | Code review needed | competitive-review skill (arch-reviewer + impl-reviewer) |
 | Building new feature | feature-dev plugin (architect -> explorer -> reviewer) |
-| Telemetry/observability code | otel-expert skill, otel-guide agent |
+| Telemetry/observability code | otelhook (passive GenAI semconv), qyl genai-architect agent |
 | CI verification before merge | metacognitive-guard verify-local.sh + wait-for-ci.sh |
 | Creating hookify rules | writing-rules skill |
 | .NET MSBuild/CPM patterns | dotnet-architecture-lint skill |

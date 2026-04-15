@@ -8,7 +8,7 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/bin/inject-genai-semconv",
             "timeout": 5,
-            "statusMessage": "Loading OTel GenAI semconv v1.40.0..."
+            "statusMessage": "Loading OTel GenAI + MCP semconv v1.40.0..."
           }
         ]
       }

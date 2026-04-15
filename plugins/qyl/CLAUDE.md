@@ -1,6 +1,6 @@
 # qyl — Unified Plugin
 
-Single source of truth for the qyl AI observability platform. Merges qyl-instrumentation + qyl-continuation + calini.
+Single source of truth for the qyl AI observability platform.
 
 ## Ground Truth (read Version.props + Directory.Packages.props for exact versions)
 

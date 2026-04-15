@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# validate-snapshot — schema check for plugin-snapshot output.
+#
+# Reads JSON from stdin. Accepts either a single snapshot object or an array.
+# Fails loud (exit 1) on the first schema violation and prints the offending
+# object to stderr.
+#
+# This is the best we can do without harness-enforced output schemas:
+# the skill instructs the LLM to pipe plugin-snapshot output through here,
+# and the script itself refuses to let bad data through silently.
+
+set -euo pipefail
+
+input=$(cat)
+[ -n "$input" ] || { echo "validate-snapshot: empty input" >&2; exit 1; }
+
+validate_one() {
+  local item="$1"
+  local plugin
+  plugin=$(echo "$item" | jq -r '.plugin // "<unknown>"')
+
+  local check
+  for check in \
+    '.plugin | type == "string" and length > 0 | .' \
+    '.version | type == "string" and length > 0 | .' \
+    '.truth_source | type == "string" and length > 0 | .' \
+    '.truth_identity | type == "string" | .' \
+    '.drift.status | type == "string" and test("^(FRESH|MISSING|UNKNOWN|METADATA_DRIFT|CONTENT_DRIFT|STALE_[0-9]+d)$") | .' \
+    '.drift.metadata_sync | type == "boolean" | .' \
+    '.drift.truth_overlap_pct | type == "number" and . >= 0 and . <= 100 | .' \
+    '.drift.mtime_delta_days | type == "number" and . >= 0 | .' \
+    '.commands | type == "array" | .' \
+    '.agents | type == "array" | .' \
+    '.skills | type == "array" | .' \
+    '.hooks | type == "array" | .' \
+    '.keywords | type == "array" | .' \
+    '.recent_commits | type == "array" | .' \
+    '.recent_commits | all(has("date") and has("subject")) | .'
+  do
+    if ! echo "$item" | jq -e "$check" >/dev/null 2>&1; then
+      echo "SCHEMA_VIOLATION [$plugin]: $check" >&2
+      echo "$item" | jq '.' >&2
+      return 1
+    fi
+  done
+
+  echo "OK: $plugin (drift=$(echo "$item" | jq -r '.drift.status'))" >&2
+  return 0
+}
+
+if echo "$input" | jq -e 'type == "array"' >/dev/null 2>&1; then
+  count=$(echo "$input" | jq 'length')
+  i=0
+  while [ "$i" -lt "$count" ]; do
+    item=$(echo "$input" | jq ".[$i]")
+    validate_one "$item" || exit 1
+    i=$((i + 1))
+  done
+  echo "OK: $count snapshots valid" >&2
+else
+  validate_one "$input" || exit 1
+fi
+
+echo "$input"

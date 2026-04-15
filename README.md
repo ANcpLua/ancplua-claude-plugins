@@ -16,14 +16,11 @@ is gated — work only advances when the gate passes. No manual babysitting.
 | **metacognitive-guard**      | Watches the AI while it works. If it's about to cut corners, guess instead of verify, or say "done" when it isn't — this blocks it before the mistake happens               |
 | **feature-dev**              | A guided process for building new things: understand what exists, design the plan, build it, review it. No skipping steps                                                   |
 | **hookify**                  | Custom tripwires you set up. "Never do X" or "Always check Y before Z." The AI physically cannot proceed if it violates your rules                                          |
-| **otelwiki**                 | Built-in reference for OpenTelemetry monitoring standards so the AI writes correct telemetry code instead of guessing                                                       |
 | **dotnet-architecture-lint** | Enforces .NET project structure rules automatically — catches version mismatches and structural violations before they ship                                                 |
 | **council**                  | Five-agent council for complex tasks. Opus captain decomposes and dispatches, three Sonnet specialists research/synthesize/check, Haiku janitor flags bloat                 |
 | **design-studio**            | Design intelligence helpers for visual direction, UX patterns, and design-system generation                                                                                 |
 | **elegance-pipeline**        | Multi-agent pipeline that scores code elegance and optionally refactors the weakest files through gated stages                                                              |
 | **code-simplifier**          | Simplifies implementations while preserving behavior — measures elegance as problem-complexity / solution-complexity                                                        |
-| **qyl-instrumentation**      | Observability orchestration for OpenTelemetry instrumentation across the qyl platform                                                                                       |
-| **qyl-continuation**         | Smart continuation heuristic that reduces unnecessary model calls while preserving quality checks                                                                           |
 
 ### How does this work without failing?
 
@@ -64,7 +61,6 @@ Codex review lives in `.github/workflows/codex-code-review.yml`.
 plugins/
 ├── exodia/                  # parallel agent orchestration (9 commands + 2 skills)
 ├── metacognitive-guard/     # quality gates + commit integrity + CI verification
-├── otelwiki/                # OpenTelemetry docs + sync
 ├── hookify/                 # user-configurable behavior rules
 ├── feature-dev/             # guided feature development + code review
 ├── council/                 # five-agent council (Teams API)
@@ -72,8 +68,7 @@ plugins/
 ├── design-studio/           # design intelligence + BM25 search
 ├── elegance-pipeline/       # code elegance scoring + gated refactoring
 ├── code-simplifier/         # complexity reduction agent
-├── qyl-instrumentation/     # OTel observability orchestration
-└── qyl-continuation/        # smart auto-continuation
+└── otelhook/                # OTel GenAI semconv passive context
 ```
 
 ## Links

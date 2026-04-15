@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-qyl-continuation stop hook.
+qyl stop hook (continuation heuristic).
 Based on double-shot-latte (MIT) by Jesse/Anthropic.
 Heuristic-only mode (Phase 2 Haiku judge removed).
 """
@@ -17,7 +17,7 @@ MAX_CONTINUATIONS = 3
 WINDOW_SECONDS = 300
 TAIL_LINES = 6
 
-WORK_DIR = Path(os.environ.get("CLAUDE_PLUGIN_DATA", str(Path.home() / ".claude" / "qyl-continuation")))
+WORK_DIR = Path(os.environ.get("CLAUDE_PLUGIN_DATA", str(Path.home() / ".claude" / "qyl")))
 WORK_DIR.mkdir(parents=True, exist_ok=True)
 
 

@@ -1,7 +1,7 @@
 {
   "name": "marketplace-tour",
-  "version": "1.0.0",
-  "description": "Interactive live demos of all marketplace plugins with version-gated features.",
+  "version": "1.1.0",
+  "description": "Interactive live demos of all marketplace plugins + deterministic capability-snapshot skill that reads CLAUDE.md truth files instead of stale marketplace.json descriptions.",
   "author": {
     "name": "AncpLua",
     "email": "ancplua@pm.me"

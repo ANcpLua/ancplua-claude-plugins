@@ -41,11 +41,6 @@ I need to...
 │   ├── Confirm completion ───── /metacognitive-guard:verification-before-completion
 │   └── .NET lint rules ──────── /dotnet-architecture-lint:lint-dotnet
 │
-├── OpenTelemetry
-│   ├── Semconv question ──────── (auto: otel-expert skill activates)
-│   ├── Sync upstream docs ───── /otelwiki:sync
-│   └── Instrumentation help ── (auto: otel-guide agent spawns)
-│
 └── Hooks / Rules
     ├── Create a new rule ──────── /hookify:hookify "behavior to prevent"
     ├── List active rules ──────── /hookify:list
@@ -61,7 +56,6 @@ I need to...
 | **metacognitive-guard** | Prevents wrong output, wrong reasoning, premature completion |
 | **feature-dev** | Guided feature development + code review |
 | **hookify** | User-configurable behavior rules |
-| **otelwiki** | Bundled OpenTelemetry docs + sync |
 | **dotnet-architecture-lint** | .NET MSBuild/CPM pattern enforcement |
 
 ## Exodia Commands
@@ -123,8 +117,6 @@ I need to...
 | `arch-reviewer` | metacognitive-guard | SOLID violations, dependency issues, coupling |
 | `impl-reviewer` | metacognitive-guard | Banned APIs, version mismatches, WebSearch fact-checks |
 | `deep-think-partner` | metacognitive-guard | Async reasoning amplifier for complex problems |
-| `otel-guide` | otelwiki | Answers OTel questions from bundled docs |
-| `otel-librarian` | otelwiki | Syncs upstream OTel docs |
 | `conversation-analyzer` | hookify | Scans transcripts for frustration patterns |
 
 ## Composition Patterns

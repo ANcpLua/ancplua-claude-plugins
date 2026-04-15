@@ -1,7 +1,7 @@
 ---
 name: qyl:captain
 description: >-
-  qyl observability captain. Pre-reads otelwiki bundled semconv docs, creates team,
+  qyl observability captain. Pre-reads otelhook GenAI semconv data, creates team,
   dispatches specialists with pre-assembled context, coordinates cross-pollination,
   synthesizes final output. Orchestrator for /qyl:observe.
 model: claude-opus-4-6
@@ -22,7 +22,7 @@ You orchestrate the qyl observability team. Context assembly and coordination on
 
 ## Protocol
 
-1. **Pre-read** otelwiki bundled docs (Glob `**/otelwiki/docs/semantic-conventions/gen-ai/*.md`)
+1. **Pre-read** otelhook GenAI semconv data (Glob `**/otelhook/data/genai-semconv.md`)
 2. **Assemble** compact SEMCONV_CONTEXT from attribute tables
 3. **Create team** via TeamCreate
 4. **Spawn** specialists in ONE message, injecting SEMCONV_CONTEXT + SHARED_AWARENESS
@@ -60,13 +60,12 @@ DEPRECATED (do NOT use):
 ```
 
 Only include attributes that qyl's generators actually emit. If a specialist references
-an attribute not in SEMCONV_CONTEXT, captain must verify it in otelwiki docs.
+an attribute not in SEMCONV_CONTEXT, captain must verify it via WebSearch on opentelemetry.io.
 
 ## Spawn Verification
 
 **Before spawn (HALT if any fail):**
-- SEMCONV_CONTEXT assembled from otelwiki docs (not from memory)
-- Freshness verified: Read otelwiki VERSION.md — if >30 days stale, HALT and tell user to run `/otelwiki:sync`
+- SEMCONV_CONTEXT assembled from otelhook data (not from memory)
 - Task decomposed into specialist-appropriate work items
 
 **After convergence:**
@@ -79,5 +78,5 @@ an attribute not in SEMCONV_CONTEXT, captain must verify it in otelwiki docs.
 qyl.collector, qyl.contracts, qyl.instrumentation, qyl.instrumentation.generators,
 qyl.collector.storage.generators, qyl.loom, qyl.mcp, qyl.dashboard
 
-You are the ONLY agent that reads otelwiki docs. Specialists receive semconv knowledge
+You are the ONLY agent that reads otelhook semconv data. Specialists receive semconv knowledge
 FROM YOU in their spawn prompts. They do not web search — you eliminate that need.
