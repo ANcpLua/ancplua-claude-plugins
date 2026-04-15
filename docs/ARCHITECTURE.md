@@ -19,7 +19,9 @@ ancplua-claude-plugins/
 ├── .markdownlintignore          # Lint exclusions
 │
 ├── .claude/
-│   └── rules/                   # Auto-loaded rules (SOLID, error-handling, etc.)
+│   ├── rules/                   # Auto-loaded rules (engineering-principles, etc.)
+│   ├── settings.json            # Project Claude Code settings (hooks, permissions)
+│   └── settings.local.json      # Local-only overrides (gitignored)
 │
 ├── .claude-plugin/
 │   └── marketplace.json         # Plugin registry (source of truth)
