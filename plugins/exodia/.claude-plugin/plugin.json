@@ -1,7 +1,7 @@
 {
   "name": "exodia",
-  "version": "2.1.4",
-  "description": "Multi-agent workflow orchestration: 9 commands (fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, baryon-mode) + 2 skills (eight-gates, hades).",
+  "version": "2.1.5",
+  "description": "Multi-agent workflow orchestration (9 commands + 2 skills: eight-gates, hades): fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, baryon-mode. Hades, eight-gates, and red-blue-review use Teams API for reactive collaboration.",
   "author": {
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"

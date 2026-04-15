@@ -8,6 +8,10 @@ Older entries live in [docs/archive/CHANGELOG-history.md](docs/archive/CHANGELOG
 
 ## [Unreleased]
 
+### Changed
+
+- **METADATA_DRIFT cleanup (6 plugins)**: Synced `plugin.json` ↔ `marketplace.json` descriptions for `design-studio` (1.0.4), `elegance-pipeline` (1.0.4), `exodia` (2.1.5), `hookify` (0.4.2), `otelhook` (0.1.1), and `qyl-lsp` (description-only sync). Capability-snapshot scan went from 6 `METADATA_DRIFT` to 0; `FRESH` count rose from 2/14 to 4/14 (`code-simplifier`, `feature-dev`, `design-studio`, `otelhook`). The other four moved from `METADATA_DRIFT` to `CONTENT_DRIFT` — their descriptions no longer mismatch each other, but still share <30% jaccard overlap with their own `CLAUDE.md` first paragraph. CONTENT_DRIFT cleanup is a separate per-plugin writing pass.
+
 ### Added
 
 - **`.claude/rules/engineering-principles.md`**: Agent-relevant subset (10 of 26) of Alexander's engineering principles, formatted as `IF <situation> → <principle>` triggers for fast in-session lookup. Auto-loaded by Claude Code from `.claude/rules/`. Pointer to full narrative at `docs/ENGINEERING-PRINCIPLES.md`.
