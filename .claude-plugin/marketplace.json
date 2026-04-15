@@ -14,7 +14,7 @@
       "version": "0.6.8",
       "source": "./plugins/metacognitive-guard"
     },
-{
+    {
       "name": "dotnet-architecture-lint",
       "description": "Enforces .NET build patterns: Version.props symlinks, CPM, and single-owner imports. Prevents AI agents from breaking centralized version management.",
       "version": "1.1.4",
