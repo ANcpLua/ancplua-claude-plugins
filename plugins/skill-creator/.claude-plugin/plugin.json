@@ -1,0 +1,12 @@
+{
+  "name": "skill-creator",
+  "version": "1.0.0",
+  "description": "Create, evaluate, and iteratively improve Claude Code skills.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": ["skills", "creator", "eval", "benchmark", "packaging"]
+}
