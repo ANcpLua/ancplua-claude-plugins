@@ -91,6 +91,12 @@
       "description": "SessionStart hook injecting OTel GenAI + MCP semantic conventions (v1.40.0) as passive context. Source: YAML registry.",
       "version": "0.1.1",
       "source": "./plugins/otelhook"
+    },
+    {
+      "name": "skill-creator",
+      "description": "Create, evaluate, and iteratively improve Claude Code skills.",
+      "version": "1.0.0",
+      "source": "./plugins/skill-creator"
     }
   ]
 }
