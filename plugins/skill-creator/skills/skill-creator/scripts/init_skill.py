@@ -11,8 +11,12 @@ Examples:
     init_skill.py custom-skill --path /custom/location
 """
 
+import re
 import sys
 from pathlib import Path
+
+# Same pattern enforced by quick_validate.py for frontmatter names
+_VALID_SKILL_NAME = re.compile(r'^[a-z][a-z0-9]*(-[a-z0-9]+)*$')
 
 # Fix Windows console encoding for emoji support
 if sys.platform == 'win32':
@@ -290,6 +294,17 @@ def main():
 
     skill_name = sys.argv[1]
     path = sys.argv[3]
+
+    # Validate skill name before creating anything
+    if len(skill_name) > 64:
+        print(f"❌ Error: Skill name exceeds 64 characters ({len(skill_name)}).")
+        sys.exit(1)
+    if not _VALID_SKILL_NAME.match(skill_name):
+        print(f"❌ Error: Invalid skill name '{skill_name}'.")
+        print("  Must be kebab-case: lowercase letters, digits, and hyphens.")
+        print("  No leading/trailing hyphens, no consecutive hyphens.")
+        print("  Pattern: ^[a-z][a-z0-9]*(-[a-z0-9]+)*$")
+        sys.exit(1)
 
     print(f"🚀 Initializing skill: {skill_name}")
     print(f"   Location: {path}")

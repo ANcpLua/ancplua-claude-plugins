@@ -339,7 +339,7 @@ See `references/description-optimization.md` for full details.
 python ${CLAUDE_SKILL_DIR}/scripts/package_skill.py <path/to/skill-folder>
 ```
 
-Validates the skill first (frontmatter, naming conventions, directory structure). If validation passes, creates a `.skill` ZIP excluding `evals/` and build artifacts. If validation fails, fix the reported errors and retry.
+Validates the skill first (frontmatter format, required fields, naming conventions). If validation passes, creates a `.skill` ZIP excluding `evals/` and build artifacts. If validation fails, fix the reported errors and retry.
 
 If the `present_files` tool is available, present the `.skill` file to the user. Otherwise, tell them the file path.
 
