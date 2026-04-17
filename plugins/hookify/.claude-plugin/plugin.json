@@ -1,6 +1,6 @@
 {
   "name": "hookify",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "User-configurable hooks from .local.md files. Define warn, block, and execute rules for Bash commands, file edits, and session events. Fork with global rules support ($HOME/.claude/global-rules/).",
   "author": {
     "name": "AncpLua",

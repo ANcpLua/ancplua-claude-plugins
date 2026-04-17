@@ -3,7 +3,7 @@ name: writing-rules
 description: >
   Guide for creating hookify rules to prevent unwanted AI behaviors.
   Use when user asks to create, write, or configure hookify rules.
-effort: low
+effort: medium
 ---
 
 # Writing Hookify Rules
