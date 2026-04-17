@@ -81,12 +81,6 @@
       "source": "./plugins/marketplace-tour"
     },
     {
-      "name": "qyl-lsp",
-      "description": "LSP code intelligence surface for qyl. SessionStart hook detects missing LSP tools in qyl.mcp and injects implementation guidance. Skill encodes placement, tool definitions, runtime stack, registration, and Loom bridge patterns.",
-      "version": "0.1.1",
-      "source": "./plugins/qyl-lsp"
-    },
-    {
       "name": "otelhook",
       "description": "SessionStart hook injecting OTel GenAI + MCP semantic conventions (v1.40.0) as passive context. Source: YAML registry.",
       "version": "0.1.1",

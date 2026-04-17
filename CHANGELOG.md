@@ -8,6 +8,10 @@ Older entries live in [docs/archive/CHANGELOG-history.md](docs/archive/CHANGELOG
 
 ## [Unreleased]
 
+### Removed
+
+- **`qyl-lsp` plugin**: Deleted from marketplace. Content was qyl-specific LSP implementation guidance that belongs in the qyl repo itself — authoritative SKILL.md now lives at `~/qyl/.claude/skills/qyl-lsp/SKILL.md` (verified against real wiring: `[QylSkill(QylSkillKind.Debug)]` attribute + `Qyl.Generated.QylToolManifest` generator path + `Hosting/QylMcpServiceCollectionExtensions.cs` DI). This repo-held version was 2 months stale and documented three fabricated seams (`SkillRegistrationExtensions.cs`, `Program.cs ConfigureCommonServices()`, manual `WithTools<LspTools>()`) that do not exist in current qyl. Single source of truth now in qyl. Also removed `qyl-lsp` commit-scope from `.coderabbit.yaml`.
+
 ### Changed
 
 - **METADATA_DRIFT cleanup (6 plugins)**: Synced `plugin.json` ↔ `marketplace.json` descriptions for `design-studio` (1.0.4), `elegance-pipeline` (1.0.4), `exodia` (2.1.5), `hookify` (0.4.2), `otelhook` (0.1.1), and `qyl-lsp` (description-only sync). Capability-snapshot scan went from 6 `METADATA_DRIFT` to 0; `FRESH` count rose from 2/14 to 4/14 (`code-simplifier`, `feature-dev`, `design-studio`, `otelhook`). The other four moved from `METADATA_DRIFT` to `CONTENT_DRIFT` — their descriptions no longer mismatch each other, but still share <30% jaccard overlap with their own `CLAUDE.md` first paragraph. CONTENT_DRIFT cleanup is a separate per-plugin writing pass.
