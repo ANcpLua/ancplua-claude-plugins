@@ -2,8 +2,8 @@
 name: elegance-scout
 description: Read-only code elegance scout. Inspects an assigned scope for the most elegant source files. Use when running the elegance pipeline scout phase.
 tools: Read, Grep, Glob, Bash
-model: sonnet
-effort: low
+model: claude-sonnet-4-6
+effort: medium
 disallowedTools: [Edit, Write]
 maxTurns: 15
 ---
