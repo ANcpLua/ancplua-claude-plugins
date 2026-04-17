@@ -3,8 +3,8 @@ name: worker
 description: >-
   Self-directing worker for carlini-jr swarms. Implements assigned DOD items
   in an isolated worktree, verifies via Playwright MCP screenshots.
-model: sonnet
-effort: low
+model: opus
+effort: xhigh
 isolation: worktree
 maxTurns: 30
 ---
