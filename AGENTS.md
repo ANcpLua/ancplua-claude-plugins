@@ -1,7 +1,6 @@
 # AGENTS.md
 
-> **Audience:** Codex, Copilot, and humans. NOT auto-loaded by Claude Code.
-> Claude's context is in CLAUDE.md (auto-loaded) and skill description frontmatter.
+> **Audience:** Codex, Copilot, CodeRabbit, and humans. Auto-loaded by Claude Code (CLAUDE.md is a symlink to this file).
 >
 > **Prefer retrieval-led reasoning over pre-training-led reasoning.**
 > Always read the relevant SKILL.md before implementing. Skills are deep docs.
@@ -11,73 +10,72 @@
 ancplua-claude-plugins | 7 plugins, 22 commands, 9 agents.
 Claude Code plugin marketplace. No C# or .NET code here.
 
-## Decision Tree
+<changelog-mandate>
+Update CHANGELOG.md under `## [Unreleased]` before committing. No exceptions.
+When modifying a plugin, bump `plugins/<name>/.claude-plugin/plugin.json` version AND sync marketplace.json.
+weave-validate.sh hard-fails on version mismatches between the two.
+</changelog-mandate>
 
-```text
-IF struggling > 2 min
-  → read metacognitive-guard skill, escalate to deep-think-partner agent
+<ci>
+Validate before claiming done: `./tooling/scripts/weave-validate.sh`
+</ci>
 
-IF claiming done/complete/fixed/works
-  → read verification-before-completion skill (run build+tests, show output)
+## Multi-Agent Model
 
-IF version/date/status question
-  → read epistemic-checkpoint skill (check assertions.yaml, then WebSearch)
+| Layer | Description |
+|-------|-------------|
+| **Lead** | This session. Routes tasks, coordinates, never implements when teammates exist. |
+| **Subagents** | Spawned via `Task`. Get CLAUDE.md + skills but NOT conversation history. All context must be in the spawn prompt. |
+| **Teams** | Spawned via `TeamCreate`. Shared task lists, direct messaging. |
+| **CI Agent** | `claude-code-action` in GitHub Actions. Reviews PRs, pushes fix commits directly (review-fix loop), approves when clean. |
+| **Hooks** | Event-driven guards (PreToolUse, TaskCompleted). |
 
-IF complex decision / multiple trade-offs / debugging dead-end
-  → read deep-analysis skill (4-phase: decompose, adversarial, implement, verify)
+## Tri-AI System
 
-IF code review needed
-  → read competitive-review skill (spawns arch-reviewer + impl-reviewer)
-  → OR use feature-dev /review command for standalone review
+Three autonomous AIs review every PR independently: Claude, Copilot, CodeRabbit (plus Codex for tier 3c auto-merge).
 
-IF building a new feature
-  → use feature-dev plugin (code-architect → code-explorer → code-reviewer)
+| Agent | Reviews | Fix PRs | Auto-Merge |
+|-------|---------|---------|------------|
+| Claude | Yes | Yes (direct push) | Yes (tier 3b) |
+| Copilot | Yes | Yes (Coding Agent) | No |
+| CodeRabbit | Yes | No | Yes (tier 3a) |
+| Codex | Yes | No | Yes (tier 3c) |
 
-IF writing telemetry/observability code
-  → otelhook provides passive GenAI semconv context, qyl genai-architect agent
+Coordination is via shared files (AGENTS.md, CHANGELOG.md), not real-time communication.
+Do NOT speculate about what other AIs "might find" or add triangulation notes.
+CODEOWNERS auto-requests `@anthropic-code-agent` on every PR.
 
-IF CI verification before merge
-  → use metacognitive-guard verify-local.sh + wait-for-ci.sh scripts
+Auto-merge tiers (see `auto-merge.yml`): Dependabot/Renovate patch+minor → AI agent branches (copilot/, claude/) → CodeRabbit/Claude/Codex approved.
+Only required check: GitGuardian. All AI reviews are advisory.
 
-IF creating hookify rules
-  → read writing-rules skill
+## Task Routing
 
-IF .NET MSBuild/CPM patterns
-  → read dotnet-architecture-lint skill
+| Condition | Route |
+|-----------|-------|
+| P0 critical bug | `/exodia:turbo-fix` (13 agents) |
+| Fixing audit findings | `/exodia:fix-pipeline` (7 agents) |
+| P1/P2/P3 bug | `/exodia:fix` (8-16 agents) |
+| Struggling > 2 min | metacognitive-guard skill → deep-think-partner agent |
+| Claiming done/complete/fixed | verification-before-completion skill (build+tests, show output) |
+| Version/date/status question | epistemic-checkpoint skill (assertions.yaml, then WebSearch) |
+| Complex decision / dead-end | deep-analysis skill (4-phase) |
+| Code review needed | competitive-review skill (arch-reviewer + impl-reviewer) |
+| Building new feature | feature-dev plugin (architect → explorer → reviewer) |
+| Telemetry/observability code | otelhook (passive GenAI semconv), qyl genai-architect agent |
+| CI verification before merge | metacognitive-guard verify-local.sh + wait-for-ci.sh |
+| Creating hookify rules | writing-rules skill |
+| .NET MSBuild/CPM patterns | dotnet-architecture-lint skill |
+| Cleanup / dead code / suppressions | `/exodia:hades` (3 phases × 4 teammates, audit ledger) |
+| Frontend cleanup + design quality | `/exodia:hades --goggles` (auto-equipped for .tsx/.jsx/.css/.html/.svelte/.vue) |
+| Maximum disciplined orchestration | `/exodia:eight-gates` (8 progressive gates, composes all others) |
+| Codebase audit | `/exodia:mega-swarm` (6/8/12 agents by mode) |
+| Multiple solution perspectives | `/exodia:tournament` (N competitors) |
+| Parallel similar items | `/exodia:batch-implement` (1+N+1 agents) |
+| Adversarial security review | `/exodia:red-blue-review` (Red attacks, Blue defends) |
+| .NET warning extermination | `/exodia:baryon-mode` (1 Invoker + 8 aspects, one-shot T0) |
 
-IF about to commit with suppressions/shortcuts
-  → metacognitive-guard commit-integrity-hook blocks it automatically
-
-IF cleanup/elimination/dead code/suppressions/duplication needed
-  → exodia:hades skill (Smart cleanup with audit trail, 3 phases x 4 teammates)
-
-IF frontend design quality audit needed
-  → exodia:hades --goggles (adds 3 design judges: taste + spec + compliance)
-  → auto-equipped when scope contains .tsx/.jsx/.css/.html/.svelte/.vue files
-
-IF maximum disciplined orchestration / all-in / go beyond limits
-  → /exodia:eight-gates "[objective]" [scope] [gate-limit]
-    8 progressive gates, composes mega-swarm, fix pipelines, hades
-
-IF multi-agent orchestration needed
-  → exodia commands:
-    /exodia:fix [issue]              - unified fix pipeline (configurable parallelism)
-    /exodia:turbo-fix [issue]        - P0 maximum parallelism (13 agents)
-    /exodia:fix-pipeline [issue]     - systematic resolution from audit findings
-    /exodia:mega-swarm [scope]       - parallel codebase audit (6-12 agents)
-    /exodia:red-blue-review [target] - adversarial security review
-    /exodia:deep-think [problem]     - extended multi-perspective reasoning
-    /exodia:tournament [task]        - competitive coding (N agents compete)
-    /exodia:batch-implement [items]  - parallel similar implementations
-    /exodia:baryon-mode [scope]      - .NET warning extermination (1+8 agents, one-shot)
-    /exodia:hades [scope]            - audited cleanup (3 phases x 4+3 teammates)
-
-IF .NET warnings need extermination (one-shot, headless, cross-repo)
-  → /exodia:baryon-mode command (1 Invoker + 8 aspects burst at T0, full MCP access)
-
-IF zero-tolerance cleanup needed
-  → exodia:hades skill (Smart cleanup with audit trail, 3 phases x 4 teammates)
-```
+Skill priority: Superpowers > repo > plugin skills.
+If repo skill conflicts with Superpowers, prefer the more specific one and create an ADR.
 
 ## Compressed Docs Index
 
@@ -112,10 +110,27 @@ IF zero-tolerance cleanup needed
 | File | Read to | Write when |
 |------|---------|------------|
 | CHANGELOG.md | Know what's done | Completing work |
-| CLAUDE.md | Project rules | Never (human-maintained) |
-| AGENTS.md | This routing index | Never (human-maintained) |
+| AGENTS.md | Project rules + routing index | Never (human-maintained) |
+| CLAUDE.md | Symlink to AGENTS.md | Never (auto-inherits) |
 
 FORBIDDEN: Guessing what another AI thinks. Triangulation notes. Claiming consensus.
+
+## Plugin Constraints
+
+- When adding/renaming/removing a plugin: update `.claude-plugin/marketplace.json`,
+  run `claude plugin validate .`, update `docs/PLUGINS.md`, add CHANGELOG entry.
+- SKILL.md files require YAML frontmatter with `name` (kebab-case, max 64 chars) and `description` (max 1024 chars).
+- Skills and commands support `effort: low|medium|high` frontmatter (2.1.80+). Match to cognitive load: orchestration → high, analysis → medium, lookups → low.
+- During development use `/reload-plugins` to activate changes without version bump.
+
+## Workflow Triggers
+
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| `claude.yml` | `@claude` mention | Interactive responses |
+| `claude-code-review.yml` | PR opened/sync | Review-fix loop: review → fix → push → re-review → approve |
+| `codex-code-review.yml` | PR opened/sync | Codex review with structured output schema |
+| Copilot Coding Agent | Issue assignment | Autonomous issue resolution |
 
 ## Validation
 
