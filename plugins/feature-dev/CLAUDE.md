@@ -35,5 +35,5 @@ Use `/review [target]` for standalone reviews outside the feature-dev workflow:
 ## Notes
 
 - Origin: Sid Bidasaria (Anthropic).
-- Agents use sonnet model with tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput.
+- Agents use opus model (Opus 4.7 default) with tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput. `effort: high` for reviewer/explorer/architect.
 - Temporary research and plan notes live under `.feature-dev/`, not in tracked repo paths. Clear them when the workflow ends; stale state is auto-pruned on the next run.
