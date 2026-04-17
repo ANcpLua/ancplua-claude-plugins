@@ -2,7 +2,7 @@
 name: design-studio
 description: "Design intelligence studio. Creative direction + data-driven recommendations for distinctive frontend interfaces. 50 styles, 97 palettes, 57 font pairings, 99 UX guidelines, 25 chart types, 13 stacks. Actions: plan, build, design, review, fix."
 argument-hint: "<project type and description>"
-effort: medium
+effort: high
 ---
 
 # Design Studio
