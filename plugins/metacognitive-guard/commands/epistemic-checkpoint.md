@@ -1,6 +1,6 @@
 ---
 description: Force verification before answering questions involving versions, dates, status, or "current" state. Prevents hallucinations at the REASONING level by checking assertions.yaml and WebSearch before forming beliefs.
-effort: low
+effort: medium
 ---
 
 # Epistemic Checkpoint

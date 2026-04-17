@@ -1,6 +1,6 @@
 ---
 description: Force verification before claiming success or completion. Prevents false "it works" claims. Triggers when about to say "done", "complete", "works", "fixed", or "the implementation is ready".
-effort: low
+effort: medium
 ---
 
 # Verification Before Completion
