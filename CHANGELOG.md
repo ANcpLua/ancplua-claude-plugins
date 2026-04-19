@@ -21,6 +21,8 @@ Older entries live in [docs/archive/CHANGELOG-history.md](docs/archive/CHANGELOG
 
 ### Removed
 
+- **`plugins/qyl/`** and **`plugins/qyl-lsp/`**: Removed both qyl-focused plugins and their marketplace entries. They belonged to an earlier distribution model where qyl runtime context shipped as a plugin; that responsibility now lives inside the qyl repo itself (`AGENTS.md`, `docs/maf/`, SessionStart hooks).
+- **`research/carlini/`**: Removed stale research artifact (`carlini_agent_team_workflow.html`) that had been superseded by the `ancplua` plugin and its `carlini-jr` skill.
 - **`.claude/agent-framework.pdf`**: Reference binary that was tracked but no longer needed; the canonical MAF source-of-truth lives in `~/.claude/skills/microsoft-agent-framework/SKILL.md` and the upstream repo.
 - **`otelwiki` plugin**: Replaced entirely by `otelhook` (passive GenAI+MCP semconv) for the volatile parts. Stable reference URLs now live in qyl's `genai-architect` agent. All otelwiki references in qyl agents/commands rewired to otelhook.
 - **`.github/workflows/trigger-docs.yml`**: Dead workflow that sent `repository_dispatch` (`docs-update`) to `ancplua-docs` on every push to main. Receiver (`ancplua-docs/validate.yml`) only runs self-validation on its own files (format check, docs.json, nav sync, broken links, a11y, OpenAPI) — it never pulls content from `ancplua-claude-plugins`, so the external trigger added zero unique work. Also removes the `DOCS_TRIGGER_PAT` secret dependency that had been failing with 401 since 2026-04-12.
