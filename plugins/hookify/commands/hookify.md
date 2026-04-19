@@ -3,7 +3,7 @@ description: Create hooks to prevent unwanted behaviors from conversation analys
 argument-hint: Optional specific behavior to address
 allowed-tools: ["Read", "Write", "AskUserQuestion", "Task", "Grep", "TodoWrite", "Skill"]
 skills: ["hookify:writing-rules"]
-effort: low
+effort: high
 ---
 
 # Hookify - Create Hooks from Unwanted Behaviors

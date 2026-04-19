@@ -1,7 +1,7 @@
 {
   "name": "elegance-pipeline",
-  "version": "1.0.4",
-  "description": "Multi-agent code-elegance workflow: 4 scouts (sonnet), 2 judges (opus), 1 planner, 1 verifier, 1 gated implementer. Persistent state with stage gates.",
+  "version": "1.1.0",
+  "description": "Multi-agent code-elegance workflow: 4 scouts (sonnet-4-6, research-only), 2 judges (opus), 1 planner, 1 verifier, 1 gated implementer. Persistent state with stage gates.",
   "author": {
     "name": "ANcpLua",
     "url": "https://github.com/ANcpLua"

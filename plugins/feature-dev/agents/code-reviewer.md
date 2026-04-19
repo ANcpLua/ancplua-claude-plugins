@@ -2,9 +2,9 @@
 name: code-reviewer
 description: Reviews code for bugs, logic errors, security vulnerabilities, code quality issues, and adherence to project conventions, using confidence-based filtering to report only high-priority issues that truly matter
 tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
-model: sonnet
+model: opus
 color: red
-effort: medium
+effort: high
 maxTurns: 20
 ---
 

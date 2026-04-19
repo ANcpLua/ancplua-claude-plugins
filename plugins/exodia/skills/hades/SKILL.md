@@ -3,7 +3,7 @@ name: hades
 description: "IF cleanup/elimination needed THEN use this. IF zero suppressions THEN this. IF dead code THEN this. IF duplication THEN this. IF frontend design audit THEN --goggles. Smart-Hades: Smart ID, deletion permit, audit ledger. 4 teammates per phase."
 argument-hint: "[scope] [focus] [intensity] [--goggles]"
 allowed-tools: Task, Bash, TodoWrite, TeamCreate, TeamDelete, TaskCreate, TaskList, TaskUpdate, SendMessage
-effort: high
+effort: xhigh
 hooks:
   PreToolUse:
     - matcher: "Edit|Write"
