@@ -2,12 +2,39 @@
 # =============================================================================
 # COMMIT INTEGRITY HOOK (PreToolUse wrapper)
 # =============================================================================
-# Filtered by hooks.json `if: "Bash(git commit*)"` — harness guarantees this
-# only fires for git commit commands. Delegates directly to integrity-check.sh.
+# Defense-in-depth: hooks.json declares `if: "Bash(git commit*)"`, but the
+# harness has been observed to fire this hook on every Bash call regardless
+# (Claude Code 2.1.114). We re-check the actual command from the stdin
+# payload and exit silently for non-commit Bash so `echo`, `ls`, etc. are
+# never blocked by staged-diff scans.
 # =============================================================================
 
 set -euo pipefail
 
-cat > /dev/null  # consume stdin (not needed by integrity-check.sh)
+INPUT=$(cat 2>/dev/null || true)
+
+if [[ -n "$INPUT" ]]; then
+    if command -v jq &>/dev/null; then
+        COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null || true)
+    else
+        COMMAND=$(printf '%s' "$INPUT" | grep -oE '"command"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*: *"\(.*\)"/\1/' || true)
+    fi
+
+    # Strip leading whitespace and any `cd ... &&` / `cd ...;` prefix
+    TRIMMED=${COMMAND#"${COMMAND%%[![:space:]]*}"}
+    while [[ "$TRIMMED" == cd\ * ]]; do
+        REST=${TRIMMED#*&&}
+        if [[ "$REST" == "$TRIMMED" ]]; then
+            REST=${TRIMMED#*;}
+        fi
+        [[ "$REST" == "$TRIMMED" ]] && break
+        TRIMMED=${REST#"${REST%%[![:space:]]*}"}
+    done
+
+    case "$TRIMMED" in
+        "git commit"|"git commit "*) ;;
+        *) exit 0 ;;
+    esac
+fi
 
 exec bash "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/integrity-check.sh"

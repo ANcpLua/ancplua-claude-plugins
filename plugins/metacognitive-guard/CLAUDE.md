@@ -51,8 +51,11 @@ agents amplify thinking. Absorbs completion-integrity and autonomous-ci.
 
 ## Notes
 
-- Commit integrity hook uses `if: "Bash(git commit*)"` (2.1.85) so the harness skips the process spawn entirely
-  for non-commit Bash calls. Script-level early-exit removed — harness guarantees filtering.
+- Commit integrity hook declares `if: "Bash(git commit*)"` (2.1.85) for harness-level filtering, but
+  Claude Code 2.1.114 was observed firing the hook on every Bash call regardless. The wrapper at
+  `bin/commit-integrity-hook` re-parses the stdin payload (`tool_input.command`) and exits silently
+  for any command that isn't `git commit ...` (after stripping leading `cd ... &&`/`;` prefixes).
+  Defense-in-depth — the script-level guard is the load-bearing one in practice.
 - verify-local.sh and wait-for-ci.sh are utility scripts for the verification workflow, not hook triggers.
 - Hades god mode: active delete permit causes epistemic-guard to exit early.
 - Struggle detector tracks consecutive struggling responses via `.blackboard/.struggle-count`.
