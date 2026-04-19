@@ -177,17 +177,34 @@ if [[ "$JS_NET_LOSS" -gt 20 ]]; then
 fi
 
 # =============================================================================
-# RULE 5: TEST FILES DELETED
+# RULE 5: TEST FILES DELETED (refactor-aware)
+#
+# A test deletion paired with production-source deletions in the same diff
+# is a coherent refactor (the class went away, so its test went with it).
+# An isolated test deletion with no prod deletions is what we actually
+# want to flag — that's removing coverage without removing the code under
+# test. Naming conventions are too varied for reliable 1:1 stem matching
+# (e.g. ChatClientToolInstrumentationTests covers ToolInstrumentingChatClient),
+# so we use the simpler proxy: any prod deletion in the diff → silent.
 # =============================================================================
 
 DELETED_FILES=$(git diff --cached --name-only --diff-filter=D 2>/dev/null || true)
-DELETED_TEST_FILES=$(echo "$DELETED_FILES" | grep -iE '\.test\.|\.spec\.|_test\.|Tests\.cs|Test\.cs' || true)
+DELETED_TEST_FILES=$(echo "$DELETED_FILES" | grep -iE '\.test\.|\.spec\.|_test\.|Tests\.cs$|Test\.cs$' || true)
+
 if [[ -n "$DELETED_TEST_FILES" ]]; then
-    VIOLATIONS+=("TEST_FILE_DELETED|Test file(s) deleted")
-    echo -e "${RED}TEST_FILE_DELETED|Test file(s) deleted${NC}"
-    echo "$DELETED_TEST_FILES" | while read -r file; do
-        echo "  - $file"
-    done
+    PROD_DELETIONS=$(echo "$DELETED_FILES" \
+        | grep -ivE '\.test\.|\.spec\.|_test\.|Tests\.cs$|Test\.cs$' \
+        | grep -E '\.(cs|ts|tsx|js|jsx|py|go|rs|java|kt|rb|php|fs|fsx|swift|m|mm|cpp|cc|c|h|hpp)$' \
+        || true)
+
+    if [[ -z "$PROD_DELETIONS" ]]; then
+        TEST_COUNT=$(echo "$DELETED_TEST_FILES" | wc -l | tr -d ' ')
+        VIOLATIONS+=("TEST_FILE_DELETED|${TEST_COUNT} test file(s) deleted with no matching production-code deletion")
+        echo -e "${RED}TEST_FILE_DELETED|${TEST_COUNT} test file(s) deleted with no production-code deletion in the same commit${NC}"
+        echo "$DELETED_TEST_FILES" | while read -r file; do
+            echo "  - $file"
+        done
+    fi
 fi
 
 # =============================================================================
