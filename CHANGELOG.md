@@ -27,6 +27,7 @@ Older entries live in [docs/archive/CHANGELOG-history.md](docs/archive/CHANGELOG
 
 ### Fixed
 
+- **`metacognitive-guard` commit-integrity gating (0.6.9)**: Restored script-level `git commit*` filter in `bin/commit-integrity-hook`. Claude Code 2.1.114 was firing the `PreToolUse(Bash)` hook on every Bash invocation regardless of the `if: "Bash(git commit*)"` declared in `hooks.json`, causing the integrity scan to read `git diff --cached` and block unrelated commands (e.g. `echo hi`) whenever a deleted test file or other "shortcut pattern" was staged. Wrapper now parses `tool_input.command` from stdin (jq with grep fallback), strips leading `cd ... &&` / `;` prefixes, and exits silently for non-commit Bash. Defense-in-depth — the `if:` filter is still declared in case the harness honors it.
 - **`docs/ARCHITECTURE.md` `.claude/` tree**: Listed `rules/`, `settings.json`, and `settings.local.json` together (previously documented only one or the other depending on which session touched the file).
 - **Claude Code Review workflow**: Allow `dependabot[bot]` and `renovate[bot]` PRs to be reviewed by adding `allowed_bots` to `claude-code-action`. Previously, bot-authored PRs were rejected with "non-human actor" error.
 - **`qyl-lsp` hooks schema (0.1.1)**: Fixed two issues preventing plugin installation. Removed invalid `"hooks"` field from plugin.json (hooks are auto-discovered from `hooks/hooks.json`). Rewrote hooks.json from flat array format to correct nested object schema matching all working plugins.
