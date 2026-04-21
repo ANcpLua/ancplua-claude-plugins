@@ -85,6 +85,12 @@
       "description": "Create, evaluate, and iteratively improve Claude Code skills.",
       "version": "1.0.0",
       "source": "./plugins/skill-creator"
+    },
+    {
+      "name": "mutation-minded-testing",
+      "description": "Mutation-minded, behavior-first test quality. 4 agents (architecture reviewer, senior tester judge, expressive verifier improver, branch coverage implementer) + 4 skills. Coverage is a floor; kill power is the signal.",
+      "version": "0.1.0",
+      "source": "./plugins/mutation-minded-testing"
     }
   ]
 }

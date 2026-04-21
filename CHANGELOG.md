@@ -8,6 +8,10 @@ Older entries live in [docs/archive/CHANGELOG-history.md](docs/archive/CHANGELOG
 
 ## [Unreleased]
 
+### Added
+
+- **`mutation-minded-testing` plugin (0.1.0)**: Behavior-first test-quality stack. Ships 4 agents (`architecture-reviewer` for testability smells, `senior-tester-judge` grading STRONG/ACCEPTABLE/WEAK/KILL by kill power, `expressive-verifier-improver` rewriting weak tests via a pattern catalogue, `branch-coverage-implementer` driving 100% branch coverage with high-signal tests only) and 4 skills (`reviewing-testability`, `judging-test-quality`, `improving-weak-tests`, `mutation-resistant-coverage`). Rejects coverage-padding and TDD ritual in favour of mutation resistance. Entry point: `/mmt [scope]` orchestrates the four phases. Core rule: coverage is a floor, kill power is the signal — no `toBeTruthy`/`toBeDefined` as primary assertions, no `toHaveBeenCalled` alone, no `.length === N` without content, no behavior left with only a happy-path test.
+
 ### Removed
 
 - **`qyl-lsp` plugin**: Deleted from marketplace. Content was qyl-specific LSP implementation guidance that belongs in the qyl repo itself — authoritative SKILL.md now lives at `~/qyl/.claude/skills/qyl-lsp/SKILL.md` (verified against real wiring: `[QylSkill(QylSkillKind.Debug)]` attribute + `Qyl.Generated.QylToolManifest` generator path + `Hosting/QylMcpServiceCollectionExtensions.cs` DI). This repo-held version was 2 months stale and documented three fabricated seams (`SkillRegistrationExtensions.cs`, `Program.cs ConfigureCommonServices()`, manual `WithTools<LspTools>()`) that do not exist in current qyl. Single source of truth now in qyl. Also removed `qyl-lsp` commit-scope from `.coderabbit.yaml`.
