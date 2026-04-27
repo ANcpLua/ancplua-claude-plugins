@@ -101,6 +101,8 @@ append() {
 
   removed="$(json_escape "$removed")"
   agent="$(json_escape "$agent")"
+  smart_id="$(json_escape "$smart_id")"
+  git_sha="$(json_escape "$git_sha")"
 
   local line
   printf -v line '{"ts":"%s","smart_id":"%s","agent":"%s","removed_symbol_id":"%s","replacement_symbol_id":%s,"consumer_call_sites_before":%s,"consumer_call_sites_after":%s,"removed_tests":%s,"removal_justification":%s,"git_sha":"%s"}' \
@@ -124,7 +126,11 @@ query() {
     echo "Error: Manifest not initialized." >&2
     exit 1
   fi
-  grep -F "\"removed_symbol_id\":\"${symbol}\"" "$MANIFEST_FILE" || echo "No entries for: ${symbol}"
+  # Match the input against the SAME escaping the manifest stores, otherwise
+  # symbols with quotes / backslashes / control chars never match.
+  local escaped
+  escaped="$(json_escape "$symbol")"
+  grep -F "\"removed_symbol_id\":\"${escaped}\"" "$MANIFEST_FILE" || echo "No entries for: ${symbol}"
 }
 
 count() {
@@ -144,7 +150,9 @@ validate() {
   fi
 
   local invalid=0 line
-  while IFS= read -r line; do
+  # `|| [ -n "$line" ]` catches the final entry when the manifest is missing
+  # a trailing newline (atomic appenders sometimes drop it on partial flush).
+  while IFS= read -r line || [ -n "$line" ]; do
     [ -z "$line" ] && continue
     if [[ "$line" == *'"replacement_symbol_id":null'* ]] && \
        [[ "$line" == *'"removal_justification":null'* ]]; then

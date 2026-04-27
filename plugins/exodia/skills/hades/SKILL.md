@@ -358,9 +358,13 @@ fi
 
 # Check if scope crosses a public-API surface
 PUBLIC_API_SHIPPED=$(echo "$FILE_LIST" | grep -c 'PublicAPI\.Shipped\.txt')
-PACKABLE_CSPROJ=$(echo "$FILE_LIST" | grep -E '\.csproj$' \
-  | xargs -I{} grep -lE '<IsPackable>true</IsPackable>|<PackageId>' {} 2>/dev/null \
-  | wc -l | tr -d ' ')
+PACKABLE_CSPROJ=0
+while IFS= read -r csproj; do
+  [ -z "$csproj" ] && continue
+  if grep -qE '<IsPackable>true</IsPackable>|<PackageId>' "$csproj" 2>/dev/null; then
+    PACKABLE_CSPROJ=$((PACKABLE_CSPROJ + 1))
+  fi
+done < <(echo "$FILE_LIST" | grep -E '\.csproj$')
 PACKAGES_PATHS=$(echo "$FILE_LIST" | grep -c '^packages/')
 if [ "$PUBLIC_API_SHIPPED" -gt 0 ] || [ "$PACKABLE_CSPROJ" -gt 0 ] \
    || [ "$PACKAGES_PATHS" -gt 0 ] \
