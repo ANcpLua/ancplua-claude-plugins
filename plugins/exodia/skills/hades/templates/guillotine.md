@@ -94,10 +94,11 @@ from the lead, approve it with SendMessage type `shutdown_response`.
 >
 > **Step 2 — Enumeration.**
 >
-> Walk the scope:
+> Walk the scope (the leading `[[:space:]]*` matches indented members
+> inside namespaces and types — `^public ` alone misses most of them):
 >
 > ```bash
-> grep -rn "^public " "$SCOPE" --include='*.cs'
+> grep -rnE '^[[:space:]]*public ' "$SCOPE" --include='*.cs'
 > ```
 >
 > For each `*.csproj` in scope:
