@@ -1,7 +1,7 @@
 ---
 name: hades
-description: "IF cleanup/elimination needed THEN use this. IF zero suppressions THEN this. IF dead code THEN this. IF duplication THEN this. IF frontend design audit THEN --goggles. Smart-Hades: Smart ID, deletion permit, audit ledger. 4 teammates per phase."
-argument-hint: "[scope] [focus] [intensity] [--goggles]"
+description: "IF cleanup/elimination needed THEN use this. IF zero suppressions THEN this. IF dead code THEN this. IF duplication THEN this. IF frontend design audit THEN --goggles. IF public API brutal break THEN --guillotine. Smart-Hades: Smart ID, deletion permit, audit ledger, break manifest. 4 teammates per phase + equipment adds 1-3."
+argument-hint: "[scope] [focus] [intensity] [--goggles] [--guillotine]"
 allowed-tools: Task, Bash, TodoWrite, TeamCreate, TeamDelete, TaskCreate, TaskList, TaskUpdate, SendMessage
 effort: xhigh
 hooks:
@@ -72,6 +72,8 @@ hooks:
 **Intensity:** $2 (default: full — full|scan-only)
 **Goggles:** $3 (default: auto — [--goggles]) — equip Pink Glasses for frontend design judgment
 (auto-equipped when scope contains frontend files)
+**Guillotine:** $4 (default: auto — [--guillotine]) — equip the Guillotine for public API brutal break
+(auto-equipped when scope contains `PublicAPI.Shipped.txt`, an `<IsPackable>true</IsPackable>` csproj, or paths under `packages/`)
 
 **Smart Infrastructure:** `plugins/exodia/scripts/smart/`
 
@@ -89,6 +91,7 @@ cp plugins/exodia/scripts/smart/hookify-rules/*.local.md .
 - [eliminators.md](templates/eliminators.md) — Phase 1 elimination teammates
 - [verifiers.md](templates/verifiers.md) — Phase 2 verification teammates
 - [goggles.md](templates/goggles.md) — Frontend design judgment teammates (when --goggles equipped)
+- [guillotine.md](templates/guillotine.md) — Public API brutal break teammates (when --guillotine equipped)
 
 ---
 
@@ -154,19 +157,73 @@ dependency versions, not the model's prior assumptions.
 **When to equip:** Any cleanup that touches frontend files (.tsx, .jsx, .css, .html, .svelte, .vue).
 **Effect:** +3 goggles teammates in Phase 0. Their findings become elimination tasks.
 
+### The Guillotine (--guillotine)
+
+When Hades equips the Guillotine, his default identity inverts.
+
+```text
+default Hades:    "ignores public API, semver, changelog, backwards compat"
+guillotine Hades: "actively destroys public API; forbids compat artifacts; demands functional equivalence per removed symbol"
+```
+
+This is not a softer mode. It is a stricter one.
+
+The Guillotine adds one teammate per phase:
+
+| Phase | Teammate                | Question Answered                                                        |
+|-------|-------------------------|--------------------------------------------------------------------------|
+| 0     | smart-guillotine-audit  | "Which `public` symbols are real contracts vs default access modifiers?" |
+| 1     | smart-guillotine-elim   | "Delete or downgrade — and what replaces it?"                            |
+| 2     | smart-guillotine-verify | "Shim-free AND functionally equivalent?"                                 |
+
+Two-axis verification is the load-bearing innovation. `build passes` if you
+delete `OldThing` and update every caller to do nothing. `tests pass` if
+you delete the tests too. Neither rules out silent capability loss. The
+Phase 2 verifier checks both axes:
+
+1. **Shim-free.** The diff introduces no `[Obsolete]`, no
+   `[EditorBrowsable(EditorBrowsableState.Never)]`, no `[assembly: TypeForwardedTo]`,
+   no transitional entries in `<TargetFrameworks>`, no
+   `// deprecated|legacy|compat|shim|bridge|transitional|will be removed|kept for`
+   comments, no `PublicAPI.Unshipped.txt` lines mirroring removed
+   `Shipped.txt` lines.
+2. **Functionally equivalent.** Every consumer call site of the removed
+   symbol either invokes the replacement now, or has been deleted from the
+   codebase entirely. If no replacement, the eliminator must record an
+   explicit `removal_justification` that does not match the LLM-default
+   blacklist (`"no longer needed"`, `"unused"`, `"dead code"`,
+   `"redundant"`, `"cleanup"`, `"refactor"` without a specific
+   `file:line` reference or quoted user instruction).
+
+Audit trail: alongside the standard deletion ledger at
+`.smart/delete-ledger.jsonl`, the Guillotine maintains
+`.smart/break-manifest.jsonl` — one entry per removed public symbol with
+`removed_symbol_id`, `replacement_symbol_id`, `consumer_call_sites_before`,
+`consumer_call_sites_after`, `removed_tests`, `removal_justification`. The
+verifier validates the manifest before passing Gate 2.
+
+**When to equip:** scope contains `PublicAPI.Shipped.txt`, any `*.csproj`
+with `<IsPackable>true</IsPackable>`, or any path under `packages/`. The
+flag itself authorizes destruction of real contracts; without it, the
+auditor classifies real contracts as `KEEP` and the eliminator no-ops.
+**Effect:** +1 teammate per phase (3 across the run). Adds the
+break-manifest as a required Gate 2 artifact.
+
 ---
 
 ## SMART INFRASTRUCTURE
 
 ```text
 .smart/                          <- gitignored, session-local
-├── delete-ledger.jsonl          <- append-only audit log (JSONL)
-└── delete-permit.json           <- active deletion permit (TTL-based)
+├── delete-ledger.jsonl          <- append-only deletion audit log (JSONL)
+├── delete-permit.json           <- active deletion permit (TTL-based)
+└── break-manifest.jsonl         <- public-API break manifest (JSONL, --guillotine)
 
 plugins/exodia/scripts/smart/    <- checked-in tooling
 ├── smart-id.sh                  <- SMART-YYYY-MM-DD-<timestamp><random>
 ├── ledger.sh                    <- init | append | query | count
 ├── permit.sh                    <- create | validate | revoke | show
+├── break-manifest.sh            <- init | append | query | count | validate (--guillotine)
 └── hookify-rules/
     ├── hookify.smart-hades-delete-guard.local.md   <- blocks raw rm/git rm
     └── hookify.smart-hades-stop-guard.local.md     <- opt-in completion guard
@@ -175,6 +232,7 @@ plugins/exodia/scripts/smart/    <- checked-in tooling
 **Smart ID format:** `SMART-YYYY-MM-DD-<10-digit-epoch><20-char-random>`
 **Ledger entry:** `{"ts","smart_id","action","path","reason","agent","git_sha"}`
 **Permit:** `{"smart_id","created_at","expires_at","ttl","expires_epoch","paths","status"}`
+**Break manifest entry (--guillotine):** `{"ts","smart_id","agent","removed_symbol_id","replacement_symbol_id","consumer_call_sites_before","consumer_call_sites_after","removed_tests","removal_justification","git_sha"}`
 
 ---
 
@@ -185,8 +243,10 @@ HADES (Lead — Delegate Mode — Opus 4.6)
 │
 ├─ INIT: Generate Smart ID, create deletion permit, init ledger
 │        Smart-target: detect frontend files in scope → auto-equip goggles
+│        Smart-target: detect public-API surface → auto-equip guillotine
+│        If guillotine equipped: init break-manifest
 │
-├─ Phase 0: AUDIT (4 Auditors + 3 Goggles if equipped) — see templates/
+├─ Phase 0: AUDIT (4 Auditors + 3 Goggles + 1 Guillotine if equipped) — see templates/
 │  ├── smart-audit-suppressions
 │  ├── smart-audit-deadcode
 │  ├── smart-audit-duplication
@@ -195,12 +255,15 @@ HADES (Lead — Delegate Mode — Opus 4.6)
 │  │
 │  ├── [GOGGLES] smart-goggles-taste       ← aesthetic direction judge
 │  ├── [GOGGLES] smart-goggles-spec        ← measurable quality judge
-│  └── [GOGGLES] smart-goggles-compliance  ← implementation rules judge
+│  ├── [GOGGLES] smart-goggles-compliance  ← implementation rules judge
 │  │   ↕ pipeline: taste → spec → compliance ↕
 │  │   ↕ cross-message with standard auditors ↕
+│  │
+│  └── [GUILLOTINE] smart-guillotine-audit ← public API contract judge (KEEP/DOWNGRADE/BREAK)
+│  │   ↕ cross-message with smart-audit-deadcode + smart-audit-suppressions ↕
 │  └── GATE 0 -> PROCEED | HALT | SCAN_COMPLETE
 │
-├─ Phase 1: ELIMINATION (4 Eliminators + design fixes) — see templates/
+├─ Phase 1: ELIMINATION (4 Eliminators + design fixes + 1 Guillotine if equipped) — see templates/
 │  ├── smart-elim-suppressions
 │  ├── smart-elim-deadcode
 │  ├── smart-elim-duplication
@@ -208,22 +271,30 @@ HADES (Lead — Delegate Mode — Opus 4.6)
 │  │   ↕ coordinate via messaging ↕
 │  │   ↕ log every deletion to ledger ↕
 │  │   ↕ goggles findings become elimination tasks ↕
+│  │
+│  └── [GUILLOTINE] smart-guillotine-elim  ← deletes/downgrades + emits break-manifest entries
+│  │   ↕ also writes deletion ledger entries via "break-public-api" action ↕
 │  └── GATE 1 -> PROCEED | HALT
 │
-└─ Phase 2: VERIFICATION (4 Verifiers + goggles re-check) — see templates/
+└─ Phase 2: VERIFICATION (4 Verifiers + goggles re-check + 1 Guillotine if equipped) — see templates/
    ├── smart-verify-build
    ├── smart-verify-tests
    ├── smart-verify-grep     ← also verifies goggles violations resolved
-   └── smart-verify-challenger
+   ├── smart-verify-challenger
+   │
+   └── [GUILLOTINE] smart-guillotine-verify ← two-axis: shim-free + functionally equivalent
        ↕ challenge each other's claims ↕
        ↕ verify ledger completeness ↕
+       ↕ verify break-manifest completeness + validity ↕
    └── GATE 2 -> COMPLETE | ITERATE (back to Phase 1)
 ```
 
-**Concurrency:** 4 teammates per phase (+3 goggles in Phase 0 when equipped). Shut down before spawning next phase.
+**Concurrency:** 4 teammates per phase (+3 goggles in Phase 0 when equipped, +1 guillotine per phase when equipped). Shut down before spawning next phase.
 **File ownership:** Each teammate owns disjoint files. Lead resolves conflicts.
 **Task sizing:** 5-6 tasks per teammate. No kanban overflow.
-**Smart targeting:** If scope contains .tsx/.jsx/.css/.html/.svelte/.vue files, auto-equip goggles.
+**Smart targeting:**
+  - Goggles: scope contains .tsx/.jsx/.css/.html/.svelte/.vue files.
+  - Guillotine: scope contains `PublicAPI.Shipped.txt`, an `<IsPackable>true</IsPackable>` csproj, or any path under `packages/`.
 **Model:** All teammates spawn as Opus 4.6 (`model: opus`).
 
 ---
@@ -276,18 +347,32 @@ FILE_LIST=$(git diff --cached --name-only; git diff --name-only)
 
 This goes into EVERY teammate's prompt.
 
-**Smart Target (auto-equip goggles):**
+**Smart Target (auto-equip goggles + guillotine):**
 
 ```bash
 # Check if scope contains frontend files
 FRONTEND_FILES=$(echo "$FILE_LIST" | grep -cE '\.(tsx|jsx|css|html|svelte|vue)$')
-if [ "$FRONTEND_FILES" -gt 0 ] || [ "${3-}" = "--goggles" ]; then
+if [ "$FRONTEND_FILES" -gt 0 ] || [ "${3-}" = "--goggles" ] || [ "${4-}" = "--goggles" ]; then
   GOGGLES=true   # Equip the Pink Glasses
+fi
+
+# Check if scope crosses a public-API surface
+PUBLIC_API_SHIPPED=$(echo "$FILE_LIST" | grep -c 'PublicAPI\.Shipped\.txt')
+PACKABLE_CSPROJ=$(echo "$FILE_LIST" | grep -E '\.csproj$' \
+  | xargs -I{} grep -lE '<IsPackable>true</IsPackable>|<PackageId>' {} 2>/dev/null \
+  | wc -l | tr -d ' ')
+PACKAGES_PATHS=$(echo "$FILE_LIST" | grep -c '^packages/')
+if [ "$PUBLIC_API_SHIPPED" -gt 0 ] || [ "$PACKABLE_CSPROJ" -gt 0 ] \
+   || [ "$PACKAGES_PATHS" -gt 0 ] \
+   || [ "${3-}" = "--guillotine" ] || [ "${4-}" = "--guillotine" ]; then
+  GUILLOTINE=true   # Equip the Guillotine
+  plugins/exodia/scripts/smart/break-manifest.sh init
 fi
 ```
 
-If `$3 = --goggles` OR scope contains frontend files → equip goggles automatically.
-Hades is smart enough to know when he needs his glasses.
+If `$3` or `$4` = `--goggles` OR scope contains frontend files → equip goggles automatically.
+If `$3` or `$4` = `--guillotine` OR scope crosses a public-API surface (PublicAPI.Shipped.txt, packable csproj, or `packages/`) → equip the Guillotine automatically and initialize the break manifest.
+Hades is smart enough to know when he needs his glasses — and his guillotine.
 
 **STEP 1 — Create Team:**
 
@@ -309,6 +394,7 @@ TaskCreate: team_name = "hades-cleanup", title = "Audit imports in [scope]", des
 ```
 
 If GOGGLES equipped, also create goggles tasks (taste, spec, compliance).
+If GUILLOTINE equipped, also create a guillotine audit task (public-API surface classification).
 
 **STEP 3 — Spawn Phase 0 Teammates (ALL in ONE message):**
 
@@ -322,6 +408,7 @@ Task: name="smart-audit-imports", team_name="hades-cleanup", subagent_type="gene
 ```
 
 If GOGGLES: +3 goggles teammates from [templates/goggles.md](templates/goggles.md) (all Opus 4.6, same team_name).
+If GUILLOTINE: +1 teammate `smart-guillotine-audit` from [templates/guillotine.md](templates/guillotine.md) (Opus 4.6, same team_name).
 
 Teammates use SendMessage to debate findings with each other.
 Teammates use TaskCreate/TaskUpdate for the shared task list.
@@ -347,6 +434,7 @@ SendMessage: type="shutdown_request", recipient="smart-audit-imports"
 Wait for all `shutdown_response` messages. Then spawn Phase 1 eliminators
 (same pattern: Task with team_name="hades-cleanup", 4 teammates from [templates/eliminators.md](templates/eliminators.md)).
 Goggles findings become elimination tasks alongside standard findings.
+If GUILLOTINE: also spawn `smart-guillotine-elim` from [templates/guillotine.md](templates/guillotine.md) (Opus 4.6, same team_name) — it claims guillotine tasks, deletes/downgrades symbols, and emits one `break-manifest.jsonl` entry per BREAK task.
 
 **STEP 6 — Evaluate GATE 1:**
 
@@ -358,6 +446,7 @@ Shut down Phase 1 teammates (SendMessage type="shutdown_request" to each).
 Wait for all shutdown_responses. Spawn Phase 2 verifiers
 (4 teammates from [templates/verifiers.md](templates/verifiers.md), same team_name).
 smart-verify-grep also checks goggles violations were resolved.
+If GUILLOTINE: also spawn `smart-guillotine-verify` from [templates/guillotine.md](templates/guillotine.md) (Opus 4.6, same team_name) — it runs the two-axis verification (shim-free + functionally equivalent) against `.smart/break-manifest.jsonl` and runs `break-manifest.sh validate`.
 
 **STEP 8 — Evaluate GATE 2:**
 
@@ -405,6 +494,12 @@ GOGGLES: [EQUIPPED | OFF]
 |   Spec:       [n] violations (P1: [n], P2: [n], P3+: [n]) |
 |   Compliance: [n] issues (CRITICAL: [n], WARNING: [n])     |
 +------------------------------------------------------------+
+| GUILLOTINE (if equipped):                                  |
+|   Public symbols audited: [n]                              |
+|     KEEP:      [n]   (real contracts, scope keeps them)    |
+|     DOWNGRADE: [n]   (fake contracts → internal)           |
+|     BREAK:     [n]   (real contracts → delete)             |
++------------------------------------------------------------+
 | Cross-teammate messages: [count]
 | Challenges resolved:     [count]
 | Ownership conflicts:     [count] (resolved by lead)
@@ -431,12 +526,14 @@ GATE 1: ELIMINATION -> [status]
 SMART_ID: [value]
 
 +------------------------------------------------------------+
-| Suppressions eliminated: [n]/[total]
-| Dead code deleted:       [n] items ([lines] lines)
+| Suppressions eliminated:  [n]/[total]
+| Dead code deleted:        [n] items ([lines] lines)
 | Duplication consolidated: [n] clusters
-| Imports fixed:           [n] issues
+| Imports fixed:            [n] issues
+| Public APIs broken:       [n] (--guillotine: downgrades + deletions)
 +------------------------------------------------------------+
-| Ledger entries: [count] (verify == total actions taken)
+| Ledger entries:           [count] (verify == total actions taken)
+| Break-manifest entries:   [count] (--guillotine, == BREAK tasks completed)
 | Build: PASS | FAIL
 | Tests: PASS | FAIL
 +------------------------------------------------------------+
@@ -446,7 +543,8 @@ SMART_ID: [value]
 
 - Build/tests fail -> HALT. Lead diagnoses. Spawn targeted fix teammate.
 - Tasks incomplete -> Wait or reassign.
-- All complete + build + tests pass -> PROCEED. Shut down Phase 1. Spawn Phase 2.
+- Guillotine BREAK task completed without a corresponding break-manifest entry -> HALT. Manifest is mandatory.
+- All complete + build + tests pass + (if guillotine) manifest count == BREAK count -> PROCEED. Shut down Phase 1. Spawn Phase 2.
 
 ---
 
@@ -457,11 +555,17 @@ GATE 2: VERIFICATION -> [status]
 SMART_ID: [value]
 
 +------------------------------------------------------------+
-| Build:        CLEAN | WARNINGS ([count])
-| Tests:        PASS ([n]) | FAIL ([n]) | SKIP ([n])
-| Suppressions: [count] remaining
-| Ledger:       [count] entries (expected: [n])
-| Challenger:   [n] claims confirmed, [n] challenged
+| Build:           CLEAN | WARNINGS ([count])
+| Tests:           PASS ([n]) | FAIL ([n]) | SKIP ([n])
+| Suppressions:    [count] remaining
+| Ledger:          [count] entries (expected: [n])
+| Challenger:      [n] claims confirmed, [n] challenged
++------------------------------------------------------------+
+| GUILLOTINE (if equipped):                                  |
+|   Axis 1 (shim-free):           PASS | FAIL ([n] hits)    |
+|   Axis 2 (functionally equiv.): PASS | FAIL ([n] entries) |
+|   Manifest validate:            PASS | FAIL                |
+|   Break-manifest entries:       [n] (== Phase 1 BREAK count)
 +------------------------------------------------------------+
 | VERDICT: COMPLETE | ITERATE
 +------------------------------------------------------------+
@@ -471,7 +575,10 @@ SMART_ID: [value]
 - Build warnings > 0 -> ITERATE.
 - Ledger incomplete -> ITERATE. Log missing entries.
 - Challenged claims unresolved -> ITERATE with targeted teammates.
-- All zeros + all confirmed + ledger complete -> COMPLETE.
+- Guillotine Axis 1 fail (shim found in diff) -> ITERATE. Eliminator removes the shim.
+- Guillotine Axis 2 fail (consumer call site not rewired and not deleted, or replacement test missing) -> ITERATE. Eliminator either rewires or deletes; cannot leave the gap.
+- `break-manifest.sh validate` fail (entry has neither replacement nor justification) -> ITERATE. Eliminator fills the missing field.
+- All zeros + all confirmed + ledger complete + (if guillotine) both axes pass + manifest valid -> COMPLETE.
 
 ---
 
@@ -479,9 +586,10 @@ SMART_ID: [value]
 
 1. Shut down all remaining teammates: SendMessage type="shutdown_request" to each
 2. Wait for all shutdown_responses
-3. Revoke deletion permit: `plugins/exodia/scripts/smart/permit.sh revoke`
-4. Delete team: `TeamDelete: team_name = "hades-cleanup"`
-5. Present final report
+3. If guillotine equipped: `plugins/exodia/scripts/smart/break-manifest.sh validate` (must exit 0)
+4. Revoke deletion permit: `plugins/exodia/scripts/smart/permit.sh revoke`
+5. Delete team: `TeamDelete: team_name = "hades-cleanup"`
+6. Present final report
 
 ---
 
@@ -504,7 +612,8 @@ SMART_ID: [value]
 | Scope: $0                                                          |
 | Intensity: $2                                                      |
 | Goggles: [EQUIPPED | OFF]                                          |
-| Phases: 3 x [4|7] teammates = [12|15+] total spawned              |
+| Guillotine: [EQUIPPED | OFF]                                       |
+| Phases: 12 base + 3 (goggles, P0) + 3 (guillotine) = 12..18 total  |
 +====================================================================+
 |                   BEFORE -> AFTER                                  |
 |  Suppressions:    [n] -> 0                                         |
@@ -512,6 +621,7 @@ SMART_ID: [value]
 |  Duplication:     [n] clusters -> 0                                |
 |  Import issues:   [n] -> 0                                         |
 |  Build warnings:  [n] -> 0                                         |
+|  Public APIs:     [n] -> [n - broken]  (--guillotine)              |
 +====================================================================+
 |                   GOGGLES (if equipped)                             |
 |  Taste violations:      [n] -> 0  (REDESIGN: [n], REFINE: [n])    |
@@ -519,10 +629,23 @@ SMART_ID: [value]
 |  Compliance violations: [n] -> 0  (CRITICAL: [n], WARNING: [n])   |
 |  Pipeline flow: taste → spec → compliance                          |
 +====================================================================+
+|                   GUILLOTINE (if equipped)                          |
+|  Public symbols audited:    [n]                                     |
+|    KEEP:                    [n]                                     |
+|    DOWNGRADE -> internal:   [n]                                     |
+|    BREAK -> deleted:        [n]                                     |
+|  Break-manifest entries:    [n]                                     |
+|  Axis 1 (shim-free):        PASS                                    |
+|  Axis 2 (functionally eq.): PASS                                    |
+|  Manifest validated:        PASS                                    |
+|  Pure removals:             [n] (with explicit justification)       |
+|  Replacements wired:        [n] (with consumer rewire)              |
++====================================================================+
 |                   SMART INFRASTRUCTURE                             |
-|  Ledger entries:  [n]                                              |
-|  Permit lifecycle: created -> active -> revoked                    |
-|  Permit TTL:      [n]s (used [n]s)                                 |
+|  Ledger entries:           [n]                                     |
+|  Break-manifest entries:   [n] (--guillotine)                      |
+|  Permit lifecycle:         created -> active -> revoked            |
+|  Permit TTL:               [n]s (used [n]s)                        |
 +====================================================================+
 |                   DEBATE METRICS                                   |
 |  Cross-teammate messages: [n]                                      |
@@ -538,13 +661,14 @@ SMART_ID: [value]
 +====================================================================+
 ```
 
-| Category             | Before     | After | Ledger Entries | Debate Messages |
-|----------------------|------------|-------|----------------|-----------------|
-| Suppressions         | X          | 0     | [n]            | [n]             |
-| Dead code            | X lines    | 0     | [n]            | [n]             |
-| Duplication          | X clusters | 0     | [n]            | [n]             |
-| Imports              | X issues   | 0     | [n]            | [n]             |
-| Build warnings       | X          | 0     | --             | --              |
-| Taste (goggles)      | X          | 0     | [n]            | [n]             |
-| Spec (goggles)       | X          | 0     | [n]            | [n]             |
-| Compliance (goggles) | X          | 0     | [n]            | [n]             |
+| Category               | Before     | After | Ledger Entries | Manifest Entries | Debate Messages |
+|------------------------|------------|-------|----------------|------------------|-----------------|
+| Suppressions           | X          | 0     | [n]            | --               | [n]             |
+| Dead code              | X lines    | 0     | [n]            | --               | [n]             |
+| Duplication            | X clusters | 0     | [n]            | --               | [n]             |
+| Imports                | X issues   | 0     | [n]            | --               | [n]             |
+| Build warnings         | X          | 0     | --             | --               | --              |
+| Taste (goggles)        | X          | 0     | [n]            | --               | [n]             |
+| Spec (goggles)         | X          | 0     | [n]            | --               | [n]             |
+| Compliance (goggles)   | X          | 0     | [n]            | --               | [n]             |
+| Public-API (guillotine)| X          | [n]   | [n]            | [n]              | [n]             |
