@@ -1,0 +1,21 @@
+{
+  "name": "release-pilot",
+  "description": "Drives .NET release workflow for ANcpLua framework repos. Auto-detects three patterns (auto-bump on main / tag with manual approval / tag-direct), watches CI with environment-gate awareness, classifies failures with a narrow auto-fix allowlist. Never edits <Version> lines, never reassigns ghost tags.",
+  "version": "0.2.0",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "dotnet",
+    "nuget",
+    "release",
+    "ci",
+    "trusted-publishing",
+    "github-actions",
+    "ghost-tag"
+  ],
+  "commands": "./commands"
+}

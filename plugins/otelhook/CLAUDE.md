@@ -37,11 +37,11 @@ Update checklist:
 
 ## Files
 
-| File | Purpose |
-|------|---------|
-| `hooks/hooks.json` | SessionStart hook (once: true) |
-| `bin/inject-genai-semconv` | Cats data/genai-semconv.md |
-| `data/genai-semconv.md` | Condensed GenAI + MCP semconv v1.40.0 |
+| File                       | Purpose                               |
+|----------------------------|---------------------------------------|
+| `hooks/hooks.json`         | SessionStart hook (once: true)        |
+| `bin/inject-genai-semconv` | Cats data/genai-semconv.md            |
+| `data/genai-semconv.md`    | Condensed GenAI + MCP semconv v1.40.0 |
 
 ## Known gaps vs upstream
 
