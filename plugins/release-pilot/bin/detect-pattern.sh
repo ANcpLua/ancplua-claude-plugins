@@ -2,9 +2,16 @@
 set -euo pipefail
 
 # detect-pattern.sh — read .github/workflows/nuget-publish.yml in CWD,
-# echo "auto-bump" (Pattern A — push-to-main publishes) or
-# "tag-triggered" (Pattern B — only tag pushes publish).
-# Exit 1 with stderr message if neither pattern matches.
+# echo one of:
+#   auto-bump      — Pattern A: push to main publishes (no manual gate).
+#                    NET.Sdk. Deploy job has `if: github.ref == 'refs/heads/main'`.
+#   tag-with-gate  — Pattern B: tag triggers publish, environment requires
+#                    manual approval. Roslyn.Utilities, Agents.
+#                    Workflow has `environment: nuget` on the publish job.
+#   tag-direct     — Pattern C: tag triggers publish, no environment gate.
+#                    Analyzers. Trigger is `tags: ['v*']` only; non-tag CI
+#                    happens in a separate ci.yml workflow.
+# Exit 1 with stderr message if no pattern matches.
 
 WF="${1:-.github/workflows/nuget-publish.yml}"
 
@@ -13,35 +20,38 @@ if [ ! -f "$WF" ]; then
   exit 1
 fi
 
-# Signal 1: deploy/publish job is gated by main branch
-# (`if: github.ref == 'refs/heads/main'`) — Pattern A. ANcpLua.NET.Sdk.
-GATED_BY_MAIN=0
+# Pattern A: deploy job gated by main branch ref.
 if grep -qE "if:[[:space:]]*github\.ref[[:space:]]*==[[:space:]]*'refs/heads/main'" "$WF"; then
-  GATED_BY_MAIN=1
+  echo "auto-bump"
+  exit 0
 fi
 
-# Signal 2: publish job gated by an `is_release == 'true'` output —
-# Pattern B with main-branch CI. ANcpLua.Roslyn.Utilities, ANcpLua.Agents.
-GATED_BY_RELEASE=0
-if grep -qE "if:.*is_release.*==.*'true'" "$WF"; then
-  GATED_BY_RELEASE=1
+# Pattern B: publish job uses GitHub `nuget` environment for manual approval.
+# The is_release-output gate is also a B signal, but environment: nuget is
+# the load-bearing one for release-pilot's flow.
+if grep -qE "^[[:space:]]*environment:[[:space:]]*nuget[[:space:]]*$" "$WF"; then
+  echo "tag-with-gate"
+  exit 0
 fi
 
-# Signal 3: workflow has any `v*` tag trigger — handles both YAML
-# inline-flow (`tags: ['v*']`) and block (`tags:\n  - 'v*'`) forms.
-# ANcpLua.Analyzers (pure tag), ANcpLua.Roslyn.Utilities/Agents (mixed).
+# Pattern C: tag-only trigger, no environment, no main-ref gate.
+# Detect by: workflow has `tags: ['v*']` AND does NOT have a main-branch
+# push trigger.
 HAS_TAG_TRIGGER=0
 if grep -qE "['\"]v\*['\"]" "$WF"; then
   HAS_TAG_TRIGGER=1
 fi
 
-if [ "$GATED_BY_MAIN" -eq 1 ]; then
-  echo "auto-bump"
-  exit 0
+HAS_MAIN_TRIGGER=0
+# Look for `branches: [main]` (inline) or a `branches:` block followed by `- main`.
+if grep -qE "branches:[[:space:]]*\[[[:space:]]*['\"]?main['\"]?[[:space:]]*\]" "$WF"; then
+  HAS_MAIN_TRIGGER=1
+elif awk '/^[[:space:]]*branches:[[:space:]]*$/{flag=1; next} flag && /^[[:space:]]*-[[:space:]]*['"'"'"]?main['"'"'"]?[[:space:]]*$/{found=1; exit} flag && /^[[:space:]]*[a-zA-Z_]+:/{flag=0} END{exit !found}' "$WF"; then
+  HAS_MAIN_TRIGGER=1
 fi
 
-if [ "$GATED_BY_RELEASE" -eq 1 ] || [ "$HAS_TAG_TRIGGER" -eq 1 ]; then
-  echo "tag-triggered"
+if [ "$HAS_TAG_TRIGGER" -eq 1 ] && [ "$HAS_MAIN_TRIGGER" -eq 0 ]; then
+  echo "tag-direct"
   exit 0
 fi
 
