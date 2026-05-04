@@ -24,16 +24,33 @@ isolated branch, then stop. The human reviews the diff and decides.
 ## Preconditions — fail loudly if missing
 
 1. `git rev-parse --git-dir` must succeed (inside a repo).
-2. The `mcp__rider__*` tools must be loadable. Verify with:
+2. `git rev-parse --verify HEAD` must succeed. If HEAD is unborn (no commits yet), stop and ask the user to commit at least once before running a dry-run — there is nothing to branch from.
+3. The `mcp__rider__*` tools must be loadable. Verify with:
    ```
    ToolSearch select:mcp__rider__get_file_problems
    ```
    If it returns nothing, stop and tell the user to open Rider on the solution.
-3. If the working tree is dirty, `git stash push -u -m "rider-respect-pre"` and report the stash ref so the user can restore.
 
 ## Workflow
 
-### 1. Branch off
+### 1. Resolve scope first — before touching git state
+
+Scope must be captured before any branch / stash, otherwise the default no-arg case (which reads dirty working-tree files) silently turns into an empty set.
+
+| User input | Scope |
+|---|---|
+| (none) | `git diff --name-only HEAD`, restricted to `*.cs` / `*.vb`. If clean, stop — there is nothing to dry-run. |
+| Path | The path, expanded via `find`. |
+| Glob | `mcp__rider__find_files_by_glob`. |
+
+If scope is empty: stop, do not invent files.
+
+### 2. Stash policy — only when scope is explicit
+
+- **No-arg (default) case:** do **not** stash. The dirty edits *are* the scope; they ride onto the dry-run branch and get inspected. Stashing first would erase the very files the user is asking us to look at.
+- **Explicit path / glob case:** if the working tree is dirty, `git stash push -u -m "rider-respect-pre"` and report the stash ref. This isolates the dry-run diff to *only* the explicit scope, instead of mixing it with unrelated dirty edits.
+
+### 3. Branch off
 
 ```bash
 TS=$(date +%Y%m%d-%H%M%S)
@@ -43,17 +60,7 @@ git checkout -b "rider-respect/${BASE}/${TS}"
 
 State the branch name back to the user immediately so they can `git checkout -` to bail at any point.
 
-### 2. Resolve scope
-
-| User input | Scope |
-|---|---|
-| (none) | `git diff --name-only HEAD`, restricted to `*.cs` / `*.vb`. If HEAD is the only commit, use `git diff --name-only`. |
-| Path | The path, expanded via `find`. |
-| Glob | `mcp__rider__find_files_by_glob`. |
-
-If scope is empty: stop, do not invent files.
-
-### 3. Pull diagnostics per file
+### 4. Pull diagnostics per file
 
 For each file, call `mcp__rider__get_file_problems(filePath: "<absolute>")`. Parse results into `(severity, ruleId, line, column, message, suggestedFix?)`.
 
@@ -63,7 +70,7 @@ Bucket by severity, honoring the `--severity` argument:
 - **Warnings** — fix unless the rule appears in `<NoWarn>` of the project's csproj or `Directory.Build.props`. Don't override project policy.
 - **Suggestions / hints** — fix only when severity threshold is `suggestion` (the default). Skip for `--severity=warning` / `--severity=error`.
 
-### 4. Apply fixes — pick the right MCP tool per diagnostic class
+### 5. Apply fixes — pick the right MCP tool per diagnostic class
 
 This is the core knowledge of the skill. The wrong tool for a class either misses call sites or breaks the file.
 
@@ -76,7 +83,7 @@ This is the core knowledge of the skill. The wrong tool for a class either misse
 | Suppressible CA rules with canonical fixes (CA1062 null check, CA2007 ConfigureAwait, CA1822 static, etc.) | `Edit` | Apply the canonical fix. **Do NOT** add `#pragma warning disable` / `[SuppressMessage]`. |
 | Diagnostics with no automatic fix (e.g. "consider …") | Skip; record in report | Don't guess. The human decides. |
 
-### 5. Verify
+### 6. Verify
 
 ```
 mcp__rider__build_solution
@@ -84,7 +91,9 @@ mcp__rider__build_solution
 
 If build fails, **stop** and tell the user: "Rider's daemon disagreed with the build compiler on file X — branch left in failing state for inspection." This is *exactly* what the dry-run is meant to expose; don't try to repair.
 
-### 6. Report — and stop
+### 7. Report — and stop
+
+The skill never commits, so the dry-run lives entirely in the working tree of the new branch. Tailor the commands accordingly:
 
 ```text
 rider-respect dry run on  rider-respect/<base>/<ts>
@@ -95,10 +104,12 @@ fixes applied:             A
 fixes skipped (no auto):   K
 fixes skipped (NoWarn):    P     (rules respected from project policy)
 build after fixes:         pass | fail (<count> errors)
+stash ref (if any):        stash@{N}     (only when scope was explicit and tree was dirty)
 
-review:    git diff <base>...HEAD
-discard:   git checkout - && git branch -D <branch>
-keep:      (do nothing — branch is already detached from <base>)
+review:    git diff
+discard:   git checkout -- . && git checkout <base> && git branch -D <branch>
+adopt:     git add -A && git commit -m "<msg>"   (then merge / PR yourself)
+restore:   git stash pop                          (only if a stash ref is listed above)
 ```
 
 **Do not commit. Do not push. Do not open a PR.** The dry-run branch's value is precisely that the human inspects the diff and decides.
