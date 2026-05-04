@@ -97,6 +97,12 @@
       "description": "Drives .NET release workflow for ANcpLua framework repos. Auto-detects three patterns (auto-bump on main / tag with manual approval / tag-direct), watches CI with environment-gate awareness, classifies failures with a narrow auto-fix allowlist. Never edits <Version> lines, never reassigns ghost tags.",
       "version": "0.2.0",
       "source": "./plugins/release-pilot"
+    },
+    {
+      "name": "rider-respect",
+      "description": "Apply every IDE hint Rider's daemon reports onto an isolated dry-run branch via the JetBrains MCP server. Naming via rename_refactoring, formatting via reformat_file, code-style via the daemon's suggested fixes. Never commits, pushes, or suppresses — leaves the branch for human review.",
+      "version": "0.1.0",
+      "source": "./plugins/rider-respect"
     }
   ]
 }
