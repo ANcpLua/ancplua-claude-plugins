@@ -106,8 +106,8 @@ fixes skipped (NoWarn):    P     (rules respected from project policy)
 build after fixes:         pass | fail (<count> errors)
 stash ref (if any):        stash@{N}     (only when scope was explicit and tree was dirty)
 
-review:    git diff
-discard:   git checkout -- . && git checkout <base> && git branch -D <branch>
+review:    git status -s && git diff
+discard:   git restore --staged --worktree . && git clean -fd && git checkout <base> && git branch -D <branch>
 adopt:     git add -A && git commit -m "<msg>"   (then merge / PR yourself)
 restore:   git stash pop                          (only if a stash ref is listed above)
 ```
