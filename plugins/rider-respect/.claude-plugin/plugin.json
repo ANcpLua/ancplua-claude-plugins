@@ -1,0 +1,22 @@
+{
+  "name": "rider-respect",
+  "description": "Apply every IDE hint Rider's daemon reports (naming, code style, analyzer warnings, formatter) onto an isolated dry-run branch. Uses the Rider MCP server's get_file_problems / rename_refactoring / reformat_file. No commit, no merge — leaves the branch for human review.",
+  "version": "0.1.0",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "rider",
+    "jetbrains",
+    "mcp",
+    "code-style",
+    "naming",
+    "ide-hints",
+    "dry-run",
+    "dotnet"
+  ],
+  "commands": "./commands"
+}
