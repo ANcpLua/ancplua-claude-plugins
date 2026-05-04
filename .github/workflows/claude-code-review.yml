@@ -24,6 +24,7 @@ jobs:
     # - skip-review label / [skip review] in title gives humans an off switch
     if: |
       github.actor != 'coderabbitai[bot]' &&
+      github.actor != 'github-actions[bot]' &&
       !contains(github.event.pull_request.title, '[skip review]') &&
       !contains(github.event.pull_request.labels.*.name, 'skip-review')
     concurrency:
