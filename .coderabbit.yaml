@@ -3,7 +3,9 @@
 # ancplua-claude-plugins — Claude Code plugin marketplace & agent lab
 # Stack: Markdown + YAML frontmatter (skills/commands/agents) + Shell (hooks/scripts)
 # CI:    claude plugin validate, shellcheck, markdownlint, actionlint, jq
-# Scope: 13 plugins, 28 commands, 6 skills, 25 agents — NO C#/.NET code
+# Scope: 16 plugins — NO C#/.NET code
+#
+# Schema-validated against: https://coderabbit.ai/integrations/schema.v2.json
 # ─────────────────────────────────────────────────────────────────────────────
 
 language: en-US
@@ -12,15 +14,19 @@ tone_instructions: >-
   One actionable sentence over three hedging ones. No praise for obvious correctness.
   Plugin marketplace — files consumed by AI agents, clarity is paramount.
 early_access: true
+enable_free_tier: false
 
 reviews:
   profile: assertive
+  request_changes_workflow: true
   high_level_summary: true
   high_level_summary_in_walkthrough: true
   review_status: true
   review_details: true
   commit_status: true
+  fail_commit_status: true
   collapse_walkthrough: false
+  changed_files_summary: false
   sequence_diagrams: false
   estimate_code_review_effort: true
   assess_linked_issues: true
@@ -38,7 +44,7 @@ reviews:
       instructions: Apply when the PR modifies files under plugins/exodia/.
     - label: area:metacognitive-guard
       instructions: Apply when the PR modifies files under plugins/metacognitive-guard/.
-- label: area:hookify
+    - label: area:hookify
       instructions: Apply when the PR modifies files under plugins/hookify/.
     - label: area:feature-dev
       instructions: Apply when the PR modifies files under plugins/feature-dev/.
@@ -52,8 +58,12 @@ reviews:
       instructions: Apply when the PR modifies files under plugins/elegance-pipeline/.
     - label: area:code-simplifier
       instructions: Apply when the PR modifies files under plugins/code-simplifier/.
-- label: area:ancplua
+    - label: area:ancplua
       instructions: Apply when the PR modifies files under plugins/ancplua/.
+    - label: area:rider-respect
+      instructions: Apply when the PR modifies files under plugins/rider-respect/.
+    - label: area:release-pilot
+      instructions: Apply when the PR modifies files under plugins/release-pilot/.
     - label: area:infra
       instructions: Apply when the PR modifies .github/, tooling/, or build infrastructure files.
     - label: area:docs
@@ -182,13 +192,33 @@ reviews:
         thresholds are reasonable. Flag any guard that could silently pass
         when it should block.
 
-- path: plugins/hookify/**
+    - path: plugins/hookify/**
       instructions: >-
         User-configurable hook engine. Review for: correct rule schema,
         that rule matching logic handles edge cases (empty patterns, regex
         escaping), and that blocking vs warning severity is clearly
         distinguished. Flag rules that could match too broadly and block
         legitimate operations.
+
+    - path: plugins/release-pilot/**
+      instructions: >-
+        .NET release orchestrator for the four ANcpLua framework repos.
+        Review for: correct ghost-tag handling (never delete or reassign
+        remote tags), bounded auto-fix iterations (max 1 dotnet format
+        whitespace), classify-failure.sh hard-stop allowlist accuracy,
+        and that the three release patterns (auto-bump / tag-with-gate /
+        tag-direct) match the consuming repos' workflows. Flag any
+        broadening of the auto-fix allowlist beyond format-only.
+
+    - path: plugins/rider-respect/**
+      instructions: >-
+        Rider IDE dry-run plugin. Review for: hard invariant that the skill
+        NEVER commits, pushes, merges, or suppresses (#pragma / NoWarn /
+        SuppressMessage). Scope must be captured BEFORE any git stash
+        (stash-after-scope ordering bug). Discard command must clean
+        untracked files (git clean -fd) since Rider refactors can create
+        new .cs files. Flag any "fix" that adds suppression rather than
+        rewriting the diagnostic.
 
     - path: plugins/**/scripts/*.sh
       instructions: >-
@@ -199,6 +229,13 @@ reviews:
         variables provided by Claude Code runtime (CLAUDE_SKILL_DIR,
         CLAUDE_PLUGIN_ROOT). Flag scripts that source external files without
         checking existence. Flag unquoted variables in any context.
+
+    - path: plugins/**/bin/*.sh
+      instructions: >-
+        Shell scripts under plugin bin/ directories — executed by skills and
+        commands. Same shellcheck rules as scripts/. Pay special attention
+        to release-pilot/bin/ scripts which interact with git tags and
+        NuGet — flag any retag or tag-deletion logic.
 
     - path: .github/workflows/**
       instructions: >-
@@ -273,14 +310,17 @@ reviews:
   auto_review:
     enabled: true
     auto_incremental_review: true
+    auto_pause_after_reviewed_commits: 0
     drafts: false
     ignore_title_keywords:
       - '[skip ci]'
       - '[skip review]'
-      - wip
+      - 'wip'
+    labels: []
+    base_branches: []
     ignore_usernames:
-      - dependabot[bot]
-      - renovate[bot]
+      - 'dependabot[bot]'
+      - 'renovate[bot]'
 
   # ── Finishing touches ─────────────────────────────────────────────────────
   finishing_touches:
@@ -300,9 +340,13 @@ reviews:
         Include scope matching plugin name or area: (exodia), (metacognitive-guard),
         (hookify), (feature-dev), (dotnet-lint), (routing), (council),
         (design-studio), (elegance), (code-simplifier), (qyl), (otelhook),
-        (ancplua), (infra), (docs), (ci).
+        (ancplua), (rider-respect), (release-pilot), (infra), (docs), (ci).
         Under 72 characters. No trailing period.
         Examples: feat(exodia): add baryon-mode command, fix(hookify): escape regex in rule matching
+    description:
+      mode: warning
+    issue_assessment:
+      mode: warning
     custom_checks:
       - mode: error
         name: CHANGELOG updated
@@ -341,53 +385,109 @@ reviews:
           plugin code changes, or both are updated. Fail if: either is stale.
 
   # ── Tools ─────────────────────────────────────────────────────────────────
-  # Strategy: enable tools relevant to Markdown + Shell + YAML + JSON stack.
-  # No compiled languages in this repo — all content is declarative or scripted.
+  # Schema default for ALL tools is enabled:true.
+  # Explicitly keep what's relevant, disable everything else.
   tools:
     # ── Active for this stack ──
     shellcheck:
-      enabled: true        # Shell script analysis (hooks, build scripts)
+      enabled: true
     actionlint:
-      enabled: true        # GitHub Actions workflow validation
+      enabled: true
     markdownlint:
-      enabled: true        # Markdown formatting (skills, commands, docs)
+      enabled: true
     gitleaks:
-      enabled: true        # Secret scanning
+      enabled: true
     github-checks:
       enabled: true
-      timeout_ms: 120000   # 2 min for CI to complete
+      timeout_ms: 120000
+    ast-grep:
+      essential_rules: true
 
     # ── Explicitly disabled: not in our stack ──
     eslint:
-      enabled: false       # No JavaScript/TypeScript
+      enabled: false
     oxc:
-      enabled: false       # No JavaScript/TypeScript
+      enabled: false
     biome:
-      enabled: false       # No JavaScript/TypeScript
+      enabled: false
     ruff:
-      enabled: false       # No Python
+      enabled: false
+    pylint:
+      enabled: false
+    flake8:
+      enabled: false
     phpstan:
-      enabled: false       # No PHP
-    golangci-lint:
-      enabled: false       # No Go
+      enabled: false
+    phpmd:
+      enabled: false
+    phpcs:
+      enabled: false
+    swiftlint:
+      enabled: false
     detekt:
-      enabled: false       # No Kotlin
-    clippy:
-      enabled: false       # No Rust
-    hadolint:
-      enabled: false       # No Dockerfiles
+      enabled: false
+    pmd:
+      enabled: false
     semgrep:
-      enabled: false       # No compiled source to scan
-    yamllint:
-      enabled: false       # Too pedantic on YAML formatting
+      enabled: false
+    opengrep:
+      enabled: false
+    trufflehog:
+      enabled: false
     checkov:
-      enabled: false       # No IaC files
-    trivy:
-      enabled: false       # No container images
+      enabled: false
+    tflint:
+      enabled: false
+    fortitudeLint:
+      enabled: false
+    rubocop:
+      enabled: false
+    buf:
+      enabled: false
+    regal:
+      enabled: false
+    clang:
+      enabled: false
+    cppcheck:
+      enabled: false
+    circleci:
+      enabled: false
+    clippy:
+      enabled: false
     sqlfluff:
-      enabled: false       # No SQL files
+      enabled: false
+    trivy:
+      enabled: false
+    prismaLint:
+      enabled: false
+    shopifyThemeCheck:
+      enabled: false
+    luacheck:
+      enabled: false
+    brakeman:
+      enabled: false
+    dotenvLint:
+      enabled: false
+    htmlhint:
+      enabled: false
+    stylelint:
+      enabled: false
+    checkmake:
+      enabled: false
+    osvScanner:
+      enabled: false
+    blinter:
+      enabled: false
+    yamllint:
+      enabled: false
+    psscriptanalyzer:
+      enabled: false
     languagetool:
-      enabled: false       # Too noisy for agent prompt prose
+      enabled: false
+    hadolint:
+      enabled: false
+    golangci-lint:
+      enabled: false
 
 # ── Chat ──────────────────────────────────────────────────────────────────
 chat:
@@ -415,7 +515,21 @@ knowledge_base:
     scope: auto
   issues:
     scope: auto
+  pull_requests:
+    scope: auto
   jira:
     usage: disabled
   linear:
     usage: disabled
+  mcp:
+    usage: auto
+
+# ── Issue enrichment ──────────────────────────────────────────────────────
+issue_enrichment:
+  auto_enrich:
+    enabled: true
+  planning:
+    auto_planning:
+      enabled: false
+  labeling:
+    auto_apply_labels: true
