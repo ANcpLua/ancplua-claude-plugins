@@ -598,7 +598,7 @@ export async function runBenchmark(targetPath, options = {}) {
 
     // Best-effort capture of the final assistant message: Claude Code emits it as the
     // last `assistant`/`result` event in stream-json; if available, persist it for
-    // downstream consumers (matches the OpenAI harness's --output-last-message file).
+    // downstream consumers under the conventional --output-last-message filename.
     const finalMessage = (() => {
       const reversed = [...parsedEvents.events].reverse();
       for (const event of reversed) {
