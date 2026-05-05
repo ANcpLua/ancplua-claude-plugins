@@ -48,6 +48,36 @@ async function copyIfExists(sourcePath, destinationPath) {
   return true;
 }
 
+// Credential-aware copy. Refuses symlink sources (which would dereference to
+// somewhere outside ~/.claude and copy the contents into world-traversable
+// /tmp), and tightens permissions on the destination so the temp copy is not
+// readable by other users on a shared host.
+async function copyCredentialFile(sourcePath, destinationPath) {
+  let sourceStat;
+  try {
+    sourceStat = await fs.lstat(sourcePath);
+  } catch {
+    return false;
+  }
+  if (sourceStat.isSymbolicLink() || !sourceStat.isFile()) {
+    return false;
+  }
+  await fs.mkdir(path.dirname(destinationPath), { recursive: true, mode: 0o700 });
+  await fs.copyFile(sourcePath, destinationPath);
+  await fs.chmod(destinationPath, 0o600);
+  return true;
+}
+
+const SAFE_TARGET_NAME = /^[a-z0-9][a-z0-9._-]*$/i;
+
+function assertSafeTargetName(name) {
+  if (typeof name !== "string" || !SAFE_TARGET_NAME.test(name) || name === "." || name === "..") {
+    throw new Error(
+      `Refusing to provision target with unsafe name "${name}". Names must match ${SAFE_TARGET_NAME} and not be "." or "..".`,
+    );
+  }
+}
+
 async function resolveGitRoot(sourcePath) {
   try {
     const { stdout } = await execFileAsync("git", ["-C", sourcePath, "rev-parse", "--show-toplevel"]);
@@ -85,6 +115,7 @@ async function provisionSkillInstall(target, claudeHomePath) {
   // Per Claude's per-user skill location convention, skills live under
   // ~/.claude/skills/<name>/. Inside the isolated workspace we put them at
   // <claudeHomePath>/skills/<name>/.
+  assertSafeTargetName(target.name);
   const skillPath = path.join(claudeHomePath, "skills", target.name);
   await copyDirectory(target.path, skillPath);
   return skillPath;
@@ -94,6 +125,7 @@ async function provisionPluginInstall(target, workspacePath) {
   // Project-scope marketplace path is .claude-plugin/marketplace.json per the
   // marketplace ref. The plugin source itself goes under ./plugins/<name>/ inside
   // the workspace and is referenced by relative path from the marketplace entry.
+  assertSafeTargetName(target.name);
   let manifest = {};
   try {
     const manifestPath = path.join(target.path, ".claude-plugin", "plugin.json");
@@ -134,9 +166,9 @@ async function seedClaudeHome(claudeHomePath) {
     ? path.resolve(process.env.CC_PLUGIN_EVAL_CLAUDE_HOME_SOURCE)
     : path.join(os.homedir(), ".claude");
 
-  await fs.mkdir(claudeHomePath, { recursive: true });
+  await fs.mkdir(claudeHomePath, { recursive: true, mode: 0o700 });
   await Promise.all([
-    copyIfExists(path.join(sourceClaudeHome, "auth.json"), path.join(claudeHomePath, "auth.json")),
+    copyCredentialFile(path.join(sourceClaudeHome, "auth.json"), path.join(claudeHomePath, "auth.json")),
     copyIfExists(path.join(sourceClaudeHome, "settings.json"), path.join(claudeHomePath, "settings.json")),
   ]);
 }

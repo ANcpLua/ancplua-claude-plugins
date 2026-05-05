@@ -20,6 +20,7 @@ const ALLOWED_AGENT_KEYS = new Set([
 ]);
 
 const FORBIDDEN_AGENT_KEYS = new Set(["hooks", "mcpServers", "permissionMode"]);
+const FORBIDDEN_AGENT_KEYS_LOWER = new Set([...FORBIDDEN_AGENT_KEYS].map((key) => key.toLowerCase()));
 
 const VALID_MODEL_ALIASES = new Set([
   "sonnet",
@@ -126,7 +127,14 @@ export async function evaluateAgents(pluginRoot, manifest) {
       const reportedForbidden = new Set();
       if (extracted.frontmatterText) {
         for (const forbidden of FORBIDDEN_AGENT_KEYS) {
-          const re = new RegExp(`^${forbidden}\\s*:`, "m");
+          // Match the forbidden key even when YAML smuggles it through
+          // case variants (Hooks, MCPSERVERS), surrounding quotes ("hooks":),
+          // leading whitespace (indented blocks), anchors (&x hooks:), or
+          // flow-style mappings ({hooks: ...}).
+          const re = new RegExp(
+            `(?:^|[\\s,{])(?:&[\\w-]+\\s+)?["']?${forbidden}["']?\\s*:`,
+            "im",
+          );
           if (re.test(extracted.frontmatterText)) {
             reportedForbidden.add(forbidden);
             findings.push(
@@ -155,15 +163,20 @@ export async function evaluateAgents(pluginRoot, manifest) {
     const fm = parsed.data;
 
     // CC703 — forbidden security fields (highest priority; check first).
-    for (const forbidden of FORBIDDEN_AGENT_KEYS) {
-      if (Object.prototype.hasOwnProperty.call(fm, forbidden)) {
+    // Compare keys case-insensitively so `Hooks:`, `MCPSERVERS:`, etc. cannot
+    // bypass the deny-list by varying capitalization.
+    const reportedForbiddenKeys = new Set();
+    for (const key of Object.keys(fm)) {
+      const lowerKey = key.toLowerCase();
+      if (FORBIDDEN_AGENT_KEYS_LOWER.has(lowerKey) && !reportedForbiddenKeys.has(lowerKey)) {
+        reportedForbiddenKeys.add(lowerKey);
         findings.push(
           createFinding({
             severity: "error",
             code: "CC703",
-            message: `Agent frontmatter contains forbidden security field \`${forbidden}\`.`,
+            message: `Agent frontmatter contains forbidden security field \`${key}\`.`,
             location: { file: fileRel },
-            fix: `Remove \`${forbidden}\`; plugin-shipped agents cannot configure ${forbidden} (Claude Code reference).`,
+            fix: `Remove \`${key}\`; plugin-shipped agents cannot configure this field (Claude Code reference).`,
           }),
         );
       }
@@ -187,7 +200,7 @@ export async function evaluateAgents(pluginRoot, manifest) {
 
     // Unknown keys — soft signal (the SPEC allows compatibility metadata; we restrict to known keys).
     for (const key of Object.keys(fm)) {
-      if (FORBIDDEN_AGENT_KEYS.has(key)) continue; // already reported as CC703
+      if (FORBIDDEN_AGENT_KEYS_LOWER.has(key.toLowerCase())) continue; // already reported as CC703
       if (!ALLOWED_AGENT_KEYS.has(key)) {
         findings.push(
           createFinding({

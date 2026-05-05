@@ -25,7 +25,14 @@ async function isCommandsConfigured(manifest, pluginRoot) {
   }
   if (typeof declared === "string") {
     if (declared.trim() === "") return false;
-    return pathExists(path.join(pluginRoot, declared.replace(/^\.\//, "")));
+    const cleaned = declared.replace(/^\.\//, "");
+    // Refuse to probe paths outside the plugin tree (`../../etc`, etc.); a
+    // manifest pointing outside its own root is not a valid commands declaration.
+    if (cleaned.includes("..")) return false;
+    const resolved = path.resolve(pluginRoot, cleaned);
+    const rootWithSep = pluginRoot.endsWith(path.sep) ? pluginRoot : pluginRoot + path.sep;
+    if (resolved !== pluginRoot && !resolved.startsWith(rootWithSep)) return false;
+    return pathExists(resolved);
   }
   if (Array.isArray(declared)) {
     return declared.length > 0;
@@ -79,6 +86,50 @@ function appendCheckFragment(target, fragment) {
   target.checks.push(...(fragment.checks || []));
   target.metrics.push(...(fragment.metrics || []));
   target.artifacts.push(...(fragment.artifacts || []));
+}
+
+// Each evaluator runs under safeEvaluator* so that one throw does not silently
+// drop every other evaluator's findings. The synthetic CC<n>99 finding records
+// which evaluator crashed and what the runtime error was.
+async function safeEvaluatorFindings(componentName, codePrefix, runner) {
+  try {
+    const fragment = await runner();
+    return fragment || { findings: [], metrics: [], artifacts: [] };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return {
+      findings: [
+        {
+          severity: "error",
+          code: `${codePrefix}99`,
+          message: `Evaluator for "${componentName}" crashed and was skipped: ${message}`,
+          fix: `Investigate the ${componentName} evaluator crash; ${componentName} component findings are missing from this report.`,
+        },
+      ],
+      metrics: [],
+      artifacts: [],
+    };
+  }
+}
+
+async function safeEvaluatorChecks(componentName, codePrefix, runner, pluginRoot) {
+  try {
+    const fragment = await runner();
+    return fragment || { checks: [], metrics: [], artifacts: [] };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const finding = {
+      severity: "error",
+      code: `${codePrefix}99`,
+      message: `Evaluator for "${componentName}" crashed and was skipped: ${message}`,
+      fix: `Investigate the ${componentName} evaluator crash; ${componentName} component findings are missing from this report.`,
+    };
+    return {
+      checks: [findingToCheck(finding, pluginRoot)],
+      metrics: [],
+      artifacts: [],
+    };
+  }
 }
 
 async function countDeclaredComponents(pluginRoot, manifest) {
@@ -163,20 +214,26 @@ export async function evaluatePlugin(pluginRoot) {
 
   // Dispatch to all Writer B evaluators. Each returns a {findings, metrics, artifacts}
   // fragment per SPEC §6.1; findingToCheck adapts findings into the canonical checks[] shape.
-  appendFindingFragment(result, await evaluateManifest(manifest, pluginRoot), pluginRoot);
-  appendFindingFragment(result, await evaluateHooks(pluginRoot, manifest), pluginRoot);
-  appendFindingFragment(result, await evaluateMcp(pluginRoot, manifest), pluginRoot);
-  appendFindingFragment(result, await evaluateLsp(pluginRoot, manifest), pluginRoot);
-  appendFindingFragment(result, await evaluateMonitors(pluginRoot, manifest), pluginRoot);
-  appendFindingFragment(result, await evaluateAgents(pluginRoot, manifest), pluginRoot);
-  appendFindingFragment(result, await evaluateUserConfig(manifest, pluginRoot), pluginRoot);
+  appendFindingFragment(result, await safeEvaluatorFindings("manifest", "CC1", () => evaluateManifest(manifest, pluginRoot)), pluginRoot);
+  appendFindingFragment(result, await safeEvaluatorFindings("hooks", "CC3", () => evaluateHooks(pluginRoot, manifest)), pluginRoot);
+  appendFindingFragment(result, await safeEvaluatorFindings("mcp", "CC4", () => evaluateMcp(pluginRoot, manifest)), pluginRoot);
+  appendFindingFragment(result, await safeEvaluatorFindings("lsp", "CC5", () => evaluateLsp(pluginRoot, manifest)), pluginRoot);
+  appendFindingFragment(result, await safeEvaluatorFindings("monitors", "CC6", () => evaluateMonitors(pluginRoot, manifest)), pluginRoot);
+  appendFindingFragment(result, await safeEvaluatorFindings("agents", "CC7", () => evaluateAgents(pluginRoot, manifest)), pluginRoot);
+  appendFindingFragment(result, await safeEvaluatorFindings("userconfig", "CC1", () => evaluateUserConfig(manifest, pluginRoot)), pluginRoot);
 
   // Marketplace lives at <plugin-parent>/<plugin-parent>/.claude-plugin/marketplace.json
   // for the user's monorepo case. SPEC §6.8 only invokes this evaluator if such a file
   // exists; otherwise it is a no-op.
   const marketplacePath = path.resolve(pluginRoot, "..", "..", ".claude-plugin", "marketplace.json");
   if (await pathExists(marketplacePath)) {
-    appendFindingFragment(result, await evaluateMarketplace(marketplacePath, manifest?.name, manifest), pluginRoot);
+    appendFindingFragment(
+      result,
+      await safeEvaluatorFindings("marketplace", "CC8", () =>
+        evaluateMarketplace(marketplacePath, manifest?.name, manifest),
+      ),
+      pluginRoot,
+    );
   }
 
   // Per-skill evaluation. Walk the configured skills directory and run skill.js for each.
@@ -205,7 +262,10 @@ export async function evaluatePlugin(pluginRoot) {
 
   for (const skillDir of skillDirs) {
     const prefix = `skill:${path.basename(skillDir)}`;
-    appendCheckFragment(result, await evaluateSkill(skillDir, { prefix }));
+    appendCheckFragment(
+      result,
+      await safeEvaluatorChecks(`skill:${path.basename(skillDir)}`, "CC2", () => evaluateSkill(skillDir, { prefix }), pluginRoot),
+    );
   }
 
   // Plugin-level metrics: plugin_skill_count, plugin_keyword_count, and the new
@@ -293,15 +353,16 @@ export async function evaluatePluginComponents(pluginRoot, components) {
   const requested = new Set(components && components.length > 0 ? components : ["all"]);
   const wantAll = requested.has("all");
   const dispatchTable = [
-    ["manifest", () => evaluateManifest(manifest, pluginRoot)],
-    ["hooks", () => evaluateHooks(pluginRoot, manifest)],
-    ["mcp", () => evaluateMcp(pluginRoot, manifest)],
-    ["lsp", () => evaluateLsp(pluginRoot, manifest)],
-    ["monitors", () => evaluateMonitors(pluginRoot, manifest)],
-    ["agents", () => evaluateAgents(pluginRoot, manifest)],
-    ["userconfig", () => evaluateUserConfig(manifest, pluginRoot)],
+    ["manifest", "CC1", () => evaluateManifest(manifest, pluginRoot)],
+    ["hooks", "CC3", () => evaluateHooks(pluginRoot, manifest)],
+    ["mcp", "CC4", () => evaluateMcp(pluginRoot, manifest)],
+    ["lsp", "CC5", () => evaluateLsp(pluginRoot, manifest)],
+    ["monitors", "CC6", () => evaluateMonitors(pluginRoot, manifest)],
+    ["agents", "CC7", () => evaluateAgents(pluginRoot, manifest)],
+    ["userconfig", "CC1", () => evaluateUserConfig(manifest, pluginRoot)],
     [
       "marketplace",
+      "CC8",
       async () => {
         const marketplacePath = path.resolve(pluginRoot, "..", "..", ".claude-plugin", "marketplace.json");
         if (!(await pathExists(marketplacePath))) {
@@ -312,9 +373,9 @@ export async function evaluatePluginComponents(pluginRoot, components) {
     ],
   ];
 
-  for (const [name, runner] of dispatchTable) {
+  for (const [name, codePrefix, runner] of dispatchTable) {
     if (!wantAll && !requested.has(name)) continue;
-    const fragment = await runner();
+    const fragment = await safeEvaluatorFindings(name, codePrefix, runner);
     if (!fragment) continue;
     result.findings.push(...(fragment.findings || []));
     appendFindingFragment(result, fragment, pluginRoot);

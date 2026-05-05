@@ -51,26 +51,28 @@ function unique(items) {
 }
 
 export function summarizeChecks(checks) {
+  // Status counts (pass/warn/fail/info) and severity counts (error/warning) are flattened
+  // into one object per the schema in src/core/schema.js. `info` always represents status; the
+  // severity bucket has only `error` and `warning` to avoid the `info` namespace clash.
   return checks.reduce(
     (summary, check) => {
       summary.total += 1;
-      summary.status[check.status] = (summary.status[check.status] || 0) + 1;
-      summary.severity[check.severity] = (summary.severity[check.severity] || 0) + 1;
+      if (check.status === "pass" || check.status === "warn" || check.status === "fail" || check.status === "info") {
+        summary[check.status] += 1;
+      }
+      if (check.severity === "error" || check.severity === "warning") {
+        summary[check.severity] += 1;
+      }
       return summary;
     },
     {
       total: 0,
-      status: {
-        pass: 0,
-        warn: 0,
-        fail: 0,
-        info: 0,
-      },
-      severity: {
-        error: 0,
-        warning: 0,
-        info: 0,
-      },
+      pass: 0,
+      warn: 0,
+      fail: 0,
+      info: 0,
+      error: 0,
+      warning: 0,
     },
   );
 }
@@ -259,7 +261,7 @@ function buildRiskReasons({ score, failedErrors, warningSignals, deductions, che
       `Contains ${warningSignals} warning signal${warningSignals === 1 ? "" : "s"} that still need attention.`,
     );
   }
-  if (checkSummary.status.info > 0 && reasons.length === 0) {
+  if (checkSummary.info > 0 && reasons.length === 0) {
     reasons.push("No failing or warning checks were found; remaining items are informational only.");
   }
   if (reasons.length === 0) {

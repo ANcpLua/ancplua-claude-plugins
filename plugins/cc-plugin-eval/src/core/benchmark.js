@@ -1,6 +1,7 @@
 // Derived from openai/plugins plugin-eval (MIT). Modified for Claude Code. See ../../THIRD_PARTY_NOTICES.md.
 
 import { spawn } from "node:child_process";
+import { rmSync } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 
@@ -31,6 +32,101 @@ const DEFAULT_MODELS = {
   plugin: "claude-opus-4-7",
   skill: "claude-sonnet-4-7",
 };
+
+// Env vars the spawned `claude` child inherits. Anything not on this list is dropped
+// so credentials and secrets don't leak from the parent shell into stderr/verifier
+// output or the workspace snapshot. HOME and CLAUDE_HOME are set explicitly per-run.
+const INHERITED_ENV_KEYS = new Set([
+  "PATH",
+  "TERM",
+  "LANG",
+  "LC_ALL",
+  "LC_CTYPE",
+  "USER",
+  "LOGNAME",
+  "SHELL",
+  "TMPDIR",
+  "SystemRoot",
+]);
+
+function buildClaudeChildEnv(provisioned) {
+  const env = {};
+  for (const key of INHERITED_ENV_KEYS) {
+    if (process.env[key] !== undefined) env[key] = process.env[key];
+  }
+  env.HOME = provisioned.homePath;
+  env.CLAUDE_HOME = provisioned.claudeHomePath;
+  return env;
+}
+
+// Allowlist of CLI flags that benchmark scenarios may inject via runner.extraArgs.
+// Anything not on this list — `--mcp-config`, `--system-prompt`, `--add-dir`,
+// `--allow-dangerously-skip-permissions`, etc. — is rejected because a
+// target-checked-in benchmark.json shouldn't be able to escalate the runner's
+// trust boundary just by listing flags.
+const SAFE_EXTRA_ARG_FLAGS = new Set([
+  "--effort",
+  "--allowed-tools",
+  "--allowedTools",
+  "--disallowed-tools",
+  "--disallowedTools",
+  "--strict-mcp-config",
+  "--exclude-dynamic-system-prompt-sections",
+  "--debug",
+  "--include-hook-events",
+  "--include-partial-messages",
+  "--verbose",
+]);
+
+function filterExtraArgs(extraArgs) {
+  if (!Array.isArray(extraArgs)) return [];
+  const result = [];
+  for (const arg of extraArgs) {
+    if (typeof arg !== "string") continue;
+    if (arg.startsWith("--") && !SAFE_EXTRA_ARG_FLAGS.has(arg)) {
+      throw new Error(
+        `Unsupported flag in benchmark runner.extraArgs: "${arg}". Allowed flags: ${[...SAFE_EXTRA_ARG_FLAGS]
+          .sort()
+          .join(", ")}.`,
+      );
+    }
+    result.push(arg);
+  }
+  return result;
+}
+
+// Tempdir cleanup registry. provisionBenchmarkWorkspace registers each tempRoot;
+// the SIGINT/SIGTERM handler below removes them synchronously (best effort) so an
+// interrupted benchmark doesn't leave auth.json copies in /tmp.
+const ACTIVE_CLEANUPS = new Set();
+let signalHandlersInstalled = false;
+
+function installSignalHandlers() {
+  if (signalHandlersInstalled) return;
+  signalHandlersInstalled = true;
+  const handle = (signal) => {
+    for (const cleanup of ACTIVE_CLEANUPS) {
+      try {
+        cleanup();
+      } catch {
+        // best-effort; continue to next cleanup
+      }
+    }
+    ACTIVE_CLEANUPS.clear();
+    // Re-raise the signal at default disposition so the process actually exits.
+    process.removeAllListeners(signal);
+    process.kill(process.pid, signal);
+  };
+  process.on("SIGINT", handle);
+  process.on("SIGTERM", handle);
+  process.on("SIGHUP", handle);
+}
+
+function registerCleanup(fn) {
+  installSignalHandlers();
+  ACTIVE_CLEANUPS.add(fn);
+  return () => ACTIVE_CLEANUPS.delete(fn);
+}
 
 function sanitizeId(value) {
   return String(value || "scenario")
@@ -263,11 +359,28 @@ async function runProcessCapture({
   timeoutMs,
 }) {
   const startedAt = Date.now();
+  // detached: true on POSIX makes the child its own process-group leader so that
+  // grandchildren (Bash subshells, MCP servers, verifiers) can be reaped together.
+  // Without this, child.kill() only kills `claude` and leaves orphans attached to init.
+  const isPosix = process.platform !== "win32";
   const child = spawn(command, args, {
     cwd,
     env,
     stdio: [stdinInput ? "pipe" : "ignore", "pipe", "pipe"],
+    detached: isPosix,
   });
+
+  const killProcessTree = (signal) => {
+    try {
+      if (isPosix && typeof child.pid === "number") {
+        process.kill(-child.pid, signal);
+      } else {
+        child.kill(signal);
+      }
+    } catch {
+      // process may already have exited
+    }
+  };
 
   const stdoutChunks = [];
   const stderrChunks = [];
@@ -292,13 +405,12 @@ async function runProcessCapture({
     ? timeoutMs
     : DEFAULT_PROCESS_TIMEOUT_MS;
   let timedOut = false;
+  // Two-phase: send SIGTERM to the group so child shells get a chance to flush
+  // and exit cleanly, then SIGKILL after a 2-second grace period for stragglers.
   const killTimer = setTimeout(() => {
     timedOut = true;
-    try {
-      child.kill("SIGKILL");
-    } catch {
-      // ignore — process may already have exited
-    }
+    killProcessTree("SIGTERM");
+    setTimeout(() => killProcessTree("SIGKILL"), 2000).unref?.();
   }, effectiveTimeout);
   if (typeof killTimer.unref === "function") killTimer.unref();
 
@@ -372,7 +484,7 @@ function buildClaudeExecArgs({
     args.push("--permission-mode", config.runner.permissionMode);
   }
   if (Array.isArray(config?.runner?.extraArgs)) {
-    args.push(...config.runner.extraArgs);
+    args.push(...filterExtraArgs(config.runner.extraArgs));
   }
   // finalMessagePath is recorded for downstream consumers; the streaming JSON output
   // already contains the final message, so we leave the file write to a post-run step.
@@ -554,7 +666,7 @@ export async function runBenchmark(targetPath, options = {}) {
       command: claudeExecutable,
       args: ["--version"],
       cwd: process.cwd(),
-      env: process.env,
+      env: { PATH: process.env.PATH, HOME: process.env.HOME },
       stdoutPath: path.join(runDirectory, "claude-version.stdout.log"),
       stderrPath: path.join(runDirectory, "claude-version.stderr.log"),
     });
@@ -575,6 +687,16 @@ export async function runBenchmark(targetPath, options = {}) {
       target,
       config,
       scenarioId: scenario.id,
+    });
+
+    // Register a synchronous cleanup so SIGINT/SIGTERM can wipe the tempRoot
+    // before the process dies, preventing leaked auth.json copies in /tmp.
+    const deregisterCleanup = registerCleanup(() => {
+      try {
+        rmSync(provisioned.tempRoot, { recursive: true, force: true });
+      } catch {
+        // best-effort — process is exiting
+      }
     });
 
     let scenarioStatus = "failed";
@@ -599,11 +721,7 @@ export async function runBenchmark(targetPath, options = {}) {
         command: claudeExecutable,
         args,
         cwd: provisioned.workspacePath,
-        env: {
-          ...process.env,
-          HOME: provisioned.homePath,
-          CLAUDE_HOME: provisioned.claudeHomePath,
-        },
+        env: buildClaudeChildEnv(provisioned),
         stdoutPath,
         stderrPath,
         timeoutMs: config?.runner?.timeoutMs,
@@ -681,6 +799,7 @@ export async function runBenchmark(targetPath, options = {}) {
         claudeHomePath: provisioned.claudeHomePath,
       });
     } finally {
+      deregisterCleanup();
       if (!shouldPreserveWorkspace) {
         await provisioned.cleanup();
       }
