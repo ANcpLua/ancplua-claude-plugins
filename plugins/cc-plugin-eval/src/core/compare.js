@@ -3,6 +3,11 @@
 import { createComparisonNextAction } from "./presentation.js";
 
 export function compareResults(before, after) {
+  if (!Array.isArray(before?.checks) || !Array.isArray(after?.checks)) {
+    throw new Error(
+      "Invalid input to compareResults: missing checks array on before/after (pass evaluate() results, not inspect/comparison payloads).",
+    );
+  }
   const beforeFailures = new Set(
     before.checks.filter((check) => check.status === "fail").map((check) => check.id),
   );

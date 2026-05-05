@@ -318,6 +318,12 @@ export async function evaluateSkill(skillRoot, options = {}) {
   const brokenLinks = [];
   for (const linkTarget of relativeLinks) {
     const candidatePath = path.resolve(skillRoot, linkTarget);
+    const rel = path.relative(skillRoot, candidatePath);
+    const escapesSkill = rel === "" ? false : rel.startsWith("..") || path.isAbsolute(rel);
+    if (escapesSkill) {
+      brokenLinks.push(linkTarget);
+      continue;
+    }
     if (!(await pathExists(candidatePath))) {
       brokenLinks.push(linkTarget);
     }

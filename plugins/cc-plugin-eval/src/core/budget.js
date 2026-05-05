@@ -44,13 +44,9 @@ async function computeDeferredComponents(rootPath, excludeFiles = []) {
   const components = [];
   for (const filePath of files) {
     const content = await readText(filePath);
+    const rel = relativePath(rootPath, filePath);
     components.push(
-      createComponent(
-        relativePath(rootPath, filePath),
-        filePath,
-        estimateTokenCount(content),
-        "Deferred supporting file",
-      ),
+      createComponent(rel, rel, estimateTokenCount(content), "Deferred supporting file"),
     );
   }
   return components;
@@ -58,23 +54,24 @@ async function computeDeferredComponents(rootPath, excludeFiles = []) {
 
 export async function computeSkillBudget(skillRoot) {
   const skillPath = path.join(skillRoot, "SKILL.md");
+  const skillPathRel = relativePath(skillRoot, skillPath);
   const content = await readText(skillPath);
   const parsed = parseFrontmatter(content);
   const name = parsed.data?.name || path.basename(skillRoot);
   const description = parsed.data?.description || "";
 
   const triggerComponents = [
-    createComponent("skill-name", skillPath, estimateTokenCount(name), "Always-loaded skill identifier"),
+    createComponent("skill-name", skillPathRel, estimateTokenCount(name), "Always-loaded skill identifier"),
     createComponent(
       "skill-description",
-      skillPath,
+      skillPathRel,
       estimateTokenCount(description),
       "Always-loaded trigger description",
     ),
   ];
 
   const invokeComponents = [
-    createComponent("skill-file", skillPath, estimateTokenCount(content), "Loaded when the skill is invoked"),
+    createComponent("skill-file", skillPathRel, estimateTokenCount(content), "Loaded when the skill is invoked"),
   ];
 
   const deferredComponents = await computeDeferredComponents(skillRoot, [skillPath]);
@@ -98,6 +95,7 @@ export async function computeSkillBudget(skillRoot) {
 
 export async function computePluginBudget(pluginRoot, manifest) {
   const manifestPath = path.join(pluginRoot, ".claude-plugin", "plugin.json");
+  const manifestPathRel = relativePath(pluginRoot, manifestPath);
   const manifestContent = await readText(manifestPath);
   const skillDirs = manifest?.skills
     ? await discoverSkillDirs(pluginRoot, manifest.skills)
@@ -106,20 +104,20 @@ export async function computePluginBudget(pluginRoot, manifest) {
   const triggerComponents = [
     createComponent(
       "plugin-description",
-      manifestPath,
+      manifestPathRel,
       estimateTokenCount(manifest?.description || ""),
       "Plugin marketplace summary",
     ),
     createComponent(
       "keywords",
-      manifestPath,
+      manifestPathRel,
       estimateTokenCount((manifest?.keywords || []).join(" ")),
       "Marketplace discovery keywords",
     ),
   ];
 
   const invokeComponents = [
-    createComponent("plugin-manifest", manifestPath, estimateTokenCount(manifestContent), "Manifest load cost"),
+    createComponent("plugin-manifest", manifestPathRel, estimateTokenCount(manifestContent), "Manifest load cost"),
   ];
 
   for (const skillDir of skillDirs) {
@@ -127,12 +125,13 @@ export async function computePluginBudget(pluginRoot, manifest) {
     if (!(await pathExists(skillPath))) {
       continue;
     }
+    const skillPathRel = relativePath(pluginRoot, skillPath);
     const content = await readText(skillPath);
     const parsed = parseFrontmatter(content);
     triggerComponents.push(
       createComponent(
         `${path.basename(skillDir)}-description`,
-        skillPath,
+        skillPathRel,
         estimateTokenCount(parsed.data?.description || ""),
         "Skill trigger description exposed through the plugin",
       ),
@@ -140,7 +139,7 @@ export async function computePluginBudget(pluginRoot, manifest) {
     invokeComponents.push(
       createComponent(
         `${path.basename(skillDir)}-skill-file`,
-        skillPath,
+        skillPathRel,
         estimateTokenCount(content),
         "Skill invocation cost ceiling",
       ),
@@ -194,13 +193,9 @@ export async function computeBudgetProfile(target) {
   const components = [];
   for (const filePath of files) {
     const content = await readText(filePath);
+    const rel = relativePath(target.path, filePath);
     components.push(
-      createComponent(
-        relativePath(target.path, filePath),
-        filePath,
-        estimateTokenCount(content),
-        "Generic text file budget",
-      ),
+      createComponent(rel, rel, estimateTokenCount(content), "Generic text file budget"),
     );
   }
   return {

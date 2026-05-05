@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import { createFinding, createMetric } from "../core/schema.js";
-import { pathExists, readText, walkFiles } from "../lib/files.js";
+import { pathExists, readJson, readText, walkFiles } from "../lib/files.js";
 
 const VALID_TYPES = new Set(["string", "number", "boolean", "directory", "file"]);
 const KEY_RE = /^[A-Za-z0-9_]+$/;
@@ -12,7 +12,8 @@ const SENSITIVE_VALUE_LIMIT = 2 * 1024;
 const LOC = { file: ".claude-plugin/plugin.json" };
 
 function asEntries(userConfig) {
-  if (!userConfig || typeof userConfig !== "object" || Array.isArray(userConfig)) return [];
+  if (userConfig == null) return [];
+  if (typeof userConfig !== "object" || Array.isArray(userConfig)) return null;
   return Object.entries(userConfig);
 }
 
@@ -24,6 +25,19 @@ function validateUserConfigBlock(block, options) {
   const { sourceLabel, declaredKeys } = options;
   const findings = [];
   const entries = asEntries(block);
+
+  if (entries === null) {
+    findings.push(
+      createFinding({
+        severity: "error",
+        code: "CC918",
+        message: `${sourceLabel} container is not a plain object (${Array.isArray(block) ? "array" : typeof block} provided).`,
+        location: LOC,
+        fix: "userConfig must be an object mapping field names to descriptors.",
+      }),
+    );
+    return findings;
+  }
 
   for (const [key, raw] of entries) {
     if (typeof key === "string") declaredKeys.add(key);
@@ -137,6 +151,28 @@ function validateUserConfigBlock(block, options) {
   return findings;
 }
 
+function collectScanDirs(pluginRoot, manifest) {
+  const dirs = new Set();
+  const fields = [
+    { value: manifest?.skills, fallback: "skills" },
+    { value: manifest?.agents, fallback: "agents" },
+    { value: manifest?.commands, fallback: "commands" },
+  ];
+  for (const { value, fallback } of fields) {
+    const entries = [];
+    if (typeof value === "string") entries.push(value);
+    else if (Array.isArray(value)) {
+      for (const entry of value) if (typeof entry === "string") entries.push(entry);
+    } else {
+      entries.push(fallback);
+    }
+    for (const entry of entries) {
+      dirs.add(path.join(pluginRoot, entry.replace(/^\.\//, "")));
+    }
+  }
+  return [...dirs];
+}
+
 async function gatherSubstitutionSources(pluginRoot, manifest) {
   // Aggregate every place the ref says ${user_config.*} can appear:
   // hooks/monitor commands, MCP/LSP server configs, skill content, agent content.
@@ -184,11 +220,9 @@ async function gatherSubstitutionSources(pluginRoot, manifest) {
   }
 
   // Skill and agent markdown bodies (best-effort scan, capped to avoid runaway IO).
-  const scanDirs = [
-    path.join(pluginRoot, "skills"),
-    path.join(pluginRoot, "agents"),
-    path.join(pluginRoot, "commands"),
-  ];
+  // Resolve scan roots from manifest.skills/agents/commands (string or array),
+  // falling back to the conventional directory names. Mirrors discoverAgentFiles.
+  const scanDirs = collectScanDirs(pluginRoot, manifest);
   for (const dir of scanDirs) {
     if (!(await pathExists(dir))) continue;
     let files = [];
@@ -234,8 +268,55 @@ export async function evaluateUserConfig(manifest, pluginRoot) {
 
   // Per-channel userConfig + CC916 server cross-check.
   const mcpServerKeys = new Set();
+  let mcpKeysAvailable = false;
   if (manifest?.mcpServers && typeof manifest.mcpServers === "object" && !Array.isArray(manifest.mcpServers)) {
     for (const key of Object.keys(manifest.mcpServers)) mcpServerKeys.add(key);
+    mcpKeysAvailable = true;
+  } else if (typeof manifest?.mcpServers === "string") {
+    const candidate = path.resolve(pluginRoot, manifest.mcpServers.replace(/^\.\//, ""));
+    const rel = path.relative(pluginRoot, candidate);
+    const escapesRoot = rel === "" ? false : rel.startsWith("..") || path.isAbsolute(rel);
+    if (escapesRoot) {
+      findings.push(
+        createFinding({
+          severity: "info",
+          code: "CC919",
+          message: `Skipping channel/mcpServers cross-check: manifest.mcpServers path "${manifest.mcpServers}" escapes the plugin root.`,
+          location: LOC,
+        }),
+      );
+    } else {
+      try {
+        const parsed = await readJson(candidate);
+        const servers = parsed?.mcpServers && typeof parsed.mcpServers === "object" && !Array.isArray(parsed.mcpServers)
+          ? parsed.mcpServers
+          : parsed && typeof parsed === "object" && !Array.isArray(parsed)
+            ? parsed
+            : null;
+        if (servers) {
+          for (const key of Object.keys(servers)) mcpServerKeys.add(key);
+          mcpKeysAvailable = true;
+        } else {
+          findings.push(
+            createFinding({
+              severity: "info",
+              code: "CC919",
+              message: `Skipping channel/mcpServers cross-check: ${manifest.mcpServers} did not contain a server map.`,
+              location: LOC,
+            }),
+          );
+        }
+      } catch (error) {
+        findings.push(
+          createFinding({
+            severity: "info",
+            code: "CC919",
+            message: `Skipping channel/mcpServers cross-check: cannot load ${manifest.mcpServers} (${error instanceof Error ? error.message : String(error)}).`,
+            location: LOC,
+          }),
+        );
+      }
+    }
   }
   if (Array.isArray(manifest?.channels)) {
     for (let i = 0; i < manifest.channels.length; i += 1) {
@@ -250,7 +331,7 @@ export async function evaluateUserConfig(manifest, pluginRoot) {
             location: LOC,
           }),
         );
-      } else if (mcpServerKeys.size > 0 && !mcpServerKeys.has(channel.server)) {
+      } else if (mcpKeysAvailable && !mcpServerKeys.has(channel.server)) {
         findings.push(
           createFinding({
             severity: "warn",

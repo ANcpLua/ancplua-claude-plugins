@@ -68,18 +68,33 @@ export async function resolveTarget(inputPath) {
 }
 
 export async function discoverPluginSkillDirectories(pluginRoot, manifest) {
-  const configuredPath = manifest?.skills ? manifest.skills.replace(/^\.\//, "") : "skills";
-  const skillsRoot = path.join(pluginRoot, configuredPath);
-  if (!(await isDirectory(skillsRoot))) {
-    return [];
+  const declared = manifest?.skills;
+  const configuredPaths = [];
+  if (typeof declared === "string") {
+    configuredPaths.push(declared.replace(/^\.\//, ""));
+  } else if (Array.isArray(declared)) {
+    for (const entry of declared) {
+      if (typeof entry === "string") configuredPaths.push(entry.replace(/^\.\//, ""));
+    }
+  } else {
+    configuredPaths.push("skills");
   }
 
-  const candidates = await listImmediateDirectories(skillsRoot);
   const directories = [];
-  for (const candidate of candidates) {
-    const skillFile = path.join(candidate, "SKILL.md");
-    if (await pathExists(skillFile)) {
-      directories.push(candidate);
+  const seen = new Set();
+  for (const configuredPath of configuredPaths) {
+    const skillsRoot = path.join(pluginRoot, configuredPath);
+    if (!(await isDirectory(skillsRoot))) {
+      continue;
+    }
+    const candidates = await listImmediateDirectories(skillsRoot);
+    for (const candidate of candidates) {
+      if (seen.has(candidate)) continue;
+      const skillFile = path.join(candidate, "SKILL.md");
+      if (await pathExists(skillFile)) {
+        seen.add(candidate);
+        directories.push(candidate);
+      }
     }
   }
   return directories;

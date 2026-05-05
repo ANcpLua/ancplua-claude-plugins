@@ -250,6 +250,8 @@ async function loadBenchmarkConfig(target, options = {}) {
   };
 }
 
+const DEFAULT_PROCESS_TIMEOUT_MS = 5 * 60 * 1000;
+
 async function runProcessCapture({
   command,
   args,
@@ -258,6 +260,7 @@ async function runProcessCapture({
   stdoutPath,
   stderrPath,
   stdinInput,
+  timeoutMs,
 }) {
   const startedAt = Date.now();
   const child = spawn(command, args, {
@@ -285,10 +288,28 @@ async function runProcessCapture({
     child.stdin.end(stdinInput);
   }
 
+  const effectiveTimeout = Number.isFinite(timeoutMs) && timeoutMs > 0
+    ? timeoutMs
+    : DEFAULT_PROCESS_TIMEOUT_MS;
+  let timedOut = false;
+  const killTimer = setTimeout(() => {
+    timedOut = true;
+    try {
+      child.kill("SIGKILL");
+    } catch {
+      // ignore — process may already have exited
+    }
+  }, effectiveTimeout);
+  if (typeof killTimer.unref === "function") killTimer.unref();
+
   const outcome = await new Promise((resolve, reject) => {
-    child.once("error", reject);
+    child.once("error", (error) => {
+      clearTimeout(killTimer);
+      reject(error);
+    });
     child.once("close", (code, signal) => {
-      resolve({ code: code ?? 1, signal });
+      clearTimeout(killTimer);
+      resolve({ code: code ?? 1, signal, timedOut });
     });
   });
 
@@ -390,21 +411,25 @@ async function analyzeChangedWorkspaceCode(workspacePath, changedRelativePaths) 
   };
 }
 
-async function runVerifierCommands({ commands, cwd, processRunner, basePath }) {
+async function runVerifierCommands({ commands, cwd, processRunner, basePath, timeoutMs }) {
   const results = [];
 
   for (let index = 0; index < commands.length; index += 1) {
     const command = commands[index];
     const stdoutPath = path.join(basePath, `verifier-${index + 1}.stdout.log`);
     const stderrPath = path.join(basePath, `verifier-${index + 1}.stderr.log`);
+    // Use $SHELL when set (mac/dev workstations) or fall back to /bin/sh, which
+    // is guaranteed POSIX. Drop the -l flag so we don't source ~/.zshrc inside
+    // an isolated benchmark home (per F-codex-001).
     const outcome = await processRunner({
       kind: "verifier",
-      command: "/bin/zsh",
-      args: ["-lc", command],
+      command: process.env.SHELL || "/bin/sh",
+      args: ["-c", command],
       cwd,
       env: process.env,
       stdoutPath,
       stderrPath,
+      timeoutMs,
     });
 
     results.push({
@@ -576,6 +601,7 @@ export async function runBenchmark(targetPath, options = {}) {
       },
       stdoutPath,
       stderrPath,
+      timeoutMs: config?.runner?.timeoutMs,
     });
 
     const parsedEvents = parseClaudeJsonStream(claudeRun.stdoutText);
@@ -594,6 +620,7 @@ export async function runBenchmark(targetPath, options = {}) {
       cwd: provisioned.workspacePath,
       processRunner,
       basePath: scenarioDirectory,
+      timeoutMs: config?.runner?.timeoutMs,
     });
 
     // Best-effort capture of the final assistant message: Claude Code emits it as the

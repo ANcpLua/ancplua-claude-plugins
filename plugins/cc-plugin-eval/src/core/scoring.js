@@ -21,14 +21,22 @@ const GRADE_THRESHOLDS = {
 };
 
 const CATEGORY_PRIORITY = {
-  manifest: 0,
-  "skill-structure": 1,
-  budget: 2,
-  measurement: 3,
-  "best-practice": 4,
-  complexity: 5,
-  readability: 6,
-  "code-quality": 7,
+  security: 0,
+  manifest: 1,
+  "skill-structure": 2,
+  hooks: 3,
+  mcp: 3,
+  lsp: 3,
+  monitors: 3,
+  agents: 3,
+  userconfig: 3,
+  marketplace: 4,
+  budget: 5,
+  measurement: 6,
+  "best-practice": 7,
+  complexity: 8,
+  readability: 9,
+  "code-quality": 10,
 };
 
 const STATUS_PRIORITY = {

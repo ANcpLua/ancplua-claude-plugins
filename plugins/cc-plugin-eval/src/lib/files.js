@@ -133,7 +133,17 @@ export async function walkFiles(rootPath, options = {}) {
   const excluded = new Set([...IGNORED_DIRS, ...excludeDirs]);
 
   async function visit(currentPath, depth = 0) {
-    const entries = await fs.readdir(currentPath, { withFileTypes: true });
+    let entries;
+    try {
+      entries = await fs.readdir(currentPath, { withFileTypes: true });
+    } catch (error) {
+      // Skip unreadable / missing directories (EACCES, ENOENT, etc.) — one
+      // unreadable subtree should not abort the entire scan.
+      if (error && (error.code === "EACCES" || error.code === "ENOENT" || error.code === "EPERM")) {
+        return;
+      }
+      throw error;
+    }
     for (const entry of entries) {
       const entryPath = path.join(currentPath, entry.name);
       if (entry.isDirectory()) {

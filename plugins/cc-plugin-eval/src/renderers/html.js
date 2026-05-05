@@ -203,6 +203,40 @@ function renderImprovementBriefHtml(result) {
 </html>`;
 }
 
+function renderComparisonHtml(result) {
+  const delta = result.scoreDelta || 0;
+  const deltaSign = delta > 0 ? "+" : "";
+  const budget = result.budgetDelta || {};
+  const budgetItems = [
+    `trigger_cost_tokens: ${budget.trigger_cost_tokens >= 0 ? "+" : ""}${budget.trigger_cost_tokens || 0}`,
+    `invoke_cost_tokens: ${budget.invoke_cost_tokens >= 0 ? "+" : ""}${budget.invoke_cost_tokens || 0}`,
+    `deferred_cost_tokens: ${budget.deferred_cost_tokens >= 0 ? "+" : ""}${budget.deferred_cost_tokens || 0}`,
+  ];
+
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>cc-plugin-eval Comparison</title>
+  </head>
+  <body>
+    <main>
+      <h1>cc-plugin-eval Comparison: ${escapeHtml(result.target?.name || "")}</h1>
+      <p>Score delta: ${escapeHtml(`${deltaSign}${delta}`)} (grade ${escapeHtml(result.gradeBefore || "")} -> ${escapeHtml(result.gradeAfter || "")})</p>
+      <p>Risk: ${escapeHtml(result.riskBefore || "")} -> ${escapeHtml(result.riskAfter || "")}</p>
+      <h2>Recommended Next Step</h2>
+      ${renderNextAction(result.nextAction)}
+      <h2>Budget Delta</h2>
+      ${renderList(budgetItems)}
+      <h2>Resolved Failures</h2>
+      ${renderOptionalList(result.resolvedFailures || [], "No previously failing checks resolved.")}
+      <h2>New Failures</h2>
+      ${renderOptionalList(result.newFailures || [], "No newly failing checks introduced.")}
+    </main>
+  </body>
+</html>`;
+}
+
 export function renderHtml(result) {
   if (result.kind === "workflow-guide") {
     return `<!doctype html>
@@ -304,6 +338,10 @@ export function renderHtml(result) {
 
   if (result.kind === "improvement-brief") {
     return renderImprovementBriefHtml(result);
+  }
+
+  if (result.kind === "comparison") {
+    return renderComparisonHtml(result);
   }
 
   return `<!doctype html>
