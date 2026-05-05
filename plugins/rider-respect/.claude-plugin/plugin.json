@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "rider-respect",
   "description": "Apply every IDE hint Rider's daemon reports (naming, code style, analyzer warnings, formatter) onto an isolated dry-run branch. Uses the Rider MCP server's get_file_problems / rename_refactoring / reformat_file. No commit, no merge — leaves the branch for human review.",
   "version": "0.1.0",

@@ -57,6 +57,14 @@ Compatibility aliases:
 `;
 }
 
+function readOptionValue(flag, argv, index) {
+  const value = argv[index + 1];
+  if (value === undefined || (typeof value === "string" && value.startsWith("--"))) {
+    throw new Error(`Missing value for ${flag}.\n\n${usage()}`);
+  }
+  return value;
+}
+
 function parseOptions(argv) {
   const positional = [];
   const options = {
@@ -78,42 +86,42 @@ function parseOptions(argv) {
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === "--format") {
-      options.format = argv[index + 1];
+      options.format = readOptionValue("--format", argv, index);
       index += 1;
     } else if (arg === "--output") {
-      options.output = argv[index + 1];
+      options.output = readOptionValue("--output", argv, index);
       index += 1;
     } else if (arg === "--metric-pack") {
-      options.metricPackManifests.push(argv[index + 1]);
+      options.metricPackManifests.push(readOptionValue("--metric-pack", argv, index));
       index += 1;
     } else if (arg === "--observed-usage") {
-      options.observedUsagePaths.push(argv[index + 1]);
+      options.observedUsagePaths.push(readOptionValue("--observed-usage", argv, index));
       index += 1;
     } else if (arg === "--config") {
-      options.configPath = argv[index + 1];
+      options.configPath = readOptionValue("--config", argv, index);
       index += 1;
     } else if (arg === "--usage-out") {
-      options.usageOutPath = argv[index + 1];
+      options.usageOutPath = readOptionValue("--usage-out", argv, index);
       index += 1;
     } else if (arg === "--result-out") {
-      options.resultOutPath = argv[index + 1];
+      options.resultOutPath = readOptionValue("--result-out", argv, index);
       index += 1;
     } else if (arg === "--model") {
-      options.model = argv[index + 1];
+      options.model = readOptionValue("--model", argv, index);
       index += 1;
     } else if (arg === "--goal") {
-      options.goal = argv[index + 1];
+      options.goal = readOptionValue("--goal", argv, index);
       index += 1;
     } else if (arg === "--request") {
-      options.request = argv[index + 1];
+      options.request = readOptionValue("--request", argv, index);
       index += 1;
     } else if (arg === "--brief-out") {
-      options.briefOut = argv[index + 1];
+      options.briefOut = readOptionValue("--brief-out", argv, index);
       index += 1;
     } else if (arg === "--strict") {
       options.strict = true;
     } else if (arg === "--component") {
-      options.component = argv[index + 1];
+      options.component = readOptionValue("--component", argv, index);
       index += 1;
     } else if (arg === "--help" || arg === "-h") {
       options.help = true;
