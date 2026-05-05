@@ -22,6 +22,11 @@ const SYSTEM_BIN_ALLOWLIST = new Set([
   "jq",
 ]);
 
+function escapesRoot(rootPath, candidatePath) {
+  const rel = path.relative(rootPath, candidatePath);
+  return rel === "" ? false : rel.startsWith("..") || path.isAbsolute(rel);
+}
+
 async function loadMonitorsConfig(pluginRoot, manifest) {
   // Inline support: manifest.monitors as array.
   if (Array.isArray(manifest?.monitors)) {
@@ -29,11 +34,20 @@ async function loadMonitorsConfig(pluginRoot, manifest) {
   }
   const candidatePath = (() => {
     if (typeof manifest?.monitors === "string") {
-      return path.join(pluginRoot, manifest.monitors.replace(/^\.\//, ""));
+      return path.resolve(pluginRoot, manifest.monitors.replace(/^\.\//, ""));
     }
-    return path.join(pluginRoot, "monitors", "monitors.json");
+    return path.resolve(pluginRoot, "monitors", "monitors.json");
   })();
   const fileRel = toPosixPath(path.relative(pluginRoot, candidatePath));
+  if (typeof manifest?.monitors === "string" && escapesRoot(pluginRoot, candidatePath)) {
+    return {
+      entries: null,
+      sourceFile: fileRel,
+      parseError: null,
+      missing: false,
+      escaped: true,
+    };
+  }
   if (!(await pathExists(candidatePath))) {
     return { entries: null, sourceFile: fileRel, parseError: null, missing: true };
   }
@@ -109,7 +123,20 @@ export async function evaluateMonitors(pluginRoot, manifest) {
   const metrics = [];
   const artifacts = [];
 
-  const { entries, sourceFile, parseError, missing } = await loadMonitorsConfig(pluginRoot, manifest);
+  const { entries, sourceFile, parseError, missing, escaped } = await loadMonitorsConfig(pluginRoot, manifest);
+
+  if (escaped) {
+    findings.push(
+      createFinding({
+        severity: "error",
+        code: "CC900",
+        message: `Manifest \`monitors\` path "${manifest.monitors}" escapes the plugin root.`,
+        location: { file: ".claude-plugin/plugin.json" },
+        fix: "Use a path that resolves inside the plugin directory (no `../` traversal).",
+      }),
+    );
+    return { findings, metrics, artifacts };
+  }
 
   if (parseError) {
     findings.push(
