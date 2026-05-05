@@ -8,5 +8,8 @@ export function estimateTokenCount(text) {
 }
 
 export function sumTokenCounts(items) {
-  return items.reduce((total, item) => total + item.tokens, 0);
+  return items.reduce((total, item) => {
+    const value = Number(item?.tokens);
+    return total + (Number.isFinite(value) ? value : 0);
+  }, 0);
 }

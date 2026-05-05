@@ -85,11 +85,6 @@ function asArray(value) {
   return [value];
 }
 
-function expandPluginRootRef(value, pluginRoot) {
-  if (typeof value !== "string") return value;
-  return value.replace(/\$\{CLAUDE_PLUGIN_ROOT\}/g, pluginRoot);
-}
-
 function firstWord(command) {
   if (typeof command !== "string") return "";
   const trimmed = command.trim();

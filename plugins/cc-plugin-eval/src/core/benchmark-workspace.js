@@ -49,8 +49,15 @@ async function copyIfExists(sourcePath, destinationPath) {
 }
 
 async function resolveGitRoot(sourcePath) {
-  const { stdout } = await execFileAsync("git", ["-C", sourcePath, "rev-parse", "--show-toplevel"]);
-  return stdout.trim();
+  try {
+    const { stdout } = await execFileAsync("git", ["-C", sourcePath, "rev-parse", "--show-toplevel"]);
+    return stdout.trim();
+  } catch (error) {
+    throw new Error(
+      `Cannot resolve git root for "${sourcePath}": ${error instanceof Error ? error.message : String(error)}`,
+      { cause: error },
+    );
+  }
 }
 
 async function createWorkspaceCopy(sourcePath, workspacePath) {

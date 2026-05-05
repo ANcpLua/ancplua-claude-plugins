@@ -1,11 +1,8 @@
 // Derived from openai/plugins plugin-eval (MIT). Modified for Claude Code. See ../../THIRD_PARTY_NOTICES.md.
 
 import { formatCommandPath } from "../lib/files.js";
+import { shellQuote } from "../lib/shell.js";
 import { enrichSummary } from "./scoring.js";
-
-function shellQuote(value) {
-  return `'${String(value).replaceAll("'", "'\\''")}'`;
-}
 
 function targetLabel(target) {
   if (target.kind === "plugin") {
@@ -116,20 +113,16 @@ export function createWorkflowGuideNextAction(guide) {
 export function createMeasurementPlanNextAction(plan) {
   const toolset = plan.toolsets.find((entry) => plan.recommendedToolsets.includes(entry.id)) || plan.toolsets[0];
   const targetKind = targetTypeLabel(plan.target);
+  const why = toolset
+    ? toolset.goal
+    : `Use cc-plugin-eval to decide the next measurement move for this ${targetKind}.`;
 
   return {
     label: toolset ? `Start with ${toolset.label}` : "Decide what to measure next",
-    why: toolset
-      ? toolset.goal
-      : "A small measurement pass will turn the current report into a more trustworthy workflow decision.",
+    why,
     command: buildStartCommand(plan.target, `What should I run next?`),
     chatPrompt: `What should I run next?`,
     ...(toolset ? { toolsetId: toolset.id } : {}),
-    ...(toolset
-      ? {}
-      : {
-          why: `Use cc-plugin-eval to decide the next measurement move for this ${targetKind}.`,
-        }),
   };
 }
 

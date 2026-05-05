@@ -18,6 +18,22 @@ import { evaluateAgents } from "./agents.js";
 import { evaluateMarketplace } from "./marketplace.js";
 import { evaluateUserConfig } from "./userconfig.js";
 
+async function isCommandsConfigured(manifest, pluginRoot) {
+  const declared = manifest?.commands;
+  if (declared === undefined || declared === null) {
+    return pathExists(path.join(pluginRoot, "commands"));
+  }
+  if (typeof declared === "string") {
+    if (declared.trim() === "") return false;
+    return pathExists(path.join(pluginRoot, declared.replace(/^\.\//, "")));
+  }
+  if (Array.isArray(declared)) {
+    return declared.length > 0;
+  }
+  // Plain objects like `{}` or other truthy non-paths do not configure commands.
+  return false;
+}
+
 const STATUS_FROM_SEVERITY = {
   error: "fail",
   warn: "warn",
@@ -168,7 +184,9 @@ export async function evaluatePlugin(pluginRoot) {
   if (skillDirs.length === 0) {
     // Only emit CC103 (skills missing) if the plugin also lacks a commands directory
     // — Claude allows commands/ as a flat alternative to skills/.
-    const commandsConfigured = manifest?.commands || (await pathExists(path.join(pluginRoot, "commands")));
+    // F-cr-023: a truthy but malformed manifest.commands (e.g. `{}` or a path that
+    // does not resolve) must NOT silence CC103.
+    const commandsConfigured = await isCommandsConfigured(manifest, pluginRoot);
     if (!commandsConfigured) {
       result.checks.push(
         createCheck({
@@ -259,12 +277,13 @@ export async function evaluatePluginComponents(pluginRoot, components) {
   try {
     manifest = await readJson(manifestPath);
   } catch (error) {
+    const parserMessage = error instanceof Error ? error.message : String(error);
     const finding = {
       severity: "error",
       code: "CC102",
-      message: "plugin.json could not be parsed as JSON.",
+      message: `plugin.json could not be parsed as JSON: ${parserMessage}`,
       location: { file: ".claude-plugin/plugin.json" },
-      fix: error instanceof Error ? error.message : String(error),
+      fix: "Validate the JSON with `jq . .claude-plugin/plugin.json` and fix the reported syntax error.",
     };
     result.findings.push(finding);
     result.checks.push(findingToCheck(finding, pluginRoot));

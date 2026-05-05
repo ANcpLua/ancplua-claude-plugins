@@ -3,7 +3,7 @@
 **Status:** scaffolding spec for parallel implementation by 3 writers
 **Source repo (MIT):** `/tmp/plugin-compare/openai-plugins/plugins/plugin-eval/` (forked from `openai/plugins`)
 **Authoritative Claude refs:** `/tmp/plugin-compare/refs/claude-plugins-reference.md`, `/tmp/plugin-compare/refs/claude-skills-reference.md`
-**Destination root:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/`
+**Destination root:** `plugins/cc-plugin-eval/`
 
 Writers MUST read sections 1, 2, 3, 4, 8, 9, 10 (everyone), and one of 5/6/7 (their assignment). Do NOT freelance outside your section without raising it back to the architect.
 
@@ -488,7 +488,7 @@ Title strings: `Plugin Eval Report` → `cc-plugin-eval Report`, etc. Remove the
 1. `node scripts/cc-plugin-eval.js analyze fixtures/minimal-plugin --format markdown` produces a non-empty report.
 2. `node scripts/cc-plugin-eval.js validate fixtures/full-plugin --strict` exits 0 (full-plugin must be valid).
 3. `node scripts/cc-plugin-eval.js inspect fixtures/full-plugin --component hooks --format json` returns `{kind: "inspect-result", findings: [...]}` with no other components.
-4. No string `plugin-eval` (without the `cc-` prefix), `.codex-plugin`, `.plugin-eval`, `interface`, `defaultPrompt`, `composerIcon`, `brandColor`, `developerName`, `category`, or `capabilities` appears anywhere in `src/`. Run `grep -rE "plugin-eval[^-]|\.codex-plugin|\.plugin-eval|interface\\.[a-z]" src/` and confirm no hits.
+4. No string `plugin-eval` (without the `cc-` prefix), `.codex-plugin`, `.plugin-eval`, `interface`, `defaultPrompt`, `composerIcon`, `brandColor`, `developerName`, `category`, or `capabilities` appears anywhere in `src/`. Run `rg -n '(?<!cc-)plugin-eval|\.codex-plugin|\.plugin-eval|interface\.[a-z]' src/` and confirm no hits.
 
 ---
 
@@ -671,7 +671,7 @@ If the config is an array, treat as a list of hook configs (per ref multi-source
 
 **Signature:** `export async function evaluateMarketplace(marketplacePath, pluginName) → fragment`
 
-**Behavior:** Validate `.claude-plugin/marketplace.json` (the file at the marketplace root, NOT inside the plugin). Called only if such a file exists at `<plugin-parent>/<plugin-parent>/.claude-plugin/marketplace.json` (the user's monorepo case). Expected shape per the user's existing `marketplace.json` at `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/.claude-plugin/marketplace.json`: `{name, owner, metadata, plugins: [{name, description, version, source}]}`.
+**Behavior:** Validate `.claude-plugin/marketplace.json` (the file at the marketplace root, NOT inside the plugin). Called only if such a file exists at `<plugin-parent>/<plugin-parent>/.claude-plugin/marketplace.json` (the user's monorepo case). Expected shape per the user's existing `marketplace.json` at `.claude-plugin/marketplace.json`: `{name, owner, metadata, plugins: [{name, description, version, source}]}`.
 
 **Lint rules (minimum 5):**
 
@@ -982,7 +982,7 @@ Sections (each 1 paragraph unless noted):
 7. **Local-first behavior.** 3 bullets explaining `analyze`/`validate`/`inspect` are pure-local; `benchmark` runs real `claude` in isolated workspaces.
 8. **Safety and execution notes.** 4 bullets: file-only side effects of `analyze`/`validate`/`inspect`/`explain-budget`/`measurement-plan`; `init-benchmark` writes under `.cc-plugin-eval/`; `benchmark` runs a live `claude` workflow in an isolated temp workspace; review generated benchmark configs before running them.
 9. **How it works as a Claude Code plugin.** Reference `.claude-plugin/plugin.json` and the `skills/` directory; mention the chat-first router. Use natural prompts: "Evaluate this plugin.", "Why did this score that way?", "Validate the manifest." (no `$plugin-name` syntax — Claude does not use that prefix).
-10. **Manual plugin installation.** Reference the user's marketplace pattern at `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/.claude-plugin/marketplace.json`. Show one example entry that pins `cc-plugin-eval` at version `0.1.0` with `source: "./plugins/cc-plugin-eval"`.
+10. **Manual plugin installation.** Reference the user's marketplace pattern at `.claude-plugin/marketplace.json`. Show one example entry that pins `cc-plugin-eval` at version `0.1.0` with `source: "./plugins/cc-plugin-eval"`.
 11. **Use cases.** 5-bullet list (evaluate plugin, evaluate skill, validate before commit via `validate --strict`, benchmark, compare before/after).
 12. **References.** Links to the 5 files in `references/`.
 
@@ -1175,7 +1175,7 @@ The reviewer runs this list, in order, against the merged result.
 
 ### 10.3 Repository-level LICENSE
 
-The user's repository at `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/` already contains licensing per the user's other plugins. Writer C does NOT add a separate `LICENSE` file inside `plugins/cc-plugin-eval/` — the repo-level license covers the plugin. THIRD_PARTY_NOTICES.md handles the OpenAI attribution.
+The user's repository already contains licensing per the user's other plugins. Writer C does NOT add a separate `LICENSE` file inside `plugins/cc-plugin-eval/` — the repo-level license covers the plugin. THIRD_PARTY_NOTICES.md handles the OpenAI attribution.
 
 ---
 

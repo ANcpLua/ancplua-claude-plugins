@@ -12,13 +12,13 @@ Qualitative score: B+ on the static analysis, A- on the architecture, **C+ on sh
 
 ### CRIT-1 — Manifest description ships the literal string "real-codex"
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/.claude-plugin/plugin.json:5`
+- **Where:** `plugins/cc-plugin-eval/.claude-plugin/plugin.json:5`
 - **Why it's critical:** SPEC §9.1 forbids `Codex|codex` strings in shipped artifacts (only `THIRD_PARTY_NOTICES.md` is allowed to mention Codex). The marketplace UI surfaces this description. A 0.1.0 launch with "real-codex benchmarking" in the user-visible manifest is embarrassing and is exactly the kind of porting residue that triggers the no-Codex-strings rule.
 - **Exact fix:** In `.claude-plugin/plugin.json`, change `"Token-budget analysis, scoring, comparison, improvement briefs, and real-codex benchmarking."` to `"Token-budget analysis, scoring, comparison, improvement briefs, and real claude benchmarking."` (drop the hyphen and the leading "real-").
 
 ### CRIT-2 — `discoverSkillNames` populates the set with absolute paths, not skill names (breaks CC605 on full-plugin and the unit test)
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/evaluators/monitors.js:79-81`
+- **Where:** `plugins/cc-plugin-eval/src/evaluators/monitors.js:79-81`
 - **Why it's critical:** This breaks the full-plugin fixture's `validate --strict` invariant (test #7) and makes test #3 (`evaluateMonitors emits CC605 for on-skill-invoke missing skill`) pass for the wrong reason rather than fail correctly. `listImmediateDirectories` returns full paths (e.g. `/Users/.../skills/example-skill`), but the loop then does `names.add(name)` — so the set ends up holding `/Users/.../skills/example-skill` instead of `example-skill`. As a result `skillNames.has("example-skill")` is always false, which makes CC605 fire on the *valid* full-plugin fixture and then the strict-validate exits 2 instead of 0.
 - **Exact fix:** In `src/evaluators/monitors.js` line 80, change
   ```js
@@ -32,7 +32,7 @@ Qualitative score: B+ on the static analysis, A- on the architecture, **C+ on sh
 
 ### CRIT-3 — `evaluateMonitors` gates CC605 / CC608 on `set.size > 0`, hiding real misses
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/evaluators/monitors.js:209` (CC605) and `:258` (CC608)
+- **Where:** `plugins/cc-plugin-eval/src/evaluators/monitors.js:209` (CC605) and `:258` (CC608)
 - **Why it's critical:** Both lint rules are gated on `if (skillNames.size > 0 && !skillNames.has(...))` and `if (userConfigKeys.size > 0 && !userConfigKeys.has(...))`. The intent was "don't false-positive when discovery completely fails," but the effect is that any plugin with an empty/missing skills directory or empty userConfig silently skips the cross-check. Tests #3 and #4 hit this directly: they pass `manifest = { skills: "./skills/" }` (declared, but no directory exists) and `manifest = { userConfig: {} }` (declared but empty). The author *intended* the cross-check to fire — the gate is too defensive.
 - **Exact fix:**
   - In `src/evaluators/monitors.js:209`, change `if (skillNames.size > 0 && !skillNames.has(referencedSkill))` to `if (!skillNames.has(referencedSkill))`.
@@ -42,7 +42,7 @@ Qualitative score: B+ on the static analysis, A- on the architecture, **C+ on sh
 
 ### CRIT-4 — `evaluateHooks` looks for `mcp_tool` server name in `handler.server`, but the canonical encoding (and the fixture) puts it in `handler.command` as `<server>/<tool>`
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/evaluators/hooks.js:357-369`
+- **Where:** `plugins/cc-plugin-eval/src/evaluators/hooks.js:357-369`
 - **Why it's critical:** Both the test (`tests/cc-plugin-eval.test.js:341` — `command: "ghost-server/whatever"`) and the broken-plugin fixture (`fixtures/broken-plugin/hooks/hooks.json:17` — `command: "ghost-server/some-tool"`) encode the MCP server name as `<server>/<tool>` in the `command` field. The evaluator only inspects `handler.server`, which neither uses. As a result CC310 never fires and tests #2 and #8 both fail. (Test #8 explicitly asserts CC310 in the broken-plugin coverage matrix at line 1126.)
 - **Exact fix:** In `src/evaluators/hooks.js` replace the entire `if (hookType === "mcp_tool")` block (lines 356-369) with:
   ```js
@@ -69,7 +69,7 @@ Qualitative score: B+ on the static analysis, A- on the architecture, **C+ on sh
 
 ### CRIT-5 — `evaluateMarketplace` ignores its third argument, causing CC804 to never fire from the unit test
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/evaluators/marketplace.js:6` and the manifest lookup at `:115`
+- **Where:** `plugins/cc-plugin-eval/src/evaluators/marketplace.js:6` and the manifest lookup at `:115`
 - **Why it's critical:** The test (`tests/cc-plugin-eval.test.js:671`) calls `evaluateMarketplace(marketplacePath, "p", { version: "1.0.0" })`, expecting the third argument to be the manifest. The evaluator instead reads `options.manifest` and falls back to `{}`, so `manifest.version` is always undefined and CC804 never fires. SPEC §6.8 declares the function signature `(marketplacePath, pluginName) → fragment` and does not specify an options object — making the third argument the manifest is the simplest spec-conforming fix.
 - **Exact fix:** In `src/evaluators/marketplace.js`:
   - Change line 6 from `export async function evaluateMarketplace(marketplacePath, pluginName, options = {}) {` to `export async function evaluateMarketplace(marketplacePath, pluginName, manifest = {}) {`.
@@ -79,7 +79,7 @@ Qualitative score: B+ on the static analysis, A- on the architecture, **C+ on sh
 
 ### CRIT-6 — `SECRET_NAME_RE` does not match `api_token`, the canonical CC915 fixture key
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/evaluators/userconfig.js:8`
+- **Where:** `plugins/cc-plugin-eval/src/evaluators/userconfig.js:8`
 - **Why it's critical:** Test #6 and the broken-plugin fixture (`fixtures/broken-plugin/.claude-plugin/plugin.json:18-22`) both use `api_token` as the canonical secret-shaped key. SPEC §7.2.8 explicitly calls this out: "userConfig.api-token (CC910) and api_token without sensitive: true (CC915)". The current regex `/^(api[_-]?key|token|secret|password|credential)/i` requires the key to match `api[_-]?key` (i.e. `apikey`, `api_key`, `api-key`) or to *start with* `token`/`secret`/etc. `api_token` matches none of those alternatives — `api[_-]?key` requires "key" not "token", and `token` doesn't start the string.
 - **Exact fix:** In `src/evaluators/userconfig.js:8`, change
   ```js
@@ -97,7 +97,7 @@ Qualitative score: B+ on the static analysis, A- on the architecture, **C+ on sh
 
 ### MAJ-1 — Test #1 (CC211 broken link): test fixture writes a backtick code-span, not a Markdown link, and the evaluator only inspects Markdown links
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/tests/cc-plugin-eval.test.js:220`
+- **Where:** `plugins/cc-plugin-eval/tests/cc-plugin-eval.test.js:220`
 - **Why it matters:** SPEC §5.3.8 CC211 rule is *broken-relative-links* — the upstream Codex implementation only finds `[text](url)` links, and SPEC says "keep the Codex implementation but extend the allow-list of URI schemes". The cc-plugin-eval evaluator already does this correctly. But the test writes `See \`references/missing.md\`.` which renders as inline code, not a link, so `findRelativeLinks` returns `[]` and CC211 never fires. This is a test-side fixture bug, not an evaluator gap.
 - **Exact fix:** In `tests/cc-plugin-eval.test.js:220`, change
   ```js
@@ -112,13 +112,13 @@ Qualitative score: B+ on the static analysis, A- on the architecture, **C+ on sh
 
 ### MAJ-2 — Manifest CC107 fires on the broken-plugin fixture only because `keywords` field is missing entirely
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/evaluators/manifest.js:144-155`
+- **Where:** `plugins/cc-plugin-eval/src/evaluators/manifest.js:144-155`
 - **Why it matters:** The current manifest evaluator emits CC107 (info) whenever `keywords` has fewer than 3 entries, but it also fires when `keywords` is *absent*. The SPEC §6.2 says CC107 is "info — `keywords` is empty or absent — suggest at least 3 for marketplace discovery." That is consistent with the implementation. **No bug** — but the broken-plugin fixture is missing `keywords` so this is one of the noise findings cluttering its coverage matrix. Cosmetic.
 - **Decision rationale:** No action this iteration. Flagged so the fix-writer doesn't get distracted by it.
 
 ### MAJ-3 — `evaluateUserConfig`'s CC917 (unused-key heuristic) walks `process.cwd()` when called from a unit test, producing nondeterministic info findings
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/evaluators/userconfig.js:271-292` (also `gatherSubstitutionSources`)
+- **Where:** `plugins/cc-plugin-eval/src/evaluators/userconfig.js:271-292` (also `gatherSubstitutionSources`)
 - **Why it matters:** The CC917 unused-key check calls `gatherSubstitutionSources(pluginRoot, manifest)`, and the unit tests pass `pluginRoot = process.cwd()` (the cc-plugin-eval repo root). That walks the entire repo tree (skills/, references/, src/, fixtures/, tests/) on every test invocation, scanning every `.md` for `${user_config.X}`. It's slow, depends on the working directory, and could match strings inside `references/component-validators.md` that document the `${user_config.api_endpoint}` reference convention — turning a unit-test-shaped manifest into something that incidentally references real config keys from unrelated docs. None of the tests assert CC917, so this only manifests as noise; but the broken-plugin coverage matrix (see test #8) doesn't depend on CC917.
 - **Exact fix:** Two acceptable options. Recommended: in `src/evaluators/userconfig.js:140`, add an early-return when `pluginRoot` is not a plugin root (heuristic: no `.claude-plugin/plugin.json`). Implementation:
   ```js
@@ -137,20 +137,20 @@ Qualitative score: B+ on the static analysis, A- on the architecture, **C+ on sh
 
 ### MAJ-4 — `buildClaudeExecArgs` invokes `--include-partial-messages` unconditionally, but Claude Code rejects the flag without `--print --output-format=stream-json`
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/core/benchmark.js:331-361`
-- **Why it matters:** The flag is correctly only available with `--print --output-format=stream-json` per `claude --help` (verified on 2026-05-05 against `/Users/ancplua/.local/bin/claude`), and the args list always includes both — so the flag is technically valid. However, two issues: (1) `--include-partial-messages` floods stdout with intermediate streamlets that downstream `parseClaudeJsonStream` treats as full events, inflating event counts; (2) it's not part of any test contract. The benchmark fixture test mocks the runner anyway, so the real-world correctness is unverified at CI. Recommend dropping `--include-partial-messages` until there's a concrete reason to keep it. Same for `--verbose` — it's noise in stream-json mode.
+- **Where:** `plugins/cc-plugin-eval/src/core/benchmark.js:331-361`
+- **Why it matters:** The flag is correctly only available with `--print --output-format=stream-json` per `claude --help` (verified on 2026-05-05 against the local `claude` CLI), and the args list always includes both — so the flag is technically valid. However, two issues: (1) `--include-partial-messages` floods stdout with intermediate streamlets that downstream `parseClaudeJsonStream` treats as full events, inflating event counts; (2) it's not part of any test contract. The benchmark fixture test mocks the runner anyway, so the real-world correctness is unverified at CI. Recommend dropping `--include-partial-messages` until there's a concrete reason to keep it. Same for `--verbose` — it's noise in stream-json mode.
 - **Exact fix:** In `src/core/benchmark.js:338-345`, drop `"--verbose"` and `"--include-partial-messages"` from the default args. Move them into `config.runner.extraArgs` if a benchmark author wants them.
 - **Severity:** Major, not critical, because the test suite uses a fake binary so this only matters for users who run real benchmarks. But the eventual PR notes around this should be explicit.
 
 ### MAJ-5 — Hooks evaluator's CC305 detection skips when `${CLAUDE_PLUGIN_ROOT}` is followed by a quote/whitespace/no-path
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/evaluators/hooks.js:305-321`
+- **Where:** `plugins/cc-plugin-eval/src/evaluators/hooks.js:305-321`
 - **Why it matters:** The regex `/\$\{CLAUDE_PLUGIN_ROOT\}([^\s"';|&<>]+)/` requires a non-empty path immediately after the variable. If a user writes `"command": "${CLAUDE_PLUGIN_ROOT}"` (no path) or `"command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/x.sh"` (quoted form per the ref's `cd "${CLAUDE_PLUGIN_ROOT}" && ...` pattern), the regex misses the script path. Tests don't cover these cases. Soft.
 - **Exact fix:** Optional this iteration. If addressing: change to `/\$\{CLAUDE_PLUGIN_ROOT\}\/?([^\s"';|&<>]*)/` and validate `scriptRel` length > 0 separately.
 
 ### MAJ-6 — `evaluateAgents` deny-lists `hooks`, `mcpServers`, `permissionMode` correctly but emits `severity: "error"` (status fail) only inside the `for` loop — the rule does fire, but the SPEC text is satisfied
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/evaluators/agents.js:135-148`
+- **Where:** `plugins/cc-plugin-eval/src/evaluators/agents.js:135-148`
 - **Why it matters:** The reviewer's audit checklist required confirming "rejection at ERROR severity, not WARN". Verified — `severity: "error"` is set for CC703, and `findingToCheck` (Writer A's adapter) maps `"error"` → `status: "fail"`. **This is correct.** No fix needed; included so the fix-writer doesn't waste time looking.
 
 ---
@@ -163,7 +163,7 @@ The CLI integration tests use `execFile` for one-shot invocations. The benchmark
 
 ### MIN-2 — `fixtures/broken-plugin` is missing the LSP `command` (CC502 should fire there but the LSP file is structurally minimal)
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/fixtures/broken-plugin/.lsp.json`
+- **Where:** `plugins/cc-plugin-eval/fixtures/broken-plugin/.lsp.json`
 - The fixture currently triggers CC503 + CC504 but not CC502. SPEC §7.2.8 doesn't mandate CC502, and test #8 already accepts `CC503 || CC504` so this passes. Optional: add a second LSP entry without `command` to broaden coverage.
 
 ### MIN-3 — `provisionPluginInstall` writes `.claude-plugin/marketplace.json` inside the workspace using `name: "cc-plugin-eval-benchmark"`, but the plugin entry uses the *target's* name
@@ -172,7 +172,7 @@ This is correct per SPEC §5.3.12 but could confuse a maintainer who reads only 
 
 ### MIN-4 — README references `multi-skill-plugin/` fixture but SPEC §2 says it should be deleted
 
-- **Where:** `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/README.md:18` and `:157`
+- **Where:** `plugins/cc-plugin-eval/README.md:18` and `:157`
 - The directory still exists (`fixtures/multi-skill-plugin/`) and the README documents it. SPEC §2 row 81 says "delete". Decide: keep the directory (and update SPEC) or delete it (and update README). Recommend keep + update SPEC §2 — multi-skill-plugin is genuinely useful for aggregate-scoring tests.
 
 ### MIN-5 — `monitors.js` "system bin allow-list" is duplicated between hooks.js and monitors.js
@@ -260,7 +260,7 @@ The security posture is **acceptable for a local-first tool**, with three watch-
 **PASS.**
 
 - `THIRD_PARTY_NOTICES.md` exists at the plugin root with the full MIT text, an explicit "Modifications" section, a per-file porting status table (verbatim ports / derivative ports / new files), and a "License of derivative work" closer pointing at the repo-level LICENSE.
-- `package.json` does NOT declare a `license` field — but the repo-level `LICENSE` file at `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/` covers it per SPEC §10.3, and `.claude-plugin/plugin.json:12` declares `"license": "MIT"`. Acceptable per SPEC §10. (Optional minor: add `"license": "MIT"` to `package.json` for tooling that scans only npm metadata.)
+- `package.json` does NOT declare a `license` field — but the repo-level `LICENSE` file at `` covers it per SPEC §10.3, and `.claude-plugin/plugin.json:12` declares `"license": "MIT"`. Acceptable per SPEC §10. (Optional minor: add `"license": "MIT"` to `package.json` for tooling that scans only npm metadata.)
 - `.claude-plugin/plugin.json` declares `"license": "MIT"`. Verified.
 - Per-file headers verified by spot-check on:
   - Verbatim ports: `src/index.js`, `src/lib/files.js`, `src/renderers/index.js`, `src/core/scoring.js`, `src/evaluators/code.js` — all have `// Ported from openai/plugins plugin-eval (MIT). See ../THIRD_PARTY_NOTICES.md.` (relative path varies by depth).
@@ -269,15 +269,15 @@ The security posture is **acceptable for a local-first tool**, with three watch-
 - README closes with "MIT, copyright (c) 2026 AncpLua" and points at `THIRD_PARTY_NOTICES.md`. Verified.
 
 **File paths inspected:**
-- `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/THIRD_PARTY_NOTICES.md`
-- `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/.claude-plugin/plugin.json`
-- `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/package.json`
-- `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/README.md`
-- `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/cli.js`
-- `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/index.js`
-- `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/core/benchmark.js`
-- `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/core/benchmark-workspace.js`
-- `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/evaluators/skill.js`
-- `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/evaluators/manifest.js`
-- `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/src/lib/files.js`
-- `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/plugins/cc-plugin-eval/tests/cc-plugin-eval.test.js`
+- `plugins/cc-plugin-eval/THIRD_PARTY_NOTICES.md`
+- `plugins/cc-plugin-eval/.claude-plugin/plugin.json`
+- `plugins/cc-plugin-eval/package.json`
+- `plugins/cc-plugin-eval/README.md`
+- `plugins/cc-plugin-eval/src/cli.js`
+- `plugins/cc-plugin-eval/src/index.js`
+- `plugins/cc-plugin-eval/src/core/benchmark.js`
+- `plugins/cc-plugin-eval/src/core/benchmark-workspace.js`
+- `plugins/cc-plugin-eval/src/evaluators/skill.js`
+- `plugins/cc-plugin-eval/src/evaluators/manifest.js`
+- `plugins/cc-plugin-eval/src/lib/files.js`
+- `plugins/cc-plugin-eval/tests/cc-plugin-eval.test.js`

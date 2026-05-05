@@ -343,7 +343,11 @@ export async function evaluateSkill(skillRoot, options = {}) {
     );
   }
 
+  // CC214 only fires for top-level skill docs (README.md / CHANGELOG.md /
+  // CONTRIBUTING.md sitting directly in the skill root); nested README files
+  // under references/ etc. are conventional and should not trigger it.
   const extraDocs = supportFiles
+    .filter((filePath) => path.dirname(filePath) === skillRoot)
     .map((filePath) => path.basename(filePath))
     .filter((name) => ["README.md", "CHANGELOG.md", "CONTRIBUTING.md"].includes(name));
   if (extraDocs.length > 0) {

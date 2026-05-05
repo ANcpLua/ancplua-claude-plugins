@@ -179,7 +179,7 @@ export function parseClaudeJsonStream(text) {
   };
 }
 
-export function summarizeClaudeEvents(events) {
+export function summarizeClaudeEvents(events, ignoredLines = []) {
   const errorMessages = [];
   const toolNames = [];
   const shellCommands = [];
@@ -221,7 +221,7 @@ export function summarizeClaudeEvents(events) {
   return {
     threadId,
     eventCount: events.length,
-    ignoredLineCount: 0,
+    ignoredLineCount: Array.isArray(ignoredLines) ? ignoredLines.length : 0,
     finalStatus: failed ? "failed" : completed ? "completed" : "unknown",
     errorMessages,
     toolCallCount: toolNames.length,

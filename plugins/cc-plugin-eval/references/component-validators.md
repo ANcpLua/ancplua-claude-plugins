@@ -152,6 +152,8 @@
 
 ## Cross-references
 
-- Claude Code plugins reference (cached): `/tmp/plugin-compare/refs/claude-plugins-reference.md`
-- Claude Code skills reference (cached): `/tmp/plugin-compare/refs/claude-skills-reference.md`
+- Claude Code plugins reference: <https://docs.claude.com/en/docs/claude-code/plugins-reference>
+- Claude Code skills reference: <https://docs.claude.com/en/docs/claude-code/skills>
+<!-- Local cache copies, if used during dev, live at /tmp/plugin-compare/refs/. Do not commit them. -->
+
 - Schema for the canonical evaluation result: `evaluation-result-schema.md`

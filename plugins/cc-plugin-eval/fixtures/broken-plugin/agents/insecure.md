@@ -19,4 +19,4 @@ disallowedTools:
   - Bash
 ---
 
-Body that triggers many CC7xx findings on purpose.
+Too short.

@@ -62,7 +62,15 @@ export async function runMetricPacks(target, manifestPaths = []) {
       );
     }
 
-    const payload = JSON.parse(execution.stdout || "{}");
+    let payload;
+    try {
+      payload = JSON.parse(execution.stdout || "{}");
+    } catch (error) {
+      throw new Error(
+        `Metric pack output is not valid JSON (${manifest.name || resolvedManifestPath}): ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
+      );
+    }
     extensions.push({
       name: manifest.name || path.basename(resolvedManifestPath),
       version: manifest.version || "0.0.0",

@@ -605,8 +605,7 @@ export async function runBenchmark(targetPath, options = {}) {
     });
 
     const parsedEvents = parseClaudeJsonStream(claudeRun.stdoutText);
-    const telemetry = summarizeClaudeEvents(parsedEvents.events);
-    telemetry.ignoredLineCount = parsedEvents.ignoredLines.length;
+    const telemetry = summarizeClaudeEvents(parsedEvents.events, parsedEvents.ignoredLines);
 
     const afterSnapshot = await snapshotWorkspace(provisioned.workspacePath);
     const workspaceDiff = diffWorkspaceSnapshots(beforeSnapshot, afterSnapshot);

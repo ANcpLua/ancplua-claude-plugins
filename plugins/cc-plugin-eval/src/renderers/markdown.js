@@ -14,6 +14,18 @@ import {
 } from "../core/presentation.js";
 import { enrichSummary } from "../core/scoring.js";
 
+const CC_PREFIX_TO_COMPONENT = {
+  CC1: "Manifest",
+  CC2: "Skills",
+  CC3: "Hooks",
+  CC4: "MCP",
+  CC5: "LSP",
+  CC6: "Monitors",
+  CC7: "Agents",
+  CC8: "Marketplace",
+  CC9: "Security / userConfig",
+};
+
 function detailsBlock(summary, body) {
   const content = Array.isArray(body) ? body.join("\n") : body;
   if (!content || content.trim().length === 0) {
@@ -646,25 +658,7 @@ function renderInspect(payload) {
   const findingsByComponent = new Map();
 
   for (const finding of inspectPayload.findings || []) {
-    const component = finding.code?.startsWith?.("CC1")
-      ? "Manifest"
-      : finding.code?.startsWith?.("CC2")
-        ? "Skills"
-        : finding.code?.startsWith?.("CC3")
-          ? "Hooks"
-          : finding.code?.startsWith?.("CC4")
-            ? "MCP"
-            : finding.code?.startsWith?.("CC5")
-              ? "LSP"
-              : finding.code?.startsWith?.("CC6")
-                ? "Monitors"
-                : finding.code?.startsWith?.("CC7")
-                  ? "Agents"
-                  : finding.code?.startsWith?.("CC8")
-                    ? "Marketplace"
-                    : finding.code?.startsWith?.("CC9")
-                      ? "Security / userConfig"
-                      : "Other";
+    const component = CC_PREFIX_TO_COMPONENT[finding.code?.slice?.(0, 3)] || "Other";
     if (!findingsByComponent.has(component)) {
       findingsByComponent.set(component, []);
     }

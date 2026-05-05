@@ -3,12 +3,9 @@
 import path from "node:path";
 
 import { formatCommandPath, pathExists, relativePath } from "../lib/files.js";
+import { shellQuote } from "../lib/shell.js";
 import { createWorkflowGuideNextAction } from "./presentation.js";
 import { resolveTarget } from "./target.js";
-
-function shellQuote(value) {
-  return `'${String(value).replaceAll("'", "'\\''")}'`;
-}
 
 function benchmarkConfigPath(target) {
   return path.join(target.path, ".cc-plugin-eval", "benchmark.json");

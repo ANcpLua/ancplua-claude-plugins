@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { execFile } from "node:child_process";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 
 import { analyzePath, explainBudget } from "../src/core/analyze.js";
@@ -28,7 +29,7 @@ import { evaluateMarketplace } from "../src/evaluators/marketplace.js";
 import { evaluateUserConfig } from "../src/evaluators/userconfig.js";
 
 const execFileAsync = promisify(execFile);
-const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const fixturesRoot = path.join(repoRoot, "fixtures");
 const cliPath = path.join(repoRoot, "scripts", "cc-plugin-eval.js");
 const nodeBin = process.execPath;
