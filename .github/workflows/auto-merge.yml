@@ -3,8 +3,13 @@
 # Tiers:
 # 1a. Dependabot PRs: Auto-approve + auto-merge for patch/minor
 # 1b. Renovate PRs: Auto-approve + auto-merge
-# 2.  AI Agent fix PRs (copilot/, claude/): Auto-merge when CI passes
-# 3.  CodeRabbit/Claude/Codex approved PRs: Auto-merge when CI passes
+# 2.  CodeRabbit/Claude/Codex approved PRs: Auto-merge when CI passes
+#
+# Auto-approval of agent-authored fix PRs is intentionally NOT a tier here.
+# Rubber-stamping the workflow's own output provides no quality signal. The
+# desired loop is: reviewer agent posts findings -> autofix workflow applies
+# them -> re-review on push -> reviewer approves once it has no more
+# findings -> Tier 2 auto-merges based on that *real* approval state.
 #
 # Requirements:
 # - Repo setting "Allow auto-merge" must be enabled
@@ -94,43 +99,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr merge --auto --squash "$PR_URL"
 
-  # Tier 2: Auto-merge AI agent fix PRs (Copilot, Claude)
-  ai-agent-auto-merge:
-    name: AI Agent auto-merge
-    runs-on: ubuntu-latest
-    if: |
-      startsWith(github.event.pull_request.head.ref, 'copilot/') ||
-      startsWith(github.event.pull_request.head.ref, 'claude/')
-
-    steps:
-      # SECURITY: Pass branch name via env to prevent code injection (CWE-94)
-      - name: Identify AI agent
-        id: agent
-        env:
-          BRANCH: ${{ github.event.pull_request.head.ref }}
-        run: |
-          if [[ "$BRANCH" == copilot/* ]]; then
-            echo "agent=Copilot" >> "$GITHUB_OUTPUT"
-          elif [[ "$BRANCH" == claude/* ]]; then
-            echo "agent=Claude" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Auto-approve AI agent PRs
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AGENT: ${{ steps.agent.outputs.agent }}
-        run: |
-          echo "Auto-approving $AGENT PR"
-          gh pr review --approve "$PR_URL" --body "✅ Auto-approved: $AGENT autonomous fix PR"
-
-      - name: Enable auto-merge for AI agent PRs
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr merge --auto --squash "$PR_URL"
-
-  # Tier 3a: Auto-merge PRs approved by CodeRabbit
+  # Tier 2a: Auto-merge PRs approved by CodeRabbit
   coderabbit-auto-merge:
     name: CodeRabbit auto-merge
     runs-on: ubuntu-latest
@@ -149,7 +118,7 @@ jobs:
           echo "CodeRabbit approved PR #$PR_NUMBER"
           gh pr merge --auto --squash "$PR_URL"
 
-  # Tier 3b: Auto-merge PRs approved by Claude
+  # Tier 2b: Auto-merge PRs approved by Claude
   # SECURITY: Requires github-actions[bot] to prevent spoofing by humans
   claude-approved-auto-merge:
     name: Claude approved auto-merge
@@ -170,7 +139,7 @@ jobs:
           echo "Claude approved PR #$PR_NUMBER"
           gh pr merge --auto --squash "$PR_URL"
 
-  # Tier 3c: Auto-merge PRs approved by Codex
+  # Tier 2c: Auto-merge PRs approved by Codex
   # SECURITY: Requires github-actions[bot] to prevent spoofing by humans
   codex-approved-auto-merge:
     name: Codex approved auto-merge
