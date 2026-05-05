@@ -40,8 +40,6 @@ function validateUserConfigBlock(block, options) {
   }
 
   for (const [key, raw] of entries) {
-    if (typeof key === "string") declaredKeys.add(key);
-
     // CC910 — invalid key.
     if (typeof key !== "string" || !KEY_RE.test(key)) {
       findings.push(
@@ -53,7 +51,10 @@ function validateUserConfigBlock(block, options) {
           fix: "Rename the key to a valid identifier (letters, digits, underscore).",
         }),
       );
+      continue;
     }
+
+    declaredKeys.add(key);
 
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
       findings.push(

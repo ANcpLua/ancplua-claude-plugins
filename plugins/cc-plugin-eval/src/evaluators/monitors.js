@@ -88,7 +88,8 @@ async function discoverSkillNames(pluginRoot, manifest) {
     dirs.push("skills");
   }
   for (const rel of dirs) {
-    const skillsDir = path.join(pluginRoot, rel);
+    const skillsDir = path.resolve(pluginRoot, rel);
+    if (escapesRoot(pluginRoot, skillsDir)) continue;
     if (!(await pathExists(skillsDir))) continue;
     const subdirs = await listImmediateDirectories(skillsDir).catch(() => []);
     for (const fullPath of subdirs) names.add(path.basename(fullPath));
@@ -187,9 +188,9 @@ export async function evaluateMonitors(pluginRoot, manifest) {
     }
 
     const missingFields = [];
-    if (typeof entry.name !== "string" || entry.name === "") missingFields.push("name");
-    if (typeof entry.command !== "string" || entry.command === "") missingFields.push("command");
-    if (typeof entry.description !== "string" || entry.description === "") missingFields.push("description");
+    if (typeof entry.name !== "string" || entry.name.trim() === "") missingFields.push("name");
+    if (typeof entry.command !== "string" || entry.command.trim() === "") missingFields.push("command");
+    if (typeof entry.description !== "string" || entry.description.trim() === "") missingFields.push("description");
     if (missingFields.length > 0) {
       findings.push(
         createFinding({
@@ -297,7 +298,7 @@ export async function evaluateMonitors(pluginRoot, manifest) {
 
     // Path traversal in command.
     const stripped = command.replace(/\$\{CLAUDE_PLUGIN_ROOT\}/g, "").replace(/\$\{CLAUDE_PLUGIN_DATA\}/g, "");
-    if (/(?:^|\s|\/)\.\.\//.test(stripped)) {
+    if (/(?:^|\s|\/|\\)\.\.[\/\\]/.test(stripped)) {
       findings.push(
         createFinding({
           severity: "error",

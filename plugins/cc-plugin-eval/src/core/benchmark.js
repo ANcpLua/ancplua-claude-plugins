@@ -576,108 +576,114 @@ export async function runBenchmark(targetPath, options = {}) {
       config,
       scenarioId: scenario.id,
     });
-    const beforeSnapshot = await snapshotWorkspace(provisioned.workspacePath);
-    const stdoutPath = path.join(scenarioDirectory, "claude.stdout.jsonl");
-    const stderrPath = path.join(scenarioDirectory, "claude.stderr.log");
-    const finalMessagePath = path.join(scenarioDirectory, "final-message.txt");
 
-    const { args } = buildClaudeExecArgs({
-      config,
-      model: options.model || config.runner.model || defaultModelForTarget(target),
-      workspacePath: provisioned.workspacePath,
-      finalMessagePath,
-      prompt: scenario.userInput,
-    });
+    let scenarioStatus = "failed";
+    let shouldPreserveWorkspace = true;
 
-    const claudeRun = await processRunner({
-      kind: "claude",
-      command: claudeExecutable,
-      args,
-      cwd: provisioned.workspacePath,
-      env: {
-        ...process.env,
-        HOME: provisioned.homePath,
-        CLAUDE_HOME: provisioned.claudeHomePath,
-      },
-      stdoutPath,
-      stderrPath,
-      timeoutMs: config?.runner?.timeoutMs,
-    });
+    try {
+      const beforeSnapshot = await snapshotWorkspace(provisioned.workspacePath);
+      const stdoutPath = path.join(scenarioDirectory, "claude.stdout.jsonl");
+      const stderrPath = path.join(scenarioDirectory, "claude.stderr.log");
+      const finalMessagePath = path.join(scenarioDirectory, "final-message.txt");
 
-    const parsedEvents = parseClaudeJsonStream(claudeRun.stdoutText);
-    const telemetry = summarizeClaudeEvents(parsedEvents.events, parsedEvents.ignoredLines);
+      const { args } = buildClaudeExecArgs({
+        config,
+        model: options.model || config.runner.model || defaultModelForTarget(target),
+        workspacePath: provisioned.workspacePath,
+        finalMessagePath,
+        prompt: scenario.userInput,
+      });
 
-    const afterSnapshot = await snapshotWorkspace(provisioned.workspacePath);
-    const workspaceDiff = diffWorkspaceSnapshots(beforeSnapshot, afterSnapshot);
-    const workspaceSummary = summarizeWorkspaceDiff(workspaceDiff);
-    const generatedCode = await analyzeChangedWorkspaceCode(
-      provisioned.workspacePath,
-      workspaceSummary.changedFiles.map((entry) => entry.path),
-    );
-    const verifierResults = await runVerifierCommands({
-      commands: Array.isArray(config.verifiers?.commands) ? config.verifiers.commands : [],
-      cwd: provisioned.workspacePath,
-      processRunner,
-      basePath: scenarioDirectory,
-      timeoutMs: config?.runner?.timeoutMs,
-    });
+      const claudeRun = await processRunner({
+        kind: "claude",
+        command: claudeExecutable,
+        args,
+        cwd: provisioned.workspacePath,
+        env: {
+          ...process.env,
+          HOME: provisioned.homePath,
+          CLAUDE_HOME: provisioned.claudeHomePath,
+        },
+        stdoutPath,
+        stderrPath,
+        timeoutMs: config?.runner?.timeoutMs,
+      });
 
-    // Best-effort capture of the final assistant message: Claude Code emits it as the
-    // last `assistant`/`result` event in stream-json; if available, persist it for
-    // downstream consumers under the conventional --output-last-message filename.
-    const finalMessage = (() => {
-      const reversed = [...parsedEvents.events].reverse();
-      for (const event of reversed) {
-        if (typeof event?.message?.content === "string") return event.message.content;
-        if (typeof event?.text === "string") return event.text;
-        if (typeof event?.content === "string") return event.content;
+      const parsedEvents = parseClaudeJsonStream(claudeRun.stdoutText);
+      const telemetry = summarizeClaudeEvents(parsedEvents.events, parsedEvents.ignoredLines);
+
+      const afterSnapshot = await snapshotWorkspace(provisioned.workspacePath);
+      const workspaceDiff = diffWorkspaceSnapshots(beforeSnapshot, afterSnapshot);
+      const workspaceSummary = summarizeWorkspaceDiff(workspaceDiff);
+      const generatedCode = await analyzeChangedWorkspaceCode(
+        provisioned.workspacePath,
+        workspaceSummary.changedFiles.map((entry) => entry.path),
+      );
+      const verifierResults = await runVerifierCommands({
+        commands: Array.isArray(config.verifiers?.commands) ? config.verifiers.commands : [],
+        cwd: provisioned.workspacePath,
+        processRunner,
+        basePath: scenarioDirectory,
+        timeoutMs: config?.runner?.timeoutMs,
+      });
+
+      // Best-effort capture of the final assistant message: Claude Code emits it as the
+      // last `assistant`/`result` event in stream-json; if available, persist it for
+      // downstream consumers under the conventional --output-last-message filename.
+      const finalMessage = (() => {
+        const reversed = [...parsedEvents.events].reverse();
+        for (const event of reversed) {
+          if (typeof event?.message?.content === "string") return event.message.content;
+          if (typeof event?.text === "string") return event.text;
+          if (typeof event?.content === "string") return event.content;
+        }
+        return "";
+      })();
+      if (finalMessage) {
+        await writeText(finalMessagePath, finalMessage);
       }
-      return "";
-    })();
-    if (finalMessage) {
-      await writeText(finalMessagePath, finalMessage);
-    }
-    const claudeSucceeded = claudeRun.code === 0 && telemetry.finalStatus !== "failed";
-    const verifiersPassed = verifierResults.every((result) => result.status === "passed");
-    const scenarioStatus = claudeSucceeded && verifiersPassed ? "completed" : "failed";
+      const claudeSucceeded = claudeRun.code === 0 && telemetry.finalStatus !== "failed";
+      const verifiersPassed = verifierResults.every((result) => result.status === "passed");
+      scenarioStatus = claudeSucceeded && verifiersPassed ? "completed" : "failed";
 
-    if (telemetry.usage) {
-      usageLines.push(buildObservedUsageLine(target, scenario, telemetry.usage));
-    }
+      if (telemetry.usage) {
+        usageLines.push(buildObservedUsageLine(target, scenario, telemetry.usage));
+      }
 
-    const preserveMode = config.workspace.preserve || "on-failure";
-    const shouldPreserveWorkspace =
-      preserveMode === "always" ||
-      (preserveMode === "on-failure" && scenarioStatus !== "completed");
+      const preserveMode = config.workspace.preserve || "on-failure";
+      shouldPreserveWorkspace =
+        preserveMode === "always" ||
+        (preserveMode === "on-failure" && scenarioStatus !== "completed");
 
-    runScenarios.push({
-      id: scenario.id,
-      title: scenario.title,
-      purpose: scenario.purpose,
-      successChecklist: scenario.successChecklist,
-      status: scenarioStatus,
-      exitCode: claudeRun.code,
-      signal: claudeRun.signal || null,
-      durationMs: claudeRun.durationMs,
-      prompt: scenario.userInput,
-      finalMessagePath: (await pathExists(finalMessagePath)) ? finalMessagePath : null,
-      finalMessagePreview: finalMessage.trim() || null,
-      rawEventLogPath: stdoutPath,
-      stderrLogPath: stderrPath,
-      usage: telemetry.usage,
-      usageAvailability: telemetry.usageAvailability,
-      telemetry,
-      workspacePath: shouldPreserveWorkspace ? provisioned.workspacePath : null,
-      workspaceSummary,
-      workspaceChanges: workspaceSummary.allChanges,
-      generatedCode,
-      verifierResults,
-      installedTargetPath: provisioned.installedTargetPath,
-      claudeHomePath: provisioned.claudeHomePath,
-    });
-
-    if (!shouldPreserveWorkspace) {
-      await provisioned.cleanup();
+      runScenarios.push({
+        id: scenario.id,
+        title: scenario.title,
+        purpose: scenario.purpose,
+        successChecklist: scenario.successChecklist,
+        status: scenarioStatus,
+        exitCode: claudeRun.code,
+        signal: claudeRun.signal || null,
+        durationMs: claudeRun.durationMs,
+        prompt: scenario.userInput,
+        finalMessagePath: (await pathExists(finalMessagePath)) ? finalMessagePath : null,
+        finalMessagePreview: finalMessage.trim() || null,
+        rawEventLogPath: stdoutPath,
+        stderrLogPath: stderrPath,
+        usage: telemetry.usage,
+        usageAvailability: telemetry.usageAvailability,
+        telemetry,
+        workspacePath: shouldPreserveWorkspace ? provisioned.workspacePath : null,
+        workspaceSummary,
+        workspaceChanges: workspaceSummary.allChanges,
+        generatedCode,
+        verifierResults,
+        installedTargetPath: provisioned.installedTargetPath,
+        claudeHomePath: provisioned.claudeHomePath,
+      });
+    } finally {
+      if (!shouldPreserveWorkspace) {
+        await provisioned.cleanup();
+      }
     }
   }
 
