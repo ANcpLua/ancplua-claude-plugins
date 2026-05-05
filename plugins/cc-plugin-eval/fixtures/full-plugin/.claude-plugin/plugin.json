@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "full-plugin",
+  "version": "1.0.0",
+  "description": "Claude Code plugin fixture exercising every component for cc-plugin-eval tests.",
+  "author": {
+    "name": "cc-plugin-eval fixture",
+    "url": "https://example.com/cc-plugin-eval-fixture"
+  },
+  "homepage": "https://example.com/full-plugin",
+  "repository": "https://github.com/example/full-plugin",
+  "license": "MIT",
+  "keywords": ["fixture", "full", "components", "claude-code"],
+  "skills": "./skills/",
+  "agents": "./agents/",
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./.mcp.json",
+  "lspServers": "./.lsp.json",
+  "monitors": "./monitors/monitors.json",
+  "themes": "./themes/",
+  "userConfig": {
+    "api_endpoint": {
+      "type": "string",
+      "title": "API endpoint",
+      "description": "Endpoint used by the bundled MCP server."
+    },
+    "api_token": {
+      "type": "string",
+      "title": "API token",
+      "description": "Authentication token for the bundled MCP server.",
+      "sensitive": true
+    },
+    "max_results": {
+      "type": "number",
+      "title": "Maximum results",
+      "description": "Cap on results returned by the MCP server.",
+      "default": 50,
+      "min": 1,
+      "max": 500
+    }
+  },
+  "channels": [
+    {
+      "server": "example-mcp",
+      "userConfig": {
+        "channel_label": {
+          "type": "string",
+          "title": "Channel label",
+          "description": "Label injected into channel messages."
+        }
+      }
+    }
+  ],
+  "dependencies": [
+    {"name": "minimal-plugin", "version": "^0.1.0"}
+  ]
+}

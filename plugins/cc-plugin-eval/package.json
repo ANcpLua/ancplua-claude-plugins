@@ -1,0 +1,29 @@
+{
+  "name": "cc-plugin-eval",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Claude-Code-native plugin/skill evaluator. Token-budget analysis, scoring, manifest/hooks/mcp/lsp/monitors/agents linting, benchmarking, comparison, and improvement briefs.",
+  "bin": {
+    "cc-plugin-eval": "./scripts/cc-plugin-eval.js"
+  },
+  "scripts": {
+    "test": "node --test tests/**/*.test.js",
+    "analyze": "node ./scripts/cc-plugin-eval.js analyze",
+    "evaluate-skill": "node ./scripts/cc-plugin-eval.js evaluate-skill",
+    "validate": "node ./scripts/cc-plugin-eval.js validate",
+    "inspect": "node ./scripts/cc-plugin-eval.js inspect",
+    "guide": "node ./scripts/cc-plugin-eval.js start",
+    "start": "node ./scripts/cc-plugin-eval.js start",
+    "report": "node ./scripts/cc-plugin-eval.js report",
+    "compare": "node ./scripts/cc-plugin-eval.js compare",
+    "explain-budget": "node ./scripts/cc-plugin-eval.js explain-budget",
+    "measurement-plan": "node ./scripts/cc-plugin-eval.js measurement-plan",
+    "init-benchmark": "node ./scripts/cc-plugin-eval.js init-benchmark",
+    "benchmark": "node ./scripts/cc-plugin-eval.js benchmark",
+    "improve": "node ./scripts/cc-plugin-eval.js improve"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

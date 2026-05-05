@@ -1,0 +1,44 @@
+{
+  "name": "Bad Name",
+  "version": "not-a-version",
+  "description": "Broken Claude Code plugin fixture for cc-plugin-eval evaluator tests. Path is set to a missing directory and ${CLAUDE_PLUGIN_ROOT} appears in this metadata field intentionally so cc-plugin-eval emits CC110.",
+  "license": "MIT",
+  "skills": "missing-dir/",
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./.mcp.json",
+  "lspServers": "./.lsp.json",
+  "monitors": "./monitors/monitors.json",
+  "agents": "./agents/",
+  "userConfig": {
+    "api-token": {
+      "type": "string",
+      "title": "Bad key",
+      "description": "Key has a hyphen so CC910 fires."
+    },
+    "api_token": {
+      "type": "string",
+      "title": "API token",
+      "description": "Secret-shaped name with sensitive missing so CC915 fires."
+    },
+    "limit": {
+      "title": "Limit",
+      "description": "Missing type so CC911 fires."
+    },
+    "color": {
+      "type": "rainbow",
+      "title": "Color",
+      "description": "Invalid type so CC912 fires."
+    },
+    "items": {
+      "type": "number",
+      "title": "Items",
+      "description": "multiple on a number type so CC913 fires.",
+      "multiple": true
+    }
+  },
+  "channels": [
+    {
+      "server": "ghost-server"
+    }
+  ]
+}

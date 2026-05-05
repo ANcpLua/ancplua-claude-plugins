@@ -1,0 +1,14 @@
+{
+  "go": {
+    "command": "gopls",
+    "args": ["serve"],
+    "extensionToLanguage": {
+      ".go": "go"
+    },
+    "transport": "stdio",
+    "startupTimeout": 10000,
+    "shutdownTimeout": 5000,
+    "restartOnCrash": true,
+    "maxRestarts": 3
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "minimal-plugin",
+  "version": "0.1.0",
+  "description": "Minimal Claude Code plugin fixture for cc-plugin-eval tests.",
+  "license": "MIT",
+  "keywords": ["fixture"],
+  "skills": "./skills/"
+}

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "broken-server": {
+      "args": ["--config", "${CLAUDE_PLUGIN_ROOT}/config.json"],
+      "env": {
+        "API_TOKEN": "literal-secret-value"
+      }
+    }
+  }
+}

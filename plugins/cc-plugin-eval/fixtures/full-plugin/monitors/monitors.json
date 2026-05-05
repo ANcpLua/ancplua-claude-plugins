@@ -1,0 +1,14 @@
+[
+  {
+    "name": "deploy-status",
+    "command": "cd \"${CLAUDE_PLUGIN_ROOT}\" && ./scripts/poll-deploy.sh ${user_config.api_endpoint}",
+    "description": "Deployment status changes",
+    "when": "always"
+  },
+  {
+    "name": "error-log",
+    "command": "tail -F ./logs/error.log",
+    "description": "Application error log for debug skill",
+    "when": "on-skill-invoke:example-skill"
+  }
+]

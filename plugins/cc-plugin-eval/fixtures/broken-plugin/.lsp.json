@@ -1,0 +1,12 @@
+{
+  "go": {
+    "command": "gopls",
+    "extensionToLanguage": {
+      "go": "go"
+    }
+  },
+  "py": {
+    "command": "pyright",
+    "args": ["--stdio"]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "cc-plugin-eval",
+  "version": "0.1.0",
+  "description": "Local-first Claude Code plugin and CLI for evaluating Claude Code plugins, skills, hooks, MCP/LSP servers, monitors, agents, userConfig, channels, and dependencies. Token-budget analysis, scoring, comparison, improvement briefs, and real claude benchmarking.",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "homepage": "https://github.com/ANcpLua/ancplua-claude-plugins/tree/main/plugins/cc-plugin-eval",
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "plugin",
+    "skill",
+    "evaluation",
+    "quality",
+    "token-budget",
+    "lint",
+    "manifest",
+    "hooks",
+    "mcp",
+    "lsp"
+  ],
+  "skills": "./skills/"
+}
