@@ -31,18 +31,29 @@ ancplua-claude-plugins/
 │   ├── copilot-instructions.md  # Copilot Coding Agent instructions
 │   ├── dependabot.yml           # Dependency update config
 │   └── workflows/
-│       ├── auto-merge.yml       # Tiered auto-merge (Dependabot, Copilot, Claude)
+│       ├── auto-merge.yml       # Tiered auto-merge (Dependabot, Renovate, CodeRabbit, Owner — see renovate-config reusable workflow)
 │       ├── ci.yml               # Main CI (plugin validate, shellcheck, markdownlint)
-│       ├── claude.yml           # Claude interactive (@claude mention trigger)
-│       ├── claude-code-review.yml # Claude formal PR review
-│       └── trigger-docs.yml     # Triggers ancplua-docs rebuild on push to main
+│       ├── coderabbit-autofix.yml   # Auto-comments @coderabbitai autofix on PR open/sync
+│       └── codex-code-review.yml    # Codex formal PR review
 │
-├── plugins/                     # 8 plugins (23 commands, 6 skills, 14 agents)
-│   ├── exodia/                  # Multi-agent orchestration (9 commands + 2 skills: eight-gates, hades)
-│   ├── metacognitive-guard/     # Cognitive amplification + commit integrity + CI
-│   ├── hookify/                 # User-configurable rule-based hooks
-│   ├── feature-dev/             # Guided feature development + code review
-│   ├── dotnet-architecture-lint/# .NET build pattern enforcement
+├── plugins/                     # 17 plugins (30 commands, 13 skills, 23 agents)
+│   ├── ancplua/                  # Agent operating system — leaderless swarms with Playwright oracle
+│   ├── cc-plugin-eval/           # Claude-Code-native plugin/skill evaluator (token budget, scoring, validators)
+│   ├── code-simplifier/          # Code simplification agent tuned to qyl engineering principles
+│   ├── council/                  # Five-agent council via Teams API: Opus captain, researcher, clarity, synth, janitor
+│   ├── design-studio/            # Design intelligence studio — creative direction + data-driven recommendations
+│   ├── dotnet-architecture-lint/ # .NET build pattern enforcement (Version.props symlinks, CPM, single-target)
+│   ├── elegance-pipeline/        # Multi-agent code-elegance workflow: scouts → researcher → planner → judge
+│   ├── exodia/                   # Multi-agent orchestration (9 commands + 2 skills: eight-gates, hades)
+│   ├── feature-dev/              # Guided feature development with explorer/architect/reviewer agents
+│   ├── hookify/                  # User-configurable rule-based hooks (warn, block, format from .local.md)
+│   ├── marketplace-tour/         # Interactive live demos of all marketplace plugins
+│   ├── metacognitive-guard/      # Cognitive amplification + epistemic hooks + competitive review
+│   ├── mutation-minded-testing/  # Mutation-minded, behavior-first test quality (4 agents)
+│   ├── otelhook/                 # SessionStart hook injecting OTel GenAI + MCP semantic conventions
+│   ├── release-pilot/            # Drives .NET release workflow for ANcpLua framework repos
+│   ├── rider-respect/            # Apply every IDE hint Rider's daemon reports
+│   └── skill-creator/            # Create, evaluate, and iteratively improve Claude Code skills
 │
 ├── docs/
 │   ├── ARCHITECTURE.md          # This file
