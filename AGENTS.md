@@ -107,9 +107,9 @@ external content. Don't disable it in agentic sessions touching files or the web
 
 `bypassPermissions` applies to standing-authority repos only:
 
-- `/Users/ancplua/framework/` — ANcpLua.Agents, ANcpLua.Analyzers, ANcpLua.NET.Sdk, ANcpLua.Roslyn.Utilities
+- `/Users/ancplua/framework/` — ANcpLua.Agents, ANcpLua.Analyzers, ANcpLua.NET.Sdk, ANcpLua.Roslyn.Utilities, renovate-config
 - `/Users/ancplua/qyl/`
-- `/Users/ancplua/WebStormProjects/ancplua-claude-plugins/`
+- `/Users/ancplua/marketplaces/ancplua-claude-plugins/`
 
 Outside these trees: ask before push, tag, or destructive git operations.
 
