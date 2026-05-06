@@ -91,7 +91,7 @@ function appendCheckFragment(target, fragment) {
 // Each evaluator runs under safeEvaluator* so that one throw does not silently
 // drop every other evaluator's findings. The synthetic CC<n>99 finding records
 // which evaluator crashed and what the runtime error was.
-async function safeEvaluatorFindings(componentName, codePrefix, runner) {
+export async function safeEvaluatorFindings(componentName, codePrefix, runner) {
   try {
     const fragment = await runner();
     return fragment || { findings: [], metrics: [], artifacts: [] };
@@ -112,7 +112,7 @@ async function safeEvaluatorFindings(componentName, codePrefix, runner) {
   }
 }
 
-async function safeEvaluatorChecks(componentName, codePrefix, runner, pluginRoot) {
+export async function safeEvaluatorChecks(componentName, codePrefix, runner, pluginRoot) {
   try {
     const fragment = await runner();
     return fragment || { checks: [], metrics: [], artifacts: [] };

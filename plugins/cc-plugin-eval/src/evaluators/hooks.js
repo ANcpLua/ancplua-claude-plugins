@@ -364,8 +364,8 @@ export async function evaluateHooks(pluginRoot, manifest) {
                 pattern: /\b(?:curl|wget|fetch|http)\b[^|;&]*[|]\s*(?:sh|bash|zsh|ksh|dash|fish|sudo)\b/i,
                 summary: "pipes a network fetch directly into a shell",
               },
-              { pattern: /(?:^|[\s;|&(`])eval\s+/i, summary: "invokes `eval` to execute dynamic strings" },
-              { pattern: /(?:^|[\s;|&(`])exec\s+(?!["']?[/$])/i, summary: "invokes `exec` with a non-anchored target" },
+              { pattern: /(?:^|[\s;|&(`"'])eval\s+/i, summary: "invokes `eval` to execute dynamic strings" },
+              { pattern: /(?:^|[\s;|&(`"'])exec\s+(?!["']?[/$])/i, summary: "invokes `exec` with a non-anchored target" },
               {
                 pattern: /\bbase64\b[^|;]*[|]\s*(?:sh|bash|zsh|ksh|dash|fish)\b/i,
                 summary: "decodes base64 into a shell interpreter",

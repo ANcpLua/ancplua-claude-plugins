@@ -49,7 +49,7 @@ const INHERITED_ENV_KEYS = new Set([
   "SystemRoot",
 ]);
 
-function buildClaudeChildEnv(provisioned) {
+export function buildClaudeChildEnv(provisioned) {
   const env = {};
   for (const key of INHERITED_ENV_KEYS) {
     if (process.env[key] !== undefined) env[key] = process.env[key];
@@ -78,7 +78,7 @@ const SAFE_EXTRA_ARG_FLAGS = new Set([
   "--verbose",
 ]);
 
-function filterExtraArgs(extraArgs) {
+export function filterExtraArgs(extraArgs) {
   if (!Array.isArray(extraArgs)) return [];
   const result = [];
   for (const arg of extraArgs) {

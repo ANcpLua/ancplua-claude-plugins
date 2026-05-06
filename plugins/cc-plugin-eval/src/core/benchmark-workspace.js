@@ -52,7 +52,7 @@ async function copyIfExists(sourcePath, destinationPath) {
 // somewhere outside ~/.claude and copy the contents into world-traversable
 // /tmp), and tightens permissions on the destination so the temp copy is not
 // readable by other users on a shared host.
-async function copyCredentialFile(sourcePath, destinationPath) {
+export async function copyCredentialFile(sourcePath, destinationPath) {
   let sourceStat;
   try {
     sourceStat = await fs.lstat(sourcePath);
@@ -68,9 +68,9 @@ async function copyCredentialFile(sourcePath, destinationPath) {
   return true;
 }
 
-const SAFE_TARGET_NAME = /^[a-z0-9][a-z0-9._-]*$/i;
+export const SAFE_TARGET_NAME = /^[a-z0-9][a-z0-9._-]*$/i;
 
-function assertSafeTargetName(name) {
+export function assertSafeTargetName(name) {
   if (typeof name !== "string" || !SAFE_TARGET_NAME.test(name) || name === "." || name === "..") {
     throw new Error(
       `Refusing to provision target with unsafe name "${name}". Names must match ${SAFE_TARGET_NAME} and not be "." or "..".`,
