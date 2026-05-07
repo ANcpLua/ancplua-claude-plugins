@@ -853,8 +853,8 @@ test("evaluateUserConfig scans manifest-defined config file paths", async () => 
       },
       mcpServers: ["./custom/mcp.json"],
       lspServers: "./custom/lsp.json",
-      hooks: "./custom/hooks.json",
-      monitors: "./custom/monitors.json",
+      hooks: ["./custom/hooks.json"],
+      monitors: ["./custom/monitors.json"],
     },
     tempDir,
   );

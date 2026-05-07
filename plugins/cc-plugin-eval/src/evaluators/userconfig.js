@@ -212,8 +212,8 @@ function collectConfigFilePaths(pluginRoot, manifest) {
 
   addPathLikeEntries(manifest?.mcpServers);
   addPathLikeEntries(manifest?.lspServers);
-  if (typeof manifest?.hooks === "string") addConfiguredPath(paths, pluginRoot, manifest.hooks);
-  if (typeof manifest?.monitors === "string") addConfiguredPath(paths, pluginRoot, manifest.monitors);
+  addPathLikeEntries(manifest?.hooks);
+  addPathLikeEntries(manifest?.monitors);
 
   return [...paths];
 }
