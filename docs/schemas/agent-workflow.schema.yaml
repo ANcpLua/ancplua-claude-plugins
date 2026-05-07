@@ -149,14 +149,17 @@ properties:
       "$ref": "#/$defs/gate"
   tasks:
     type: array
+    minItems: 1
     items:
       "$ref": "#/$defs/task"
   agents:
     type: array
+    minItems: 1
     items:
       "$ref": "#/$defs/agent"
   events:
     type: array
+    minItems: 1
     items:
       "$ref": "#/$defs/event"
   verification:
@@ -177,10 +180,12 @@ properties:
           - partial
       commands:
         type: array
+        minItems: 1
         items:
           "$ref": "#/$defs/command_result"
       grep_assertions:
         type: array
+        minItems: 1
         items:
           "$ref": "#/$defs/grep_assertion"
       not_run:
@@ -261,11 +266,12 @@ properties:
       owner_role:
         type: string
       pass_status:
-        type: string
+        "$ref": "#/$defs/agent_status"
       fail_statuses:
         type: array
+        minItems: 1
         items:
-          type: string
+          "$ref": "#/$defs/agent_status"
       required_before:
         type: array
         items:
@@ -380,9 +386,6 @@ properties:
       message:
         type: string
       result:
-        type:
-          - string
-          - "null"
         enum:
           - pass
           - fail

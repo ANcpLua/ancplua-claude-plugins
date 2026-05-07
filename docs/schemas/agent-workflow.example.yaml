@@ -105,9 +105,9 @@ gates:
   - id: final_validation
     order: 5
     owner_role: root_coordinator
-    pass_status: passed
+    pass_status: closed
     fail_statuses:
-      - failed
+      - blocked
 
 tasks:
   - id: source-inventory
