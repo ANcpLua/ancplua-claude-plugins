@@ -3,7 +3,7 @@ workflow:
   name: source-copy-utility-review
   kind: source_copy
   state: closed
-  repository: /Users/ancplua/framework/ANcpLua.Roslyn.Utilities
+  repository: <repo-root>
   branch: null
   source_request: Copy useful source code from ANcpLua/Chasm without adding Chasm library references.
   summary: Source-only utility adaptation with planner, implementers, spec review, quality review, and final validation.
@@ -12,7 +12,7 @@ workflow:
 
 root:
   role: root_coordinator
-  cwd: /Users/ancplua/framework/ANcpLua.Roslyn.Utilities
+  cwd: <repo-root>
   status: reporting
   responsibilities:
     - preserve current session context
@@ -211,7 +211,7 @@ events:
     result: pass
     command:
       cmd: dotnet build -c Release
-      cwd: /Users/ancplua/framework/ANcpLua.Roslyn.Utilities
+      cwd: <repo-root>
       exit_code: 0
       status: passed
       output_summary: Build succeeded with 0 warnings and 0 errors.
@@ -264,7 +264,7 @@ events:
     result: pass
     command:
       cmd: rg -n 'Only\(|OnlyOrDefault\(|Guard\.That|NotNull<T>\(' src/ANcpLua.Roslyn.Utilities/EnumerableExtensions.cs
-      cwd: /Users/ancplua/framework/ANcpLua.Roslyn.Utilities
+      cwd: <repo-root>
       exit_code: 0
       status: passed
       output_summary: Guard.That and Guard.NotNull paths are present.
@@ -277,7 +277,7 @@ events:
     result: pass
     command:
       cmd: rg -n 'Guard\.NotNull|Guard\.That' src/ANcpLua.Roslyn.Utilities/{DelegateDisposable.cs,ReaderWriterLockSlimExtensions.cs,WeakReferenceExtensions.cs,FormattingExtensions.cs,EnumeratorExtensions.cs,EnumerableExtensions.cs}
-      cwd: /Users/ancplua/framework/ANcpLua.Roslyn.Utilities
+      cwd: <repo-root>
       exit_code: 0
       status: passed
       output_summary: Guard contract is used in touched validation paths.
@@ -286,7 +286,7 @@ verification:
   status: passed
   commands:
     - cmd: dotnet build -c Release
-      cwd: /Users/ancplua/framework/ANcpLua.Roslyn.Utilities
+      cwd: <repo-root>
       exit_code: 0
       status: passed
       output_summary: Build succeeded with 0 warnings and 0 errors.

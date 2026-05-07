@@ -1,5 +1,5 @@
 "$schema": "https://json-schema.org/draft/2020-12/schema"
-"$id": "https://github.com/ANcpLua/ANcpLua.Roslyn.Utilities/schemas/agent-workflow.schema.yaml"
+"$id": "https://raw.githubusercontent.com/ANcpLua/ancplua-claude-plugins/main/docs/schemas/agent-workflow.schema.yaml"
 title: Agent Workflow Run
 description: >
   Machine-manageable schema for a coordinator-driven agent workflow with
