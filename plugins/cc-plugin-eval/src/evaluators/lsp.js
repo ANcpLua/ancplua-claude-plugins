@@ -23,17 +23,36 @@ const KNOWN_LSP_BINARIES = new Set([
   "intelephense",
 ]);
 
-async function loadLspConfig(pluginRoot, manifest) {
-  if (manifest && typeof manifest.lspServers === "object" && !Array.isArray(manifest.lspServers)) {
-    return { servers: manifest.lspServers, sourceFile: ".claude-plugin/plugin.json", parseError: null, missing: false };
+function resolvePluginPath(pluginRoot, configuredPath) {
+  const root = path.resolve(pluginRoot);
+  const candidatePath = path.resolve(root, configuredPath.replace(/^\.\//, ""));
+  const rel = path.relative(root, candidatePath);
+  if (rel === ".." || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel)) {
+    return {
+      candidatePath,
+      fileRel: toPosixPath(path.relative(root, candidatePath)),
+      error: "Configured path must stay inside plugin root.",
+    };
   }
-  const candidatePath = (() => {
-    if (typeof manifest?.lspServers === "string") {
-      return path.join(pluginRoot, manifest.lspServers.replace(/^\.\//, ""));
-    }
-    return path.join(pluginRoot, ".lsp.json");
-  })();
-  const fileRel = toPosixPath(path.relative(pluginRoot, candidatePath));
+  return { candidatePath, fileRel: toPosixPath(rel || ".") };
+}
+
+function normalizeServerMap(parsed) {
+  return parsed &&
+    typeof parsed === "object" &&
+    !Array.isArray(parsed) &&
+    parsed.lspServers &&
+    typeof parsed.lspServers === "object" &&
+    !Array.isArray(parsed.lspServers)
+    ? parsed.lspServers
+    : parsed;
+}
+
+async function readLspConfigFile(pluginRoot, configuredPath) {
+  const { candidatePath, fileRel, error } = resolvePluginPath(pluginRoot, configuredPath);
+  if (error) {
+    return { servers: null, sourceFile: fileRel, parseError: error, missing: false };
+  }
   if (!(await pathExists(candidatePath))) {
     return { servers: null, sourceFile: fileRel, parseError: null, missing: true };
   }
@@ -49,8 +68,7 @@ async function loadLspConfig(pluginRoot, manifest) {
     };
   }
   try {
-    const parsed = JSON.parse(raw);
-    return { servers: parsed, sourceFile: fileRel, parseError: null, missing: false };
+    return { servers: normalizeServerMap(JSON.parse(raw)), sourceFile: fileRel, parseError: null, missing: false };
   } catch (error) {
     return {
       servers: null,
@@ -59,6 +77,61 @@ async function loadLspConfig(pluginRoot, manifest) {
       missing: false,
     };
   }
+}
+
+async function loadLspConfig(pluginRoot, manifest) {
+  if (manifest && typeof manifest.lspServers === "object" && !Array.isArray(manifest.lspServers)) {
+    return { servers: manifest.lspServers, sourceFile: ".claude-plugin/plugin.json", parseError: null, missing: false };
+  }
+
+  const configured = Array.isArray(manifest?.lspServers)
+    ? manifest.lspServers
+    : [typeof manifest?.lspServers === "string" ? manifest.lspServers : ".lsp.json"];
+  const mergedServers = {};
+  const sourceFiles = [];
+  let found = false;
+
+  for (const entry of configured) {
+    if (entry && typeof entry === "object" && !Array.isArray(entry)) {
+      const servers = normalizeServerMap(entry);
+      if (!servers || typeof servers !== "object" || Array.isArray(servers)) {
+        return {
+          servers,
+          sourceFile: ".claude-plugin/plugin.json",
+          parseError: null,
+          missing: false,
+        };
+      }
+      Object.assign(mergedServers, servers);
+      sourceFiles.push(".claude-plugin/plugin.json");
+      found = true;
+      continue;
+    }
+    if (typeof entry !== "string") {
+      return {
+        servers: null,
+        sourceFile: ".claude-plugin/plugin.json",
+        parseError: "lspServers array entries must be path strings or server maps.",
+        missing: false,
+      };
+    }
+    const loaded = await readLspConfigFile(pluginRoot, entry);
+    sourceFiles.push(loaded.sourceFile);
+    if (loaded.parseError) return loaded;
+    if (loaded.missing) continue;
+    found = true;
+    if (!loaded.servers || typeof loaded.servers !== "object" || Array.isArray(loaded.servers)) {
+      return { ...loaded, servers: loaded.servers };
+    }
+    Object.assign(mergedServers, loaded.servers);
+  }
+
+  return {
+    servers: found ? mergedServers : null,
+    sourceFile: sourceFiles.join(", ") || ".lsp.json",
+    parseError: null,
+    missing: !found,
+  };
 }
 
 async function readmeMentions(pluginRoot, term) {

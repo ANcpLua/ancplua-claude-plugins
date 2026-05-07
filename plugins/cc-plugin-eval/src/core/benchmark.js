@@ -1,6 +1,7 @@
 // Derived from openai/plugins plugin-eval (MIT). Modified for Claude Code. See ../../THIRD_PARTY_NOTICES.md.
 
 import { spawn } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import { rmSync } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -33,7 +34,7 @@ const DEFAULT_MODELS = {
   skill: "claude-sonnet-4-7",
 };
 
-// Env vars the spawned `claude` child inherits. Anything not on this list is dropped
+// Env vars benchmark child processes inherit. Anything not on this list is dropped
 // so credentials and secrets don't leak from the parent shell into stderr/verifier
 // output or the workspace snapshot. HOME and CLAUDE_HOME are set explicitly per-run.
 const INHERITED_ENV_KEYS = new Set([
@@ -49,7 +50,7 @@ const INHERITED_ENV_KEYS = new Set([
   "SystemRoot",
 ]);
 
-export function buildClaudeChildEnv(provisioned) {
+function buildBenchmarkChildEnv(provisioned) {
   const env = {};
   for (const key of INHERITED_ENV_KEYS) {
     if (process.env[key] !== undefined) env[key] = process.env[key];
@@ -57,6 +58,14 @@ export function buildClaudeChildEnv(provisioned) {
   env.HOME = provisioned.homePath;
   env.CLAUDE_HOME = provisioned.claudeHomePath;
   return env;
+}
+
+export function buildClaudeChildEnv(provisioned) {
+  return buildBenchmarkChildEnv(provisioned);
+}
+
+export function buildVerifierChildEnv(provisioned) {
+  return buildBenchmarkChildEnv(provisioned);
 }
 
 // Allowlist of CLI flags that benchmark scenarios may inject via runner.extraArgs.
@@ -155,8 +164,9 @@ function defaultModelForTarget(target) {
   return DEFAULT_MODELS[target.kind] || DEFAULT_MODELS.skill;
 }
 
-function createRunId() {
-  return new Date().toISOString().replaceAll(":", "-").replace(/\..+$/, "");
+export function createRunId() {
+  const timestamp = new Date().toISOString().replaceAll(":", "-").replace(/\./g, "-");
+  return `${timestamp}-${randomUUID().slice(0, 8)}`;
 }
 
 function normalizeScenario(scenario, index) {
@@ -523,8 +533,9 @@ async function analyzeChangedWorkspaceCode(workspacePath, changedRelativePaths) 
   };
 }
 
-async function runVerifierCommands({ commands, cwd, processRunner, basePath, timeoutMs }) {
+async function runVerifierCommands({ commands, cwd, processRunner, basePath, timeoutMs, env }) {
   const results = [];
+  const verifierEnv = env || {};
 
   for (let index = 0; index < commands.length; index += 1) {
     const command = commands[index];
@@ -535,10 +546,10 @@ async function runVerifierCommands({ commands, cwd, processRunner, basePath, tim
     // an isolated benchmark home (per F-codex-001).
     const outcome = await processRunner({
       kind: "verifier",
-      command: process.env.SHELL || "/bin/sh",
+      command: verifierEnv.SHELL || "/bin/sh",
       args: ["-c", command],
       cwd,
-      env: process.env,
+      env: verifierEnv,
       stdoutPath,
       stderrPath,
       timeoutMs,
@@ -743,6 +754,7 @@ export async function runBenchmark(targetPath, options = {}) {
         processRunner,
         basePath: scenarioDirectory,
         timeoutMs: config?.runner?.timeoutMs,
+        env: buildVerifierChildEnv(provisioned),
       });
 
       // Best-effort capture of the final assistant message: Claude Code emits it as the

@@ -8,17 +8,36 @@ const SECRET_KEY_RE = /(token|key|secret|password|api[_-]?key|credential)/i;
 const USER_CONFIG_REF_RE = /\$\{user_config\.[A-Za-z0-9_]+\}/;
 const ENV_REF_RE = /\$\{[A-Z_][A-Z0-9_]*\}/;
 
-async function loadMcpConfig(pluginRoot, manifest) {
-  if (manifest && typeof manifest.mcpServers === "object" && !Array.isArray(manifest.mcpServers)) {
-    return { servers: manifest.mcpServers, sourceFile: ".claude-plugin/plugin.json", parseError: null, missing: false };
+function resolvePluginPath(pluginRoot, configuredPath) {
+  const root = path.resolve(pluginRoot);
+  const candidatePath = path.resolve(root, configuredPath.replace(/^\.\//, ""));
+  const rel = path.relative(root, candidatePath);
+  if (rel === ".." || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel)) {
+    return {
+      candidatePath,
+      fileRel: toPosixPath(path.relative(root, candidatePath)),
+      error: "Configured path must stay inside plugin root.",
+    };
   }
-  const candidatePath = (() => {
-    if (typeof manifest?.mcpServers === "string") {
-      return path.join(pluginRoot, manifest.mcpServers.replace(/^\.\//, ""));
-    }
-    return path.join(pluginRoot, ".mcp.json");
-  })();
-  const fileRel = toPosixPath(path.relative(pluginRoot, candidatePath));
+  return { candidatePath, fileRel: toPosixPath(rel || ".") };
+}
+
+function normalizeServerMap(parsed) {
+  return parsed &&
+    typeof parsed === "object" &&
+    !Array.isArray(parsed) &&
+    parsed.mcpServers &&
+    typeof parsed.mcpServers === "object" &&
+    !Array.isArray(parsed.mcpServers)
+    ? parsed.mcpServers
+    : parsed;
+}
+
+async function readMcpConfigFile(pluginRoot, configuredPath) {
+  const { candidatePath, fileRel, error } = resolvePluginPath(pluginRoot, configuredPath);
+  if (error) {
+    return { servers: null, sourceFile: fileRel, parseError: error, missing: false };
+  }
   if (!(await pathExists(candidatePath))) {
     return { servers: null, sourceFile: fileRel, parseError: null, missing: true };
   }
@@ -34,12 +53,7 @@ async function loadMcpConfig(pluginRoot, manifest) {
     };
   }
   try {
-    const parsed = JSON.parse(raw);
-    const servers =
-      parsed && typeof parsed === "object" && parsed.mcpServers && typeof parsed.mcpServers === "object"
-        ? parsed.mcpServers
-        : parsed;
-    return { servers, sourceFile: fileRel, parseError: null, missing: false };
+    return { servers: normalizeServerMap(JSON.parse(raw)), sourceFile: fileRel, parseError: null, missing: false };
   } catch (error) {
     return {
       servers: null,
@@ -48,6 +62,61 @@ async function loadMcpConfig(pluginRoot, manifest) {
       missing: false,
     };
   }
+}
+
+async function loadMcpConfig(pluginRoot, manifest) {
+  if (manifest && typeof manifest.mcpServers === "object" && !Array.isArray(manifest.mcpServers)) {
+    return { servers: manifest.mcpServers, sourceFile: ".claude-plugin/plugin.json", parseError: null, missing: false };
+  }
+
+  const configured = Array.isArray(manifest?.mcpServers)
+    ? manifest.mcpServers
+    : [typeof manifest?.mcpServers === "string" ? manifest.mcpServers : ".mcp.json"];
+  const mergedServers = {};
+  const sourceFiles = [];
+  let found = false;
+
+  for (const entry of configured) {
+    if (entry && typeof entry === "object" && !Array.isArray(entry)) {
+      const servers = normalizeServerMap(entry);
+      if (!servers || typeof servers !== "object" || Array.isArray(servers)) {
+        return {
+          servers,
+          sourceFile: ".claude-plugin/plugin.json",
+          parseError: null,
+          missing: false,
+        };
+      }
+      Object.assign(mergedServers, servers);
+      sourceFiles.push(".claude-plugin/plugin.json");
+      found = true;
+      continue;
+    }
+    if (typeof entry !== "string") {
+      return {
+        servers: null,
+        sourceFile: ".claude-plugin/plugin.json",
+        parseError: "mcpServers array entries must be path strings or server maps.",
+        missing: false,
+      };
+    }
+    const loaded = await readMcpConfigFile(pluginRoot, entry);
+    sourceFiles.push(loaded.sourceFile);
+    if (loaded.parseError) return loaded;
+    if (loaded.missing) continue;
+    found = true;
+    if (!loaded.servers || typeof loaded.servers !== "object" || Array.isArray(loaded.servers)) {
+      return { ...loaded, servers: loaded.servers };
+    }
+    Object.assign(mergedServers, loaded.servers);
+  }
+
+  return {
+    servers: found ? mergedServers : null,
+    sourceFile: sourceFiles.join(", ") || ".mcp.json",
+    parseError: null,
+    missing: !found,
+  };
 }
 
 function stripPluginVars(value) {

@@ -98,16 +98,25 @@ function stripQuotes(value) {
   return value.replace(/^["']|["']$/g, "");
 }
 
-async function loadHookConfig(pluginRoot, manifest) {
-  // Returns { source: object|null, sourceFile: string, parseError: string|null }.
-  if (manifest && typeof manifest.hooks === "object" && !Array.isArray(manifest.hooks)) {
-    return { source: manifest.hooks, sourceFile: ".claude-plugin/plugin.json", parseError: null };
+function resolvePluginPath(pluginRoot, configuredPath) {
+  const root = path.resolve(pluginRoot);
+  const candidatePath = path.resolve(root, configuredPath.replace(/^\.\//, ""));
+  const rel = path.relative(root, candidatePath);
+  if (rel === ".." || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel)) {
+    return {
+      candidatePath,
+      fileRel: toPosixPath(path.relative(root, candidatePath)),
+      error: "Configured path must stay inside plugin root.",
+    };
   }
-  const candidatePath = (() => {
-    if (typeof manifest?.hooks === "string") return path.join(pluginRoot, manifest.hooks.replace(/^\.\//, ""));
-    return path.join(pluginRoot, "hooks", "hooks.json");
-  })();
-  const fileRel = toPosixPath(path.relative(pluginRoot, candidatePath));
+  return { candidatePath, fileRel: toPosixPath(rel || ".") };
+}
+
+async function readHookConfigFile(pluginRoot, configuredPath) {
+  const { candidatePath, fileRel, error } = resolvePluginPath(pluginRoot, configuredPath);
+  if (error) {
+    return { source: null, sourceFile: fileRel, parseError: error };
+  }
   if (!(await pathExists(candidatePath))) {
     return { source: null, sourceFile: fileRel, parseError: null };
   }
@@ -124,7 +133,7 @@ async function loadHookConfig(pluginRoot, manifest) {
   try {
     const parsed = JSON.parse(raw);
     // Some hooks files use top-level { hooks: { ... } }; unwrap if so.
-    if (parsed && typeof parsed === "object" && parsed.hooks && typeof parsed.hooks === "object" && !Array.isArray(parsed.hooks)) {
+    if (parsed && typeof parsed === "object" && parsed.hooks && typeof parsed.hooks === "object") {
       return { source: parsed.hooks, sourceFile: fileRel, parseError: null };
     }
     return { source: parsed, sourceFile: fileRel, parseError: null };
@@ -137,10 +146,60 @@ async function loadHookConfig(pluginRoot, manifest) {
   }
 }
 
-function collectMcpServerNames(manifest) {
+async function loadHookConfig(pluginRoot, manifest) {
+  // Returns { source: object|array|null, sourceFile: string, parseError: string|null }.
+  if (manifest && typeof manifest.hooks === "object" && !Array.isArray(manifest.hooks)) {
+    return { source: manifest.hooks, sourceFile: ".claude-plugin/plugin.json", parseError: null };
+  }
+  if (Array.isArray(manifest?.hooks)) {
+    if (!manifest.hooks.every((entry) => typeof entry === "string")) {
+      return { source: manifest.hooks, sourceFile: ".claude-plugin/plugin.json", parseError: null };
+    }
+    const sources = [];
+    for (const hookPath of manifest.hooks) {
+      const loaded = await readHookConfigFile(pluginRoot, hookPath);
+      if (loaded.parseError) return loaded;
+      if (loaded.source) sources.push(loaded.source);
+    }
+    return { source: sources.length > 0 ? sources : null, sourceFile: ".claude-plugin/plugin.json", parseError: null };
+  }
+  return readHookConfigFile(pluginRoot, typeof manifest?.hooks === "string" ? manifest.hooks : "hooks/hooks.json");
+}
+
+function addMcpServerNames(names, source) {
+  const servers =
+    source && typeof source === "object" && !Array.isArray(source) && source.mcpServers && typeof source.mcpServers === "object"
+      ? source.mcpServers
+      : source;
+  if (servers && typeof servers === "object" && !Array.isArray(servers)) {
+    for (const key of Object.keys(servers)) names.add(key);
+  }
+}
+
+async function readMcpServerConfig(pluginRoot, configuredPath) {
+  const { candidatePath } = resolvePluginPath(pluginRoot, configuredPath);
+  if (!(await pathExists(candidatePath))) return null;
+  try {
+    return JSON.parse(await readText(candidatePath));
+  } catch {
+    return null;
+  }
+}
+
+async function collectMcpServerNames(pluginRoot, manifest) {
   const names = new Set();
   if (manifest?.mcpServers && typeof manifest.mcpServers === "object" && !Array.isArray(manifest.mcpServers)) {
-    for (const key of Object.keys(manifest.mcpServers)) names.add(key);
+    addMcpServerNames(names, manifest.mcpServers);
+  } else if (typeof manifest?.mcpServers === "string") {
+    addMcpServerNames(names, await readMcpServerConfig(pluginRoot, manifest.mcpServers));
+  } else if (Array.isArray(manifest?.mcpServers)) {
+    for (const entry of manifest.mcpServers) {
+      if (typeof entry === "string") {
+        addMcpServerNames(names, await readMcpServerConfig(pluginRoot, entry));
+      } else if (entry && typeof entry === "object" && !Array.isArray(entry)) {
+        addMcpServerNames(names, entry);
+      }
+    }
   }
   return names;
 }
@@ -179,7 +238,7 @@ export async function evaluateHooks(pluginRoot, manifest) {
   let promptCount = 0;
   let agentCount = 0;
   const allEvents = new Set();
-  const declaredMcpServers = collectMcpServerNames(manifest);
+  const declaredMcpServers = await collectMcpServerNames(pluginRoot, manifest);
 
   for (const bucket of eventBuckets) {
     if (!bucket || typeof bucket !== "object" || Array.isArray(bucket)) {

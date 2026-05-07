@@ -347,6 +347,39 @@ test("evaluateHooks emits CC310 for mcp_tool referencing undeclared server", asy
   assert.ok(findingCodes(fragment).has("CC310"));
 });
 
+test("evaluateHooks honors inline hook arrays from manifest.hooks", async () => {
+  const tempDir = await makeTempDir("ccplug-hooks-inline-array");
+  const fragment = await evaluateHooks(tempDir, {
+    hooks: [
+      {
+        PostToolUse: [{ hooks: [{ type: "mcp_tool", command: "declared-server/notify" }] }],
+      },
+    ],
+    mcpServers: { "declared-server": { command: "node" } },
+  });
+  assert.equal(findingCodes(fragment).has("CC310"), false);
+  assert.ok(fragment.metrics.some((metric) => metric.id === "hooks_total_handler_count" && metric.value === 1));
+});
+
+test("evaluateHooks resolves mcp_tool server names from file-backed mcpServers", async () => {
+  const tempDir = await makeTempDir("ccplug-hooks-file-backed-mcp");
+  await fs.mkdir(path.join(tempDir, "hooks"), { recursive: true });
+  await fs.writeFile(
+    path.join(tempDir, ".mcp.json"),
+    JSON.stringify({ mcpServers: { "declared-server": { command: "node" } } }),
+    "utf8",
+  );
+  await fs.writeFile(
+    path.join(tempDir, "hooks", "hooks.json"),
+    JSON.stringify({
+      PostToolUse: [{ hooks: [{ type: "mcp_tool", command: "declared-server/notify" }] }],
+    }),
+    "utf8",
+  );
+  const fragment = await evaluateHooks(tempDir, { mcpServers: "./.mcp.json" });
+  assert.equal(findingCodes(fragment).has("CC310"), false);
+});
+
 // =====================================================================
 // 6. MCP evaluator (CC4xx)
 // =====================================================================
@@ -414,6 +447,17 @@ test("evaluateMcp emits CC408 for invalid server name", async () => {
   assert.ok(findingCodes(fragment).has("CC408"));
 });
 
+test("evaluateMcp reads array-based mcpServers path declarations", async () => {
+  const tempDir = await makeTempDir("ccplug-mcp-array-path");
+  await fs.writeFile(
+    path.join(tempDir, "mcp-one.json"),
+    JSON.stringify({ mcpServers: { "missing-command": { args: [] } } }),
+    "utf8",
+  );
+  const fragment = await evaluateMcp(tempDir, { mcpServers: ["./mcp-one.json"] });
+  assert.ok(findingCodes(fragment).has("CC402"));
+});
+
 // =====================================================================
 // 7. LSP evaluator (CC5xx)
 // =====================================================================
@@ -426,6 +470,17 @@ test("evaluateLsp emits CC502 for missing command", async () => {
     "utf8",
   );
   const fragment = await evaluateLsp(tempDir, {});
+  assert.ok(findingCodes(fragment).has("CC502"));
+});
+
+test("evaluateLsp reads array-based lspServers path declarations", async () => {
+  const tempDir = await makeTempDir("ccplug-lsp-array-path");
+  await fs.writeFile(
+    path.join(tempDir, "lsp-one.json"),
+    JSON.stringify({ go: { extensionToLanguage: { ".go": "go" } } }),
+    "utf8",
+  );
+  const fragment = await evaluateLsp(tempDir, { lspServers: ["./lsp-one.json"] });
   assert.ok(findingCodes(fragment).has("CC502"));
 });
 
@@ -1271,7 +1326,7 @@ test("shipped plugin surfaces advertise beginner chat prompts", async () => {
 // =====================================================================
 
 import { safeEvaluatorFindings, safeEvaluatorChecks } from "../src/evaluators/plugin.js";
-import { buildClaudeChildEnv, filterExtraArgs } from "../src/core/benchmark.js";
+import { buildClaudeChildEnv, buildVerifierChildEnv, createRunId, filterExtraArgs } from "../src/core/benchmark.js";
 import {
   assertSafeTargetName,
   SAFE_TARGET_NAME,
@@ -1464,7 +1519,7 @@ test("assertSafeTargetName: rejects '..', '.', empty, and unsafe characters", ()
   assert.match("Hello.World", SAFE_TARGET_NAME);
 });
 
-test("buildClaudeChildEnv: drops unlisted env keys; sets HOME and CLAUDE_HOME", () => {
+test("benchmark child env builders drop unlisted env keys and set HOME/CLAUDE_HOME", () => {
   const restore = { ...process.env };
   process.env.PATH = "/usr/bin";
   process.env.ANTHROPIC_API_KEY = "should-not-leak";
@@ -1475,12 +1530,17 @@ test("buildClaudeChildEnv: drops unlisted env keys; sets HOME and CLAUDE_HOME", 
       homePath: "/tmp/fake/home",
       claudeHomePath: "/tmp/fake/home/.claude",
     });
+    const verifierEnv = buildVerifierChildEnv({
+      homePath: "/tmp/fake/home",
+      claudeHomePath: "/tmp/fake/home/.claude",
+    });
     assert.equal(env.HOME, "/tmp/fake/home");
     assert.equal(env.CLAUDE_HOME, "/tmp/fake/home/.claude");
     assert.equal(env.PATH, "/usr/bin");
     assert.equal(env.ANTHROPIC_API_KEY, undefined, "API key must not leak");
     assert.equal(env.CLAUDE_CODE_OAUTH_TOKEN, undefined, "OAuth token must not leak");
     assert.equal(env.SECRET_THING, undefined, "arbitrary secrets must not leak");
+    assert.deepEqual(verifierEnv, env, "verifiers must use the same scrubbed env policy as Claude runs");
   } finally {
     Object.assign(process.env, restore);
     // Re-delete the keys we added so we don't pollute later tests.
@@ -1488,6 +1548,13 @@ test("buildClaudeChildEnv: drops unlisted env keys; sets HOME and CLAUDE_HOME", 
       if (!(k in restore)) delete process.env[k];
     }
   }
+});
+
+test("createRunId includes sub-second/random entropy", () => {
+  const first = createRunId();
+  const second = createRunId();
+  assert.notEqual(first, second);
+  assert.match(first, /^\d{4}-\d{2}-\d{2}T.+Z-[0-9a-f]{8}$/);
 });
 
 test("filterExtraArgs: rejects sandbox-escape flags; passes safe ones through", () => {
