@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "multi-skill-plugin",
+  "version": "0.2.0",
+  "description": "Claude Code plugin fixture with multiple bundled skills for cc-plugin-eval tests.",
+  "license": "MIT",
+  "keywords": ["fixture", "multi-skill"],
+  "skills": "./skills/"
+}

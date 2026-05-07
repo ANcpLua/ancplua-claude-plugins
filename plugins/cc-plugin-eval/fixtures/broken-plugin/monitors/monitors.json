@@ -1,0 +1,13 @@
+[
+  {
+    "name": "duplicate",
+    "command": "echo one",
+    "description": "First entry intentionally shares the name with the second so CC603 fires."
+  },
+  {
+    "name": "duplicate",
+    "command": "echo two",
+    "description": "Second duplicate entry. Also references ${user_config.missing_key} so CC608 fires.",
+    "when": "weird-syntax"
+  }
+]

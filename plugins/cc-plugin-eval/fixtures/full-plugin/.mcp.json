@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "example-mcp": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/servers/example-server",
+      "args": ["--config", "${CLAUDE_PLUGIN_ROOT}/config.json"],
+      "env": {
+        "API_ENDPOINT": "${user_config.api_endpoint}",
+        "API_TOKEN": "${user_config.api_token}"
+      },
+      "cwd": "${CLAUDE_PLUGIN_ROOT}"
+    }
+  }
+}

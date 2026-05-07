@@ -1,0 +1,3 @@
+#!/bin/sh
+# Fixture MCP server stub. Real tests use the fixture only for path-existence checks.
+exit 0

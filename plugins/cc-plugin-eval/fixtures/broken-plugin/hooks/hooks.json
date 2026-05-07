@@ -1,0 +1,22 @@
+{
+  "postToolUse": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/scripts/missing.sh"
+        }
+      ]
+    }
+  ],
+  "PostToolUse": [
+    {
+      "hooks": [
+        {
+          "type": "mcp_tool",
+          "command": "ghost-server/some-tool"
+        }
+      ]
+    }
+  ]
+}
