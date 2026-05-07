@@ -1,0 +1,458 @@
+"$schema": "https://json-schema.org/draft/2020-12/schema"
+"$id": "https://github.com/ANcpLua/ANcpLua.Roslyn.Utilities/schemas/agent-workflow.schema.yaml"
+title: Agent Workflow Run
+description: >
+  Machine-manageable schema for a coordinator-driven agent workflow with
+  planner, implementer, spec-review, quality-review, validation, and closeout
+  stages.
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - workflow
+  - root
+  - constraints
+  - roles
+  - gates
+  - tasks
+  - agents
+  - events
+  - verification
+  - final_report
+properties:
+  schema_version:
+    type: string
+    enum:
+      - "1"
+  workflow:
+    type: object
+    additionalProperties: false
+    required:
+      - name
+      - kind
+      - state
+      - repository
+      - source_request
+    properties:
+      name:
+        type: string
+        minLength: 1
+      kind:
+        type: string
+        enum:
+          - source_copy
+          - repo_change
+          - review
+          - investigation
+          - cleanup
+          - release
+      state:
+        type: string
+        enum:
+          - planning
+          - implementing
+          - reviewing
+          - validating
+          - reporting
+          - closed
+          - blocked
+      repository:
+        type: string
+        minLength: 1
+      branch:
+        type:
+          - string
+          - "null"
+      source_request:
+        type: string
+        minLength: 1
+      summary:
+        type:
+          - string
+          - "null"
+      started_at:
+        type:
+          - string
+          - "null"
+        format: date-time
+      finished_at:
+        type:
+          - string
+          - "null"
+        format: date-time
+  root:
+    type: object
+    additionalProperties: false
+    required:
+      - role
+      - cwd
+      - responsibilities
+      - status
+    properties:
+      role:
+        const: root_coordinator
+      cwd:
+        type: string
+        minLength: 1
+      status:
+        type: string
+        enum:
+          - active
+          - waiting
+          - integrating
+          - validating
+          - reporting
+          - closed
+          - blocked
+      responsibilities:
+        type: array
+        minItems: 1
+        items:
+          type: string
+          minLength: 1
+  constraints:
+    type: object
+    additionalProperties: false
+    required:
+      - no_git_reset
+      - protect_user_changes
+      - source_only_when_requested
+      - no_package_refs_when_copying_source
+      - no_dotnet_test_without_request
+      - verification_before_reporting
+    properties:
+      no_git_reset:
+        type: boolean
+      protect_user_changes:
+        type: boolean
+      source_only_when_requested:
+        type: boolean
+      no_package_refs_when_copying_source:
+        type: boolean
+      no_dotnet_test_without_request:
+        type: boolean
+      verification_before_reporting:
+        type: boolean
+      final_response_contract:
+        type:
+          - string
+          - "null"
+  roles:
+    type: array
+    minItems: 1
+    items:
+      "$ref": "#/$defs/role_definition"
+  gates:
+    type: array
+    minItems: 1
+    items:
+      "$ref": "#/$defs/gate"
+  tasks:
+    type: array
+    items:
+      "$ref": "#/$defs/task"
+  agents:
+    type: array
+    items:
+      "$ref": "#/$defs/agent"
+  events:
+    type: array
+    items:
+      "$ref": "#/$defs/event"
+  verification:
+    type: object
+    additionalProperties: false
+    required:
+      - status
+      - commands
+      - grep_assertions
+      - not_run
+    properties:
+      status:
+        type: string
+        enum:
+          - not_run
+          - passed
+          - failed
+          - partial
+      commands:
+        type: array
+        items:
+          "$ref": "#/$defs/command_result"
+      grep_assertions:
+        type: array
+        items:
+          "$ref": "#/$defs/grep_assertion"
+      not_run:
+        type: array
+        items:
+          type: string
+  final_report:
+    type: object
+    additionalProperties: false
+    required:
+      - status
+      - summary
+      - validation_summary
+      - remaining
+    properties:
+      status:
+        type: string
+        enum:
+          - ready_to_report
+          - reported
+          - blocked
+      summary:
+        type: string
+      validation_summary:
+        type: array
+        items:
+          type: string
+      remaining:
+        type: array
+        items:
+          type: string
+
+"$defs":
+  role_definition:
+    type: object
+    additionalProperties: false
+    required:
+      - role
+      - purpose
+      - may_edit
+      - terminal_statuses
+    properties:
+      role:
+        type: string
+        enum:
+          - root_coordinator
+          - team_planner
+          - team_implementer
+          - team_reviewer
+          - team_improver
+          - team_verifier
+      purpose:
+        type: string
+        minLength: 1
+      may_edit:
+        type: boolean
+      terminal_statuses:
+        type: array
+        minItems: 1
+        items:
+          "$ref": "#/$defs/agent_status"
+  gate:
+    type: object
+    additionalProperties: false
+    required:
+      - id
+      - order
+      - owner_role
+      - pass_status
+      - fail_statuses
+    properties:
+      id:
+        type: string
+        pattern: "^[a-z][a-z0-9_]*$"
+      order:
+        type: integer
+        minimum: 1
+      owner_role:
+        type: string
+      pass_status:
+        type: string
+      fail_statuses:
+        type: array
+        items:
+          type: string
+      required_before:
+        type: array
+        items:
+          type: string
+  task:
+    type: object
+    additionalProperties: false
+    required:
+      - id
+      - title
+      - status
+      - owner_role
+      - write_scope
+      - validation
+    properties:
+      id:
+        type: string
+        pattern: "^[a-z][a-z0-9_\\-]*$"
+      title:
+        type: string
+      status:
+        type: string
+        enum:
+          - pending
+          - in_progress
+          - done
+          - blocked
+          - rejected
+      owner_role:
+        type: string
+      write_scope:
+        type: array
+        items:
+          type: string
+      dependencies:
+        type: array
+        items:
+          type: string
+      validation:
+        type: array
+        items:
+          type: string
+  agent:
+    type: object
+    additionalProperties: false
+    required:
+      - id
+      - nickname
+      - role
+      - status
+      - responsibility
+    properties:
+      id:
+        type: string
+      nickname:
+        type: string
+      role:
+        type: string
+      status:
+        "$ref": "#/$defs/agent_status"
+      responsibility:
+        type: string
+      write_scope:
+        type: array
+        items:
+          type: string
+      output_summary:
+        type:
+          - string
+          - "null"
+      concerns:
+        type: array
+        items:
+          type: string
+  event:
+    type: object
+    additionalProperties: false
+    required:
+      - sequence
+      - type
+      - actor
+      - message
+    properties:
+      sequence:
+        type: integer
+        minimum: 1
+      at:
+        type:
+          - string
+          - "null"
+        format: date-time
+      type:
+        type: string
+        enum:
+          - user_update
+          - plan_update
+          - agent_spawned
+          - agent_closed
+          - file_edit
+          - command
+          - search
+          - build
+          - review
+          - validation
+          - final_report
+      actor:
+        type: string
+      related_agent_id:
+        type:
+          - string
+          - "null"
+      message:
+        type: string
+      result:
+        type:
+          - string
+          - "null"
+        enum:
+          - pass
+          - fail
+          - skipped
+          - no_output
+          - info
+          - null
+      command:
+        anyOf:
+          - "$ref": "#/$defs/command_result"
+          - type: "null"
+  command_result:
+    type: object
+    additionalProperties: false
+    required:
+      - cmd
+      - cwd
+      - exit_code
+      - status
+    properties:
+      cmd:
+        type: string
+      cwd:
+        type: string
+      exit_code:
+        type: integer
+      status:
+        type: string
+        enum:
+          - passed
+          - failed
+          - skipped
+      output_summary:
+        type:
+          - string
+          - "null"
+  grep_assertion:
+    type: object
+    additionalProperties: false
+    required:
+      - description
+      - cmd
+      - expected
+      - status
+    properties:
+      description:
+        type: string
+      cmd:
+        type: string
+      expected:
+        type: string
+      actual:
+        type:
+          - string
+          - "null"
+      status:
+        type: string
+        enum:
+          - passed
+          - failed
+          - skipped
+  agent_status:
+    type: string
+    enum:
+      - pending
+      - running
+      - done
+      - done_with_concerns
+      - needs_context
+      - blocked
+      - approved
+      - rejected
+      - closed
