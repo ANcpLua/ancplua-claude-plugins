@@ -177,7 +177,8 @@ function addMcpServerNames(names, source) {
 }
 
 async function readMcpServerConfig(pluginRoot, configuredPath) {
-  const { candidatePath } = resolvePluginPath(pluginRoot, configuredPath);
+  const { candidatePath, error } = resolvePluginPath(pluginRoot, configuredPath);
+  if (error) return null;
   if (!(await pathExists(candidatePath))) return null;
   try {
     return JSON.parse(await readText(candidatePath));
