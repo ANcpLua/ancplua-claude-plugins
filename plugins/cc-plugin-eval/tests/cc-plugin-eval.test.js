@@ -817,6 +817,70 @@ test("evaluateUserConfig emits CC915 for secret-shaped key without sensitive: tr
   assert.ok(findingCodes(fragment).has("CC915"));
 });
 
+test("evaluateUserConfig scans manifest-defined config file paths", async () => {
+  const tempDir = await makeTempDir("ccplug-userconfig-paths");
+  await fs.mkdir(path.join(tempDir, ".claude-plugin"), { recursive: true });
+  await fs.mkdir(path.join(tempDir, "custom"), { recursive: true });
+  await fs.writeFile(path.join(tempDir, ".claude-plugin", "plugin.json"), "{}", "utf8");
+  await fs.writeFile(
+    path.join(tempDir, "custom", "mcp.json"),
+    JSON.stringify({ mcpServers: { one: { command: "node", args: ["${user_config.mcp_key}"] } } }),
+    "utf8",
+  );
+  await fs.writeFile(
+    path.join(tempDir, "custom", "lsp.json"),
+    JSON.stringify({ lspServers: { ts: { command: "typescript-language-server", args: ["${user_config.lsp_key}"] } } }),
+    "utf8",
+  );
+  await fs.writeFile(
+    path.join(tempDir, "custom", "hooks.json"),
+    JSON.stringify({ PostToolUse: [{ matcher: "*", hooks: [{ type: "command", command: "echo ${user_config.hook_key}" }] }] }),
+    "utf8",
+  );
+  await fs.writeFile(
+    path.join(tempDir, "custom", "monitors.json"),
+    JSON.stringify([{ name: "m", when: "always", command: "echo ${user_config.monitor_key}" }]),
+    "utf8",
+  );
+
+  const fragment = await evaluateUserConfig(
+    {
+      userConfig: {
+        mcp_key: { type: "string", title: "mcp", description: "mcp" },
+        lsp_key: { type: "string", title: "lsp", description: "lsp" },
+        hook_key: { type: "string", title: "hook", description: "hook" },
+        monitor_key: { type: "string", title: "monitor", description: "monitor" },
+      },
+      mcpServers: ["./custom/mcp.json"],
+      lspServers: "./custom/lsp.json",
+      hooks: "./custom/hooks.json",
+      monitors: "./custom/monitors.json",
+    },
+    tempDir,
+  );
+
+  assert.ok(!findingCodes(fragment).has("CC917"));
+});
+
+test("evaluateUserConfig validates channels against array-based mcpServers", async () => {
+  const tempDir = await makeTempDir("ccplug-userconfig-mcp-array");
+  await fs.writeFile(
+    path.join(tempDir, "mcp.json"),
+    JSON.stringify({ mcpServers: { declared: { command: "node" } } }),
+    "utf8",
+  );
+
+  const fragment = await evaluateUserConfig(
+    {
+      mcpServers: ["./mcp.json"],
+      channels: [{ server: "missing", userConfig: {} }],
+    },
+    tempDir,
+  );
+
+  assert.ok(findingCodes(fragment).has("CC916"));
+});
+
 // =====================================================================
 // 12. Code/coverage/python/typescript ports
 // =====================================================================

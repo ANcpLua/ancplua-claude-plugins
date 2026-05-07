@@ -21,6 +21,10 @@ function isFinding(value) {
   return value && typeof value === "object" && typeof value.code === "string";
 }
 
+function isPlainObject(value) {
+  return value && typeof value === "object" && !Array.isArray(value);
+}
+
 function validateUserConfigBlock(block, options) {
   const { sourceLabel, declaredKeys } = options;
   const findings = [];
@@ -174,6 +178,139 @@ function collectScanDirs(pluginRoot, manifest) {
   return [...dirs];
 }
 
+function resolvePluginPath(pluginRoot, configuredPath) {
+  const root = path.resolve(pluginRoot);
+  const candidatePath = path.resolve(root, configuredPath.replace(/^\.\//, ""));
+  const rel = path.relative(root, candidatePath);
+  if (rel === ".." || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel)) {
+    return null;
+  }
+  return candidatePath;
+}
+
+function addConfiguredPath(paths, pluginRoot, configuredPath) {
+  if (typeof configuredPath !== "string") return;
+  const candidatePath = resolvePluginPath(pluginRoot, configuredPath);
+  if (candidatePath) paths.add(candidatePath);
+}
+
+function collectConfigFilePaths(pluginRoot, manifest) {
+  const paths = new Set([
+    path.join(pluginRoot, ".mcp.json"),
+    path.join(pluginRoot, ".lsp.json"),
+    path.join(pluginRoot, "hooks", "hooks.json"),
+    path.join(pluginRoot, "monitors", "monitors.json"),
+  ]);
+
+  const addPathLikeEntries = (value) => {
+    if (typeof value === "string") {
+      addConfiguredPath(paths, pluginRoot, value);
+    } else if (Array.isArray(value)) {
+      for (const entry of value) addConfiguredPath(paths, pluginRoot, entry);
+    }
+  };
+
+  addPathLikeEntries(manifest?.mcpServers);
+  addPathLikeEntries(manifest?.lspServers);
+  if (typeof manifest?.hooks === "string") addConfiguredPath(paths, pluginRoot, manifest.hooks);
+  if (typeof manifest?.monitors === "string") addConfiguredPath(paths, pluginRoot, manifest.monitors);
+
+  return [...paths];
+}
+
+function normalizeMcpServerMap(parsed) {
+  return isPlainObject(parsed?.mcpServers) ? parsed.mcpServers : parsed;
+}
+
+async function readMcpServerMap(pluginRoot, configuredPath) {
+  const candidatePath = resolvePluginPath(pluginRoot, configuredPath);
+  if (!candidatePath) {
+    return {
+      servers: null,
+      message: `manifest.mcpServers path "${configuredPath}" escapes the plugin root.`,
+    };
+  }
+  if (!(await pathExists(candidatePath))) return { servers: null, message: null };
+
+  try {
+    const parsed = await readJson(candidatePath);
+    const servers = normalizeMcpServerMap(parsed);
+    if (isPlainObject(servers)) return { servers, message: null };
+    return {
+      servers: null,
+      message: `${configuredPath} did not contain a server map.`,
+    };
+  } catch (error) {
+    return {
+      servers: null,
+      message: `cannot load ${configuredPath} (${error instanceof Error ? error.message : String(error)}).`,
+    };
+  }
+}
+
+async function collectMcpServerKeys(pluginRoot, manifest, findings) {
+  const keys = new Set();
+  let available = false;
+  const configured = manifest?.mcpServers;
+
+  const addServers = (servers) => {
+    for (const key of Object.keys(servers)) keys.add(key);
+    available = true;
+  };
+
+  if (isPlainObject(configured)) {
+    addServers(configured);
+    return { keys, available };
+  }
+
+  const entries = Array.isArray(configured) ? configured : typeof configured === "string" ? [configured] : [];
+  for (const entry of entries) {
+    if (isPlainObject(entry)) {
+      const servers = normalizeMcpServerMap(entry);
+      if (isPlainObject(servers)) {
+        addServers(servers);
+      } else {
+        findings.push(
+          createFinding({
+            severity: "info",
+            code: "CC919",
+            message: "Skipping channel/mcpServers cross-check: manifest.mcpServers array entry did not contain a server map.",
+            location: LOC,
+          }),
+        );
+      }
+      continue;
+    }
+
+    if (typeof entry !== "string") {
+      findings.push(
+        createFinding({
+          severity: "info",
+          code: "CC919",
+          message: "Skipping channel/mcpServers cross-check: manifest.mcpServers array entries must be path strings or server maps.",
+          location: LOC,
+        }),
+      );
+      continue;
+    }
+
+    const loaded = await readMcpServerMap(pluginRoot, entry);
+    if (loaded.servers) addServers(loaded.servers);
+    else if (loaded.message) {
+      findings.push(
+        createFinding({
+          severity: "info",
+          code: "CC919",
+          message: `Skipping channel/mcpServers cross-check: ${loaded.message}`,
+          location: LOC,
+        }),
+      );
+    }
+  }
+
+  return { keys, available };
+}
+
 async function gatherSubstitutionSources(pluginRoot, manifest) {
   // Aggregate every place the ref says ${user_config.*} can appear:
   // hooks/monitor commands, MCP/LSP server configs, skill content, agent content.
@@ -203,13 +340,8 @@ async function gatherSubstitutionSources(pluginRoot, manifest) {
     return fragments.join("\n");
   }
 
-  // External JSON config files.
-  const candidatePaths = [
-    path.join(pluginRoot, ".mcp.json"),
-    path.join(pluginRoot, ".lsp.json"),
-    path.join(pluginRoot, "hooks", "hooks.json"),
-    path.join(pluginRoot, "monitors", "monitors.json"),
-  ];
+  // External JSON config files, including manifest-defined path fields.
+  const candidatePaths = collectConfigFilePaths(pluginRoot, manifest);
   for (const candidate of candidatePaths) {
     if (await pathExists(candidate)) {
       try {
@@ -268,57 +400,7 @@ export async function evaluateUserConfig(manifest, pluginRoot) {
   }
 
   // Per-channel userConfig + CC916 server cross-check.
-  const mcpServerKeys = new Set();
-  let mcpKeysAvailable = false;
-  if (manifest?.mcpServers && typeof manifest.mcpServers === "object" && !Array.isArray(manifest.mcpServers)) {
-    for (const key of Object.keys(manifest.mcpServers)) mcpServerKeys.add(key);
-    mcpKeysAvailable = true;
-  } else if (typeof manifest?.mcpServers === "string") {
-    const candidate = path.resolve(pluginRoot, manifest.mcpServers.replace(/^\.\//, ""));
-    const rel = path.relative(pluginRoot, candidate);
-    const escapesRoot = rel === "" ? false : rel.startsWith("..") || path.isAbsolute(rel);
-    if (escapesRoot) {
-      findings.push(
-        createFinding({
-          severity: "info",
-          code: "CC919",
-          message: `Skipping channel/mcpServers cross-check: manifest.mcpServers path "${manifest.mcpServers}" escapes the plugin root.`,
-          location: LOC,
-        }),
-      );
-    } else {
-      try {
-        const parsed = await readJson(candidate);
-        const servers = parsed?.mcpServers && typeof parsed.mcpServers === "object" && !Array.isArray(parsed.mcpServers)
-          ? parsed.mcpServers
-          : parsed && typeof parsed === "object" && !Array.isArray(parsed)
-            ? parsed
-            : null;
-        if (servers) {
-          for (const key of Object.keys(servers)) mcpServerKeys.add(key);
-          mcpKeysAvailable = true;
-        } else {
-          findings.push(
-            createFinding({
-              severity: "info",
-              code: "CC919",
-              message: `Skipping channel/mcpServers cross-check: ${manifest.mcpServers} did not contain a server map.`,
-              location: LOC,
-            }),
-          );
-        }
-      } catch (error) {
-        findings.push(
-          createFinding({
-            severity: "info",
-            code: "CC919",
-            message: `Skipping channel/mcpServers cross-check: cannot load ${manifest.mcpServers} (${error instanceof Error ? error.message : String(error)}).`,
-            location: LOC,
-          }),
-        );
-      }
-    }
-  }
+  const { keys: mcpServerKeys, available: mcpKeysAvailable } = await collectMcpServerKeys(pluginRoot, manifest, findings);
   if (Array.isArray(manifest?.channels)) {
     for (let i = 0; i < manifest.channels.length; i += 1) {
       const channel = manifest.channels[i];
