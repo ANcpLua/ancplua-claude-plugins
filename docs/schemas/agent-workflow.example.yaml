@@ -1,0 +1,309 @@
+schema_version: "1"
+workflow:
+  name: source-copy-utility-review
+  kind: source_copy
+  state: closed
+  repository: <repo-root>
+  branch: null
+  source_request: Copy useful source code from ANcpLua/Chasm without adding Chasm library references.
+  summary: Source-only utility adaptation with planner, implementers, spec review, quality review, and final validation.
+  started_at: null
+  finished_at: null
+
+root:
+  role: root_coordinator
+  cwd: <repo-root>
+  status: reporting
+  responsibilities:
+    - preserve current session context
+    - inspect source and repo constraints
+    - assign scoped implementation domains
+    - integrate subagent output
+    - run final verification before reporting
+
+constraints:
+  no_git_reset: true
+  protect_user_changes: true
+  source_only_when_requested: true
+  no_package_refs_when_copying_source: true
+  no_dotnet_test_without_request: true
+  verification_before_reporting: true
+  final_response_contract: End the response with the required remaining-work line when active developer instructions require it.
+
+roles:
+  - role: root_coordinator
+    purpose: Coordinate, integrate, verify, and report without losing the main task context.
+    may_edit: true
+    terminal_statuses:
+      - closed
+      - blocked
+  - role: team_planner
+    purpose: Convert ambiguous request into exact scope, assumptions, risks, and ordered tasks.
+    may_edit: false
+    terminal_statuses:
+      - done
+      - done_with_concerns
+      - blocked
+  - role: team_implementer
+    purpose: Implement one scoped task or independent problem domain and run focused validation.
+    may_edit: true
+    terminal_statuses:
+      - done
+      - done_with_concerns
+      - needs_context
+      - blocked
+  - role: team_reviewer
+    purpose: Verify exact spec compliance before quality review.
+    may_edit: false
+    terminal_statuses:
+      - approved
+      - rejected
+      - blocked
+  - role: team_improver
+    purpose: Verify correctness, maintainability, security, tests, duplication, and brittle abstractions.
+    may_edit: false
+    terminal_statuses:
+      - approved
+      - rejected
+      - blocked
+
+gates:
+  - id: plan_scope
+    order: 1
+    owner_role: team_planner
+    pass_status: done
+    fail_statuses:
+      - blocked
+  - id: implementation_self_review
+    order: 2
+    owner_role: team_implementer
+    pass_status: done
+    fail_statuses:
+      - done_with_concerns
+      - needs_context
+      - blocked
+    required_before:
+      - spec_review
+  - id: spec_review
+    order: 3
+    owner_role: team_reviewer
+    pass_status: approved
+    fail_statuses:
+      - rejected
+      - blocked
+    required_before:
+      - quality_review
+  - id: quality_review
+    order: 4
+    owner_role: team_improver
+    pass_status: approved
+    fail_statuses:
+      - rejected
+      - blocked
+    required_before:
+      - final_validation
+  - id: final_validation
+    order: 5
+    owner_role: root_coordinator
+    pass_status: closed
+    fail_statuses:
+      - blocked
+
+tasks:
+  - id: source-inventory
+    title: Inspect Chasm source and existing ANcpLua.Roslyn.Utilities helpers.
+    status: done
+    owner_role: root_coordinator
+    write_scope: []
+    dependencies: []
+    validation:
+      - rg for existing equivalent helper APIs before adding source.
+  - id: scoped-source-copy
+    title: Add source-only helper code without adding package references.
+    status: done
+    owner_role: team_implementer
+    write_scope:
+      - src/ANcpLua.Roslyn.Utilities
+    dependencies:
+      - source-inventory
+    validation:
+      - build ANcpLua.Roslyn.Utilities project.
+  - id: guard-contract-tightening
+    title: Use local Guard contract for added validation paths.
+    status: done
+    owner_role: root_coordinator
+    write_scope:
+      - src/ANcpLua.Roslyn.Utilities/EnumerableExtensions.cs
+    dependencies:
+      - scoped-source-copy
+    validation:
+      - rg Guard.NotNull and Guard.That in touched files.
+  - id: final-validation
+    title: Build and grep for prohibited package/source-copy residue.
+    status: done
+    owner_role: root_coordinator
+    write_scope: []
+    dependencies:
+      - guard-contract-tightening
+    validation:
+      - dotnet build -c Release
+      - rg for Chasm package refs and broken HashCode AddRange pattern.
+
+agents:
+  - id: 019dffdb-fd34-70e0-a78e-226ed79b6a17
+    nickname: Plan-C
+    role: team_planner
+    status: closed
+    responsibility: Define source-only copy scope and exclusions.
+    write_scope: []
+    output_summary: Recommended source-only cherry-pick and exclusion of broken HashCodeExtensions.AddRange.
+    concerns: []
+  - id: 019dffdc-c18c-7830-bd03-a479a9b53b75
+    nickname: Impl-C
+    role: team_implementer
+    status: closed
+    responsibility: Add sync, disposal, and weak-reference helper source.
+    write_scope:
+      - src/ANcpLua.Roslyn.Utilities/DelegateDisposable.cs
+      - src/ANcpLua.Roslyn.Utilities/ReaderWriterLockSlimExtensions.cs
+      - src/ANcpLua.Roslyn.Utilities/WeakReferenceExtensions.cs
+    output_summary: Added helper source and reported XML-doc concerns that were resolved during integration.
+    concerns:
+      - Initial strict build warnings required XML documentation cleanup.
+  - id: 019dffdc-e807-7040-b465-2811943bf68d
+    nickname: Impl-A
+    role: team_implementer
+    status: closed
+    responsibility: Add formatting, enumerator, and read-only empty helper source.
+    write_scope:
+      - src/ANcpLua.Roslyn.Utilities/FormattingExtensions.cs
+      - src/ANcpLua.Roslyn.Utilities/Enumerator.cs
+      - src/ANcpLua.Roslyn.Utilities/EnumeratorExtensions.cs
+      - src/ANcpLua.Roslyn.Utilities/ReadOnlyCollection.cs
+      - src/ANcpLua.Roslyn.Utilities/ReadOnlyDictionary.cs
+    output_summary: Added helper source and reported XML-doc concerns that were resolved during integration.
+    concerns:
+      - Initial strict build warnings required XML documentation cleanup.
+  - id: 019dffe1-ed1d-7211-bc94-060bee2d405b
+    nickname: Spec-A
+    role: team_reviewer
+    status: closed
+    responsibility: Verify exact request compliance.
+    write_scope: []
+    output_summary: Approved source-only scope, no Chasm package refs, and no copied broken HashCode AddRange.
+    concerns: []
+  - id: 019dffe2-3e87-7343-ac74-dd8abd8f745c
+    nickname: Quality-C
+    role: team_improver
+    status: closed
+    responsibility: Verify maintainability and correctness risks after spec approval.
+    write_scope: []
+    output_summary: Approved after lock-scope constructor tightening and negative tests.
+    concerns: []
+
+events:
+  - sequence: 1
+    at: null
+    type: build
+    actor: root_coordinator
+    related_agent_id: null
+    message: Build passed on the current tree.
+    result: pass
+    command:
+      cmd: dotnet build -c Release
+      cwd: <repo-root>
+      exit_code: 0
+      status: passed
+      output_summary: Build succeeded with 0 warnings and 0 errors.
+  - sequence: 2
+    at: null
+    type: agent_closed
+    actor: root_coordinator
+    related_agent_id: 019dffdb-fd34-70e0-a78e-226ed79b6a17
+    message: Closed Plan-C after integrating planner output.
+    result: info
+    command: null
+  - sequence: 3
+    at: null
+    type: agent_closed
+    actor: root_coordinator
+    related_agent_id: 019dffdc-c18c-7830-bd03-a479a9b53b75
+    message: Closed Impl-C after integrating implementation output.
+    result: info
+    command: null
+  - sequence: 4
+    at: null
+    type: agent_closed
+    actor: root_coordinator
+    related_agent_id: 019dffdc-e807-7040-b465-2811943bf68d
+    message: Closed Impl-A after integrating implementation output.
+    result: info
+    command: null
+  - sequence: 5
+    at: null
+    type: agent_closed
+    actor: root_coordinator
+    related_agent_id: 019dffe1-ed1d-7211-bc94-060bee2d405b
+    message: Closed Spec-A after spec compliance approval.
+    result: info
+    command: null
+  - sequence: 6
+    at: null
+    type: agent_closed
+    actor: root_coordinator
+    related_agent_id: 019dffe2-3e87-7343-ac74-dd8abd8f745c
+    message: Closed Quality-C after quality approval.
+    result: info
+    command: null
+  - sequence: 7
+    at: null
+    type: search
+    actor: root_coordinator
+    related_agent_id: null
+    message: Checked Only, OnlyOrDefault, Guard.That, and NotNull usage in EnumerableExtensions.cs.
+    result: pass
+    command:
+      cmd: rg -n 'Only\(|OnlyOrDefault\(|Guard\.That|NotNull<T>\(' src/ANcpLua.Roslyn.Utilities/EnumerableExtensions.cs
+      cwd: <repo-root>
+      exit_code: 0
+      status: passed
+      output_summary: Guard.That and Guard.NotNull paths are present.
+  - sequence: 8
+    at: null
+    type: search
+    actor: root_coordinator
+    related_agent_id: null
+    message: Checked Guard.NotNull and Guard.That across touched helper files.
+    result: pass
+    command:
+      cmd: rg -n 'Guard\.NotNull|Guard\.That' src/ANcpLua.Roslyn.Utilities/{DelegateDisposable.cs,ReaderWriterLockSlimExtensions.cs,WeakReferenceExtensions.cs,FormattingExtensions.cs,EnumeratorExtensions.cs,EnumerableExtensions.cs}
+      cwd: <repo-root>
+      exit_code: 0
+      status: passed
+      output_summary: Guard contract is used in touched validation paths.
+
+verification:
+  status: passed
+  commands:
+    - cmd: dotnet build -c Release
+      cwd: <repo-root>
+      exit_code: 0
+      status: passed
+      output_summary: Build succeeded with 0 warnings and 0 errors.
+  grep_assertions:
+    - description: No Chasm library/package residue.
+      cmd: rg -n 'Chasm|PackageReference Include="Chasm|HashCodeExtensions|AddRange<T>\(this HashCode' src tests Directory.Packages.props Version.props
+      expected: No matches.
+      actual: No matches.
+      status: passed
+  not_run:
+    - dotnet test was not run because repo instructions require explicit user request.
+
+final_report:
+  status: reported
+  summary: The workflow closed after build validation, grep validation, agent closeout, and Guard usage inspection.
+  validation_summary:
+    - dotnet build -c Release passed.
+    - Chasm package/reference grep passed with no matches.
+    - Guard usage grep passed.
+  remaining: []
