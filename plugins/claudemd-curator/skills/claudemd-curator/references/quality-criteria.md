@@ -90,9 +90,9 @@ Applies the same six-criterion rubric to `CLAUDE.md`, `AGENTS.md`, `.claude.loca
 
 ## Assessment Process
 
-1. Read the target project-memory artifact completely
+1. Read the target project-memory artifact(s) completely (any of: CLAUDE.md, AGENTS.md, .claude.local.md, .claude/rules/*.md)
 2. Cross-reference with actual codebase:
-   - Run documented commands when feasible; otherwise mark them as "cannot verify"
+   - Run documented commands in a shell or automated test to verify they execute successfully; explicitly label any item that cannot be executed or verified as "cannot verify"
    - Check if referenced files exist
    - Verify architecture descriptions
 3. Score each criterion

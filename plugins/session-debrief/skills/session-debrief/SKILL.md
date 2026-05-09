@@ -24,7 +24,7 @@ Produce a self-contained HTML debrief of Claude Code usage and save it to the cu
    ```
 
 4. **Edit the output file** (use Edit, not Write — preserve the template's JS/CSS):
-   - Replace the contents of `<script id="report-data" type="application/json">` with the full JSON from step 1 after escaping it for an HTML script block: replace `<` with `\u003C` and `</script>` with `<\/script>` before embedding. The page's JS renders the hero total, all tables, bars, and drill-downs from this blob automatically.
+   - Replace the contents of `<script id="report-data" type="application/json">` with the full JSON from step 1 after escaping dangerous sequences for HTML script embedding: replace all `<` with `\u003C` and specifically replace `</script>` with `<\/script>` to prevent untrusted transcript content from breaking the page or injecting executable script. The page's JS renders the hero total, all tables, bars, and drill-downs from this blob automatically.
    - Fill the `<!-- AGENT: anomalies -->` block with **3–5 one-line findings**. Express figures as a **% of total tokens** wherever possible (total = `overall.input_tokens.total + overall.output_tokens`). One line per finding, exact markup:
      ```html
      <div class="take bad"><div class="fig">41.2%</div><div class="txt"><b>cc-monitor</b> consumed 41% of the week across just 3 sessions</div></div>

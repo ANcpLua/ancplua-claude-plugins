@@ -75,7 +75,7 @@ Format:
 ## Project Memory Quality Report
 
 ### Summary
-- Files found: X
+- Files found: X (CLAUDE.md, AGENTS.md, .claude.local.md, .claude/rules/*.md discovered)
 - Average score: X/100
 - Files needing update: X
 
@@ -100,9 +100,15 @@ Format:
 - [List what should be added]
 
 #### 2. ./AGENTS.md (Project Root - Codex/OpenAI/Codeium)
-...
+[Same format, scored against the same rubric]
 
-#### 3. ./.claude/rules/<rule>.md (Auto-loaded rule)
+#### 3. ./.claude.local.md (Local overrides)
+[Same format if present]
+
+#### 4. ./.claude/rules/<rule>.md (Auto-loaded rules)
+[One assessment per discovered rule file]
+
+[Repeat for all discovered memory artifacts]
 ...
 ```
 

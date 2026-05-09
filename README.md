@@ -11,6 +11,8 @@ is gated — work only advances when the gate passes. No manual babysitting.
 
 ## Plugins
 
+Sample of available plugins (full list: 19 plugins, 31 commands, 20 skills, 26 agents):
+
 | Plugin                       | What it does in plain language                                                                                                                                              |
 |------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **exodia**                   | Summons up to 12 AI workers that tackle different parts of your code simultaneously. One finds problems, another fixes them, another reviews the fix — all at the same time |

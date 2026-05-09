@@ -249,6 +249,7 @@ async function processFile(p, info, buckets) {
 
     if (e.type === 'user') {
       // Link Agent tool_result -> agentId for type + prompt attribution.
+      // Always process linkage events unconditionally (before SINCE filtering).
       const tur = e.toolUseResult
       if (tur && tur.agentId) {
         const c0 = Array.isArray(e.message?.content)
@@ -262,7 +263,7 @@ async function processFile(p, info, buckets) {
           if (pk) {
             agentIdToPrompt.set(tur.agentId, pk)
             const r = prompts.get(pk)
-            if (r) r.subagentCalls++
+            if (r && inRange) r.subagentCalls++
           }
         }
       }
@@ -284,7 +285,8 @@ async function processFile(p, info, buckets) {
     if (e.type === 'assistant') {
       const msg = e.message || {}
       const usage = msg.usage
-      // detect Skill / Agent tool calls in content
+      // detect Skill / Agent tool calls in content.
+      // Always process linkage/attribution (before SINCE filtering).
       if (Array.isArray(msg.content)) {
         for (const c of msg.content) {
           if (c && c.type === 'tool_use') {

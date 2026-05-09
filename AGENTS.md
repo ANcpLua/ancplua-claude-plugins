@@ -1,6 +1,6 @@
 # Agent Operating Guide — ancplua-claude-plugins
 
-> This file is read by Claude Code, Codex / OpenAI Codex CLI, Codeium / Continue, and ChatGPT desktop on session init. Each tool reads only its own file (`AGENTS.md` for Codex-family, `CLAUDE.md` for Claude). Keep both self-contained — see `claudemd-curator` plugin for tooling that maintains the pair.
+> This file is read by Codex / OpenAI Codex CLI, Codeium / Continue, and other agent tooling on session init. Each tool reads only its own file (`AGENTS.md` for Codex-family, `CLAUDE.md` for Claude Code). Keep both self-contained — see `claudemd-curator` plugin for tooling that maintains the pair.
 
 ---
 
