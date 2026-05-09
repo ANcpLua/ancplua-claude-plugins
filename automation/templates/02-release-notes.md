@@ -8,7 +8,15 @@ Draft weekly release notes from PRs merged in the last 7 days, across the 5 in-s
 
 ## Task-specific grounding
 
-- Source: `gh pr list --state merged --search "merged:>=$(date -v-7d -u +%FT%TZ)"`.
+- Source: compute a portable cutoff first:
+  ```bash
+  if date -u -d '7 days ago' +%FT%TZ >/dev/null 2>&1; then
+    cutoff="$(date -u -d '7 days ago' +%FT%TZ)"
+  else
+    cutoff="$(date -v-7d -u +%FT%TZ)"
+  fi
+  gh pr list --state merged --search "merged:>=$cutoff"
+  ```
 - Each entry: PR title, PR URL, one-line user-facing impact (or `internal:` prefix).
 - Group by area inferred from labels and changed paths. Do not invent areas.
 - Output is a **draft** — written to `docs/release-notes/<YYYY-WW>.md` per repo, never auto-merged.

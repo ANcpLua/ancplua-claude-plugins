@@ -8,7 +8,7 @@
 # Env:
 #   AGENT_CMD  default: "claude --print --dangerously-skip-permissions"
 #   SESSION    default: automations-<UTC-stamp>
-#   REPO       default: /Users/ancplua/qyl  (the cwd panes start in)
+#   REPO       default: current directory (the cwd panes start in)
 #   DRY_RUN=1  print actions without executing tmux
 
 set -u
@@ -16,7 +16,7 @@ set -u
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 AGENT_CMD="${AGENT_CMD:-claude --print --dangerously-skip-permissions}"
 SESSION="${SESSION:-automations-$(date -u +%Y%m%d-%H%M)}"
-REPO="${REPO:-/Users/ancplua/qyl}"
+REPO="${REPO:-$PWD}"
 TEMPLATES_DIR="$DIR/templates"
 DRY_RUN="${DRY_RUN:-0}"
 
