@@ -25,7 +25,7 @@ Find all project-memory artifacts in the repository:
 }
 ```
 
-Discovery is exhaustive for the current repository. Do not sample or truncate the file list before scoring artifacts.
+Discovery runs across all matching artifacts in the repository with no sampling or truncation. The skill processes the complete list to satisfy the claudemd-curator contract.
 
 **File Types & Locations:**
 

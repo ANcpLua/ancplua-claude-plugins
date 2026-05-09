@@ -131,7 +131,7 @@ function classifyFile(p) {
   }
   if (parts.includes('workflows')) {
     const workflowIdx = parts.indexOf('workflows')
-    const sessionId = parts[workflowIdx + 1]
+    const sessionId = parts.length > workflowIdx + 1 ? parts[workflowIdx + 1] : null
     if (!sessionId) {
       return { project, sessionId: path.basename(p, '.jsonl'), kind: 'main' }
     }
@@ -199,8 +199,8 @@ async function processFile(p, info, buckets) {
     crlfDelay: Infinity,
   })
   const streamError = new Promise((_, reject) => {
-    input.once('error', reject)
-    rl.once('error', reject)
+    input.once('error', (err) => reject(new Error(`Stream error reading ${p}: ${err.message}`)))
+    rl.once('error', (err) => reject(new Error(`Readline error reading ${p}: ${err.message}`)))
   })
 
   // Per-file: dedupe API calls by requestId, keep the one with max output_tokens.
@@ -669,7 +669,7 @@ function summarize(s) {
     human_messages: s.humanMessages,
     hours: { wall_clock: +hrs(s.wallClockMs), active: +hrs(s.activeMs) },
     cache_break_threshold: CACHE_BREAK_THRESHOLD,
-    cache_breaks: s.cacheBreaks.length,
+    cache_breaks_count: s.cacheBreaks.length,
     subagent: {
       calls: s.subagentCalls,
       total_tokens: s.subagentTokens,

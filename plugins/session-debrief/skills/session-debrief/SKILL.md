@@ -18,11 +18,11 @@ Produce a self-contained HTML debrief of Claude Code usage and save it to the cu
 
 ## Steps
 
-1. **Get data.** Resolve the absolute directory containing this `SKILL.md` as `skill_dir`, then run the bundled analyzer (default window: last 7 days; honor a different range if the user passed one, e.g. `24h`, `30d`, or `all`):
+1. **Get data.** Resolve the absolute directory containing this `SKILL.md`, then run the bundled analyzer (default window: last 7 days; honor a different range if the user passed one, e.g. `24h`, `30d`, or `all`):
    ```sh
    tmp_json="${TMPDIR:-/tmp}/session-debrief.json"
-   skill_dir="/absolute/path/to/plugins/session-debrief/skills/session-debrief"
-   node "$skill_dir/analyze-sessions.mjs" --json --since 7d > "$tmp_json"
+   SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+   node "$SKILL_DIR/analyze-sessions.mjs" --json --since 7d > "$tmp_json"
    ```
    For all-time, omit `--since`.
 
@@ -30,7 +30,7 @@ Produce a self-contained HTML debrief of Claude Code usage and save it to the cu
 
 3. **Copy the template** (also bundled alongside this SKILL.md) to the output path in the current working directory:
    ```sh
-   cp "$skill_dir/template.html" ./session-debrief-$(date +%Y%m%d-%H%M).html
+   cp "$SKILL_DIR/template.html" ./session-debrief-$(date +%Y%m%d-%H%M).html
    ```
 
 4. **Edit the output file** (use Edit, not Write — preserve the template's JS/CSS):
