@@ -1,7 +1,8 @@
 # ancplua-claude-plugins
 
-Claude Code plugin marketplace. 13 plugins for parallel agent orchestration,
-quality gates, and automated enforcement in Claude Code sessions.
+Claude Code plugin marketplace. 19 plugins for parallel agent orchestration,
+quality gates, automated enforcement, OpenTelemetry semconv injection,
+.NET release driving, project-memory curation, and session debriefs.
 
 ## What this does
 
@@ -44,7 +45,7 @@ Add the marketplace, then install plugins individually:
 
 ## Technical details
 
-13 plugins, 28 commands, 6 skills, 25 agents.
+19 plugins, 31 commands, 20 skills, 26 agents.
 
 Tri-AI review system: Claude, Copilot, and CodeRabbit review PRs independently.
 
