@@ -22,6 +22,8 @@ is gated — work only advances when the gate passes. No manual babysitting.
 | **design-studio**            | Design intelligence helpers for visual direction, UX patterns, and design-system generation                                                                                 |
 | **elegance-pipeline**        | Multi-agent pipeline that scores code elegance and optionally refactors the weakest files through gated stages                                                              |
 | **code-simplifier**          | Simplifies implementations while preserving behavior — measures elegance as problem-complexity / solution-complexity                                                        |
+| **claudemd-curator**         | Audits and curates project-memory artifacts such as CLAUDE.md, AGENTS.md, and `.claude/rules/*.md`                                                                          |
+| **session-debrief**          | Generates self-contained HTML reports from Claude Code session transcripts: tokens, cache, subagents, skills, and expensive prompts                                          |
 
 ### How does this work without failing?
 
@@ -41,6 +43,8 @@ Add the marketplace, then install plugins individually:
 /plugin install exodia@ancplua-claude-plugins
 /plugin install metacognitive-guard@ancplua-claude-plugins
 /plugin install hookify@ancplua-claude-plugins
+/plugin install claudemd-curator@ancplua-claude-plugins
+/plugin install session-debrief@ancplua-claude-plugins
 ```
 
 ## Technical details
@@ -69,6 +73,8 @@ plugins/
 ├── design-studio/           # design intelligence + BM25 search
 ├── elegance-pipeline/       # code elegance scoring + gated refactoring
 ├── code-simplifier/         # complexity reduction agent
+├── claudemd-curator/        # project-memory curation
+├── session-debrief/         # Claude Code session usage reports
 └── otelhook/                # OTel GenAI semconv passive context
 ```
 

@@ -11,11 +11,12 @@ Produce a self-contained HTML debrief of Claude Code usage and save it to the cu
 
 1. **Get data.** Run the bundled analyzer (default window: last 7 days; honor a different range if the user passed one, e.g. `24h`, `30d`, or `all`). The script `analyze-sessions.mjs` lives in the same directory as this SKILL.md — use its absolute path:
    ```sh
-   node <skill-dir>/analyze-sessions.mjs --json --since 7d > /tmp/session-debrief.json
+   tmp_json="${TMPDIR:-/tmp}/session-debrief.json"
+   node <skill-dir>/analyze-sessions.mjs --json --since 7d > "$tmp_json"
    ```
    For all-time, omit `--since`.
 
-2. **Read** `/tmp/session-debrief.json`. Skim `overall`, `by_project`, `by_subagent_type`, `by_skill`, `cache_breaks`, `top_prompts`.
+2. **Read** `${TMPDIR:-/tmp}/session-debrief.json`. Skim `overall`, `by_project`, `by_subagent_type`, `by_skill`, `cache_breaks`, `top_prompts`.
 
 3. **Copy the template** (also bundled alongside this SKILL.md) to the output path in the current working directory:
    ```sh
@@ -23,7 +24,7 @@ Produce a self-contained HTML debrief of Claude Code usage and save it to the cu
    ```
 
 4. **Edit the output file** (use Edit, not Write — preserve the template's JS/CSS):
-   - Replace the contents of `<script id="report-data" type="application/json">` with the full JSON from step 1. The page's JS renders the hero total, all tables, bars, and drill-downs from this blob automatically.
+   - Replace the contents of `<script id="report-data" type="application/json">` with the full JSON from step 1 after escaping it for an HTML script block: replace `<` with `\u003C` and `</script>` with `<\/script>` before embedding. The page's JS renders the hero total, all tables, bars, and drill-downs from this blob automatically.
    - Fill the `<!-- AGENT: anomalies -->` block with **3–5 one-line findings**. Express figures as a **% of total tokens** wherever possible (total = `overall.input_tokens.total + overall.output_tokens`). One line per finding, exact markup:
      ```html
      <div class="take bad"><div class="fig">41.2%</div><div class="txt"><b>cc-monitor</b> consumed 41% of the week across just 3 sessions</div></div>

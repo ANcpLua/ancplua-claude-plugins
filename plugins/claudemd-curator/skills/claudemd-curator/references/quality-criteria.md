@@ -90,9 +90,9 @@ Applies the same six-criterion rubric to `CLAUDE.md`, `AGENTS.md`, `.claude.loca
 
 ## Assessment Process
 
-1. Read the CLAUDE.md file completely
+1. Read the target project-memory artifact completely
 2. Cross-reference with actual codebase:
-   - Run documented commands (mentally or actually)
+   - Run documented commands when feasible; otherwise mark them as "cannot verify"
    - Check if referenced files exist
    - Verify architecture descriptions
 3. Score each criterion

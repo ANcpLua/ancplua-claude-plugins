@@ -36,16 +36,16 @@ Document the essential commands for working with the project.
 
 Describe the project structure so Claude understands where things live.
 
-```markdown
+````markdown
 ## Architecture
 
-```
+```text
 <root>/
   <dir>/    # <purpose>
   <dir>/    # <purpose>
   <dir>/    # <purpose>
 ```
-```
+````
 
 ### Key Files
 
@@ -123,7 +123,7 @@ Document development workflow patterns.
 
 ## Template: Project Root (Minimal)
 
-```markdown
+````markdown
 # <Project Name>
 
 <One-line description>
@@ -136,20 +136,20 @@ Document development workflow patterns.
 
 ## Architecture
 
-```
+```text
 <structure>
 ```
 
 ## Gotchas
 
 - <gotcha>
-```
+````
 
 ---
 
 ## Template: Project Root (Comprehensive)
 
-```markdown
+````markdown
 # <Project Name>
 
 <One-line description>
@@ -162,7 +162,7 @@ Document development workflow patterns.
 
 ## Architecture
 
-```
+```text
 <structure with descriptions>
 ```
 
@@ -185,7 +185,7 @@ Document development workflow patterns.
 ## Gotchas
 
 - <gotcha>
-```
+````
 
 ---
 
@@ -193,14 +193,14 @@ Document development workflow patterns.
 
 For packages within a monorepo or distinct modules.
 
-```markdown
+````markdown
 # <Package Name>
 
 <Purpose of this package>
 
 ## Usage
 
-```
+```text
 <import/usage example>
 ```
 
@@ -215,7 +215,7 @@ For packages within a monorepo or distinct modules.
 ## Notes
 
 - <important note>
-```
+````
 
 ---
 
@@ -248,7 +248,7 @@ For packages within a monorepo or distinct modules.
 
 ## Update Principles
 
-When updating any CLAUDE.md:
+When updating any project-memory artifact:
 
 1. **Be specific**: Use actual file paths, real commands from this project
 2. **Be current**: Verify info against the actual codebase

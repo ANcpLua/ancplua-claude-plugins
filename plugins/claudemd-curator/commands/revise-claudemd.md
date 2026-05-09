@@ -1,6 +1,6 @@
 ---
 description: Capture session learnings into CLAUDE.md / AGENTS.md / .claude/rules
-allowed-tools: Read, Edit, Glob
+allowed-tools: Read, Glob, Bash, Edit, Write
 ---
 
 Review this session for learnings about working with Claude Code (or Codex / Codeium) in this codebase. Update the appropriate project-memory artifact with context that would help future agent sessions be more effective.

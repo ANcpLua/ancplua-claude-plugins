@@ -230,17 +230,20 @@ async function processFile(p, info, buckets) {
     }
 
     // timestamp tracking
+    let inRange = true
     if (e.timestamp) {
       const ts = Date.parse(e.timestamp)
       if (!isNaN(ts)) {
-        if (SINCE && ts < SINCE.getTime()) continue
-        if (firstTs === null) firstTs = ts
-        if (prevTs !== null) {
-          const gap = ts - prevTs
-          if (gap > 0 && gap < IDLE_GAP_MS) activeMs += gap
+        inRange = !(SINCE && ts < SINCE.getTime())
+        if (inRange) {
+          if (firstTs === null) firstTs = ts
+          if (prevTs !== null) {
+            const gap = ts - prevTs
+            if (gap > 0 && gap < IDLE_GAP_MS) activeMs += gap
+          }
+          prevTs = ts
+          lastTs = ts
         }
-        prevTs = ts
-        lastTs = ts
       }
     }
 
@@ -273,6 +276,7 @@ async function processFile(p, info, buckets) {
         pk => {
           currentPrompt = pk
         },
+        inRange,
       )
       continue
     }
@@ -286,9 +290,11 @@ async function processFile(p, info, buckets) {
           if (c && c.type === 'tool_use') {
             if (c.name === 'Skill' && c.input && c.input.skill) {
               const sk = String(c.input.skill)
-              bumpSkill(overall, sk)
-              bumpSkill(project, sk)
-              if (subagent) bumpSkill(subagent, sk)
+              if (inRange) {
+                bumpSkill(overall, sk)
+                bumpSkill(project, sk)
+                if (subagent) bumpSkill(subagent, sk)
+              }
               currentSkill = sk
             }
             if (c.name === 'Agent' || c.name === 'Task') {
@@ -300,7 +306,7 @@ async function processFile(p, info, buckets) {
           }
         }
       }
-      if (!usage) continue
+      if (!usage || !inRange) continue
       const key =
         e.requestId ||
         (msg.id && msg.id.startsWith('msg_0') && msg.id.length > 10
@@ -423,6 +429,7 @@ function handleUser(
   { project, overall, subagent },
   setSkill,
   setPrompt,
+  inRange,
 ) {
   if (e.isMeta || e.isCompactSummary) return
   const content = e.message && e.message.content
@@ -451,9 +458,11 @@ function handleUser(
     const m = /<command-(?:name|message)>\/?([^<]+)<\/command-/.exec(text)
     if (m) {
       slashCmd = m[1].trim()
-      bumpSkill(overall, slashCmd)
-      bumpSkill(project, slashCmd)
-      if (subagent) bumpSkill(subagent, slashCmd)
+      if (inRange) {
+        bumpSkill(overall, slashCmd)
+        bumpSkill(project, slashCmd)
+        if (subagent) bumpSkill(subagent, slashCmd)
+      }
       setSkill(slashCmd)
     } else {
       setSkill(null) // plain human message resets skill attribution
@@ -463,8 +472,10 @@ function handleUser(
 
   // Only count as human message / start a prompt in main (non-sidechain) transcripts
   if (info.kind === 'main' && !e.isSidechain) {
-    overall.humanMessages++
-    project.humanMessages++
+    if (inRange) {
+      overall.humanMessages++
+      project.humanMessages++
+    }
     const pk = e.uuid || `${info.sessionId}:${e.timestamp}`
     promptRecord(pk, {
       text: promptPreview(text, slashCmd),
@@ -651,6 +662,7 @@ function summarize(s) {
 function printJson({ overall, perProject, perSubagent, perSkill }) {
   const out = {
     root: ROOT,
+    since: SINCE ? SINCE.toISOString() : null,
     generated_at: new Date().toISOString(),
     overall: summarize(overall),
     cache_breaks: overall.cacheBreaks

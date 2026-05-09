@@ -1,7 +1,7 @@
 ---
 name: claudemd-curator
 description: Audit and improve project-memory artifacts (CLAUDE.md, AGENTS.md, .claude/rules/*.md, .claude.local.md). Use when the user asks to check, audit, update, improve, or fix CLAUDE.md or AGENTS.md files, or mentions "project memory", "memory optimization", "Codex AGENTS.md sync", or ".claude/rules". Discovers all known artifacts, scores each against the rubric, prints a report, and makes targeted updates only after approval.
-tools: Read, Glob, Grep, Bash, Edit
+tools: Read, Glob, Grep, Bash, Edit, Write
 ---
 
 # claudemd-curator
@@ -45,7 +45,7 @@ Find all project-memory artifacts in the repository:
 
 ### Phase 2: Quality Assessment
 
-For each CLAUDE.md file, evaluate against quality criteria. See [references/quality-criteria.md](references/quality-criteria.md) for detailed rubrics.
+For each discovered project-memory artifact (`CLAUDE.md`, `AGENTS.md`, `.claude.local.md`, `.claude/rules/*.md`), evaluate against quality criteria. See [references/quality-criteria.md](references/quality-criteria.md) for detailed rubrics.
 
 **Quick Assessment Checklist:**
 
@@ -72,7 +72,7 @@ For each CLAUDE.md file, evaluate against quality criteria. See [references/qual
 Format:
 
 ```
-## CLAUDE.md Quality Report
+## Project Memory Quality Report
 
 ### Summary
 - Files found: X
@@ -81,7 +81,7 @@ Format:
 
 ### File-by-File Assessment
 
-#### 1. ./CLAUDE.md (Project Root)
+#### 1. ./CLAUDE.md (Project Root - Claude)
 **Score: XX/100 (Grade: X)**
 
 | Criterion | Score | Notes |
@@ -99,7 +99,10 @@ Format:
 **Recommended additions:**
 - [List what should be added]
 
-#### 2. ./packages/api/CLAUDE.md (Package-specific)
+#### 2. ./AGENTS.md (Project Root - Codex/OpenAI/Codeium)
+...
+
+#### 3. ./.claude/rules/<rule>.md (Auto-loaded rule)
 ...
 ```
 
@@ -123,7 +126,7 @@ After outputting the quality report, ask user for confirmation before updating.
    - Verbose explanations when a one-liner suffices
 
 3. **Show diffs** - For each change, show:
-   - Which CLAUDE.md file to update
+   - Which project-memory artifact to update
    - The specific addition (as a diff or quoted block)
    - Brief explanation of why this helps future sessions
 

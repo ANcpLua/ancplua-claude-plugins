@@ -9,7 +9,7 @@
   },
   "homepage": "https://github.com/ANcpLua/ancplua-claude-plugins/tree/main/plugins/claudemd-curator",
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "keywords": [
     "claude-md",
     "agents-md",

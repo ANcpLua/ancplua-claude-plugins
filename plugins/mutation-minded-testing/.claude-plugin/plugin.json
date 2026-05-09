@@ -17,5 +17,10 @@
     "kill-power"
   ],
   "commands": "./commands",
-  "agents": "./agents"
+  "agents": [
+    "./agents/architecture-reviewer.md",
+    "./agents/branch-coverage-implementer.md",
+    "./agents/expressive-verifier-improver.md",
+    "./agents/senior-tester-judge.md"
+  ]
 }

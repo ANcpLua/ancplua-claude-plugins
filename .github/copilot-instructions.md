@@ -364,7 +364,7 @@ You are one of **three AI agents** on this repository. All agents can now create
 AIs coordinate through **shared files**, not real-time communication:
 
 - `CHANGELOG.md` - What has changed
-- `CLAUDE.md` / `.github/copilot-instructions.md` - Repository context
+- `CLAUDE.md` / `AGENTS.md` / `.github/copilot-instructions.md` - Repository context
 - `docs/specs/` and `docs/decisions/` - Authoritative requirements
 
 Each AI does its own complete review. Overlapping findings indicate high confidence issues.
