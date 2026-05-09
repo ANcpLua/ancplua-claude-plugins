@@ -376,7 +376,7 @@
     ['api calls', o.api_calls],
     ['human msgs', o.human_messages],
     ['active hours', o.hours.active, `${o.hours.wall_clock} wall-clock`],
-    ['cache breaks', o.cache_breaks_over_100k, '>100k uncached'],
+    ['cache breaks', o.cache_breaks, `>${fmt(o.cache_break_threshold)} uncached`],
     ['subagent calls', o.subagent.calls, `avg ${fmt(o.subagent.avg_tokens_per_call)}`],
   ].map(([l,v,d]) =>
     `<div class="stat"><div class="label">${l}</div>`+
@@ -546,7 +546,7 @@
       short(k), GRAND>0 ? 100*(v.input_tokens.total+v.output_tokens)/GRAND : 0,
       v.sessions, v.api_calls, v.human_messages,
       v.input_tokens.total, v.input_tokens.pct_cached, v.output_tokens,
-      v.hours.active, v.cache_breaks_over_100k,
+      v.hours.active, v.cache_breaks,
       v.subagent.calls, v.subagent.avg_tokens_per_call,
     ]);
   }

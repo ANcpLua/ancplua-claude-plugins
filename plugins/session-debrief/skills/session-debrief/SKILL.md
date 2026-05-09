@@ -3,16 +3,26 @@ name: session-debrief
 description: Generate an explorable HTML debrief of Claude Code session usage (tokens, cache, subagents, skills, expensive prompts) from ~/.claude/projects transcripts. Use when the user asks for a session debrief, session report, token spend breakdown, cache analysis, or "where did the tokens go".
 ---
 
+## MANDATORY ACTIVATION
+
+Use this skill when the user asks for:
+- "session debrief" or "session report"
+- "token spend breakdown" or "token usage"
+- "cache analysis" or "cache hit rate"
+- "where did the tokens go"
+- "expensive prompts" or "costly prompts"
+
 # Session Debrief
 
 Produce a self-contained HTML debrief of Claude Code usage and save it to the current working directory.
 
 ## Steps
 
-1. **Get data.** Run the bundled analyzer (default window: last 7 days; honor a different range if the user passed one, e.g. `24h`, `30d`, or `all`). The script `analyze-sessions.mjs` lives in the same directory as this SKILL.md — use its absolute path:
+1. **Get data.** Resolve the absolute directory containing this `SKILL.md` as `skill_dir`, then run the bundled analyzer (default window: last 7 days; honor a different range if the user passed one, e.g. `24h`, `30d`, or `all`):
    ```sh
    tmp_json="${TMPDIR:-/tmp}/session-debrief.json"
-   node <skill-dir>/analyze-sessions.mjs --json --since 7d > "$tmp_json"
+   skill_dir="/absolute/path/to/plugins/session-debrief/skills/session-debrief"
+   node "$skill_dir/analyze-sessions.mjs" --json --since 7d > "$tmp_json"
    ```
    For all-time, omit `--since`.
 
@@ -20,7 +30,7 @@ Produce a self-contained HTML debrief of Claude Code usage and save it to the cu
 
 3. **Copy the template** (also bundled alongside this SKILL.md) to the output path in the current working directory:
    ```sh
-   cp <skill-dir>/template.html ./session-debrief-$(date +%Y%m%d-%H%M).html
+   cp "$skill_dir/template.html" ./session-debrief-$(date +%Y%m%d-%H%M).html
    ```
 
 4. **Edit the output file** (use Edit, not Write — preserve the template's JS/CSS):

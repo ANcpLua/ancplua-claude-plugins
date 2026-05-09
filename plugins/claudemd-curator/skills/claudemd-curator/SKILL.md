@@ -1,7 +1,7 @@
 ---
 name: claudemd-curator
 description: Audit and improve project-memory artifacts (CLAUDE.md, AGENTS.md, .claude/rules/*.md, .claude.local.md). Use when the user asks to check, audit, update, improve, or fix CLAUDE.md or AGENTS.md files, or mentions "project memory", "memory optimization", "Codex AGENTS.md sync", or ".claude/rules". Discovers all known artifacts, scores each against the rubric, prints a report, and makes targeted updates only after approval.
-tools: Read, Glob, Grep, Bash, Edit, Write
+allowed-tools: Read, Glob, Grep, Bash, Edit, Write
 ---
 
 # claudemd-curator
@@ -22,8 +22,10 @@ Find all project-memory artifacts in the repository:
 {
   find . \( -name "CLAUDE.md" -o -name "AGENTS.md" -o -name ".claude.md" -o -name ".claude.local.md" \) 2>/dev/null
   find . -path "*/.claude/rules/*.md" 2>/dev/null
-} | head -50
+}
 ```
+
+Discovery is exhaustive for the current repository. Do not sample or truncate the file list before scoring artifacts.
 
 **File Types & Locations:**
 

@@ -14,21 +14,21 @@ The two plugins added on 2026-05-09 (`claudemd-curator`, `session-debrief`) are 
 
 | Phase 2 deliverable | Why it matters | Where it lands |
 |---|---|---|
-| Multi-repo workspace scan (not just `pwd`) | Standing-authority repos live under `~/framework/`, `~/qyl/`, `~/marketplaces/` — current upstream skill scans only the current repo | `skills/claudemd-curator/SKILL.md` Phase 1 Discovery → add `--workspace` mode |
-| Plugin-aware audit cross-referenced with `marketplace-tour` capability snapshot | Existing `marketplace-tour` already produces `METADATA_DRIFT` / `CONTENT_DRIFT` / `STALE_<N>d` signals against `CLAUDE.md`; curator should consume them, not duplicate them | New section in `SKILL.md`: "Phase 2.5: Plugin mode" |
-| `~/.claude/CLAUDE.md` (global) vs project `CLAUDE.md` overlap detection | Auto-memory and global rules drift from project memory over time; surface duplicates and mismatches | New `references/global-vs-project-overlap.md` |
+| Multi-repo workspace scan (not just `pwd`) | Standing-authority repos live under `~/framework/`, `~/qyl/`, `~/marketplaces/` — current upstream skill scans only the current repo | `plugins/claudemd-curator/skills/claudemd-curator/SKILL.md` Phase 1 Discovery → add `--workspace` mode |
+| Plugin-aware audit cross-referenced with `marketplace-tour` capability snapshot | Existing `marketplace-tour` already produces `METADATA_DRIFT` / `CONTENT_DRIFT` / `STALE_<N>d` signals against `CLAUDE.md`; curator should consume them, not duplicate them | New section in `plugins/claudemd-curator/skills/claudemd-curator/SKILL.md`: "Phase 2.5: Plugin mode" |
+| `~/.claude/CLAUDE.md` (global) vs project `CLAUDE.md` overlap detection | Auto-memory and global rules drift from project memory over time; surface duplicates and mismatches | New `plugins/claudemd-curator/skills/claudemd-curator/references/global-vs-project-overlap.md` |
 | `cc-plugin-eval` integration: emit a curator-rubric score as one of its evaluator dimensions | Whole-plugin scoring already aggregates manifest + hooks + skills; CLAUDE.md/AGENTS.md quality is a missing dimension | New evaluator file in `plugins/cc-plugin-eval/src/evaluators/` |
 
 **`session-debrief/` — analyzer + template upgrade**
 
 | Phase 2 deliverable | Why it matters | Where it lands |
 |---|---|---|
-| Cache-rot >300k token cliff flag | The Opus 4.7 working-mode CLAUDE.md cites the 300–400k degradation threshold; the debrief should make individual sessions that crossed it visible | `analyze-sessions.mjs` `cacheBreaks` schema + new `degradation_cliff` field on session spans + new anomaly category in `template.html` |
-| Effort-level attribution by reading `~/.claude/settings.json` `effortLevel` and env `CLAUDE_CODE_EFFORT_LEVEL` at session-start time | Correlates token spend with intelligence tier — currently invisible | New CLI flag `--settings-snapshot`, new column in by-session table |
-| Marketplace-aware project tier mapping (`marketplace`/`framework`/`qyl`/`other`) | Raw `project` directory paths are noisy; tier rollup makes "where the context budget went" legible | `analyze-sessions.mjs` `classifyFile()` extension |
-| Default output dir `~/.claude/reports/` (CWD-pollution fix), explicit `--output ./` flag for the current behaviour | Current default writes into whatever directory the user invoked from — leaks debrief HTML into commits | `skills/session-debrief/SKILL.md` Step 3 |
+| Cache-rot >300k token cliff flag | The Opus 4.7 working-mode CLAUDE.md cites the 300–400k degradation threshold; the debrief should make individual sessions that crossed it visible | `plugins/session-debrief/skills/session-debrief/analyze-sessions.mjs` `cacheBreaks` schema + new `degradation_cliff` field on session spans + new anomaly category in `plugins/session-debrief/skills/session-debrief/template.html` |
+| Effort-level attribution by reading `~/.claude/settings.json` `effortLevel` and env `CLAUDE_CODE_EFFORT_LEVEL` at session-start time | Correlates token spend with intelligence tier — currently invisible | New CLI flag in `plugins/session-debrief/skills/session-debrief/analyze-sessions.mjs`, new column in by-session table |
+| Marketplace-aware project tier mapping (`marketplace`/`framework`/`qyl`/`other`) | Raw `project` directory paths are noisy; tier rollup makes "where the context budget went" legible | `plugins/session-debrief/skills/session-debrief/analyze-sessions.mjs` `classifyFile()` extension |
+| Default output dir `~/.claude/reports/` (CWD-pollution fix), explicit `--output ./` flag for the current behaviour | Current default writes into whatever directory the user invoked from — leaks debrief HTML into commits | `plugins/session-debrief/skills/session-debrief/SKILL.md` Step 3 |
 | Smoke-test harness: run the analyzer against the user's actual `~/.claude/projects/` and assert non-empty JSON, no thrown errors | Boris-style verification — keeps the analyzer honest when transcript JSONL schema drifts | New `tests/smoke.test.mjs`, version bump to 0.2.0 |
-| Anomaly category for subagent types averaging >1M tokens/call | Already implied by the existing template comment block; not yet surfaced as a discrete rule | `template.html` AGENT block update |
+| Anomaly category for subagent types averaging >1M tokens/call | Already implied by the existing template comment block; not yet surfaced as a discrete rule | `plugins/session-debrief/skills/session-debrief/template.html` AGENT block update |
 
 When Phase 2 ships: bump both plugins to `0.2.0`, regenerate `claudemd-curator-example.png` and `revise-claudemd-example.png` against the new behaviour, update CHANGELOG.
 

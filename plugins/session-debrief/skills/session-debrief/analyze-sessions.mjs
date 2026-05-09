@@ -130,7 +130,11 @@ function classifyFile(p) {
     }
   }
   if (parts.includes('workflows')) {
-    const sessionId = parts[1]
+    const workflowIdx = parts.indexOf('workflows')
+    const sessionId = parts[workflowIdx + 1]
+    if (!sessionId) {
+      return { project, sessionId: path.basename(p, '.jsonl'), kind: 'main' }
+    }
     return { project, sessionId, kind: 'subagent', agentTypeHint: 'workflow' }
   }
   const sessionId = path.basename(p, '.jsonl')
@@ -189,9 +193,14 @@ function promptRecord(key, init) {
 }
 
 async function processFile(p, info, buckets) {
+  const input = fs.createReadStream(p, { encoding: 'utf8' })
   const rl = readline.createInterface({
-    input: fs.createReadStream(p, { encoding: 'utf8' }),
+    input,
     crlfDelay: Infinity,
+  })
+  const streamError = new Promise((_, reject) => {
+    input.once('error', reject)
+    rl.once('error', reject)
   })
 
   // Per-file: dedupe API calls by requestId, keep the one with max output_tokens.
@@ -214,7 +223,7 @@ async function processFile(p, info, buckets) {
   const subagent = buckets.subagent // may be null
   const skillStats = buckets.skillStats // map name -> stats
 
-  for await (const line of rl) {
+  for await (const line of raceAsyncIterator(rl, streamError)) {
     if (!line) continue
     let e
     try {
@@ -425,6 +434,15 @@ async function processFile(p, info, buckets) {
   }
 }
 
+async function* raceAsyncIterator(iterable, errorPromise) {
+  const iterator = iterable[Symbol.asyncIterator]()
+  while (true) {
+    const result = await Promise.race([iterator.next(), errorPromise])
+    if (result.done) break
+    yield result.value
+  }
+}
+
 function handleUser(
   e,
   info,
@@ -582,12 +600,20 @@ async function main() {
       subagent = perSubagent.get(at)
     }
 
-    await processFile(p, info, {
-      overall,
-      project,
-      subagent,
-      skillStats: perSkill,
-    })
+    try {
+      await processFile(p, info, {
+        overall,
+        project,
+        subagent,
+        skillStats: perSkill,
+      })
+    } catch (err) {
+      if (!AS_JSON) {
+        const message = err && err.message ? err.message : String(err)
+        process.stderr.write(`\n  skipping ${p}: ${message}\n`)
+      }
+      continue
+    }
     n++
     if (!AS_JSON && n % 200 === 0) {
       process.stderr.write(`\r  scanned ${n}/${files.length} files…`)
@@ -642,7 +668,8 @@ function summarize(s) {
     output_tokens: s.outputTokens,
     human_messages: s.humanMessages,
     hours: { wall_clock: +hrs(s.wallClockMs), active: +hrs(s.activeMs) },
-    cache_breaks_over_100k: s.cacheBreaks.length,
+    cache_break_threshold: CACHE_BREAK_THRESHOLD,
+    cache_breaks: s.cacheBreaks.length,
     subagent: {
       calls: s.subagentCalls,
       total_tokens: s.subagentTokens,
