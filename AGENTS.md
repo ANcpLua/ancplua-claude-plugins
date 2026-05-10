@@ -1,68 +1,8 @@
 # Agent Operating Guide — ancplua-claude-plugins
 
-> This file is read by Codex / OpenAI Codex CLI, Codeium / Continue, and other agent tooling on session init. Each tool reads only its own file (`AGENTS.md` for Codex-family, `CLAUDE.md` for Claude Code). Keep both self-contained — see `claudemd-curator` plugin for tooling that maintains the pair.
-
----
-
-## Next session — start here
-
-The two plugins added on 2026-05-09 (`claudemd-curator`, `session-debrief`) are **Phase 1 forks** of `anthropics/claude-plugins-official`. Phase 2 — substantive refactor — is the next session's job.
-
-### Follow-up task: Phase 2 refactor of both plugins
-
-**`claudemd-curator/` — workspace-aware curation**
-
-| Phase 2 deliverable | Why it matters | Where it lands |
-|---|---|---|
-| Multi-repo workspace scan (not just `pwd`) | Standing-authority repos live under `~/framework/`, `~/qyl/`, `~/marketplaces/` — current upstream skill scans only the current repo | ./plugins/claudemd-curator/skills/claudemd-curator/SKILL.md Phase 1 Discovery → add `--workspace` mode |
-| Plugin-aware audit cross-referenced with `marketplace-tour` capability snapshot | Existing `marketplace-tour` already produces `METADATA_DRIFT` / `CONTENT_DRIFT` / `STALE_<N>d` signals against `CLAUDE.md`; curator should consume them, not duplicate them | New section in ./plugins/claudemd-curator/skills/claudemd-curator/SKILL.md: "Phase 2.5: Plugin mode" |
-| `~/.claude/CLAUDE.md` (global) vs project `CLAUDE.md` overlap detection | Auto-memory and global rules drift from project memory over time; surface duplicates and mismatches | New ./plugins/claudemd-curator/skills/claudemd-curator/references/global-vs-project-overlap.md |
-| `cc-plugin-eval` integration: emit a curator-rubric score as one of its evaluator dimensions | Whole-plugin scoring already aggregates manifest + hooks + skills; CLAUDE.md/AGENTS.md quality is a missing dimension | New evaluator file in ./plugins/cc-plugin-eval/src/evaluators/ |
-
-**`session-debrief/` — analyzer + template upgrade**
-
-| Phase 2 deliverable | Why it matters | Where it lands |
-|---|---|---|
-| Cache-rot >300k token cliff flag | The Opus 4.7 working-mode CLAUDE.md cites the 300–400k degradation threshold; the debrief should make individual sessions that crossed it visible | ./plugins/session-debrief/skills/session-debrief/analyze-sessions.mjs `cacheBreaks` schema + new `degradation_cliff` field on session spans + new anomaly category in ./plugins/session-debrief/skills/session-debrief/template.html |
-| Effort-level attribution by reading `~/.claude/settings.json` `effortLevel` and env `CLAUDE_CODE_EFFORT_LEVEL` at session-start time | Correlates token spend with intelligence tier — currently invisible | New CLI flag in ./plugins/session-debrief/skills/session-debrief/analyze-sessions.mjs, new column in by-session table |
-| Marketplace-aware project tier mapping (`marketplace`/`framework`/`qyl`/`other`) | Raw `project` directory paths are noisy; tier rollup makes "where the context budget went" legible | ./plugins/session-debrief/skills/session-debrief/analyze-sessions.mjs `classifyFile()` extension |
-| Default output dir `~/.claude/reports/` (CWD-pollution fix), explicit `--output ./` flag for the current behaviour | Current default writes into whatever directory the user invoked from — leaks debrief HTML into commits | ./plugins/session-debrief/skills/session-debrief/SKILL.md Step 3 |
-| Smoke-test harness: run the analyzer against the user's actual `~/.claude/projects/` and assert non-empty JSON, no thrown errors | Boris-style verification — keeps the analyzer honest when transcript JSONL schema drifts | New ./tests/smoke.test.mjs, version bump to 0.2.0 |
-| Anomaly category for subagent types averaging >1M tokens/call | Already implied by the existing template comment block; not yet surfaced as a discrete rule | ./plugins/session-debrief/skills/session-debrief/template.html AGENT block update |
-
-When Phase 2 ships: bump both plugins to `0.2.0`, regenerate `claudemd-curator-example.png` and `revise-claudemd-example.png` against the new behaviour, update CHANGELOG.
-
-### Open adopt / discuss / skip from the 2026-05-05 stack research
-
-Source of truth: [`docs/research-2026-05-05-claude-code-stack.md`](docs/research-2026-05-05-claude-code-stack.md).
-
-The next session must not silently re-research these — they have been verified once. Treat each row as a binary: **adopt this session**, **discuss with Alexander**, or **leave on the shelf**.
-
-| Item | Default action | Open question |
-|---|---|---|
-| `open-telemetry/weaver registry mcp` | **Adopt** — highest-leverage single move for the v1.40 → v1.41 OTel work | Pin Weaver release to the same tag as the semconv release (currently v1.41.0) — confirm no Weaver upstream blocker before adding. |
-| `oraios/serena` (LSP-backed semantic toolkit) | **Adopt via `uvx`, NOT marketplace** | Per Serena README, marketplace install conflicts with the harness. Confirm the `uvx --from git+https://github.com/oraios/serena serena-mcp-server` install line is still current at adopt time. |
-| `MarcelRoozekrans/roslyn-codelens-mcp` | **Discuss** | Different layer than `rider-respect` (semantic-graph queries vs. action channel). Worth installing alongside, OR skip until the OTel migration analyzer work begins? |
-| `Aaronontheweb/dotnet-skills` (cherry-pick: OTel-NET-Instrumentation, coding-standards, type-design-performance only) | **Adopt cherry-pick** | Skip Akka / Aspire / EF skills unless there's a specific need. |
-| `NuGet.Mcp.Server` + `DimonSmart/NugetMcpServer` (paired: CVE state + API shape inspection) | **Discuss** | Requires .NET 10 SDK for the official one — confirm SDK is installed before adoption. |
-| Semgrep MCP (`semgrep mcp` CLI subcommand) | **Adopt** | One line: `claude mcp add semgrep -- semgrep mcp`. No standalone repo install. |
-| Socket MCP (supply-chain `depscore`) | **Adopt** | Use before adding any new NuGet/npm/PyPI dep. |
-| `anthropics/claude-plugins-official` `code-modernization` + `code-review` | **Discuss** | `code-modernization` orthogonal to `dotnet-architecture-lint`; `code-review` overlaps lightly with `feature-dev`. Worth having both running, or do they cause duplicated review noise? |
-| `github/github-mcp-server` (read-only, toolset-restricted) | **Adopt** | `claude mcp add github -- github-mcp-server stdio --read-only --toolsets repos,issues,pull_requests`. |
-| `ast-grep` MCP | **Discuss** | Useful for structural C# refactors that go beyond grep. Adopt only if Phase 2 generator work needs it. |
-| Cognition DeepWiki (hosted, no install) | **Adopt** | Endpoint: `https://mcp.deepwiki.com/mcp`. Read-only over public-repo wikis. Avoid `regenrek/deepwiki-mcp` — broken since DeepWiki cut off scraping. |
-| `grafana/mcp-grafana` | **Skip for now** | Only relevant once OTel instrumentation is shipping traces to a Grafana / Tempo stack. |
-| `upstash/context7` | **Discuss** | Originally tagged "skip" over Jan-2026 free-tier cut + ContextCrush vuln; reconciled 2026-05-05 — vuln patched, 54.4k★, MIT, broader OSS doc coverage than Microsoft Learn. Use with awareness. |
-| FP / purity DIY: PurelySharp + Apex.Analyzers.Immutable + ErrorProne.NET wired through `hookify` | **Discuss (weekend project)** | Clear marketplace gap; existing infra (`hookify`) makes wiring trivial. Worth a `csharp-purity` plugin? |
-| F# space (`jovaneyck/fsi-mcp-server` only real touchpoint) | **Skip** | Not in scope unless F# work appears. |
-| ⚠ `csharp-lsp` (Anthropic), `zircote/csharp-lsp`, `SharpLensMcp`, `JoshuaRamirez/RoslynMcpServer`, `liatrio-labs/otel-instrumentation-mcp`, `Snyk MCP`, `wshobson/commands`, `xiaolai/claude-plugin-marketplace`, `VoltAgent/awesome-claude-code-subagents`, `better-clawd` | **Skip** — see research doc "Skip / avoid" table for reasons. Don't re-research. |
-
-### Standing rules for the next session
-
-- The two new plugins are **Phase 1 only**. Do not claim Phase 2 deliverables are done without working code, a smoke-test pass, and a regenerated example PNG where applicable.
-- Both plugins retain the upstream Anthropic `LICENSE` inside the plugin directory. Don't remove it. Attribution to Isabella He (claude-md-management) and Anthropic stays in the README.
-- The marketplace count in `README.md` and the marketplace metadata description must be updated together when adding/removing plugins. Current authoritative count: **19 plugins, 31 commands, 20 skills, 26 agents** (verified 2026-05-09 by `find plugins/*/skills -name SKILL.md` etc.). If a Phase 2 task adds counts, recount with the same `find` invocations.
-- All Phase 2 file paths in the tables above are **proposed**, not promised. The first action of the next session must be a fresh inventory: read the current SKILL.md files and confirm the proposed integration points still match the code before editing.
+> Sources: Boris Cherny (@bcherny) + Thariq (@trq212), 2026-04-16; Claude Opus 4.7 System Card (Anthropic, 2026-04-16,
+> 232 pp.).  
+> All System Card citations are to the April 16 2026 edition; page numbers are stable.
 
 ---
 
@@ -207,3 +147,19 @@ Without a `/go` skill: explicitly state "cannot verify" rather than claiming the
 
 `verbose: true` + `showThinkingSummaries: true` catches drift early but costs cognitive load.  
 A/B `/focus` on tasks where you trust the agent; stay verbose where you don't.
+
+---
+
+## Automation runner — `automation/`
+
+The `automation/` directory contains the cron-triggered runner that keeps
+Alexander's working repos clean (the 5 listed in `automation/policy.md`).
+
+**Rule for dev work:** ignore `automation/` entirely. The cron output
+artifact `automation/RUN-LOG.md` is auto-managed (FIFO cap 10, written by
+`automation/scripts/log-entry.sh`) — never hand-edit it. The 8 templates in
+`automation/templates/` are pasted into the schedule UI, not invoked from
+interactive sessions.
+
+For policy details, see [`automation/policy.md`](automation/policy.md).  
+For the runner overview, see [`automation/README.md`](automation/README.md).
