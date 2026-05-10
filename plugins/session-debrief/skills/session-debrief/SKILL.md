@@ -14,7 +14,7 @@ Use this skill when the user asks for:
 
 # Session Debrief
 
-Produce a self-contained HTML debrief of Claude Code usage and save it to the current working directory.
+Produce a self-contained HTML debrief of Claude Code usage and save it to `~/.claude/reports/` by default. Write to the current working directory only when the user explicitly requests `--output ./`.
 
 ## Steps
 
@@ -29,9 +29,11 @@ Produce a self-contained HTML debrief of Claude Code usage and save it to the cu
 
 2. **Read** `${TMPDIR:-/tmp}/session-debrief.json`. Skim `overall`, `by_project`, `by_subagent_type`, `by_skill`, `cache_breaks`, `top_prompts`.
 
-3. **Copy the template** (also bundled alongside this SKILL.md) to the output path in the current working directory:
+3. **Copy the template** (also bundled alongside this SKILL.md) to the output path. Default to `~/.claude/reports/`; use CWD only for explicit `--output ./` intent:
    ```sh
-   cp "$SKILL_DIR/template.html" ./session-debrief-$(date +%Y%m%d-%H%M).html
+   output_dir="$HOME/.claude/reports"
+   mkdir -p "$output_dir"
+   cp "$SKILL_DIR/template.html" "$output_dir/session-debrief-$(date +%Y%m%d-%H%M).html"
    ```
 
 4. **Edit the output file** (use Edit, not Write — preserve the template's JS/CSS):
@@ -44,7 +46,7 @@ Produce a self-contained HTML debrief of Claude Code usage and save it to the cu
    - Fill the `<!-- AGENT: optimizations -->` block (at the **bottom** of the page) with 1–4 `<div class="callout">` suggestions tied to specific rows (e.g. "`/weekly-status` spawned 7 subagents for 8.1% of total — scope it to fewer parallel agents").
    - Do not restructure existing sections.
 
-5. **Report** the saved file path to the user. Do not open it or render it.
+5. **Report** the saved file path to the user. Do not open it or render it. If the user requested `--output ./`, report the CWD path instead.
 
 ## Notes
 

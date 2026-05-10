@@ -54,10 +54,12 @@ jobs:
 
       - name: Enable auto-merge for patch and minor
         if: steps.metadata.outputs.update-type != 'version-update:semver-major'
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr merge --auto --squash "$PR_URL"
+        uses: peter-evans/enable-pull-request-automerge@a660677d5469627102a1c1e11409dd063606628d # v3.0.0
+        continue-on-error: true
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: squash
 
       - name: Comment on major updates
         if: steps.metadata.outputs.update-type == 'version-update:semver-major'
@@ -94,10 +96,12 @@ jobs:
         run: gh pr review --approve "$PR_URL"
 
       - name: Enable auto-merge for Renovate
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr merge --auto --squash "$PR_URL"
+        uses: peter-evans/enable-pull-request-automerge@a660677d5469627102a1c1e11409dd063606628d # v3.0.0
+        continue-on-error: true
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: squash
 
   # Tier 2a: Auto-merge PRs approved by CodeRabbit
   coderabbit-auto-merge:
@@ -110,13 +114,12 @@ jobs:
 
     steps:
       - name: Enable auto-merge for CodeRabbit approved PRs
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          echo "CodeRabbit approved PR #$PR_NUMBER"
-          gh pr merge --auto --squash "$PR_URL"
+        uses: peter-evans/enable-pull-request-automerge@a660677d5469627102a1c1e11409dd063606628d # v3.0.0
+        continue-on-error: true
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: squash
 
   # Tier 2b: Auto-merge PRs approved by Claude
   # SECURITY: Requires github-actions[bot] to prevent spoofing by humans
@@ -131,13 +134,12 @@ jobs:
 
     steps:
       - name: Enable auto-merge for Claude approved PRs
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          echo "Claude approved PR #$PR_NUMBER"
-          gh pr merge --auto --squash "$PR_URL"
+        uses: peter-evans/enable-pull-request-automerge@a660677d5469627102a1c1e11409dd063606628d # v3.0.0
+        continue-on-error: true
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: squash
 
   # Tier 2c: Auto-merge PRs approved by Codex
   # SECURITY: Requires github-actions[bot] to prevent spoofing by humans
@@ -152,10 +154,9 @@ jobs:
 
     steps:
       - name: Enable auto-merge for Codex approved PRs
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          echo "Codex approved PR #$PR_NUMBER"
-          gh pr merge --auto --squash "$PR_URL"
+        uses: peter-evans/enable-pull-request-automerge@a660677d5469627102a1c1e11409dd063606628d # v3.0.0
+        continue-on-error: true
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: squash

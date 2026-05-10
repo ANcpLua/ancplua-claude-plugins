@@ -19,18 +19,23 @@ Audit, evaluate, and improve project-memory artifacts across a codebase so Claud
 
 **This skill can write to memory files.** After presenting a quality report and getting user approval, it updates `CLAUDE.md`, `AGENTS.md`, `.claude.local.md`, or files under `.claude/rules/` with targeted improvements.
 
-`MEMORY.md` (the auto-memory index under `~/.claude/projects/*/memory/`) is recognised but **never rewritten by this skill** — it is owned by the Claude Code memory subsystem and has its own format with frontmatter.
+`MEMORY.md` (the auto-memory index under `~/.claude/projects/*/memory/`) is recognized but **never rewritten by this skill** — it is owned by the Claude Code memory subsystem and has its own format with frontmatter.
 
 ## Workflow
 
 ### Phase 1: Discovery
 
-Find all project-memory artifacts in the repository and known Claude user-memory locations:
+Find all project-memory artifacts in the repository, standing workspace roots, and known Claude user-memory locations. Use `--workspace` intent when the user asks for multi-repo coverage or when the current task spans more than one repository.
 
 ```bash
 {
   find . \( -name "CLAUDE.md" -o -name "AGENTS.md" -o -name ".claude.md" -o -name ".claude.local.md" \) 2>/dev/null
   find . -path "*/.claude/rules/*.md" 2>/dev/null
+  for workspace_root in ~/framework ~/qyl ~/marketplaces; do
+    [ -d "$workspace_root" ] || continue
+    find "$workspace_root" -maxdepth 5 \( -name "CLAUDE.md" -o -name "AGENTS.md" -o -name ".claude.md" -o -name ".claude.local.md" \) 2>/dev/null
+    find "$workspace_root" -maxdepth 6 -path "*/.claude/rules/*.md" 2>/dev/null
+  done
   find ~/.claude -maxdepth 1 -name "CLAUDE.md" 2>/dev/null
   find ~/.claude/projects -path "*/memory/MEMORY.md" 2>/dev/null
 }
@@ -38,9 +43,9 @@ Find all project-memory artifacts in the repository and known Claude user-memory
 
 Discovery runs across all matching artifacts with no sampling or truncation. The skill processes the complete list to satisfy the claudemd-curator contract.
 
-**Verification:** At least one project-memory artifact is discovered, and every advertised location type that exists on disk appears in the candidate list.
+**Verification:** At least one project-memory artifact is discovered, and every advertised location type that exists on disk appears in the candidate list. For `--workspace` runs, the report must state which of `~/framework`, `~/qyl`, and `~/marketplaces` existed and how many artifacts each contributed.
 
-**Failure condition:** If no artifacts are found, stop and report the repository path and discovery commands instead of inventing memory updates.
+**Failure condition:** If no artifacts are found, stop and report the repository path, workspace roots checked, and discovery commands instead of inventing memory updates.
 
 **File Types & Locations:**
 
@@ -64,6 +69,8 @@ Discovery runs across all matching artifacts with no sampling or truncation. The
 
 For each discovered project-memory artifact (`CLAUDE.md`, `AGENTS.md`, `.claude.local.md`, `.claude/rules/*.md`), evaluate against quality criteria. See [references/quality-criteria.md](references/quality-criteria.md) for detailed rubrics.
 
+Before final scoring, compare `~/.claude/CLAUDE.md` (when present) with every project-level `CLAUDE.md`. Surface duplicated commands, overlapping standing rules, and conflicting instructions as potential drift. The report must name the global file and each affected project path; do not silently merge or rewrite global content.
+
 **Quick Assessment Checklist:**
 
 | Criterion | Weight | Check |
@@ -82,9 +89,19 @@ For each discovered project-memory artifact (`CLAUDE.md`, `AGENTS.md`, `.claude.
 - **D (30-49)**: Sparse or outdated
 - **F (0-29)**: Missing or severely outdated
 
-**Verification:** Every discovered writable artifact has a score and notes for each checklist criterion.
+**Verification:** Every discovered writable artifact has a score and notes for each checklist criterion, and the report includes a global/project overlap note when both global and project `CLAUDE.md` files exist.
 
 **Failure condition:** If an artifact cannot be read or scored, mark it blocked with the exact path and continue scoring the remaining artifacts.
+
+### Phase 2.5: Plugin Mode
+
+When the repository includes marketplace/plugin metadata, run plugin-aware audit against existing marketplace truth signals instead of producing duplicate drift facts. Consume `capability-snapshot` output from `marketplace-tour` when available and cross-reference discovered memory artifacts with `METADATA_DRIFT`, `CONTENT_DRIFT`, and `STALE_<N>d` signals.
+
+Use Phase 2.5 to explain whether memory guidance matches the current plugin registry, manifests, command names, skill names, and documented capability surface. The skill must not re-emit duplicate `METADATA_DRIFT`, `CONTENT_DRIFT`, or `STALE_<N>d` signals; it should link or cite the existing signal and describe the memory-file impact.
+
+**Verification:** Plugin-mode output lists the capability-snapshot source, every consumed marketplace-tour signal, and the memory artifacts affected by each signal.
+
+**Failure condition:** If capability-snapshot data is unavailable, mark Phase 2.5 as skipped with the exact missing source and continue the normal memory-quality report.
 
 ### Phase 3: Quality Report Output
 

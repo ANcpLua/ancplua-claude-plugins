@@ -5,7 +5,7 @@ allowed-tools: Read, Glob, Bash, Edit, Write
 
 Review this session for learnings about working with Claude Code (or Codex / Codeium) in this codebase. Update the appropriate project-memory artifact with context that would help future agent sessions be more effective.
 
-Recognised targets in priority order:
+Recognized targets in priority order:
 
 | Target | When to write here |
 |---|---|
@@ -31,8 +31,15 @@ What context was missing that would have helped Claude work more effectively?
 {
   find . \( -name "CLAUDE.md" -o -name "AGENTS.md" -o -name ".claude.local.md" \) 2>/dev/null
   find . -path "*/.claude/rules/*.md" 2>/dev/null
+  for workspace_root in ~/framework ~/qyl ~/marketplaces; do
+    [ -d "$workspace_root" ] || continue
+    find "$workspace_root" -maxdepth 5 \( -name "CLAUDE.md" -o -name "AGENTS.md" -o -name ".claude.local.md" \) 2>/dev/null
+    find "$workspace_root" -maxdepth 6 -path "*/.claude/rules/*.md" 2>/dev/null
+  done
 }
 ```
+
+Use this workspace-aware discovery when the user asks for `--workspace` mode or when the session touched sibling repositories.
 
 Decide where each addition belongs:
 - `CLAUDE.md` — Team-shared Claude Code memory (checked into git)
