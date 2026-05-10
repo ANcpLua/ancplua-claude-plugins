@@ -207,19 +207,3 @@ Without a `/go` skill: explicitly state "cannot verify" rather than claiming the
 
 `verbose: true` + `showThinkingSummaries: true` catches drift early but costs cognitive load.  
 A/B `/focus` on tasks where you trust the agent; stay verbose where you don't.
-
----
-
-## Automation runner — `automation/`
-
-The `automation/` directory contains the cron-triggered runner that keeps
-Alexander's working repos clean (the 5 listed in `automation/policy.md`).
-
-**Rule for dev work:** ignore `automation/` entirely. The cron output
-artifact `automation/RUN-LOG.md` is auto-managed (FIFO cap 10, written by
-`automation/scripts/log-entry.sh`) — never hand-edit it. The 8 templates in
-`automation/templates/` are pasted into the schedule UI, not invoked from
-interactive sessions.
-
-For policy details, see [`automation/policy.md`](automation/policy.md).  
-For the runner overview, see [`automation/README.md`](automation/README.md).
