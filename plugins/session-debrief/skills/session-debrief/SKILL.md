@@ -21,7 +21,8 @@ Produce a self-contained HTML debrief of Claude Code usage and save it to the cu
 1. **Get data.** Resolve the absolute directory containing this `SKILL.md`, then run the bundled analyzer (default window: last 7 days; honor a different range if the user passed one, e.g. `24h`, `30d`, or `all`):
    ```sh
    tmp_json="${TMPDIR:-/tmp}/session-debrief.json"
-   SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+   # Set SKILL_DIR to the absolute directory where you located this SKILL.md.
+   SKILL_DIR="/path/to/plugins/session-debrief/skills/session-debrief"
    node "$SKILL_DIR/analyze-sessions.mjs" --json --since 7d > "$tmp_json"
    ```
    For all-time, omit `--since`.
@@ -51,3 +52,9 @@ Produce a self-contained HTML debrief of Claude Code usage and save it to the cu
 - Keep commentary terse and specific — reference actual project names, numbers, timestamps from the JSON.
 - `top_prompts` already includes subagent tokens and rolls task-notification continuations into the originating prompt.
 - If the JSON is >2MB, trim `top_prompts` to 100 entries and `cache_breaks` to 100 before embedding (they should already be capped).
+
+## Verification & Failure
+
+Verify success by checking that `$tmp_json` exists, is non-empty, and parses as JSON; the output HTML exists; `<script id="report-data" type="application/json">` contains the embedded JSON; the anomalies block has 3-5 entries; and the optimizations block is non-empty when the data exposes concrete opportunities.
+
+Fail and report the exact step if the analyzer exits non-zero, no transcript JSONL files are found, the JSON remains too large after trimming, or required `top_prompts` / `cache_breaks` fields are absent. Re-run with a narrower `--since`, inspect analyzer stderr, or trim capped arrays manually before retrying the embed step.

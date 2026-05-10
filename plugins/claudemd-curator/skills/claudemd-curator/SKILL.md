@@ -4,6 +4,15 @@ description: Audit and improve project-memory artifacts (CLAUDE.md, AGENTS.md, .
 allowed-tools: Read, Glob, Grep, Bash, Edit, Write
 ---
 
+## MANDATORY ACTIVATION
+
+Use this skill when the user asks for:
+- "audit CLAUDE.md" or "check CLAUDE.md"
+- "improve project memory" or "optimize memory"
+- "sync AGENTS.md" or "Codex AGENTS.md sync"
+- "update .claude/rules" or "review .claude/rules"
+- "memory quality report"
+
 # claudemd-curator
 
 Audit, evaluate, and improve project-memory artifacts across a codebase so Claude Code (and Codex / Codeium / ChatGPT, which read `AGENTS.md`) have optimal project context.
@@ -16,16 +25,22 @@ Audit, evaluate, and improve project-memory artifacts across a codebase so Claud
 
 ### Phase 1: Discovery
 
-Find all project-memory artifacts in the repository:
+Find all project-memory artifacts in the repository and known Claude user-memory locations:
 
 ```bash
 {
   find . \( -name "CLAUDE.md" -o -name "AGENTS.md" -o -name ".claude.md" -o -name ".claude.local.md" \) 2>/dev/null
   find . -path "*/.claude/rules/*.md" 2>/dev/null
+  find ~/.claude -maxdepth 1 -name "CLAUDE.md" 2>/dev/null
+  find ~/.claude/projects -path "*/memory/MEMORY.md" 2>/dev/null
 }
 ```
 
-Discovery runs across all matching artifacts in the repository with no sampling or truncation. The skill processes the complete list to satisfy the claudemd-curator contract.
+Discovery runs across all matching artifacts with no sampling or truncation. The skill processes the complete list to satisfy the claudemd-curator contract.
+
+**Verification:** At least one project-memory artifact is discovered, and every advertised location type that exists on disk appears in the candidate list.
+
+**Failure condition:** If no artifacts are found, stop and report the repository path and discovery commands instead of inventing memory updates.
 
 **File Types & Locations:**
 
@@ -66,6 +81,10 @@ For each discovered project-memory artifact (`CLAUDE.md`, `AGENTS.md`, `.claude.
 - **C (50-69)**: Basic info, missing key sections
 - **D (30-49)**: Sparse or outdated
 - **F (0-29)**: Missing or severely outdated
+
+**Verification:** Every discovered writable artifact has a score and notes for each checklist criterion.
+
+**Failure condition:** If an artifact cannot be read or scored, mark it blocked with the exact path and continue scoring the remaining artifacts.
 
 ### Phase 3: Quality Report Output
 
@@ -114,6 +133,10 @@ Format:
 ...
 ```
 
+**Verification:** The report includes file count, average score, every discovered artifact, concrete issues, and recommended additions.
+
+**Failure condition:** If recommendations do not name the target file and reason, do not proceed to updates.
+
 ### Phase 4: Targeted Updates
 
 After outputting the quality report, ask user for confirmation before updating.
@@ -155,9 +178,17 @@ After outputting the quality report, ask user for confirmation before updating.
 ```
 ```
 
+**Verification:** Each proposed update is a minimal diff with a target file and a one-line reason tied to the quality report.
+
+**Failure condition:** If a proposed change is generic, stale, or not backed by repo evidence, remove it from the proposal.
+
 ### Phase 5: Apply Updates
 
 After user approval, apply changes using the Edit tool. Preserve existing content structure.
+
+**Verification:** Re-read each edited artifact and confirm the approved text landed without unrelated rewrites.
+
+**Failure condition:** If approval is missing or ambiguous, stop before editing and ask for the specific target files to update.
 
 ## Templates
 

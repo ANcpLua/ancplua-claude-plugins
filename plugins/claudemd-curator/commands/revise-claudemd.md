@@ -31,7 +31,7 @@ What context was missing that would have helped Claude work more effectively?
 {
   find . \( -name "CLAUDE.md" -o -name "AGENTS.md" -o -name ".claude.local.md" \) 2>/dev/null
   find . -path "*/.claude/rules/*.md" 2>/dev/null
-} | head -20
+}
 ```
 
 Decide where each addition belongs:
