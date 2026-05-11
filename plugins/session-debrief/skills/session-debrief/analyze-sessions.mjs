@@ -465,7 +465,6 @@ function handleUser(
   if (isToolResult) return
 
   let slashCmd = null
-  setSkill(null) // Every non-tool user turn starts a new attribution boundary.
   if (text) {
     // Auto-continuations (task notifications, scheduled wakeups) are not new
     // human prompts; keep attributing to the previously active prompt.
@@ -476,6 +475,8 @@ function handleUser(
     ) {
       return
     }
+
+    setSkill(null) // Plain human messages start a new attribution boundary.
     const m = /<command-(?:name|message)>\/?([^<]+)<\/command-/.exec(text)
     if (m) {
       slashCmd = m[1].trim()
@@ -487,6 +488,8 @@ function handleUser(
       setSkill(slashCmd)
     }
     if (text.startsWith('[Request interrupted')) return
+  } else {
+    setSkill(null)
   }
 
   // Only count as human message / start a prompt in main (non-sidechain) transcripts
