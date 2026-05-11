@@ -39,17 +39,27 @@ Audit, evaluate, and improve project-memory artifacts across a codebase so Claud
 
 ### Phase 1: Discovery
 
-Find all project-memory artifacts in the repository, standing workspace roots, and known Claude user-memory locations. Use `--workspace` intent when the user asks for multi-repo coverage or when the current task spans more than one repository.
+Find all project-memory artifacts in the repository and known Claude user-memory locations. When the user explicitly asks for multi-repo coverage (e.g., "check all workspaces", "audit workspace memory"), extend discovery to workspace roots configured in WORKSPACE_DIRS environment variable or use default examples.
 
 ```bash
 {
   find . \( -name "CLAUDE.md" -o -name "AGENTS.md" -o -name ".claude.md" -o -name ".claude.local.md" \) 2>/dev/null
   find . -path "*/.claude/rules/*.md" 2>/dev/null
-  for workspace_root in ~/framework ~/qyl ~/marketplaces; do
-    [ -d "$workspace_root" ] || continue
-    find "$workspace_root" -maxdepth 5 \( -name "CLAUDE.md" -o -name "AGENTS.md" -o -name ".claude.md" -o -name ".claude.local.md" \) 2>/dev/null
-    find "$workspace_root" -maxdepth 6 -path "*/.claude/rules/*.md" 2>/dev/null
-  done
+
+  # Workspace mode: only when user explicitly requests multi-repo coverage
+  # Configure via WORKSPACE_DIRS environment variable, e.g.:
+  #   export WORKSPACE_DIRS="$HOME/framework $HOME/qyl $HOME/marketplaces"
+  # Or update these example paths to match your actual workspace locations.
+  if [ "${WORKSPACE_MODE:-false}" = "true" ]; then
+    workspace_roots="${WORKSPACE_DIRS:-$HOME/framework $HOME/qyl $HOME/marketplaces}"
+    for workspace_root in $workspace_roots; do
+      [ -d "$workspace_root" ] || continue
+      echo "[workspace-scan] $workspace_root" >&2
+      find "$workspace_root" -maxdepth 5 \( -name "CLAUDE.md" -o -name "AGENTS.md" -o -name ".claude.md" -o -name ".claude.local.md" \) 2>/dev/null
+      find "$workspace_root" -maxdepth 6 -path "*/.claude/rules/*.md" 2>/dev/null
+    done
+  fi
+
   find ~/.claude -maxdepth 1 -name "CLAUDE.md" 2>/dev/null
   find ~/.claude/projects -path "*/memory/MEMORY.md" 2>/dev/null
 }
@@ -57,9 +67,15 @@ Find all project-memory artifacts in the repository, standing workspace roots, a
 
 Discovery runs across all matching artifacts with no sampling or truncation. The skill processes the complete list to satisfy the claudemd-curator contract.
 
-**Verification:** At least one project-memory artifact is discovered, and every advertised location type that exists on disk appears in the candidate list. For `--workspace` runs, the report must state which of `~/framework`, `~/qyl`, and `~/marketplaces` existed and how many artifacts each contributed.
+**Workspace Mode Activation:** Set `WORKSPACE_MODE=true` when the user asks for multi-repo coverage. The report must include a workspace discovery section listing:
+- Which workspace roots from WORKSPACE_DIRS (or the default list) were checked
+- Which roots existed on disk
+- How many artifacts each contributing workspace yielded
+- Total artifacts across all workspaces
 
-**Failure condition:** If no artifacts are found, stop and report the repository path, workspace roots checked, and discovery commands instead of inventing memory updates.
+**Verification:** At least one project-memory artifact is discovered, and every advertised location type that exists on disk appears in the candidate list.
+
+**Failure condition:** If no artifacts are found, stop and report the repository path, workspace roots checked (if workspace mode was active), and discovery commands instead of inventing memory updates.
 
 **File Types & Locations:**
 

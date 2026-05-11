@@ -127,16 +127,14 @@ echo "[5/6] JSON syntax"
 
 JSON_COUNT=0
 JSON_ERRORS=0
-find . -name "*.json" -not -path "*/node_modules/*" -not -path "*/.git/*" -type f 2>/dev/null | while IFS= read -r f; do
+while IFS= read -r f; do
   JSON_COUNT=$((JSON_COUNT + 1))
   if ! jq . "$f" >/dev/null 2>&1; then
     hard_fail "invalid JSON: $f"
     JSON_ERRORS=$((JSON_ERRORS + 1))
   fi
-done
+done < <(find . -name "*.json" -not -path "*/node_modules/*" -not -path "*/.git/*" -type f 2>/dev/null)
 
-# Count JSON files for final output
-JSON_COUNT=$(find . -name "*.json" -not -path "*/node_modules/*" -not -path "*/.git/*" -type f 2>/dev/null | wc -l)
 if [ "$JSON_ERRORS" -eq 0 ]; then
   echo "  OK: $JSON_COUNT JSON files valid"
 fi
