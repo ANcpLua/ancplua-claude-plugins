@@ -15,7 +15,17 @@ Use this skill when the user asks for:
 
 ## FAILURE CONDITIONS
 
-Skipping `claudemd-curator` when project memory is stale leaves degraded shared context in `CLAUDE.md`, `AGENTS.md`, `.claude.local.md`, and `.claude/rules/*.md`. The likely failures are missed rule updates, duplicated agent discovery work, unsynced Claude/Codex memory, omitted marketplace-drift audit signals, and downstream agent failures caused by outdated commands or architecture notes. Treat skipped memory curation as high severity when the task depends on repository instructions, cross-tool consistency, or the per-phase failure descriptions below.
+**Skipping the claudemd-curator skill entirely** leaves project memory in a degraded state, causing:
+
+- **Degraded memory quality**: Stale, incomplete, or conflicting instructions in `CLAUDE.md`, `AGENTS.md`, `.claude.local.md`, and `.claude/rules/*.md`
+- **Missed rule updates**: Critical commands, patterns, or architecture changes remain undocumented
+- **Unsynced cross-tool memory**: Claude Code and Codex/Codeium agents diverge when `CLAUDE.md` and `AGENTS.md` fall out of sync
+- **Audit omissions**: Marketplace drift signals (from `marketplace-tour`) go unconsumed, leaving memory guidance mismatched to current plugin capabilities
+- **Downstream agent failures**: Other agents operate on outdated commands, obsolete architecture notes, or missing gotchas
+
+**Severity & Escalation**: Treat skipped memory curation as **high severity** when the task depends on repository instructions, cross-tool consistency, or accurate project context. Escalate when memory staleness blocks task completion or causes repeated agent failures.
+
+**Per-Phase Failure Details**: See individual phase sections below for specific failure conditions during discovery (Phase 1, line 52), quality assessment (Phase 2, line 98), plugin mode (Phase 2.5, line 108), report output (Phase 3, line 159), targeted updates (Phase 4, line 204), and applying updates (Phase 5, line 212). These describe granular failure modes; this section summarizes the global impact when claudemd-curator is bypassed entirely.
 
 # claudemd-curator
 
