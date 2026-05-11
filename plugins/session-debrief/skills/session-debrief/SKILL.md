@@ -22,7 +22,6 @@ Produce a self-contained HTML debrief of Claude Code usage and save it to `~/.cl
    ```sh
    tmp_json="${TMPDIR:-/tmp}/session-debrief.json"
    # Set SKILL_DIR to the absolute directory where you located this SKILL.md.
-   SKILL_DIR="/path/to/plugins/session-debrief/skills/session-debrief"
    node "$SKILL_DIR/analyze-sessions.mjs" --json --since 7d > "$tmp_json"
    ```
    For all-time, omit `--since`.

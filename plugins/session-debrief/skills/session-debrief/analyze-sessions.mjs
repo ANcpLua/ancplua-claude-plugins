@@ -465,6 +465,7 @@ function handleUser(
   if (isToolResult) return
 
   let slashCmd = null
+  setSkill(null) // Every non-tool user turn starts a new attribution boundary.
   if (text) {
     // Auto-continuations (task notifications, scheduled wakeups) are not new
     // human prompts; keep attributing to the previously active prompt.
@@ -484,8 +485,6 @@ function handleUser(
         if (subagent) bumpSkill(subagent, slashCmd)
       }
       setSkill(slashCmd)
-    } else {
-      setSkill(null) // plain human message resets skill attribution
     }
     if (text.startsWith('[Request interrupted')) return
   }

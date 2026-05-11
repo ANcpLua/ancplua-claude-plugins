@@ -13,6 +13,10 @@ Use this skill when the user asks for:
 - "update .claude/rules" or "review .claude/rules"
 - "memory quality report"
 
+## FAILURE CONDITIONS
+
+Skipping `claudemd-curator` when project memory is stale leaves degraded shared context in `CLAUDE.md`, `AGENTS.md`, `.claude.local.md`, and `.claude/rules/*.md`. The likely failures are missed rule updates, duplicated agent discovery work, unsynced Claude/Codex memory, omitted marketplace-drift audit signals, and downstream agent failures caused by outdated commands or architecture notes. Treat skipped memory curation as high severity when the task depends on repository instructions, cross-tool consistency, or the per-phase failure descriptions below.
+
 # claudemd-curator
 
 Audit, evaluate, and improve project-memory artifacts across a codebase so Claude Code (and Codex / Codeium / ChatGPT, which read `AGENTS.md`) have optimal project context.
