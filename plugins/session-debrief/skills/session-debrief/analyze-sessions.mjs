@@ -42,11 +42,19 @@ function flag(name, dflt) {
   const v = argv[i + 1]
   return v === undefined || v.startsWith('--') ? true : v
 }
+function stringFlag(name, dflt) {
+  const value = flag(name, dflt)
+  return typeof value === 'string' ? value : dflt
+}
+function intFlag(name, dflt) {
+  const parsed = parseInt(stringFlag(name, String(dflt)), 10)
+  return Number.isNaN(parsed) ? dflt : parsed
+}
 const ROOT = flag('--dir', path.join(os.homedir(), '.claude', 'projects'))
 const AS_JSON = argv.includes('--json')
-const TOP_N = parseInt(flag('--top', '15'), 10)
-const SINCE = parseSince(flag('--since', null))
-const CACHE_BREAK_THRESHOLD = parseInt(flag('--cache-break', '100000'), 10)
+const TOP_N = intFlag('--top', 15)
+const SINCE = parseSince(stringFlag('--since', null))
+const CACHE_BREAK_THRESHOLD = intFlag('--cache-break', 100000)
 const IDLE_GAP_MS = 5 * 60 * 1000 // gaps >5min don't count toward "active" time
 
 function parseSince(s) {
