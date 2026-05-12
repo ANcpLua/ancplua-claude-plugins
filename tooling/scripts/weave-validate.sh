@@ -127,13 +127,13 @@ echo "[5/6] JSON syntax"
 
 JSON_COUNT=0
 JSON_ERRORS=0
-while IFS= read -r -d '' f; do
+while IFS= read -r f; do
   JSON_COUNT=$((JSON_COUNT + 1))
   if ! jq . "$f" >/dev/null 2>&1; then
     hard_fail "invalid JSON: $f"
     JSON_ERRORS=$((JSON_ERRORS + 1))
   fi
-done < <(find . -name "*.json" -not -path "*/node_modules/*" -not -path "*/.git/*" -print0)
+done < <(find . -name "*.json" -not -path "*/node_modules/*" -not -path "*/.git/*" -type f 2>/dev/null)
 
 if [ "$JSON_ERRORS" -eq 0 ]; then
   echo "  OK: $JSON_COUNT JSON files valid"
@@ -162,7 +162,8 @@ if [ -f "$MARKETPLACE" ]; then
   # Check: every marketplace entry's version matches its plugin.json (hard fail)
   MARKETPLACE_COUNT=$(jq '.plugins | length' "$MARKETPLACE")
   if [ "$MARKETPLACE_COUNT" -gt 0 ]; then
-    for i in $(seq 0 $((MARKETPLACE_COUNT - 1))); do
+    i=0
+    while [ "$i" -lt "$MARKETPLACE_COUNT" ]; do
       mp_name=$(jq -r ".plugins[$i].name" "$MARKETPLACE")
       mp_version=$(jq -r ".plugins[$i].version" "$MARKETPLACE")
       mp_source=$(jq -r ".plugins[$i].source" "$MARKETPLACE")
@@ -171,6 +172,7 @@ if [ -f "$MARKETPLACE" ]; then
       if [ ! -f "$plugin_json" ]; then
         hard_fail "'$mp_name' source '$mp_source' has no .claude-plugin/plugin.json"
         SYNC_ERRORS=$((SYNC_ERRORS + 1))
+        i=$((i + 1))
         continue
       fi
 
@@ -179,6 +181,7 @@ if [ -f "$MARKETPLACE" ]; then
         hard_fail "'$mp_name' version mismatch: marketplace=$mp_version plugin.json=$pj_version"
         SYNC_ERRORS=$((SYNC_ERRORS + 1))
       fi
+      i=$((i + 1))
     done
   fi
 

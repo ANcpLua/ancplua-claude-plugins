@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "session-debrief",
+  "version": "0.1.0",
+  "description": "Generate self-contained HTML debriefs of Claude Code session usage from ~/.claude/projects transcripts. Tokens, cache, subagents, skills, expensive prompts, cache-break clustering. Forked from anthropics/claude-plugins-official session-report; Phase 2 work tracked in AGENTS.md (cache-rot threshold, effort-level attribution, marketplace-aware project mapping).",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "homepage": "https://github.com/ANcpLua/ancplua-claude-plugins/tree/main/plugins/session-debrief",
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "Apache-2.0",
+  "keywords": [
+    "claude-code",
+    "session-analysis",
+    "transcript",
+    "tokens",
+    "cache",
+    "subagent",
+    "fork"
+  ]
+}
