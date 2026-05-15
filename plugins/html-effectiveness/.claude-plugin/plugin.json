@@ -1,0 +1,10 @@
+{
+  "name": "html-effectiveness",
+  "version": "1.0.0",
+  "description": "Routes agent output to single self-contained .html files based on Thariq Shihipar's html-effectiveness pattern catalog. 20 canonical patterns (triage board, status report, code review, design system, prompt tuner, etc.) with a data-driven decision tree so Claude picks the right pattern per task. Includes OTel semconv generator demo as concrete proof.",
+  "upstream": {
+    "philosophy": "https://github.com/ThariqS/html-effectiveness",
+    "author": "Thariq Shihipar (@trq212, thariq.io) — Claude Code @ Anthropic"
+  },
+  "skills": [{"path": "skills/html-effectiveness"}]
+}

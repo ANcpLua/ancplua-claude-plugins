@@ -64,7 +64,7 @@
     },
     {
       "name": "ancplua",
-      "description": "Agent operating system — leaderless swarms with Playwright oracle. Code is opaque weights; correctness inferred exclusively from externally observable behavior.",
+      "description": "Agent operating system \u2014 leaderless swarms with Playwright oracle. Code is opaque weights; correctness inferred exclusively from externally observable behavior.",
       "version": "0.2.0",
       "source": "./plugins/ancplua"
     },
@@ -100,7 +100,7 @@
     },
     {
       "name": "rider-respect",
-      "description": "Apply every IDE hint Rider's daemon reports onto an isolated dry-run branch via the JetBrains MCP server. Naming via rename_refactoring, formatting via reformat_file, code-style via the daemon's suggested fixes. Never commits, pushes, or suppresses — leaves the branch for human review.",
+      "description": "Apply every IDE hint Rider's daemon reports onto an isolated dry-run branch via the JetBrains MCP server. Naming via rename_refactoring, formatting via reformat_file, code-style via the daemon's suggested fixes. Never commits, pushes, or suppresses \u2014 leaves the branch for human review.",
       "version": "0.1.0",
       "source": "./plugins/rider-respect"
     },
@@ -121,6 +121,12 @@
       "description": "Self-contained HTML debriefs of Claude Code session usage from ~/.claude/projects transcripts. Tokens, cache, subagents, skills, expensive prompts, cache-break clustering. Phase 1: clean rename + manifest. Phase 2 (tracked in AGENTS.md): cache-rot >300k flag, effort-level attribution from settings.json, marketplace-aware project tier mapping. Forked from anthropics/claude-plugins-official session-report.",
       "version": "0.1.0",
       "source": "./plugins/session-debrief"
+    },
+    {
+      "name": "html-effectiveness",
+      "description": "Routes agent output to single self-contained .html files based on Thariq Shihipar's html-effectiveness pattern catalog. 20 canonical patterns (triage board, status report, code review, design system, prompt tuner, etc.) with a data-driven decision tree so Claude picks the right pattern per task. Includes OTel semconv generator demo as concrete proof.",
+      "version": "1.0.0",
+      "source": "./plugins/html-effectiveness"
     }
   ]
 }

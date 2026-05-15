@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OTel Semconv Generator — diff v1.40 → v1.41</title>
+<style>
+  :root {
+    --ivory: #FAF9F5; --paper: #FFFFFF; --slate: #141413;
+    --clay: #D97757; --clay-d: #B85C3E; --oat: #E3DACC;
+    --olive: #788C5D;
+    --g50: #F0EEE6; --g200: #D1CFC5; --g500: #87867F; --g700: #3D3D3A;
+    --break: #C24A2C; --break-bg: #F5E2D8;
+    --add:   #5C6F44; --add-bg:   #E8EDE0;
+    --depr:  #87867F; --depr-bg:  #F0EEE6;
+    --serif: ui-serif, Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--ivory); color: var(--slate); font-family: var(--sans); font-size: 14px; line-height: 1.55; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 48px 32px 64px; }
+
+  header { margin-bottom: 22px; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--g500); }
+  .eyebrow::before { content: "›"; color: var(--clay); margin-right: 6px; }
+  h1 { font-family: var(--serif); font-weight: 500; font-size: 30px; letter-spacing: -0.01em; margin: 6px 0 6px; }
+  .sub { color: var(--g500); max-width: 760px; margin: 0; }
+  .hintline { font-family: var(--mono); font-size: 11px; color: var(--g500); margin-top: 10px; }
+  .hintline::before { content: "›"; color: var(--clay); margin-right: 6px; }
+
+  .toolbar {
+    position: sticky; top: 0; z-index: 5;
+    background: var(--ivory); border-bottom: 1.5px solid var(--g200);
+    display: flex; align-items: center; gap: 14px; padding: 14px 0 12px; margin-bottom: 14px;
+  }
+  .summary { font-family: var(--mono); font-size: 12px; color: var(--g700); }
+  .summary b { color: var(--slate); }
+  .summary .dot { color: var(--g200); margin: 0 4px; }
+  .spacer { flex: 1; }
+  .filter-grp { display: flex; gap: 6px; }
+  .filter-grp button {
+    background: var(--paper); color: var(--g700); border: 1.5px solid var(--g200);
+    border-radius: 999px; font-family: var(--mono); font-size: 11px; padding: 6px 12px; cursor: pointer;
+  }
+  .filter-grp button.on { background: var(--slate); color: var(--ivory); border-color: var(--slate); }
+  .filter-grp button:hover:not(.on) { border-color: var(--g500); }
+  button.primary {
+    background: var(--slate); color: var(--ivory); border: 1.5px solid var(--slate);
+    border-radius: 999px; font-family: var(--mono); font-size: 12px; padding: 9px 16px; cursor: pointer;
+  }
+  button.primary.copied { background: var(--olive); border-color: var(--olive); }
+  button.primary:hover:not(.copied) { background: var(--g700); }
+
+  .grid { display: grid; gap: 18px; }
+  .group {
+    background: var(--paper); border: 1.5px solid var(--g200); border-radius: 12px; overflow: hidden;
+  }
+  .group.break { border-left: 3px solid var(--break); }
+  .group.added { border-left: 3px solid var(--add); }
+  .group.deprecated { border-left: 3px solid var(--depr); }
+  .group-head {
+    padding: 14px 18px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    border-bottom: 1px solid var(--g50); background: var(--paper);
+  }
+  .group-name { font-family: var(--mono); font-size: 14px; font-weight: 600; }
+  .group-type { font-family: var(--mono); font-size: 10px; text-transform: uppercase; color: var(--g500); letter-spacing: 0.05em; }
+  .badge {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+    border-radius: 999px; padding: 2px 8px 3px; border: 1px solid transparent;
+  }
+  .badge.break { background: var(--break-bg); color: var(--break); border-color: #E8C9BA; }
+  .badge.added { background: var(--add-bg); color: var(--add); border-color: #CFDAC0; }
+  .badge.deprecated { background: var(--depr-bg); color: var(--depr); border-color: var(--g200); }
+  .badge.stable { background: var(--g50); color: var(--g700); border-color: var(--g200); }
+  .stability { margin-left: auto; }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+  .col {
+    padding: 12px 16px; border-right: 1px solid var(--g50); min-height: 100px;
+  }
+  .col:last-child { border-right: none; }
+  .col-label {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+    color: var(--g500); letter-spacing: 0.06em; margin-bottom: 8px;
+  }
+  pre {
+    margin: 0; font-family: var(--mono); font-size: 12px; line-height: 1.55;
+    color: var(--g700); white-space: pre-wrap; word-break: break-word;
+  }
+  .diff-add { color: var(--add); background: var(--add-bg); display: inline-block; width: 100%; padding: 0 4px; }
+  .diff-del { color: var(--break); background: var(--break-bg); display: inline-block; width: 100%; padding: 0 4px; text-decoration: line-through; }
+  .diff-ctx { color: var(--g500); display: inline-block; width: 100%; padding: 0 4px; }
+
+  @media (max-width: 960px) { .cols { grid-template-columns: 1fr; } .col { border-right: none; border-bottom: 1px solid var(--g50); } .col:last-child { border-bottom: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">ANcpLua / OTel Semconv Generator / v1.40 → v1.41 diff</div>
+    <h1>Generated C# vs upstream YAML — what changed</h1>
+    <p class="sub">
+      Five semantic-convention groups from the v1.41.0 release. Side-by-side: upstream
+      YAML on the left, regenerated C# in the middle, diff against last generation on
+      the right. Filter to breaking changes only when triaging consumer-impact.
+    </p>
+    <div class="hintline">click filters to narrow · "Copy upgrade-notes" turns the visible cards into CHANGELOG markdown</div>
+  </header>
+
+  <div class="toolbar">
+    <div class="summary" id="summary"></div>
+    <div class="spacer"></div>
+    <div class="filter-grp" id="filters">
+      <button data-f="all" class="on">All</button>
+      <button data-f="break">Breaking only</button>
+      <button data-f="added">Added</button>
+      <button data-f="deprecated">Deprecated</button>
+    </div>
+    <button class="primary" id="copyBtn">Copy upgrade-notes</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+</div>
+
+<script>
+  // Real OTel v1.41.0 highlights: http.request.method became required+enum, db.system → db.system.name renamed,
+  // messaging.kafka.message.key replaced by messaging.destination.partition.id (breaking), code.* mostly stable,
+  // and gen_ai.* added as fully new attribute group.
+  var OTEL_DATA = [
+    {
+      group: "http.request.method",
+      type: "attribute",
+      change: "break",
+      stability: "stable",
+      yaml: [
+        "id: http.request.method",
+        "type: string",
+        "brief: HTTP request method.",
+        "requirement_level: required",
+        "stability: stable",
+        "members:",
+        "  - id: CONNECT",
+        "    value: CONNECT",
+        "  - id: DELETE",
+        "    value: DELETE",
+        "  - id: GET",
+        "    value: GET"
+      ].join("\n"),
+      generated: [
+        "[OtelSemanticAttribute(\"http.request.method\", Stability.Stable)]",
+        "public static class HttpRequestMethod",
+        "{",
+        "    public const string Connect = \"CONNECT\";",
+        "    public const string Delete  = \"DELETE\";",
+        "    public const string Get     = \"GET\";",
+        "    // ... 6 more members",
+        "}"
+      ].join("\n"),
+      diff: [
+        { kind: "ctx", text: "[OtelSemanticAttribute(\"http.request.method\", " },
+        { kind: "del", text: "Stability.Development)]" },
+        { kind: "add", text: "Stability.Stable)]" },
+        { kind: "ctx", text: "public static class HttpRequestMethod" },
+        { kind: "ctx", text: "{" },
+        { kind: "del", text: "    // requirement_level was conditional" },
+        { kind: "add", text: "    // requirement_level is now required" },
+        { kind: "ctx", text: "}" }
+      ]
+    },
+    {
+      group: "db.system.name",
+      type: "attribute",
+      change: "break",
+      stability: "release_candidate",
+      yaml: [
+        "id: db.system.name",
+        "type: string",
+        "brief: Name of the database system.",
+        "requirement_level: required",
+        "stability: release_candidate",
+        "note: Renamed from db.system in v1.41.0."
+      ].join("\n"),
+      generated: [
+        "[OtelSemanticAttribute(\"db.system.name\", Stability.ReleaseCandidate)]",
+        "public static class DbSystemName",
+        "{",
+        "    public const string Postgresql = \"postgresql\";",
+        "    public const string Mssql      = \"mssql\";",
+        "    public const string Mongodb    = \"mongodb\";",
+        "}"
+      ].join("\n"),
+      diff: [
+        { kind: "del", text: "public static class DbSystem      // RENAMED" },
+        { kind: "add", text: "public static class DbSystemName  // new name" },
+        { kind: "ctx", text: "{" },
+        { kind: "ctx", text: "    public const string Postgresql = \"postgresql\";" },
+        { kind: "ctx", text: "    public const string Mssql      = \"mssql\";" },
+        { kind: "ctx", text: "    public const string Mongodb    = \"mongodb\";" },
+        { kind: "ctx", text: "}" }
+      ]
+    },
+    {
+      group: "messaging.destination.partition.id",
+      type: "attribute",
+      change: "break",
+      stability: "alpha",
+      yaml: [
+        "id: messaging.destination.partition.id",
+        "type: string",
+        "brief: The identifier of the partition messages are sent to.",
+        "requirement_level: recommended",
+        "stability: alpha",
+        "note: Replaces messaging.kafka.message.key in v1.41.0."
+      ].join("\n"),
+      generated: [
+        "[OtelSemanticAttribute(\"messaging.destination.partition.id\", Stability.Alpha)]",
+        "public const string MessagingDestinationPartitionId =",
+        "    \"messaging.destination.partition.id\";"
+      ].join("\n"),
+      diff: [
+        { kind: "del", text: "[Obsolete(\"Use MessagingDestinationPartitionId\")]" },
+        { kind: "del", text: "public const string MessagingKafkaMessageKey = \"messaging.kafka.message.key\";" },
+        { kind: "add", text: "[OtelSemanticAttribute(\"messaging.destination.partition.id\", Stability.Alpha)]" },
+        { kind: "add", text: "public const string MessagingDestinationPartitionId =" },
+        { kind: "add", text: "    \"messaging.destination.partition.id\";" }
+      ]
+    },
+    {
+      group: "gen_ai",
+      type: "attribute_group",
+      change: "added",
+      stability: "development",
+      yaml: [
+        "id: registry.gen_ai",
+        "type: attribute_group",
+        "brief: GenAI client-side semantic conventions (new in v1.41.0).",
+        "stability: development",
+        "attributes:",
+        "  - id: gen_ai.system",
+        "    type: string",
+        "  - id: gen_ai.request.model",
+        "    type: string",
+        "  - id: gen_ai.usage.input_tokens",
+        "    type: int"
+      ].join("\n"),
+      generated: [
+        "[OtelSemanticAttribute(\"gen_ai.system\", Stability.Development)]",
+        "public const string GenAiSystem = \"gen_ai.system\";",
+        "",
+        "[OtelSemanticAttribute(\"gen_ai.request.model\", Stability.Development)]",
+        "public const string GenAiRequestModel = \"gen_ai.request.model\";",
+        "",
+        "[OtelSemanticAttribute(\"gen_ai.usage.input_tokens\", Stability.Development)]",
+        "public const string GenAiUsageInputTokens = \"gen_ai.usage.input_tokens\";"
+      ].join("\n"),
+      diff: [
+        { kind: "add", text: "// NEW attribute group in v1.41.0" },
+        { kind: "add", text: "public const string GenAiSystem            = \"gen_ai.system\";" },
+        { kind: "add", text: "public const string GenAiRequestModel      = \"gen_ai.request.model\";" },
+        { kind: "add", text: "public const string GenAiUsageInputTokens  = \"gen_ai.usage.input_tokens\";" }
+      ]
+    },
+    {
+      group: "messaging.kafka.message.key",
+      type: "attribute",
+      change: "deprecated",
+      stability: "alpha",
+      yaml: [
+        "id: messaging.kafka.message.key",
+        "type: string",
+        "stability: alpha",
+        "deprecated:",
+        "  reason: renamed",
+        "  rename_to: messaging.destination.partition.id",
+        "  since: 1.41.0"
+      ].join("\n"),
+      generated: [
+        "[Obsolete(\"Renamed to messaging.destination.partition.id in OTel semconv v1.41.0\")]",
+        "[OtelSemanticAttribute(\"messaging.kafka.message.key\", Stability.Alpha)]",
+        "public const string MessagingKafkaMessageKey = \"messaging.kafka.message.key\";"
+      ].join("\n"),
+      diff: [
+        { kind: "ctx", text: "[OtelSemanticAttribute(\"messaging.kafka.message.key\", Stability.Alpha)]" },
+        { kind: "add", text: "[Obsolete(\"Renamed to messaging.destination.partition.id in OTel semconv v1.41.0\")]" },
+        { kind: "ctx", text: "public const string MessagingKafkaMessageKey = \"messaging.kafka.message.key\";" }
+      ]
+    }
+  ];
+
+  var grid = document.getElementById("grid");
+  var filterBtns = document.querySelectorAll(".filter-grp button");
+  var activeFilter = "all";
+
+  function badge(change) {
+    if (change === "break")      return '<span class="badge break">Breaking</span>';
+    if (change === "added")      return '<span class="badge added">Added</span>';
+    if (change === "deprecated") return '<span class="badge deprecated">Deprecated</span>';
+    return "";
+  }
+  function stabBadge(s) {
+    return '<span class="badge stable stability">' + s.replace("_", " ") + '</span>';
+  }
+  function diffHtml(diff) {
+    return diff.map(function (d) {
+      var cls = d.kind === "add" ? "diff-add" : d.kind === "del" ? "diff-del" : "diff-ctx";
+      var prefix = d.kind === "add" ? "+ " : d.kind === "del" ? "- " : "  ";
+      return '<span class="' + cls + '">' + prefix + escapeHtml(d.text) + '</span>';
+    }).join("");
+  }
+  function escapeHtml(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function render() {
+    grid.innerHTML = "";
+    var visible = OTEL_DATA.filter(function (g) {
+      return activeFilter === "all" || g.change === activeFilter;
+    });
+    visible.forEach(function (g) {
+      var el = document.createElement("article");
+      el.className = "group " + g.change;
+      el.innerHTML =
+        '<div class="group-head">' +
+          '<span class="group-name">' + escapeHtml(g.group) + '</span>' +
+          '<span class="group-type">' + g.type + '</span>' +
+          badge(g.change) +
+          stabBadge(g.stability) +
+        '</div>' +
+        '<div class="cols">' +
+          '<div class="col"><div class="col-label">YAML (upstream)</div><pre>' + escapeHtml(g.yaml) + '</pre></div>' +
+          '<div class="col"><div class="col-label">Generated C#</div><pre>' + escapeHtml(g.generated) + '</pre></div>' +
+          '<div class="col"><div class="col-label">Diff vs last generation</div><pre>' + diffHtml(g.diff) + '</pre></div>' +
+        '</div>';
+      grid.appendChild(el);
+    });
+    var totals = { all: OTEL_DATA.length, break: 0, added: 0, deprecated: 0 };
+    OTEL_DATA.forEach(function (g) { if (totals[g.change] !== undefined) totals[g.change] += 1; });
+    document.getElementById("summary").innerHTML =
+      '<b>' + visible.length + '</b> showing' +
+      '<span class="dot">·</span><b>' + totals.break + '</b> breaking' +
+      '<span class="dot">·</span><b>' + totals.added + '</b> added' +
+      '<span class="dot">·</span><b>' + totals.deprecated + '</b> deprecated';
+  }
+
+  filterBtns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      filterBtns.forEach(function (x) { x.classList.remove("on"); });
+      b.classList.add("on");
+      activeFilter = b.dataset.f;
+      render();
+    });
+  });
+
+  // Copy upgrade-notes markdown — only the visible groups
+  var copyBtn = document.getElementById("copyBtn");
+  var copyTimer = null;
+  copyBtn.addEventListener("click", function () {
+    var visible = OTEL_DATA.filter(function (g) { return activeFilter === "all" || g.change === activeFilter; });
+    var md = ["# Upgrade notes — OTel semconv v1.40 → v1.41", ""];
+    visible.forEach(function (g) {
+      var emoji = g.change === "break" ? "⚠️" : g.change === "added" ? "✨" : g.change === "deprecated" ? "⊘" : "·";
+      md.push("## " + emoji + " `" + g.group + "` — " + g.change + " (" + g.stability + ")");
+      md.push("");
+      md.push("```yaml");
+      md.push(g.yaml);
+      md.push("```");
+      md.push("");
+      md.push("```csharp");
+      md.push(g.generated);
+      md.push("```");
+      md.push("");
+    });
+    var txt = md.join("\n");
+    function flash() {
+      copyBtn.textContent = "Copied ✓";
+      copyBtn.classList.add("copied");
+      clearTimeout(copyTimer);
+      copyTimer = setTimeout(function () {
+        copyBtn.textContent = "Copy upgrade-notes";
+        copyBtn.classList.remove("copied");
+      }, 1500);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(flash, flash);
+    } else {
+      var ta = document.createElement("textarea");
+      ta.value = txt;
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta); flash();
+    }
+  });
+
+  render();
+</script>
+</body>
+</html>
