@@ -1,9 +1,20 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "source_repo": "https://github.com/ThariqS/html-effectiveness",
-  "source_author": "Thariq Shihipar (@trq212, thariq.io)",
-  "local_clone": "~/RiderProjects/thariq-html-effectiveness/",
+  "source_author": "Thariq Shihipar (@trq212, thariq.io) — Claude Code @ Anthropic",
+  "local_clone": "/Users/ancplua/RiderProjects/thariq-html-effectiveness",
+  "local_clone_branch": "main",
+  "clone_if_missing": "gh repo clone ThariqS/html-effectiveness /Users/ancplua/RiderProjects/thariq-html-effectiveness",
   "philosophy": "Markdown is linear and skim-able. HTML has layout, interaction, spatial information — you actually use it. Same content, different effectiveness. The agent produces a single self-contained .html instead of a wall of prose.",
+  "triggering_principles": {
+    "match_on_intent_not_phrase": "If the user describes a deliverable that would render better with layout + interaction than as markdown prose, fire — even if no listed trigger phrase appears literally. The triggers below are EXAMPLES of intent, not an exhaustive whitelist.",
+    "languages": "Triggers are listed in English and German. Mixed-language input ('mach mir einen status report'), Austrian/Swiss German variants, typos, and informal contractions all count. Match by semantic intent regardless of language or case.",
+    "typo_tolerance": "User typos ('reprot', 'staus', 'tirage', 'flowshart') are expected. Match by stem / phonetic similarity.",
+    "case_insensitive": "Triggers are matched lower-case. 'HTML REPORT', 'html report', 'Html Report' all count.",
+    "ambiguous_user_intent": "If the user says something like 'make me a thing for X', look at WHAT X is. A list of tickets → triage-board. A diff → code-review. A timeline → incident-report. Let the data shape decide the pattern.",
+    "multi_pattern_fit": "If two patterns could fit, pick the one whose `key_pattern` field most closely describes the data structure the user has in hand. If still ambiguous, prefer the more interactive pattern (editor > report > diagram).",
+    "be_pushy": "Default to firing when the output would otherwise be a long markdown table, several sections of prose with categories, or a list the user will sort/filter/diff. Markdown for a paragraph; HTML for anything you'll come back to."
+  },
   "design_tokens": {
     "ivory": "#FAF9F5",
     "paper": "#FFFFFF",
@@ -27,170 +38,372 @@
     "Editor demos end with a 'Copy as markdown' or 'Copy diff' button. The HTML is a UI; the export is what funnels into the next prompt.",
     "Eyebrow pattern: small uppercase mono label above each h1 (e.g., 'Acme / editor / triage') for breadcrumb context.",
     "Sticky toolbar with summary count + filter pill + primary action button — top of every dense view.",
-    "Real data, not lorem ipsum. Use the user's actual data when available."
+    "Real data, not lorem ipsum. Use the user's actual data when available.",
+    "If the artifact contains private data (private repo names, customer info, internal URLs), save it under the user's home (e.g. ~/repo-audit/, ~/<task>/) — do NOT commit to a public plugin/marketplace repo."
   ],
   "patterns": [
     {
       "id": "01-exploration-code-approaches",
       "category": "exploration-planning",
       "file": "01-exploration-code-approaches.html",
-      "use_when": ["multiple solution alternatives", "compare approaches", "should I use X or Y or Z", "trade-offs between options"],
+      "use_when": [
+        "multiple solution alternatives",
+        "compare approaches", "should I use X or Y or Z", "X vs Y vs Z", "trade-offs between options", "side by side",
+        "mehrere lösungs alternativen", "ansätze vergleichen", "X oder Y oder Z", "nebeneinander", "abwägung", "soll ich X oder Y nehmen",
+        "code variants", "code alternatives", "approach comparison"
+      ],
       "key_pattern": "Side-by-side grid with annotation badges per approach"
     },
     {
       "id": "02-exploration-visual-designs",
       "category": "exploration-planning",
       "file": "02-exploration-visual-designs.html",
-      "use_when": ["layout alternatives", "design directions", "palette options", "empty-state mockups"],
+      "use_when": [
+        "layout alternatives", "design directions", "palette options", "empty-state mockups", "ui variants",
+        "layout alternativen", "design richtungen", "palette varianten", "leere zustände", "ui varianten",
+        "show me 3 designs", "give me layout options"
+      ],
       "key_pattern": "Live-rendered design variants in a grid you can react to"
     },
     {
       "id": "03-code-review-pr",
       "category": "code-review",
       "file": "03-code-review-pr.html",
-      "use_when": ["annotated diff", "PR with margin comments", "severity-tagged review"],
+      "use_when": [
+        "annotated diff", "PR with margin comments", "severity-tagged review", "code review with annotations",
+        "kommentierter diff", "PR mit randnotizen", "schweregrad markiert", "code review mit annotationen",
+        "review the pr for me", "review this diff", "mark severity in the diff"
+      ],
       "key_pattern": "Diff rendered with margin notes, severity tags, jump links"
     },
     {
       "id": "04-code-understanding",
       "category": "code-review",
       "file": "04-code-understanding.html",
-      "use_when": ["module map", "architecture overview", "where does X live", "unfamiliar package walkthrough"],
+      "use_when": [
+        "module map", "architecture overview", "where does X live", "unfamiliar package walkthrough", "code map", "module diagram",
+        "modulkarte", "architektur überblick", "wo lebt X", "wo ist X", "unbekannte codebase", "code karte", "modul diagramm",
+        "explain the architecture", "how is X wired", "give me a map of this repo"
+      ],
       "key_pattern": "Boxes and arrows with hot-path highlighted, entry points listed"
     },
     {
       "id": "05-design-system",
       "category": "design",
       "file": "05-design-system.html",
-      "use_when": ["design tokens reference", "color/type/spacing showcase", "ship a style guide"],
+      "use_when": [
+        "design tokens reference", "color/type/spacing showcase", "ship a style guide", "design system overview",
+        "design tokens referenz", "farben typo abstand", "style guide", "design system überblick",
+        "show me the tokens", "all colors in one place"
+      ],
       "key_pattern": "Tokens as live swatches you can copy from"
     },
     {
       "id": "06-component-variants",
       "category": "design",
       "file": "06-component-variants.html",
-      "use_when": ["component states matrix", "size × intent × state grid"],
+      "use_when": [
+        "component states matrix", "size × intent × state grid", "contact sheet of variants",
+        "komponenten zustände matrix", "größe × art × zustand", "varianten kontaktbogen",
+        "all states of this button", "every variant on one sheet"
+      ],
       "key_pattern": "Single component, every variant on one sheet"
     },
     {
       "id": "07-prototype-animation",
       "category": "prototyping",
       "file": "07-prototype-animation.html",
-      "use_when": ["tune an animation", "easing curve preview", "transition micro-interaction"],
+      "use_when": [
+        "tune an animation", "easing curve preview", "transition micro-interaction", "animation with slider",
+        "animation tunen", "easing kurve", "übergang mikro-interaktion", "animation mit slider",
+        "feel the easing", "play with the timing"
+      ],
       "key_pattern": "Animation isolated + sliders for duration and easing"
     },
     {
       "id": "08-prototype-interaction",
       "category": "prototyping",
       "file": "08-prototype-interaction.html",
-      "use_when": ["clickable flow", "screen-to-screen navigation", "feel the interaction"],
+      "use_when": [
+        "clickable flow", "screen-to-screen navigation", "feel the interaction", "click-through prototype",
+        "klickbarer flow", "screen zu screen", "interaktion erspüren", "klick-prototyp",
+        "click through the screens", "is the flow right"
+      ],
       "key_pattern": "4 screens linked together, real click-through"
     },
     {
       "id": "09-slide-deck",
       "category": "decks",
       "file": "09-slide-deck.html",
-      "use_when": ["short presentation", "lightning talk", "weekly meeting deck"],
+      "use_when": [
+        "slide deck", "short presentation", "lightning talk", "weekly meeting deck", "arrow-key slides",
+        "slide deck", "präsentation", "präsi", "lightning talk", "wochen meeting folien", "vortrag folien",
+        "make me slides", "deck for the meeting"
+      ],
       "key_pattern": "<section> tags + 20 lines JS, arrow-key nav"
     },
     {
       "id": "10-svg-illustrations",
       "category": "diagrams",
       "file": "10-svg-illustrations.html",
-      "use_when": ["blog post figures", "inline SVG diagrams", "vector art for docs"],
+      "use_when": [
+        "blog post figures", "inline SVG diagrams", "vector art for docs", "svg figures",
+        "blog post grafiken", "inline svg diagramme", "vektor grafik für docs", "svg figuren",
+        "draw the figures for the post"
+      ],
       "key_pattern": "Inline SVG that can be tweaked and copied out"
     },
     {
       "id": "11-status-report",
       "category": "reports",
       "file": "11-status-report.html",
-      "use_when": ["weekly status", "what shipped what slipped", "monday-morning skim"],
+      "use_when": [
+        "weekly status", "what shipped what slipped", "monday-morning skim", "status report", "weekly recap", "sprint review", "week of", "team update", "weekly digest",
+        "wochenbericht", "was wurde fertig", "montag rückblick", "statusbericht", "wochenrückblick", "sprint review", "woche zusammenfassung", "team update", "was haben wir geshipt",
+        "what did we ship last week"
+      ],
       "key_pattern": "Shipped/slipped sections + small inline chart"
     },
     {
       "id": "12-incident-report",
       "category": "reports",
       "file": "12-incident-report.html",
-      "use_when": ["incident postmortem", "RCA", "outage timeline"],
+      "use_when": [
+        "incident postmortem", "RCA", "outage timeline", "post-mortem", "incident report", "5 whys", "sev1", "sev2", "503", "downtime", "failure timeline",
+        "incident postmortem", "ursachenanalyse", "ausfall zeitleiste", "post-mortem", "vorfall bericht", "5 warums", "sev1", "sev2", "ausfall", "störung", "fehler zeitleiste",
+        "what went wrong yesterday", "minute-by-minute"
+      ],
       "key_pattern": "Minute-by-minute timeline + log excerpts + follow-up checklist"
     },
     {
       "id": "13-flowchart-diagram",
       "category": "diagrams",
       "file": "13-flowchart-diagram.html",
-      "use_when": ["pipeline diagram", "deploy flow", "process with branches"],
+      "use_when": [
+        "pipeline diagram", "deploy flow", "process with branches", "flowchart", "flow diagram", "decision flow",
+        "pipeline diagramm", "deploy flow", "prozess mit verzweigungen", "flussdiagramm", "ablauf diagramm", "entscheidungs flow",
+        "draw the deploy", "process diagram"
+      ],
       "key_pattern": "Flowchart where each step is clickable for details, timings, failure paths"
     },
     {
       "id": "14-research-feature-explainer",
       "category": "research",
       "file": "14-research-feature-explainer.html",
-      "use_when": ["explain how X works in this repo", "feature deep-dive", "rate limiting / auth / etc walkthrough"],
+      "use_when": [
+        "explain how X works in this repo", "feature deep-dive", "rate limiting walkthrough", "auth flow explainer", "how does X work",
+        "erkläre wie X funktioniert", "feature deep-dive", "rate limiting durchgang", "auth flow erklärung", "wie funktioniert X",
+        "deep-dive on the auth code"
+      ],
       "key_pattern": "TL;DR box + collapsible request-path steps + tabbed config snippets + FAQ"
     },
     {
       "id": "15-research-concept-explainer",
       "category": "research",
       "file": "15-research-concept-explainer.html",
-      "use_when": ["teach a concept", "interactive explainer", "algorithm visualization"],
+      "use_when": [
+        "teach a concept", "interactive explainer", "algorithm visualization", "explain consistent hashing", "learn by interacting",
+        "konzept lehren", "interaktiver erklärer", "algorithmus visualisierung", "konsistentes hashing erklären", "durch interaktion lernen",
+        "teach me how X works", "interactive demo of"
+      ],
       "key_pattern": "Live interactive SVG you can manipulate + comparison table + hover-linked glossary"
     },
     {
       "id": "16-implementation-plan",
       "category": "exploration-planning",
       "file": "16-implementation-plan.html",
-      "use_when": ["implementation plan", "design doc", "milestones with risks", "the plan you hand off"],
+      "use_when": [
+        "implementation plan", "design doc", "milestones with risks", "the plan you hand off", "RFC", "technical plan", "project plan",
+        "implementierungsplan", "design dokument", "meilensteine mit risiken", "der plan zum übergeben", "RFC", "technischer plan", "projektplan",
+        "how we will build X", "lay out the plan"
+      ],
       "key_pattern": "Milestones timeline + data-flow diagram + inline mockups + risky-code section + risk table"
     },
     {
       "id": "17-pr-writeup",
       "category": "code-review",
       "file": "17-pr-writeup.html",
-      "use_when": ["PR description for reviewers", "file-by-file tour", "motivate the change"],
+      "use_when": [
+        "PR description for reviewers", "file-by-file tour", "motivate the change", "PR writeup", "explain my PR",
+        "PR beschreibung für reviewer", "datei für datei rundgang", "änderung begründen", "PR writeup", "meinen PR erklären",
+        "write the PR body for me"
+      ],
       "key_pattern": "Author's side: motivation, before/after, file-tour with why, focus areas"
     },
     {
       "id": "18-editor-triage-board",
       "category": "custom-editors",
       "file": "18-editor-triage-board.html",
-      "use_when": ["triage", "sort tickets into buckets", "now/next/later/cut", "prioritize a list"],
+      "use_when": [
+        "triage", "sort tickets into buckets", "now/next/later/cut", "prioritize a list", "kanban triage", "what stays what goes", "cut the backlog",
+        "triage", "tickets sortieren in buckets", "jetzt/später/cut", "liste priorisieren", "kanban triage", "was bleibt was geht", "backlog ausmisten",
+        "help me prioritize these", "drag-drop sort these"
+      ],
       "key_pattern": "4-column drag-drop board, tag-click filter, Copy-as-markdown export"
     },
     {
       "id": "19-editor-feature-flags",
       "category": "custom-editors",
       "file": "19-editor-feature-flags.html",
-      "use_when": ["feature flag editor", "toggle config", "dependency-aware switches", "config diff"],
+      "use_when": [
+        "feature flag editor", "toggle config", "dependency-aware switches", "config diff", "flags editor",
+        "feature flag editor", "toggle konfiguration", "abhängige schalter", "config diff", "flags editor",
+        "edit the flags", "config with warnings"
+      ],
       "key_pattern": "Grouped toggles + dependency warnings on prereq off + Copy-diff for changed keys only"
     },
     {
       "id": "20-editor-prompt-tuner",
       "category": "custom-editors",
       "file": "20-editor-prompt-tuner.html",
-      "use_when": ["tune a prompt template", "live preview with variables", "test multiple inputs against a template"],
+      "use_when": [
+        "tune a prompt template", "live preview with variables", "test multiple inputs against a template", "prompt tuner", "SKILL.md description tuner",
+        "prompt template tunen", "live vorschau mit variablen", "mehrere inputs gegen template", "prompt tuner", "SKILL.md beschreibung tunen",
+        "fine-tune this prompt", "live preview as I type"
+      ],
       "key_pattern": "Editable template left, variable slots highlighted, 3 sample inputs right re-render live"
     }
   ],
   "decision_tree": [
-    {"if_user_says": ["report", "status", "weekly", "what shipped", "monday skim"], "use_pattern": "11-status-report"},
-    {"if_user_says": ["incident", "postmortem", "outage", "RCA", "503", "downtime"], "use_pattern": "12-incident-report"},
-    {"if_user_says": ["plan", "implementation plan", "design doc", "milestones", "risks", "data flow"], "use_pattern": "16-implementation-plan"},
-    {"if_user_says": ["pr description", "pr writeup", "motivate the change", "file-by-file"], "use_pattern": "17-pr-writeup"},
-    {"if_user_says": ["code review", "annotated diff", "review the pr", "severity tags"], "use_pattern": "03-code-review-pr"},
-    {"if_user_says": ["module map", "architecture overview", "where does X live", "unfamiliar codebase"], "use_pattern": "04-code-understanding"},
-    {"if_user_says": ["design system", "color tokens", "type scale", "spacing tokens"], "use_pattern": "05-design-system"},
-    {"if_user_says": ["component variants", "states matrix", "contact sheet"], "use_pattern": "06-component-variants"},
-    {"if_user_says": ["animation", "easing", "transition", "micro-interaction"], "use_pattern": "07-prototype-animation"},
-    {"if_user_says": ["clickable flow", "screen-to-screen", "prototype flow"], "use_pattern": "08-prototype-interaction"},
-    {"if_user_says": ["slide deck", "presentation", "lightning talk", "arrow keys"], "use_pattern": "09-slide-deck"},
-    {"if_user_says": ["illustrations", "blog figures", "svg figures"], "use_pattern": "10-svg-illustrations"},
-    {"if_user_says": ["flowchart", "pipeline diagram", "process diagram"], "use_pattern": "13-flowchart-diagram"},
-    {"if_user_says": ["explain feature", "how does X work", "feature deep-dive"], "use_pattern": "14-research-feature-explainer"},
-    {"if_user_says": ["explain concept", "teach", "interactive explainer"], "use_pattern": "15-research-concept-explainer"},
-    {"if_user_says": ["triage", "sort tickets", "now next later", "prioritize", "cut what"], "use_pattern": "18-editor-triage-board"},
-    {"if_user_says": ["feature flags", "toggle dependencies", "config editor"], "use_pattern": "19-editor-feature-flags"},
-    {"if_user_says": ["prompt tuner", "template with variables", "live preview prompt"], "use_pattern": "20-editor-prompt-tuner"},
-    {"if_user_says": ["compare approaches", "side by side options", "X vs Y vs Z"], "use_pattern": "01-exploration-code-approaches"},
-    {"if_user_says": ["layout alternatives", "design directions"], "use_pattern": "02-exploration-visual-designs"}
+    {
+      "if_user_says": [
+        "report", "status", "weekly", "what shipped", "monday skim", "recap", "weekly recap", "weekly digest", "sprint review", "week update", "what did we ship",
+        "bericht", "status bericht", "wochenbericht", "was wurde fertig", "wochenrückblick", "sprint review", "woche zusammenfassung", "rückblick", "wochen update", "was wurde geshipt"
+      ],
+      "use_pattern": "11-status-report"
+    },
+    {
+      "if_user_says": [
+        "incident", "postmortem", "post-mortem", "outage", "rca", "5 whys", "503", "downtime", "sev1", "sev2", "failure timeline", "what went wrong",
+        "vorfall", "postmortem", "ausfall", "ursachenanalyse", "5 warums", "503", "down zeit", "sev1", "sev2", "fehler zeitleiste", "was ist schief gelaufen"
+      ],
+      "use_pattern": "12-incident-report"
+    },
+    {
+      "if_user_says": [
+        "plan", "implementation plan", "design doc", "milestones", "risks", "data flow", "rfc", "technical plan", "project plan", "the plan",
+        "plan", "implementierungsplan", "design dokument", "meilensteine", "risiken", "datenfluss", "rfc", "technischer plan", "projektplan", "der plan"
+      ],
+      "use_pattern": "16-implementation-plan"
+    },
+    {
+      "if_user_says": [
+        "pr description", "pr writeup", "pr body", "motivate the change", "file-by-file", "explain my pr",
+        "pr beschreibung", "pr writeup", "pr text", "änderung begründen", "datei für datei", "meinen pr erklären"
+      ],
+      "use_pattern": "17-pr-writeup"
+    },
+    {
+      "if_user_says": [
+        "code review", "annotated diff", "review the pr", "review this diff", "severity tags", "review with annotations",
+        "code review", "kommentierter diff", "pr reviewen", "diff reviewen", "schweregrad markieren", "review mit notizen"
+      ],
+      "use_pattern": "03-code-review-pr"
+    },
+    {
+      "if_user_says": [
+        "module map", "architecture overview", "where does x live", "where is x", "unfamiliar codebase", "code map", "module diagram", "explain the architecture",
+        "modulkarte", "architektur überblick", "wo lebt x", "wo ist x", "unbekannte codebase", "code karte", "modul diagramm", "architektur erklären"
+      ],
+      "use_pattern": "04-code-understanding"
+    },
+    {
+      "if_user_says": [
+        "design system", "color tokens", "type scale", "spacing tokens", "style guide", "design tokens",
+        "design system", "farb tokens", "typografie skala", "abstand tokens", "style guide", "design tokens"
+      ],
+      "use_pattern": "05-design-system"
+    },
+    {
+      "if_user_says": [
+        "component variants", "states matrix", "contact sheet", "all states of this", "variant grid",
+        "komponenten varianten", "zustände matrix", "kontaktbogen", "alle zustände", "varianten raster"
+      ],
+      "use_pattern": "06-component-variants"
+    },
+    {
+      "if_user_says": [
+        "animation", "easing", "transition", "micro-interaction", "tune the animation", "easing curve",
+        "animation", "easing", "übergang", "mikro-interaktion", "animation tunen", "easing kurve"
+      ],
+      "use_pattern": "07-prototype-animation"
+    },
+    {
+      "if_user_says": [
+        "clickable flow", "screen-to-screen", "prototype flow", "click through", "feel the interaction",
+        "klickbarer flow", "screen zu screen", "prototyp flow", "durchklicken", "interaktion erspüren"
+      ],
+      "use_pattern": "08-prototype-interaction"
+    },
+    {
+      "if_user_says": [
+        "slide deck", "presentation", "lightning talk", "arrow keys", "deck for the meeting", "slides",
+        "slide deck", "präsentation", "präsi", "lightning talk", "pfeiltasten folien", "folien für meeting", "folien"
+      ],
+      "use_pattern": "09-slide-deck"
+    },
+    {
+      "if_user_says": [
+        "illustrations", "blog figures", "svg figures", "vector art", "diagrams for post",
+        "illustrationen", "blog grafiken", "svg figuren", "vektor grafik", "diagramme für post"
+      ],
+      "use_pattern": "10-svg-illustrations"
+    },
+    {
+      "if_user_says": [
+        "flowchart", "pipeline diagram", "process diagram", "decision flow", "deploy diagram",
+        "flussdiagramm", "pipeline diagramm", "prozess diagramm", "entscheidungs flow", "deploy diagramm"
+      ],
+      "use_pattern": "13-flowchart-diagram"
+    },
+    {
+      "if_user_says": [
+        "explain feature", "how does x work", "feature deep-dive", "feature explainer", "walkthrough of x",
+        "feature erklären", "wie funktioniert x", "feature deep-dive", "feature erklärer", "x durchgehen"
+      ],
+      "use_pattern": "14-research-feature-explainer"
+    },
+    {
+      "if_user_says": [
+        "explain concept", "teach me", "interactive explainer", "algorithm visualization", "interactive demo",
+        "konzept erklären", "lehre mich", "interaktiver erklärer", "algorithmus visualisierung", "interaktive demo"
+      ],
+      "use_pattern": "15-research-concept-explainer"
+    },
+    {
+      "if_user_says": [
+        "triage", "sort tickets", "now next later", "prioritize", "cut what", "drag drop sort", "kanban", "bucket the backlog",
+        "triage", "tickets sortieren", "jetzt nächste später", "priorisieren", "was streichen", "drag drop sortieren", "kanban", "backlog buckets"
+      ],
+      "use_pattern": "18-editor-triage-board"
+    },
+    {
+      "if_user_says": [
+        "feature flags", "toggle dependencies", "config editor", "flags editor", "flag toggles",
+        "feature flags", "toggle abhängigkeiten", "config editor", "flags editor", "flag schalter"
+      ],
+      "use_pattern": "19-editor-feature-flags"
+    },
+    {
+      "if_user_says": [
+        "prompt tuner", "template with variables", "live preview prompt", "tune the prompt", "skill description tuner",
+        "prompt tuner", "vorlage mit variablen", "live vorschau prompt", "prompt anpassen", "skill beschreibung tuner"
+      ],
+      "use_pattern": "20-editor-prompt-tuner"
+    },
+    {
+      "if_user_says": [
+        "compare approaches", "side by side options", "x vs y vs z", "three approaches", "alternatives side by side",
+        "ansätze vergleichen", "nebeneinander optionen", "x vs y vs z", "drei ansätze", "alternativen nebeneinander"
+      ],
+      "use_pattern": "01-exploration-code-approaches"
+    },
+    {
+      "if_user_says": [
+        "layout alternatives", "design directions", "ui variants",
+        "layout alternativen", "design richtungen", "ui varianten"
+      ],
+      "use_pattern": "02-exploration-visual-designs"
+    }
   ]
 }
