@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "source_repo": "https://github.com/ThariqS/html-effectiveness",
   "source_author": "Thariq Shihipar (@trq212, thariq.io) — Claude Code @ Anthropic",
   "local_clone": "/Users/ancplua/RiderProjects/thariq-html-effectiveness",
@@ -13,7 +13,47 @@
     "case_insensitive": "Triggers are matched lower-case. 'HTML REPORT', 'html report', 'Html Report' all count.",
     "ambiguous_user_intent": "If the user says something like 'make me a thing for X', look at WHAT X is. A list of tickets → triage-board. A diff → code-review. A timeline → incident-report. Let the data shape decide the pattern.",
     "multi_pattern_fit": "If two patterns could fit, pick the one whose `key_pattern` field most closely describes the data structure the user has in hand. If still ambiguous, prefer the more interactive pattern (editor > report > diagram).",
-    "be_pushy": "Default to firing when the output would otherwise be a long markdown table, several sections of prose with categories, or a list the user will sort/filter/diff. Markdown for a paragraph; HTML for anything you'll come back to."
+    "be_pushy": "Default to firing when the output would otherwise be a long markdown table, several sections of prose with categories, or a list the user will sort/filter/diff. Markdown for a paragraph; HTML for anything you'll come back to.",
+    "composition": "Patterns are composable. If a task naturally splits across multiple deliverables (e.g., a plan AND a spawn-deck for the plan), write multiple linked .htmls and reference each other via <a href> at the bottom. If a single pattern needs sub-work that parallelizes (audit 200 repos, scan 30 services), default to 21-agent-spawn-deck instead of one giant report.",
+    "live_data_opt_in": "If the user wants live data (auto-refresh, button-click re-fetch), add a tiny localhost-only fetch() loop pointing at a Python http.server / gh cli wrapper they run alongside. Document the prerequisite in a <p class='prereq'> at the top so the artifact remains useful even when the server is off."
+  },
+  "palettes": {
+    "coral": {
+      "id": "coral",
+      "use_for": "Reports, plans, design docs, status updates, research explainers, editor UIs — anything reading-room or knowledge-work. Default palette.",
+      "tokens": {
+        "ivory": "#FAF9F5",
+        "paper": "#FFFFFF",
+        "slate": "#141413",
+        "clay": "#D97757",
+        "clay_dark": "#B85C3E",
+        "oat": "#E3DACC",
+        "olive": "#788C5D",
+        "gray_50": "#F0EEE6",
+        "gray_200": "#D1CFC5",
+        "gray_500": "#87867F",
+        "gray_700": "#3D3D3A"
+      }
+    },
+    "github_dark": {
+      "id": "github_dark",
+      "use_for": "Codebase audits, CI/CD dashboards, fan-out agent decks, terminal-adjacent tooling — anything that feels like dev-ops or code-introspection. Use when the artifact lives next to a terminal session.",
+      "tokens": {
+        "bg": "#0d1117",
+        "surface": "#161b22",
+        "surface_2": "#21262d",
+        "border": "#30363d",
+        "accent": "#58a6ff",
+        "accent_green": "#3fb950",
+        "warn": "#d29922",
+        "danger": "#f85149",
+        "muted": "#8b949e",
+        "text": "#e6edf3",
+        "text_2": "#c9d1d9",
+        "purple": "#bc8cff",
+        "teal": "#39d353"
+      }
+    }
   },
   "design_tokens": {
     "ivory": "#FAF9F5",
@@ -262,6 +302,18 @@
         "fine-tune this prompt", "live preview as I type"
       ],
       "key_pattern": "Editable template left, variable slots highlighted, 3 sample inputs right re-render live"
+    },
+    {
+      "id": "21-agent-spawn-deck",
+      "category": "meta-orchestration",
+      "file": "(no upstream — invented for this skill, see assets/agent-spawn-deck-demo.html)",
+      "use_when": [
+        "fan out agents", "spawn parallel agents", "multi-agent prompt", "team of agents", "parallel audit", "parallel scan", "agent team", "deck of prompts", "audit prompts for me", "give me the prompts to run",
+        "agenten fan-out", "parallele agenten spawnen", "multi-agenten prompt", "team aus agenten", "paralleler audit", "paralleler scan", "agenten team", "deck mit prompts", "audit prompts liefern", "die prompts geben",
+        "shadow-ai-inventory style", "ready-to-run prompt deck"
+      ],
+      "key_pattern": "N teammate cards (emoji + role + scope + 1 ready-to-paste prompt per card) + Copy-button per teammate + 'Copy ALL as fan-out script' master button generating a parallel bash with claude -p invocations. Default palette: github_dark. Mention the synthesis step at the bottom (after fan-out returns, the lead aggregates into a follow-up HTML — link to which pattern).",
+      "inspired_by": "shadow-ai-inventory pattern: HTML carries 3+ ready-to-paste prompts for teammates, each scoped to one slice of the audit. The HTML is the launch console; the prompts spawn the real work. After all teammates report, a lead synthesizes into a triage / report HTML (link out to 18-editor-triage-board or 11-status-report)."
     }
   ],
   "decision_tree": [
@@ -404,6 +456,13 @@
         "layout alternativen", "design richtungen", "ui varianten"
       ],
       "use_pattern": "02-exploration-visual-designs"
+    },
+    {
+      "if_user_says": [
+        "fan out", "fan-out", "spawn agents", "spawn parallel", "multi-agent prompt", "team of agents", "parallel audit", "parallel scan", "agent team prompt", "give me prompts to run", "deck of prompts", "scan in parallel", "split this across agents",
+        "fan out", "fan-out", "agenten spawnen", "parallel spawnen", "multi-agenten prompt", "team aus agenten", "paralleler audit", "paralleler scan", "agenten team prompt", "prompts geben zum starten", "deck mit prompts", "parallel scannen", "auf agenten aufteilen"
+      ],
+      "use_pattern": "21-agent-spawn-deck"
     }
   ]
 }

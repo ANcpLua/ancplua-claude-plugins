@@ -6,19 +6,23 @@ description: >
   plan, RFC, feature-flag editor, prompt tuner, annotated PR writeup, status update, status report,
   weekly recap, sprint review, module map, architecture overview, design system, component variants,
   animation prototype, interactive explainer, concept explainer, feature explainer, SVG figures,
-  pipeline diagram, OR any artifact that benefits from layout, interaction, drag-drop, live preview,
-  side-by-side comparison, or a copy-to-clipboard export. Triggers eagerly on English AND German
-  phrases (case-insensitive, typo-tolerant, semantic match — NOT literal): "html instead of markdown",
-  "make me a dashboard", "build an interactive", "html report", "triage board", "triage me these",
-  "status report", "wochenbericht", "postmortem", "incident", "implementation plan",
+  pipeline diagram, agent-spawn deck (HTML carrying multiple ready-to-paste agent prompts for fan-out
+  work), OR any artifact that benefits from layout, interaction, drag-drop, live preview, side-by-side
+  comparison, parallel agent fan-out, or a copy-to-clipboard export. Triggers eagerly on English AND
+  German phrases (case-insensitive, typo-tolerant, semantic match — NOT literal): "html instead of
+  markdown", "make me a dashboard", "build an interactive", "html report", "triage board", "triage
+  me these", "status report", "wochenbericht", "postmortem", "incident", "implementation plan",
   "implementierungsplan", "design doc", "side by side", "drag drop", "click through", "give me an
   editor for", "tune the prompt", "feature flag editor", "explainer with interaction", "concept
   explainer", "annotated diff", "code review", "pr writeup", "pr beschreibung", "slide deck",
   "präsentation", "präsi", "module map", "modulkarte", "flowchart", "flussdiagramm", "vergleich",
-  "nebeneinander", "vergleiche x y z", "x vs y vs z", "drei ansätze", "alternativen". Trigger
-  eagerly — if the output would otherwise be a long markdown table, several sections of prose with
-  categories, or a list the user will sort/filter/diff, HTML wins. Match on user intent, not literal
-  phrase: a list of tickets → triage-board, a diff → code-review, a timeline → incident-report.
+  "nebeneinander", "vergleiche x y z", "x vs y vs z", "drei ansätze", "alternativen", "spawn agents",
+  "fan out", "agenten spawnen", "agenten team", "parallel scan", "paralleler audit", "multi-agent
+  prompt", "give me prompts to run", "deck of prompts". Trigger eagerly — if the output would
+  otherwise be a long markdown table, several sections of prose with categories, a list the user
+  will sort/filter/diff, OR a task that benefits from parallel agent fan-out, HTML wins. Match on
+  user intent, not literal phrase: a list of tickets → triage-board, a diff → code-review, a
+  timeline → incident-report, a parallel-audit task → 21-agent-spawn-deck.
 compatibility: >
   Works in any environment where the agent can write files. The output is a vanilla .html with inline
   CSS/JS — open in a browser, no build, no npm.
@@ -72,6 +76,21 @@ Do **not** modify those files in place — they are the upstream reference. Read
 - **Ambiguous user intent.** If the user says "make me a thing for X", look at WHAT X is. A list of tickets → triage-board. A diff → code-review. A timeline → incident-report. Let the data shape decide the pattern.
 - **Be pushy.** Default to firing when the output would otherwise be a long markdown table, several sections of prose with categories, or a list the user will sort/filter/diff. Markdown for a paragraph; HTML for anything you'll come back to.
 
+## Palette choice
+
+`patterns.json:palettes` defines two:
+
+- **`coral`** (default) — `#FAF9F5`/`#D97757`/`#141413`/`#788C5D` + Lora serif. Use for reports, plans, design docs, status updates, research explainers, editor UIs. Anything reading-room or knowledge-work.
+- **`github_dark`** — `#0d1117`/`#58a6ff`/`#3fb950`/`#f85149`. Use for codebase audits, CI/CD dashboards, fan-out agent decks, terminal-adjacent tooling. Anything that lives next to a terminal session.
+
+Pattern `21-agent-spawn-deck` defaults to `github_dark`. All others default to `coral`. The user can override per request.
+
+## Composition (multi-pattern output)
+
+If a task naturally splits across multiple deliverables (e.g., an implementation-plan AND a spawn-deck for executing the plan), write **multiple linked .htmls** and reference each other via `<a href>` at the bottom. Example: `repo-cleanup-plan.html` (pattern 16, plan) + `repo-cleanup-spawn-deck.html` (pattern 21, parallel scanners) + `repo-cleanup-triage.html` (pattern 18, result triage). Each links the next.
+
+If a single pattern needs sub-work that parallelizes (audit 200 repos, scan 30 services), default to `21-agent-spawn-deck` instead of one giant report — the deck carries N ready-to-paste prompts, the user fan-outs, the lead synthesizes.
+
 ## When to skip this skill
 
 - The user explicitly asked for markdown / a commit message / a code change in a `.py` / `.cs` / etc. file.
@@ -94,6 +113,9 @@ Do **not** modify those files in place — they are the upstream reference. Read
 | "präsi für Bachelor-Verteidigung mit Pfeiltasten" | `09-slide-deck` |
 | "feature flags editor für flags.production.json" | `19-editor-feature-flags` |
 | "concept explainer für consistent hashing, interaktiv" | `15-research-concept-explainer` |
+| "fan out 4 agents to scan my 349 repos" | `21-agent-spawn-deck` (github_dark palette) |
+| "gib mir das deck mit prompts zum parallel ausführen für den shadow-ai audit" | `21-agent-spawn-deck` |
+| "implementation plan PLUS spawn-deck zum ausführen" | `16-implementation-plan` + `21-agent-spawn-deck` (linked) |
 
 ## Bundled asset
 

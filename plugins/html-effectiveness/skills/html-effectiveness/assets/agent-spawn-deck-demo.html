@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repo-Fleet Cleanup — agent spawn deck</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface-2: #21262d;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --warn: #d29922;
+    --danger: #f85149;
+    --muted: #8b949e;
+    --text: #e6edf3;
+    --text-2: #c9d1d9;
+    --purple: #bc8cff;
+    --teal: #39d353;
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--sans); font-size: 14px; line-height: 1.55;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 36px 24px 64px; }
+
+  header { border-bottom: 1px solid var(--border); padding-bottom: 22px; margin-bottom: 26px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 8px;
+  }
+  .eyebrow::before { content: "▸ "; color: var(--accent); }
+  h1 { font-family: var(--serif); font-weight: 500; font-size: 30px; letter-spacing: -0.01em; margin-bottom: 8px; }
+  .lede { color: var(--muted); max-width: 760px; font-size: 14.5px; line-height: 1.6; }
+  .badges { margin-top: 14px; }
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-family: var(--mono); font-size: 11px; font-weight: 500; margin-right: 6px;
+    border: 1px solid transparent;
+  }
+  .badge-blue   { background: rgba(88,166,255,.13); color: var(--accent); border-color: rgba(88,166,255,.3); }
+  .badge-green  { background: rgba(63,185,80,.13); color: var(--green);  border-color: rgba(63,185,80,.3); }
+  .badge-warn   { background: rgba(210,153,34,.13); color: var(--warn);   border-color: rgba(210,153,34,.3); }
+  .badge-purple { background: rgba(188,140,255,.13); color: var(--purple); border-color: rgba(188,140,255,.3); }
+
+  .toolbar {
+    position: sticky; top: 0; z-index: 5; background: var(--bg);
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border);
+  }
+  .toolbar .summary { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .toolbar .summary b { color: var(--text); }
+  .toolbar .spacer { flex: 1; }
+  button.primary {
+    background: var(--accent); color: var(--bg); border: 1px solid var(--accent);
+    border-radius: 6px; padding: 8px 14px; font-family: var(--mono); font-size: 12px;
+    cursor: pointer; font-weight: 600;
+  }
+  button.primary:hover:not(.copied) { filter: brightness(1.08); }
+  button.primary.copied { background: var(--green); border-color: var(--green); }
+  button.ghost {
+    background: transparent; color: var(--text-2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 14px; font-family: var(--mono); font-size: 12px;
+    cursor: pointer;
+  }
+  button.ghost:hover { border-color: var(--muted); }
+
+  h2 { font-family: var(--serif); font-weight: 500; font-size: 19px; margin: 36px 0 10px; }
+  h2 .num { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-right: 8px; letter-spacing: 0.08em; }
+
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 18px; overflow: hidden;
+  }
+  .card.scan   { border-left: 3px solid var(--accent); }
+  .card.delete { border-left: 3px solid var(--danger); }
+  .card.fork   { border-left: 3px solid var(--purple); }
+  .card.stub   { border-left: 3px solid var(--warn); }
+
+  .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+  .emoji { font-size: 22px; line-height: 1; }
+  .name {
+    font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--text);
+  }
+  .role { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin-bottom: 10px; }
+  .scope {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 12px; font-family: var(--mono); font-size: 11px; color: var(--text-2);
+    margin-bottom: 12px; line-height: 1.5;
+  }
+  .scope b { color: var(--text); font-weight: 600; }
+
+  pre.prompt {
+    background: #010409; border: 1px solid var(--border); border-radius: 6px;
+    padding: 12px 14px; font-family: var(--mono); font-size: 11.5px; line-height: 1.5;
+    color: var(--text-2); white-space: pre-wrap; word-break: break-word;
+    max-height: 280px; overflow-y: auto;
+    position: relative;
+  }
+  .card-actions { display: flex; gap: 6px; margin-top: 10px; }
+  .copy-btn {
+    flex: 1; background: var(--surface-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 12px; font-family: var(--mono); font-size: 11px;
+    cursor: pointer; transition: all 120ms;
+  }
+  .copy-btn:hover:not(.copied) { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .copy-btn.copied { background: var(--green); color: var(--bg); border-color: var(--green); }
+
+  .synthesis {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 18px 20px; margin-top: 18px;
+  }
+  .synthesis h3 { font-family: var(--serif); font-weight: 500; font-size: 17px; margin-bottom: 8px; }
+  .synthesis p { color: var(--text-2); font-size: 13px; line-height: 1.65; margin-bottom: 8px; }
+  .synthesis code {
+    font-family: var(--mono); font-size: 11.5px; background: var(--surface-2);
+    padding: 2px 6px; border-radius: 3px; color: var(--accent);
+  }
+  .synthesis a {
+    color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent);
+  }
+  .synthesis a:hover { border-bottom-style: solid; }
+
+  .limits {
+    background: rgba(248,81,73,.06); border: 1px solid rgba(248,81,73,.3);
+    border-radius: 10px; padding: 16px 20px; margin-top: 22px;
+  }
+  .limits h3 { color: var(--danger); font-family: var(--serif); font-weight: 500; font-size: 16px; margin-bottom: 8px; }
+  .limits ul { padding-left: 20px; color: var(--text-2); font-size: 12.5px; line-height: 1.65; }
+
+  .footer {
+    margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--border);
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 880px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">ANcpLua / repo fleet / spawn deck · 2026-05-15</div>
+    <h1>Fan out four scanners over 349 repos</h1>
+    <p class="lede">
+      One pass over <code style="font-family:var(--mono);font-size:13px;color:var(--accent)">gh repo list ANcpLua --limit 1000</code> classified everything into 4 buckets (45 delete / 59 review / 64 archive / 181 keep). Reviewing 200+ candidates manually is the failure mode this whole skill exists to avoid. Spawn four specialized teammates instead — each takes one detection axis, returns evidence-backed verdicts, the lead aggregates into a triage HTML.
+    </p>
+    <div class="badges">
+      <span class="badge badge-blue">github_dark palette</span>
+      <span class="badge badge-purple">pattern: 21-agent-spawn-deck</span>
+      <span class="badge badge-green">runs in parallel</span>
+      <span class="badge badge-warn">no destructive ops — verdicts only</span>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="summary" id="summary"></div>
+    <div class="spacer"></div>
+    <button class="ghost" id="resetBtn">Reset</button>
+    <button class="primary" id="copyAllBtn">Copy ALL as fan-out bash</button>
+  </div>
+
+  <h2><span class="num">01</span>Teammate prompts — copy one per terminal tab</h2>
+  <div class="grid" id="deck"></div>
+
+  <div class="synthesis">
+    <h3>02 · Synthesis step (after all four return)</h3>
+    <p>
+      Each teammate writes a JSON verdict file under <code>~/repo-audit/scans/&lt;teammate&gt;.json</code> with shape
+      <code>{repo, verdict, confidence, evidence[]}</code>. When the four files exist, the lead re-runs
+      the classifier with the new evidence and produces the final triage at
+      <a href="../assets/otel-semconv-demo.html">repo-fleet-cleanup-triage.html</a> (pattern
+      <code>18-editor-triage-board</code>). The drag-drop in that triage overrides any teammate's
+      verdict — they're advisory.
+    </p>
+    <p>
+      <b>Why fan-out instead of one big audit?</b> Each scan axis (empty / fork-status / stub-name /
+      activity) has a different evidence model. One agent doing all four ends up paging in 4× the
+      context per repo and confusing axes. Four specialists, each with a tight scope, finish in ~1/4
+      the wall-clock with sharper verdicts. Pattern lifted from
+      <a href="https://github.com/ThariqS/html-effectiveness">html-effectiveness</a>'s spawn-deck
+      style (originally the shadow-ai-inventory by another agent).
+    </p>
+  </div>
+
+  <div class="limits">
+    <h3>What this deck cannot do for you</h3>
+    <ul>
+      <li>It will NOT execute <code>gh repo delete</code> or <code>gh repo archive</code>. Verdicts only, no irreversible ops.</li>
+      <li>It does NOT see the contents of private repos beyond metadata (<code>gh repo list</code> already pulled descriptions, sizes, stars, fork status). Read-deep into a private repo requires explicit per-repo prompts.</li>
+      <li>The verdicts are advisory. The final triage HTML lets you override any of them by dragging across columns.</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    Pattern: <code>21-agent-spawn-deck</code> · Catalog: <a href="https://github.com/ANcpLua/ancplua-claude-plugins/tree/main/plugins/html-effectiveness">ANcpLua/html-effectiveness</a> · Source data: <code>~/repo-audit/repos.json</code>
+  </div>
+
+</div>
+
+<script>
+window.TEAMMATES = [
+  {
+    id: "empty-scanner",
+    emoji: "📭",
+    cls: "scan",
+    name: "Teammate: empty-scanner",
+    role: "Confirms repos flagged 'isEmpty' really have zero commits and zero refs beyond default branch HEAD.",
+    scope: "Scope: 5 repos with isEmpty=true OR diskUsage<2KB (from ~/repo-audit/repos.json). Each gets a GH API verification call.",
+    prompt: [
+      "Scan five candidate-delete repos in ANcpLua/* flagged isEmpty=true or diskUsage<2KB.",
+      "For each repo:",
+      "  1. `gh api repos/ANcpLua/<name>/branches --jq '.[].name'` — count branches.",
+      "  2. `gh api repos/ANcpLua/<name>/commits --jq 'length'` — count default-branch commits.",
+      "  3. `gh api repos/ANcpLua/<name>/contents` — verify tree is empty.",
+      "",
+      "Verdict per repo:",
+      "  - CONFIRM_EMPTY: 0–1 commits, no content, only default branch → safe to delete.",
+      "  - HAS_HISTORY:  commits exist but in non-default branches → archive instead.",
+      "  - ABORT:        any star, fork, watcher, or open issue → keep + flag.",
+      "",
+      "Write ~/repo-audit/scans/empty-scanner.json with {repo, verdict, confidence, evidence[]}.",
+      "Don't execute any destructive op. Verdict only."
+    ].join("\n")
+  },
+  {
+    id: "fork-ahead-scanner",
+    emoji: "🍴",
+    cls: "fork",
+    name: "Teammate: fork-ahead-scanner",
+    role: "For each fork, check if it has commits ahead of its parent. Forks with 0 ahead are pure clutter; forks with N ahead are real work.",
+    scope: "Scope: 14 forks (parent ranges from microsoft/roslyn, dotnet/aspnetcore, etc.). The 'roslyn' fork alone is 2.33 GB.",
+    prompt: [
+      "Scan 14 ANcpLua/* fork repos and decide which are pure clutter vs which carry real work.",
+      "",
+      "For each fork:",
+      "  1. `gh api repos/ANcpLua/<name> --jq '{parent: .parent.full_name, default_branch}'` — get parent.",
+      "  2. `gh api repos/ANcpLua/<name>/compare/<parent_default>...ANcpLua:<default> --jq '{ahead_by, behind_by, total_commits}'`.",
+      "  3. If ahead_by==0: definitely clutter (DELETE candidate).",
+      "  4. If ahead_by>0: check if ahead commits are non-merge/non-revert (real work).",
+      "",
+      "Verdict per repo:",
+      "  - CLUTTER:        ahead_by=0, no draft PRs against parent → safe to delete.",
+      "  - WORK_AHEAD:     ahead_by>0 with real commits → KEEP, optionally upstream a PR.",
+      "  - STALE_PARENT:   parent archived/renamed → archive own fork too.",
+      "",
+      "Write ~/repo-audit/scans/fork-ahead-scanner.json with {repo, verdict, confidence, evidence[]}.",
+      "No destructive ops. Verdict only."
+    ].join("\n")
+  },
+  {
+    id: "stub-detector",
+    emoji: "🪪",
+    cls: "stub",
+    name: "Teammate: stub-detector",
+    role: "Look at repos with name patterns (`eqeqw`, `A-`, `test1`, `wae`, `*-DE_1`) and confirm they're genuine throw-away typo creations rather than intentional research.",
+    scope: "Scope: 15 stub-name candidates (size<10KB, age>30d, no description, 0 stars).",
+    prompt: [
+      "Scan 15 ANcpLua/* candidate-delete repos with stub-like names.",
+      "Candidates: eqeqw, eqeqwwe, A-, ACsharp, Asharp, PaperlessCsharps, test1, wae, etc.",
+      "",
+      "For each repo:",
+      "  1. `gh api repos/ANcpLua/<name>/contents --jq '.[].name'` — confirm 0–3 files.",
+      "  2. `gh api repos/ANcpLua/<name>/commits --jq 'length'` — confirm 1–2 commits.",
+      "  3. Inspect README.md (if any) for evidence of intent.",
+      "  4. Cross-check name against 'PaperlessCsharp' (existing kept repo) — these may be misnamed sandboxes that duplicate real ones.",
+      "",
+      "Verdict per repo:",
+      "  - TYPO_TRASH:        clearly random naming, no content → safe to delete.",
+      "  - SANDBOX_DUP:       duplicates an existing well-named repo → safe to delete.",
+      "  - INTENT_UNCLEAR:    has README or non-trivial commit → REVIEW pile.",
+      "",
+      "Write ~/repo-audit/scans/stub-detector.json with {repo, verdict, confidence, evidence[]}.",
+      "No destructive ops. Verdict only."
+    ].join("\n")
+  },
+  {
+    id: "review-resolver",
+    emoji: "🤔",
+    cls: "delete",
+    name: "Teammate: review-resolver",
+    role: "Take the 59 REVIEW-pile repos and produce a recommendation per repo so the lead can make a final call (archive vs delete vs keep) without re-reading all of them.",
+    scope: "Scope: 59 repos in REVIEW pile (forks with 0 stars created within 180d, OR size<200KB age>180d no description).",
+    prompt: [
+      "Look at 59 ANcpLua/* repos currently in the REVIEW pile of ~/repo-audit/triage-data.json.",
+      "",
+      "For each repo:",
+      "  1. Read description, primary language, fork status.",
+      "  2. `gh api repos/ANcpLua/<name>/contents --jq '[.[].name] | sort'` — what's in there.",
+      "  3. `gh api repos/ANcpLua/<name>/readme --jq '.content' | base64 -d | head -30` — first 30 lines of README if any.",
+      "  4. Cross-check: is this a referenced dependency of another ANcpLua/* repo? `gh search code 'ANcpLua/<name>' user:ANcpLua --limit 5`.",
+      "",
+      "Verdict per repo:",
+      "  - PROMOTE_KEEP:      referenced by another ANcpLua repo OR has substantive README → KEEP.",
+      "  - PROMOTE_ARCHIVE:   one-off experiment finished, no references → ARCHIVE.",
+      "  - PROMOTE_DELETE:    fork with 0 ahead AND no references → DELETE.",
+      "",
+      "Write ~/repo-audit/scans/review-resolver.json with {repo, verdict, confidence, evidence[], one_line_rationale}.",
+      "No destructive ops. Verdict only."
+    ].join("\n")
+  }
+];
+
+var deck = document.getElementById("deck");
+
+function buildCard(t) {
+  var card = document.createElement("article");
+  card.className = "card " + t.cls;
+
+  var head = document.createElement("div"); head.className = "card-head";
+  var em = document.createElement("span"); em.className = "emoji"; em.textContent = t.emoji;
+  var nm = document.createElement("span"); nm.className = "name"; nm.textContent = t.name;
+  head.appendChild(em); head.appendChild(nm);
+
+  var role = document.createElement("p"); role.className = "role"; role.textContent = t.role;
+  var scope = document.createElement("div"); scope.className = "scope"; scope.innerHTML = "<b>Scope</b> · " + t.scope;
+
+  var pre = document.createElement("pre"); pre.className = "prompt"; pre.textContent = t.prompt;
+
+  var actions = document.createElement("div"); actions.className = "card-actions";
+  var copyPrompt = document.createElement("button");
+  copyPrompt.className = "copy-btn"; copyPrompt.dataset.kind = "prompt";
+  copyPrompt.textContent = "Copy prompt";
+  var copyCli = document.createElement("button");
+  copyCli.className = "copy-btn"; copyCli.dataset.kind = "cli";
+  copyCli.textContent = "Copy claude -p invocation";
+
+  copyPrompt.addEventListener("click", function () { copyToClipboard(t.prompt, copyPrompt); });
+  copyCli.addEventListener("click", function () { copyToClipboard(buildCli(t), copyCli); });
+  actions.appendChild(copyPrompt); actions.appendChild(copyCli);
+
+  card.appendChild(head); card.appendChild(role); card.appendChild(scope); card.appendChild(pre); card.appendChild(actions);
+  return card;
+}
+
+function buildCli(t) {
+  return [
+    "# Teammate " + t.id,
+    "claude -p --no-session-persistence --max-budget-usd 3 " +
+      "--add-dir /Users/ancplua/repo-audit " +
+      "'" + t.prompt.replace(/'/g, "'\\''") + "' \\",
+    "  > ~/repo-audit/scans/" + t.id + ".log 2>&1 &"
+  ].join("\n");
+}
+
+function buildFanOutScript() {
+  var lines = [
+    "#!/usr/bin/env bash",
+    "# Fan-out: 4 specialized scanners over the 349-repo fleet",
+    "# Generated " + new Date().toISOString().slice(0, 16).replace("T", " ") + " from agent-spawn-deck-demo.html",
+    "# Each teammate writes a JSON verdict to ~/repo-audit/scans/<id>.json",
+    "set -euo pipefail",
+    "mkdir -p ~/repo-audit/scans",
+    ""
+  ];
+  window.TEAMMATES.forEach(function (t) {
+    lines.push(buildCli(t));
+    lines.push("");
+  });
+  lines.push("wait  # block until all four return");
+  lines.push("echo '✓ all four teammates returned; synthesis next.'");
+  lines.push("ls -la ~/repo-audit/scans/");
+  return lines.join("\n");
+}
+
+function copyToClipboard(txt, btn) {
+  function flash() {
+    var orig = btn.textContent;
+    btn.textContent = "✓ copied";
+    btn.classList.add("copied");
+    setTimeout(function () { btn.textContent = orig; btn.classList.remove("copied"); }, 1200);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(flash, flash);
+  } else {
+    var ta = document.createElement("textarea"); ta.value = txt;
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta); flash();
+  }
+}
+
+window.TEAMMATES.forEach(function (t) { deck.appendChild(buildCard(t)); });
+
+document.getElementById("summary").innerHTML =
+  "<b>" + window.TEAMMATES.length + "</b> teammates" +
+  "<span style='margin:0 6px;color:var(--border)'>·</span>" +
+  "<b>" + (window.TEAMMATES.reduce(function (s, t) { return s + t.prompt.length; }, 0)) + "</b> total prompt chars" +
+  "<span style='margin:0 6px;color:var(--border)'>·</span>" +
+  "scope: 5 + 14 + 15 + 59 = <b>93 repos</b> across the four scans";
+
+document.getElementById("copyAllBtn").addEventListener("click", function (e) {
+  copyToClipboard(buildFanOutScript(), e.target);
+});
+
+document.getElementById("resetBtn").addEventListener("click", function () {
+  document.querySelectorAll(".copy-btn.copied, button.primary.copied").forEach(function (b) { b.classList.remove("copied"); });
+});
+</script>
+</body>
+</html>
