@@ -132,14 +132,91 @@ reviews:
   - "!**/*.sarif"
   - "!**/*.trx"
   path_instructions:
-  - path: "**/*.{ts,tsx,js,jsx,mjs,cjs,json}"
+  - path: "**/*.ts"
     instructions: TypeScript/JavaScript review. Flag `any` without a narrow justification,
       unsafe casts, stale hook dependencies, direct network calls that bypass shared
       clients, client/server contract drift, swallowed promise rejections, accessibility
       regressions, missing loading/error states, bundle-heavy dependencies, and package-script
       drift. Generated clients or schemas must be regenerated from the source contract;
       do not hand-edit generated output.
-  - path: "**/*.{spec,test}.{ts,tsx,js,jsx}"
+  - path: "**/*.tsx"
+    instructions: TypeScript/JavaScript review. Flag `any` without a narrow justification,
+      unsafe casts, stale hook dependencies, direct network calls that bypass shared
+      clients, client/server contract drift, swallowed promise rejections, accessibility
+      regressions, missing loading/error states, bundle-heavy dependencies, and package-script
+      drift. Generated clients or schemas must be regenerated from the source contract;
+      do not hand-edit generated output.
+  - path: "**/*.js"
+    instructions: TypeScript/JavaScript review. Flag `any` without a narrow justification,
+      unsafe casts, stale hook dependencies, direct network calls that bypass shared
+      clients, client/server contract drift, swallowed promise rejections, accessibility
+      regressions, missing loading/error states, bundle-heavy dependencies, and package-script
+      drift. Generated clients or schemas must be regenerated from the source contract;
+      do not hand-edit generated output.
+  - path: "**/*.jsx"
+    instructions: TypeScript/JavaScript review. Flag `any` without a narrow justification,
+      unsafe casts, stale hook dependencies, direct network calls that bypass shared
+      clients, client/server contract drift, swallowed promise rejections, accessibility
+      regressions, missing loading/error states, bundle-heavy dependencies, and package-script
+      drift. Generated clients or schemas must be regenerated from the source contract;
+      do not hand-edit generated output.
+  - path: "**/*.mjs"
+    instructions: TypeScript/JavaScript review. Flag `any` without a narrow justification,
+      unsafe casts, stale hook dependencies, direct network calls that bypass shared
+      clients, client/server contract drift, swallowed promise rejections, accessibility
+      regressions, missing loading/error states, bundle-heavy dependencies, and package-script
+      drift. Generated clients or schemas must be regenerated from the source contract;
+      do not hand-edit generated output.
+  - path: "**/*.cjs"
+    instructions: TypeScript/JavaScript review. Flag `any` without a narrow justification,
+      unsafe casts, stale hook dependencies, direct network calls that bypass shared
+      clients, client/server contract drift, swallowed promise rejections, accessibility
+      regressions, missing loading/error states, bundle-heavy dependencies, and package-script
+      drift. Generated clients or schemas must be regenerated from the source contract;
+      do not hand-edit generated output.
+  - path: "**/*.json"
+    instructions: TypeScript/JavaScript review. Flag `any` without a narrow justification,
+      unsafe casts, stale hook dependencies, direct network calls that bypass shared
+      clients, client/server contract drift, swallowed promise rejections, accessibility
+      regressions, missing loading/error states, bundle-heavy dependencies, and package-script
+      drift. Generated clients or schemas must be regenerated from the source contract;
+      do not hand-edit generated output.
+  - path: "**/*.spec.ts"
+    instructions: Frontend tests. Prefer user-visible assertions by role/text/state,
+      not implementation selectors. Avoid fixed sleeps and brittle snapshots. Validate
+      unhappy paths, loading states, and accessibility-critical behavior when UI logic
+      changes.
+  - path: "**/*.spec.tsx"
+    instructions: Frontend tests. Prefer user-visible assertions by role/text/state,
+      not implementation selectors. Avoid fixed sleeps and brittle snapshots. Validate
+      unhappy paths, loading states, and accessibility-critical behavior when UI logic
+      changes.
+  - path: "**/*.spec.js"
+    instructions: Frontend tests. Prefer user-visible assertions by role/text/state,
+      not implementation selectors. Avoid fixed sleeps and brittle snapshots. Validate
+      unhappy paths, loading states, and accessibility-critical behavior when UI logic
+      changes.
+  - path: "**/*.spec.jsx"
+    instructions: Frontend tests. Prefer user-visible assertions by role/text/state,
+      not implementation selectors. Avoid fixed sleeps and brittle snapshots. Validate
+      unhappy paths, loading states, and accessibility-critical behavior when UI logic
+      changes.
+  - path: "**/*.test.ts"
+    instructions: Frontend tests. Prefer user-visible assertions by role/text/state,
+      not implementation selectors. Avoid fixed sleeps and brittle snapshots. Validate
+      unhappy paths, loading states, and accessibility-critical behavior when UI logic
+      changes.
+  - path: "**/*.test.tsx"
+    instructions: Frontend tests. Prefer user-visible assertions by role/text/state,
+      not implementation selectors. Avoid fixed sleeps and brittle snapshots. Validate
+      unhappy paths, loading states, and accessibility-critical behavior when UI logic
+      changes.
+  - path: "**/*.test.js"
+    instructions: Frontend tests. Prefer user-visible assertions by role/text/state,
+      not implementation selectors. Avoid fixed sleeps and brittle snapshots. Validate
+      unhappy paths, loading states, and accessibility-critical behavior when UI logic
+      changes.
+  - path: "**/*.test.jsx"
     instructions: Frontend tests. Prefer user-visible assertions by role/text/state,
       not implementation selectors. Avoid fixed sleeps and brittle snapshots. Validate
       unhappy paths, loading states, and accessibility-critical behavior when UI logic
@@ -156,13 +233,49 @@ reviews:
       keep required and non-blocking jobs clear; preserve tokenless OIDC upload patterns
       where used; and flag any admin-bypass, force-push, destructive cleanup, or auto-merge
       behavior that can mask a failed required check.
-  - path: "**/*.{md,mdx}"
+  - path: "**/*.md"
     instructions: 'Documentation review. Treat docs as executable team memory: flag
       instructions that disagree with actual scripts, package versions, branch protection,
       generated-file workflows, or repo layout. Keep AGENTS.md/CLAUDE.md rules coherent
       with automation. Do not request cosmetic prose changes unless ambiguity would
       mislead an agent or maintainer.'
-  - path: "**/*.{g.cs,g.ts,g.sql,g.tsp,Designer.cs,generated.*,snap}"
+  - path: "**/*.mdx"
+    instructions: 'Documentation review. Treat docs as executable team memory: flag
+      instructions that disagree with actual scripts, package versions, branch protection,
+      generated-file workflows, or repo layout. Keep AGENTS.md/CLAUDE.md rules coherent
+      with automation. Do not request cosmetic prose changes unless ambiguity would
+      mislead an agent or maintainer.'
+  - path: "**/*.g.cs"
+    instructions: Generated-output discipline. Do not suggest hand-editing generated
+      files. If generated output is wrong or missing, identify the generator/source
+      input and require regeneration in the same PR. If source model changes without
+      matching generated artifacts, flag it.
+  - path: "**/*.g.ts"
+    instructions: Generated-output discipline. Do not suggest hand-editing generated
+      files. If generated output is wrong or missing, identify the generator/source
+      input and require regeneration in the same PR. If source model changes without
+      matching generated artifacts, flag it.
+  - path: "**/*.g.sql"
+    instructions: Generated-output discipline. Do not suggest hand-editing generated
+      files. If generated output is wrong or missing, identify the generator/source
+      input and require regeneration in the same PR. If source model changes without
+      matching generated artifacts, flag it.
+  - path: "**/*.g.tsp"
+    instructions: Generated-output discipline. Do not suggest hand-editing generated
+      files. If generated output is wrong or missing, identify the generator/source
+      input and require regeneration in the same PR. If source model changes without
+      matching generated artifacts, flag it.
+  - path: "**/*.Designer.cs"
+    instructions: Generated-output discipline. Do not suggest hand-editing generated
+      files. If generated output is wrong or missing, identify the generator/source
+      input and require regeneration in the same PR. If source model changes without
+      matching generated artifacts, flag it.
+  - path: "**/*.generated.*"
+    instructions: Generated-output discipline. Do not suggest hand-editing generated
+      files. If generated output is wrong or missing, identify the generator/source
+      input and require regeneration in the same PR. If source model changes without
+      matching generated artifacts, flag it.
+  - path: "**/*.snap"
     instructions: Generated-output discipline. Do not suggest hand-editing generated
       files. If generated output is wrong or missing, identify the generator/source
       input and require regeneration in the same PR. If source model changes without
@@ -482,7 +595,7 @@ reviews:
       timeout_ms: 900000
     languagetool:
       enabled: true
-      level: picky
+      level: default
     biome:
       enabled: true
     hadolint:
@@ -674,7 +787,11 @@ code_generation:
       instructions: Generate XML docs for public/protected APIs and package surfaces.
         Document intent, contracts, cancellation, exceptions, and compatibility. Do
         not add obvious comments to private implementation details.
-    - path: "**/*.{ts,tsx}"
+    - path: "**/*.ts"
+      instructions: Generate concise TSDoc only for exported APIs, hooks, reusable
+        components, schemas, and non-obvious utility behavior. Avoid restating prop
+        names.
+    - path: "**/*.tsx"
       instructions: Generate concise TSDoc only for exported APIs, hooks, reusable
         components, schemas, and non-obvious utility behavior. Avoid restating prop
         names.
@@ -684,7 +801,10 @@ code_generation:
       instructions: Use the repo test stack (xUnit v3/Microsoft Testing Platform where
         present). Prefer focused unit tests plus integration tests for persistence,
         queues, external clients, and generated contracts. Avoid sleeps; use fakes/signals.
-    - path: "**/*.{ts,tsx}"
+    - path: "**/*.ts"
+      instructions: Use the repo frontend test stack. Assert user-visible behavior
+        and accessible roles/states. Avoid waitForTimeout and brittle snapshots.
+    - path: "**/*.tsx"
       instructions: Use the repo frontend test stack. Assert user-visible behavior
         and accessible roles/states. Avoid waitForTimeout and brittle snapshots.
     - path: "**/*.py"
