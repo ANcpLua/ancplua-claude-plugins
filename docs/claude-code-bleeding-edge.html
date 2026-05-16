@@ -1,0 +1,1538 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="Claude Code bleeding-edge reference: hidden env vars, undocumented CLI flags, hook extensions, Boris Cherny workflow tips. Curated, 2026-05.">
+<title>Claude Code bleeding-edge reference</title>
+<style>
+  :root {
+    --bg:            #0d0e10;
+    --surface:       #15171b;
+    --surface-2:     #1d2025;
+    --surface-3:     #24272d;
+    --border:        #2a2d32;
+    --border-strong: #3a3d44;
+    --text:          #e8e6e3;
+    --text-muted:    #a4a59f;
+    --text-dim:      #76776f;
+    --accent:        #d97757;
+    --accent-strong: #ea8e6f;
+    --accent-dim:    #b85c3e;
+    --warn:          #d4a35a;
+    --danger:        #e08e6f;
+    --critical-bg:   rgba(212, 163, 90, 0.09);
+    --critical-bd:   #6e5224;
+    --critical-text: #f0c989;
+    --success:       #8fa873;
+    --link:          #e8a988;
+    --shadow:        0 1px 0 rgba(255,255,255,0.02), 0 8px 28px rgba(0,0,0,0.45);
+    --focus-ring:    0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+    --sans:  system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  }
+  :root[data-theme="light"] {
+    --bg:            #FAF9F5;
+    --surface:       #ffffff;
+    --surface-2:     #F0EEE6;
+    --surface-3:     #E3DACC;
+    --border:        #D1CFC5;
+    --border-strong: #87867F;
+    --text:          #141413;
+    --text-muted:    #3D3D3A;
+    --text-dim:      #87867F;
+    --accent:        #B85C3E;
+    --accent-strong: #D97757;
+    --accent-dim:    #8d4329;
+    --warn:          #8a6925;
+    --danger:        #B85C3E;
+    --critical-bg:   rgba(217, 119, 87, 0.10);
+    --critical-bd:   #d4a35a;
+    --critical-text: #8a4d2a;
+    --success:       #5C6F44;
+    --link:          #B85C3E;
+    --shadow:        0 1px 0 rgba(255,255,255,0.6), 0 4px 14px rgba(20,20,19,0.06);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  @media (max-width: 720px) { .wrap { padding: 0 18px; } }
+
+  a { color: var(--link); text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: var(--link); }
+  a:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 3px; }
+
+  code, kbd, pre, samp { font-family: var(--mono); }
+  code {
+    font-size: 0.9em;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  kbd {
+    font-size: 0.82em;
+    background: var(--surface-3);
+    border: 1px solid var(--border-strong);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--text);
+  }
+
+  :focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 4px; }
+
+  .skip {
+    position: absolute;
+    left: -9999px;
+    top: 8px;
+    padding: 8px 14px;
+    background: var(--accent);
+    color: #0d0e10;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    z-index: 100;
+  }
+  .skip:focus { left: 8px; }
+
+  /* ── page head ─────────────────────────── */
+  .page-head { padding: 56px 0 24px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin: 0 0 12px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 34px;
+    letter-spacing: -0.015em;
+    color: var(--text);
+    margin: 0 0 12px;
+    line-height: 1.15;
+  }
+  .sub {
+    color: var(--text-muted);
+    max-width: 720px;
+    margin: 0 0 6px;
+    font-size: 15.5px;
+  }
+  .meta-row {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 14px;
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .meta-row .meta-tag::before { content: "›"; color: var(--accent); margin-right: 6px; }
+
+  /* ── critical-correction callout ─────── */
+  .critical {
+    background: var(--critical-bg);
+    border: 1px solid var(--critical-bd);
+    border-left: 3px solid var(--warn);
+    border-radius: 10px;
+    padding: 22px 26px 24px;
+    margin: 8px 0 28px;
+    box-shadow: var(--shadow);
+  }
+  .critical-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--critical-text);
+    background: rgba(212, 163, 90, 0.12);
+    border: 1px solid var(--critical-bd);
+    border-radius: 999px;
+    padding: 3px 10px 4px;
+    margin: 0 0 12px;
+  }
+  .critical-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--text);
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+  }
+  .critical p { margin: 0 0 12px; color: var(--text); max-width: 820px; }
+  .critical p:last-child { margin-bottom: 0; }
+  .critical code { background: rgba(0,0,0,0.25); border-color: var(--critical-bd); }
+  :root[data-theme="light"] .critical code { background: rgba(255,255,255,0.55); }
+
+  /* ── toolbar ──────────────────────────── */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 8;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0 12px;
+    margin-bottom: 28px;
+  }
+  .toolbar .wrap {
+    display: grid;
+    grid-template-columns: minmax(180px, 320px) 1fr auto;
+    gap: 14px;
+    align-items: center;
+  }
+  @media (max-width: 880px) {
+    .toolbar .wrap {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+  }
+  .search {
+    appearance: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 9px 12px 9px 32px;
+    background-image: radial-gradient(circle at 11px 50%, transparent 4px, var(--text-dim) 4px, var(--text-dim) 5.5px, transparent 5.5px),
+                      linear-gradient(135deg, transparent 14px, var(--text-dim) 14px, var(--text-dim) 16.5px, transparent 17px);
+    background-repeat: no-repeat;
+    background-size: 18px 18px, 8px 8px;
+    background-position: 7px 50%, 16px 14px;
+    width: 100%;
+  }
+  .search::placeholder { color: var(--text-dim); }
+  .search:focus { border-color: var(--accent); }
+
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .pill {
+    appearance: none;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    padding: 5px 11px 6px;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: background 100ms, color 100ms, border-color 100ms;
+  }
+  .pill:hover { border-color: var(--border-strong); color: var(--text); }
+  .pill.on {
+    background: var(--accent);
+    color: #0d0e10;
+    border-color: var(--accent);
+  }
+  :root[data-theme="light"] .pill.on { color: #FAF9F5; }
+  .pill-clear {
+    color: var(--accent);
+    border-color: var(--accent-dim);
+    background: transparent;
+  }
+  .pill-clear:hover { background: rgba(217,119,87,0.08); border-color: var(--accent); color: var(--accent); }
+
+  .toolbar-end {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-self: end;
+  }
+  @media (max-width: 880px) { .toolbar-end { justify-self: start; } }
+  .count {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+  .count b { color: var(--text); font-weight: 600; }
+  .theme-toggle {
+    appearance: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    padding: 5px 12px 6px;
+    cursor: pointer;
+  }
+  .theme-toggle:hover { border-color: var(--border-strong); }
+
+  /* ── sections ──────────────────────────── */
+  main { padding-bottom: 80px; }
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin: 0 0 18px;
+    overflow: hidden;
+    transition: opacity 120ms;
+  }
+  .section.hidden { display: none; }
+  .section > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid transparent;
+  }
+  .section[open] > summary { border-bottom-color: var(--border); }
+  .section > summary::-webkit-details-marker { display: none; }
+  .section > summary::before {
+    content: "";
+    flex: 0 0 8px;
+    width: 8px;
+    height: 8px;
+    border-right: 1.5px solid var(--accent);
+    border-bottom: 1.5px solid var(--accent);
+    transform: rotate(-45deg);
+    transition: transform 140ms ease;
+  }
+  .section[open] > summary::before { transform: rotate(45deg); }
+  .section > summary .stitle {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 19px;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .section > summary .scat {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 2px 9px 3px;
+  }
+  .section > summary .stagline {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-left: 14px;
+    font-family: var(--sans);
+  }
+  @media (max-width: 720px) { .section > summary .stagline { display: none; } }
+
+  .section .body {
+    padding: 18px 22px 24px;
+  }
+  .section .body > p { margin: 0 0 12px; max-width: 760px; color: var(--text); }
+  .section .body > p:last-child { margin-bottom: 0; }
+  .section h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--text);
+    margin: 22px 0 8px;
+    letter-spacing: -0.005em;
+  }
+  .section h3:first-child { margin-top: 0; }
+  .section ul { margin: 8px 0 14px; padding-left: 22px; }
+  .section ul li { margin-bottom: 8px; max-width: 760px; }
+  .section ul li:last-child { margin-bottom: 0; }
+
+  /* ── env-var table ─────────────────────── */
+  .env-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 8px 0 6px;
+  }
+  .env-table caption {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    padding: 0 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .env-table th, .env-table td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .env-table thead th {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 500;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border-strong);
+  }
+  .env-table tbody tr:last-child td { border-bottom: none; }
+  .env-table tbody tr.hidden { display: none; }
+  .env-table tbody tr:hover { background: rgba(255,255,255,0.015); }
+  :root[data-theme="light"] .env-table tbody tr:hover { background: rgba(20,20,19,0.025); }
+  .env-table .col-var { width: 38%; }
+  .env-table .col-val { width: 14%; }
+  .env-table .col-act { width: 60px; text-align: right; }
+  .env-table .col-act td, .env-table td.col-act { text-align: right; }
+  .env-table code.varname {
+    color: var(--text);
+    background: var(--surface-2);
+    border-color: var(--border);
+    white-space: nowrap;
+    font-size: 12.5px;
+  }
+  .env-table .val-token {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent);
+  }
+  .env-table .desc { color: var(--text); }
+  .env-table .desc .since {
+    display: inline-block;
+    margin-left: 6px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--text-dim);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  @media (max-width: 720px) {
+    .env-table .col-val { display: none; }
+    .env-table th.col-val { display: none; }
+  }
+
+  /* ── snippet / code block ──────────────── */
+  .snippet {
+    position: relative;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 10px 0 14px;
+    overflow: hidden;
+  }
+  .snippet pre {
+    margin: 0;
+    padding: 14px 64px 14px 16px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.55;
+    overflow-x: auto;
+    background: transparent;
+  }
+  .snippet pre code {
+    background: transparent;
+    border: none;
+    padding: 0;
+    white-space: pre;
+    font-size: inherit;
+    color: inherit;
+  }
+  .snippet .copy {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    appearance: none;
+    background: var(--surface-3);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px 5px;
+    cursor: pointer;
+    transition: background 100ms, color 100ms, border-color 100ms;
+  }
+  .snippet .copy:hover { color: var(--text); border-color: var(--border-strong); }
+  .snippet .copy.copied {
+    background: var(--success);
+    color: #0d0e10;
+    border-color: var(--success);
+  }
+  :root[data-theme="light"] .snippet .copy.copied { color: #FAF9F5; }
+
+  .copy-icon {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 5px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    padding: 2px 8px 3px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .copy-icon:hover { border-color: var(--border-strong); color: var(--text); }
+  .copy-icon.copied {
+    background: var(--success);
+    color: #0d0e10;
+    border-color: var(--success);
+  }
+  :root[data-theme="light"] .copy-icon.copied { color: #FAF9F5; }
+
+  /* ── card grid (tips, tricks, etc.) ────── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    margin: 8px 0 4px;
+  }
+  .card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px 16px;
+  }
+  .card.hidden { display: none; }
+  .card-tag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .card h4 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--text);
+    margin: 0 0 8px;
+    letter-spacing: -0.005em;
+  }
+  .card p { margin: 0; font-size: 13.5px; color: var(--text); }
+  .card p + p { margin-top: 8px; }
+  .card code { font-size: 12px; }
+
+  /* ── feature blocks ────────────────────── */
+  .feature {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 18px 16px;
+    margin: 10px 0 14px;
+  }
+  .feature.hidden { display: none; }
+  .feature .ftitle {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 16.5px;
+    color: var(--text);
+    margin: 0 0 6px;
+    letter-spacing: -0.005em;
+  }
+  .feature .fsub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    margin: 0 0 10px;
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
+  }
+  .feature p { margin: 0 0 8px; color: var(--text); }
+  .feature p:last-child { margin-bottom: 0; }
+  .feature ul { margin: 6px 0 8px; }
+
+  /* ── flag table ────────────────────────── */
+  .flag-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 8px 0;
+  }
+  .flag-row {
+    display: grid;
+    grid-template-columns: minmax(220px, 320px) 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .flag-row.hidden { display: none; }
+  .flag-row code { font-size: 12.5px; }
+  .flag-row .desc { color: var(--text); font-size: 13.5px; }
+  @media (max-width: 720px) {
+    .flag-row { grid-template-columns: 1fr; }
+    .flag-row .col-act { justify-self: start; }
+  }
+
+  /* ── source row ────────────────────────── */
+  .src {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text-dim);
+  }
+  .src::before { content: "Sources: "; color: var(--text-dim); }
+  .src a { color: var(--link); margin-right: 14px; word-break: break-all; }
+
+  /* ── sources section ───────────────────── */
+  #sources {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 22px 26px;
+    margin: 0 0 18px;
+  }
+  #sources h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 19px;
+    color: var(--text);
+    margin: 0 0 14px;
+    letter-spacing: -0.01em;
+  }
+  #sources ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 13px;
+    counter-reset: srcCounter;
+  }
+  #sources li {
+    counter-increment: srcCounter;
+    padding: 9px 0 9px 38px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  #sources li:last-child { border-bottom: none; }
+  #sources li::before {
+    content: counter(srcCounter, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 11px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    width: 26px;
+    text-align: right;
+  }
+  #sources .src-title {
+    font-family: var(--sans);
+    color: var(--text);
+    margin-right: 10px;
+  }
+  #sources .src-url {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--link);
+    word-break: break-all;
+  }
+
+  /* ── footer ────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 20px 0 60px;
+    margin-top: 18px;
+  }
+  footer p {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text-dim);
+    margin: 0;
+    max-width: 820px;
+  }
+  footer p + p { margin-top: 6px; }
+
+  /* ── no-results banner ─────────────────── */
+  #noResults {
+    display: none;
+    margin: 20px 0;
+    padding: 22px 22px 24px;
+    background: var(--surface);
+    border: 1px dashed var(--border-strong);
+    border-radius: 10px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  #noResults.on { display: block; }
+  #noResults b { color: var(--text); font-weight: 600; }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Claude Code · reference · bleeding-edge (2026-05)</p>
+    <h1>Claude Code bleeding-edge reference</h1>
+    <p class="sub">
+      Hidden env vars, undocumented CLI flags, post-May-2025 features, hook-system extensions, and the workflow tips that Boris Cherny (who built Claude Code) actually uses. Curated, not exhaustive.
+    </p>
+    <div class="meta-row">
+      <span class="meta-tag">curated from 13 sources</span>
+      <span class="meta-tag">~330 env vars exist in the wild; ~32 are feature flags</span>
+      <span class="meta-tag">verify undocumented flags against live docs before relying on them</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside class="critical" id="critical-correction" data-always="true">
+    <p class="critical-tag">Critical correction · agent teams</p>
+    <h2 class="critical-title">The Agent Teams env var is widely typed wrong</h2>
+    <p>
+      The env var that enables Claude Code's Agent Teams feature is <code>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1</code>,
+      <strong>not</strong> <code>CLAUDE_CODE_EXPERIMENTAL_TEAM=1</code>. The shorter form does not exist in the official
+      docs and is widely typed wrong across blog posts and gists. If <code>~/.claude/settings.json</code> contains the
+      typo, Agent Teams is silently disabled — no error, no warning, the feature simply does not turn on.
+    </p>
+    <p>Set it in <code>~/.claude/settings.json</code>:</p>
+    <div class="snippet">
+      <pre><code>{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}</code></pre>
+      <button type="button" class="copy" aria-label="Copy settings.json snippet to clipboard">copy</button>
+    </div>
+    <p>Or as a shell env var before launching Claude Code:</p>
+    <div class="snippet">
+      <pre><code>export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
+claude</code></pre>
+      <button type="button" class="copy" aria-label="Copy export command to clipboard">copy</button>
+    </div>
+    <p class="src">
+      <a href="https://code.claude.com/docs/en/agent-teams" target="_blank" rel="noopener noreferrer">code.claude.com/docs/en/agent-teams</a>
+      <a href="https://gist.github.com/mculp/e6a573f2a45ef7dbbf30f6a8574c7351" target="_blank" rel="noopener noreferrer">env vars gist v2.1.104</a>
+    </p>
+  </aside>
+</div>
+
+<div class="toolbar" role="search" aria-label="Reference filters">
+  <div class="wrap">
+    <input
+      class="search"
+      id="search"
+      type="search"
+      placeholder="Search env vars, flags, hooks, tips..."
+      aria-label="Search across all entries"
+      autocomplete="off"
+      spellcheck="false">
+    <div class="pills" role="group" aria-label="Filter by category">
+      <button type="button" class="pill" data-pill="commands" aria-pressed="false">commands</button>
+      <button type="button" class="pill" data-pill="env-vars" aria-pressed="false">env-vars</button>
+      <button type="button" class="pill" data-pill="cli-flags" aria-pressed="false">cli-flags</button>
+      <button type="button" class="pill" data-pill="hooks" aria-pressed="false">hooks</button>
+      <button type="button" class="pill" data-pill="settings.json" aria-pressed="false">settings.json</button>
+      <button type="button" class="pill" data-pill="tips" aria-pressed="false">tips</button>
+      <button type="button" class="pill" data-pill="unusual-tricks" aria-pressed="false">unusual-tricks</button>
+      <button type="button" class="pill pill-clear" id="clearFilters" hidden>Clear</button>
+    </div>
+    <div class="toolbar-end">
+      <span class="count" id="resultCount" aria-live="polite"></span>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark theme">Light</button>
+    </div>
+  </div>
+</div>
+
+<main id="main">
+<div class="wrap">
+
+  <div id="noResults" role="status">
+    No entries match the current search and filters. <b>Clear</b> the filters or simplify the query.
+  </div>
+
+  <!-- ── /btw command ─────────────────────────────────────────────── -->
+  <details open class="section" id="btw" data-section="commands">
+    <summary>
+      <span class="stitle">The <code>/btw</code> command</span>
+      <span class="stagline">mid-task side-questions without polluting history</span>
+      <span class="scat">commands</span>
+    </summary>
+    <div class="body">
+      <p>
+        Shipped in Claude Code 2.1.72 (March 2026). Lets you ask Claude a mid-task question — "by the way, what
+        does this regex do?" — without writing it into the main conversation history. Reports cite up to ~50% total
+        token savings in sessions where the user asks lots of side questions, because the side-thread doesn't pile
+        up in the next turn's context window.
+      </p>
+      <p>Usage is the same shape as any slash command:</p>
+      <div class="snippet" data-search="btw command mid-task question side">
+        <pre><code>/btw what's the difference between <span style="color:var(--accent)">Promise.all</span> and <span style="color:var(--accent)">Promise.allSettled</span>?</code></pre>
+        <button type="button" class="copy" aria-label="Copy /btw example to clipboard">copy</button>
+      </div>
+      <p>
+        Boris Cherny says he uses it constantly — it's the cheap way to keep one main thread on-rails while still
+        getting Claude's help with the questions that pop into your head while reading its output.
+      </p>
+      <p class="src">
+        <a href="https://www.howdoiuseai.com/blog/2026-03-12-the-simple-btw-command-that-cuts-claude-code-costs" target="_blank" rel="noopener noreferrer">howdoiuseai.com / btw command writeup</a>
+        <a href="https://www.anup.io/35-claude-code-tips-from-the-guy-who-built-it/" target="_blank" rel="noopener noreferrer">anup.io / Boris Cherny tips</a>
+      </p>
+    </div>
+  </details>
+
+  <!-- ── permission modes ─────────────────────────────────────────── -->
+  <details open class="section" id="permission-modes" data-section="commands">
+    <summary>
+      <span class="stitle">Permission modes (v2.1)</span>
+      <span class="stagline">default · acceptEdits · plan · auto · dontAsk · bypassPermissions</span>
+      <span class="scat">commands</span>
+    </summary>
+    <div class="body">
+      <p>
+        Six permission modes in v2.1. <code>auto</code> and <code>dontAsk</code> were added in 2026 — they sit
+        between <code>acceptEdits</code> (auto-approve edits but still gate everything else) and
+        <code>bypassPermissions</code> (the nuclear "never ask me anything" mode).
+      </p>
+      <p>Enter Plan Mode from anywhere with <kbd>Shift</kbd>+<kbd>Tab</kbd> <kbd>Shift</kbd>+<kbd>Tab</kbd>.</p>
+      <table class="env-table" aria-label="Permission modes">
+        <thead>
+          <tr><th class="col-var">mode</th><th>behavior</th><th class="col-act">copy</th></tr>
+        </thead>
+        <tbody>
+          <tr data-search="default permission mode prompt every action ask"><td><code class="varname">default</code></td><td class="desc">Prompts on every action that isn't pre-allowed. Safest, slowest.</td><td class="col-act"><button type="button" class="copy-icon" data-copy="default" aria-label="Copy mode name">copy</button></td></tr>
+          <tr data-search="acceptedits accept edits auto approve file changes"><td><code class="varname">acceptEdits</code></td><td class="desc">Auto-approves file edits; still prompts for shell commands and other tools.</td><td class="col-act"><button type="button" class="copy-icon" data-copy="acceptEdits" aria-label="Copy mode name">copy</button></td></tr>
+          <tr data-search="plan mode read only shift tab"><td><code class="varname">plan</code></td><td class="desc">Read-only investigation; Claude writes a plan, no edits or commands run. Enter with <kbd>Shift</kbd>+<kbd>Tab</kbd> <kbd>Shift</kbd>+<kbd>Tab</kbd>.</td><td class="col-act"><button type="button" class="copy-icon" data-copy="plan" aria-label="Copy mode name">copy</button></td></tr>
+          <tr data-search="auto 2026 background unattended"><td><code class="varname">auto</code></td><td class="desc">2026 addition. Runs unattended for longer stretches; combines acceptEdits behavior with quieter prompting policy.</td><td class="col-act"><button type="button" class="copy-icon" data-copy="auto" aria-label="Copy mode name">copy</button></td></tr>
+          <tr data-search="dontask 2026 silent never prompt subset"><td><code class="varname">dontAsk</code></td><td class="desc">2026 addition. Never prompt — for tools matching an allowlist. Tighter than bypassPermissions because it's scoped to allow rules.</td><td class="col-act"><button type="button" class="copy-icon" data-copy="dontAsk" aria-label="Copy mode name">copy</button></td></tr>
+          <tr data-search="bypasspermissions dangerously skip all"><td><code class="varname">bypassPermissions</code></td><td class="desc">Same effect as <code>--dangerously-skip-permissions</code>: pre-approve everything. Containers only.</td><td class="col-act"><button type="button" class="copy-icon" data-copy="bypassPermissions" aria-label="Copy mode name">copy</button></td></tr>
+        </tbody>
+      </table>
+      <p class="src">
+        <a href="https://support.claude.com/en/articles/14554000-claude-code-power-user-tips" target="_blank" rel="noopener noreferrer">support.claude.com / power-user tips</a>
+        <a href="https://howborisusesclaudecode.com/" target="_blank" rel="noopener noreferrer">howborisusesclaudecode.com</a>
+      </p>
+    </div>
+  </details>
+
+  <!-- ── hooks ─────────────────────────────────────────────────────── -->
+  <details open class="section" id="hooks" data-section="hooks">
+    <summary>
+      <span class="stitle">Hook system extensions (2026)</span>
+      <span class="stagline">HTTP hooks · defer outcome · additionalContext · baseline hooks</span>
+      <span class="scat">hooks</span>
+    </summary>
+    <div class="body">
+      <p>
+        The hook system in 2026 is meaningfully more capable than the 2025 version. Three changes matter most: hooks
+        can fire over HTTP, <code>PreToolUse</code> outcomes include a new <code>defer</code> verb, and PreToolUse
+        output can inject context mid-decision via <code>additionalContext</code>.
+      </p>
+
+      <div class="feature" data-search="http hooks 2026 webserver fire request">
+        <p class="ftitle">HTTP hooks (Feb 2026)</p>
+        <p class="fsub">since v2.1.x</p>
+        <p>
+          Hooks can now fire against a webserver instead of a local script. Useful for shared org-wide policies
+          (secrets-scanning, audit logging, license-compliance checks) that don't want to be checked into every
+          repo's <code>.claude/settings.json</code>.
+        </p>
+      </div>
+
+      <div class="feature" data-search="pretooluse outcome allow deny ask defer 2.1.89">
+        <p class="ftitle">PreToolUse outcomes: <code>allow</code> · <code>deny</code> · <code>ask</code> · <code>defer</code></p>
+        <p class="fsub">defer requires v2.1.89+</p>
+        <p>
+          The hook's JSON response decides what happens to the in-flight tool call. The three classic outcomes
+          (<code>allow</code>, <code>deny</code>, <code>ask</code>) are joined by <code>defer</code>: postpone the
+          decision until another hook or a user gate weighs in. Lets you build chained policies without saying
+          "yes" or "no" prematurely.
+        </p>
+        <div class="snippet" data-search="pretooluse defer additionalcontext example json">
+          <pre><code>{
+  "outcome": "defer",
+  "additionalContext": "Bash command targets a production host — wait for SRE sign-off."
+}</code></pre>
+          <button type="button" class="copy" aria-label="Copy PreToolUse defer example">copy</button>
+        </div>
+      </div>
+
+      <div class="feature" data-search="additionalcontext field pretooluse v2.1.9 inject context mid decision">
+        <p class="ftitle"><code>additionalContext</code> field in PreToolUse output</p>
+        <p class="fsub">v2.1.9+</p>
+        <p>
+          A free-text field your hook can populate to inject context into Claude's reasoning mid-decision. Use it
+          to surface the "why" behind a deny ("this file is in a protected path") so Claude adapts instead of just
+          retrying the same call.
+        </p>
+      </div>
+
+      <div class="feature" data-search="baseline recommended hooks pretooluse posttooluse secrets lint">
+        <p class="ftitle">Baseline recommended hooks</p>
+        <p class="fsub">low-effort, high-leverage</p>
+        <p>Two hooks worth setting up on day one:</p>
+        <ul>
+          <li><strong>PreToolUse secrets-scan</strong> before <code>Edit</code>/<code>Write</code> — block any change that would write a file matching a secrets pattern (API keys, private keys, <code>.env</code> contents).</li>
+          <li><strong>PostToolUse lint trigger</strong> after <code>Edit</code>/<code>Write</code> — run your project's linter on the changed file so Claude sees the failures and self-corrects without waiting for CI.</li>
+        </ul>
+      </div>
+
+      <p class="src">
+        <a href="https://code.claude.com/docs/en/hooks" target="_blank" rel="noopener noreferrer">code.claude.com/docs/en/hooks</a>
+        <a href="https://www.conor.fyi/writing/claudeflags" target="_blank" rel="noopener noreferrer">conor.fyi / unofficial guide</a>
+      </p>
+    </div>
+  </details>
+
+  <!-- ── env vars table ────────────────────────────────────────────── -->
+  <details open class="section" id="env-vars" data-section="env-vars">
+    <summary>
+      <span class="stitle">Hidden &amp; undocumented env vars</span>
+      <span class="stagline">curated subset of ~330 known vars; ~32 are feature flags</span>
+      <span class="scat">env-vars</span>
+    </summary>
+    <div class="body">
+      <p>
+        Sourced from <a href="https://gist.github.com/mculp/e6a573f2a45ef7dbbf30f6a8574c7351" target="_blank" rel="noopener noreferrer">the v2.1.104 env-vars gist</a>,
+        <a href="https://claudelab.net/en/articles/claude-code/claude-code-environment-variables-configuration-flags-guide" target="_blank" rel="noopener noreferrer">Claude Lab's reference</a>,
+        and <a href="https://theplanettools.ai/blog/claude-code-330-env-variables-32-feature-flags" target="_blank" rel="noopener noreferrer">theplanettools' 330-env-vars writeup</a>.
+        The full list lives in those gists; the table below is the high-leverage subset.
+      </p>
+      <table class="env-table" aria-label="Hidden and undocumented environment variables">
+        <caption>Set in shell, in <code>~/.claude/settings.json</code> under <code>env</code>, or in a per-project <code>.envrc</code>.</caption>
+        <thead>
+          <tr>
+            <th class="col-var">variable</th>
+            <th class="col-val">value</th>
+            <th>description</th>
+            <th class="col-act">copy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-search="claude code experimental agent teams multi session collaboration teammate">
+            <td><code class="varname">CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS</code></td>
+            <td><span class="val-token">1</span></td>
+            <td class="desc">Enable Agent Teams — multi-session collaboration with direct teammate addressing. Beyond single-session subagents. <span class="since">flag</span></td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="claude code disable experimental betas killswitch bedrock vertex gateway">
+            <td><code class="varname">CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS</code></td>
+            <td><span class="val-token">1</span></td>
+            <td class="desc">Killswitch for all experimental beta request headers. Use when a beta breaks a gateway like Bedrock or Vertex. <span class="since">flag</span></td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="claude code mcp instr delta diff instructions tokens">
+            <td><code class="varname">CLAUDE_CODE_MCP_INSTR_DELTA</code></td>
+            <td><span class="val-token">1</span></td>
+            <td class="desc">Sends only diffs of MCP instructions instead of full instruction sets each turn. Lowers token consumption when MCP servers are chatty. <span class="since">flag</span></td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="CLAUDE_CODE_MCP_INSTR_DELTA=1" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="claude code sm compact session memory summary auto compact">
+            <td><code class="varname">CLAUDE_CODE_SM_COMPACT</code></td>
+            <td><span class="val-token">1</span></td>
+            <td class="desc">Auto-compacts session memory using summaries with configurable thresholds. <span class="since">flag</span></td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="CLAUDE_CODE_SM_COMPACT=1" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="claude autocompact pct override context percentage threshold">
+            <td><code class="varname">CLAUDE_AUTOCOMPACT_PCT_OVERRIDE</code></td>
+            <td><span class="val-token">&lt;float&gt;</span></td>
+            <td class="desc">Override the context-% threshold at which auto-compact triggers. e.g. <code>0.85</code> for "compact at 85% full".</td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=0.85" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="bash max output length truncation cap bytes">
+            <td><code class="varname">BASH_MAX_OUTPUT_LENGTH</code></td>
+            <td><span class="val-token">&lt;bytes&gt;</span></td>
+            <td class="desc">Raise the Bash output truncation cap. Default is conservative; bump it when tools legitimately produce long output (test runners, codegen).</td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="BASH_MAX_OUTPUT_LENGTH=200000" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="bash default timeout ms shell wait command">
+            <td><code class="varname">BASH_DEFAULT_TIMEOUT_MS</code></td>
+            <td><span class="val-token">&lt;ms&gt;</span></td>
+            <td class="desc">Default per-Bash-call timeout. Combine with the max cap below.</td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="BASH_DEFAULT_TIMEOUT_MS=120000" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="bash max timeout ms ceiling upper bound bash">
+            <td><code class="varname">BASH_MAX_TIMEOUT_MS</code></td>
+            <td><span class="val-token">&lt;ms&gt;</span></td>
+            <td class="desc">Upper bound on Bash timeout, even if Claude asks for more. Safety ceiling.</td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="BASH_MAX_TIMEOUT_MS=600000" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="mcp timeout server connect startup">
+            <td><code class="varname">MCP_TIMEOUT</code></td>
+            <td><span class="val-token">&lt;ms&gt;</span></td>
+            <td class="desc">Extends MCP server connect timeout past the default 30s. Set higher for slow-cold-starting MCP servers (containerized, network-bound).</td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="MCP_TIMEOUT=60000" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="enable tool search deferred lazy load schemas">
+            <td><code class="varname">ENABLE_TOOL_SEARCH</code></td>
+            <td><span class="val-token">1</span></td>
+            <td class="desc">Controls the deferred ToolSearch system that lazy-loads tool schemas. Useful when total available tool count is large enough to blow the context budget. <span class="since">flag</span></td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="ENABLE_TOOL_SEARCH=1" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="log level debug info warn error verbose logging">
+            <td><code class="varname">LOG_LEVEL</code></td>
+            <td><span class="val-token">debug|info|warn|error</span></td>
+            <td class="desc">Verbose logging. <code>debug</code> when you're chasing a misbehaving MCP server or hook.</td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="LOG_LEVEL=debug" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="anthropic model default identifier opus sonnet haiku claude-opus claude-sonnet">
+            <td><code class="varname">ANTHROPIC_MODEL</code></td>
+            <td><span class="val-token">&lt;model-id&gt;</span></td>
+            <td class="desc">Default model. e.g. <code>claude-opus-4-7</code> or <code>claude-sonnet-4-6</code>.</td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="ANTHROPIC_MODEL=claude-opus-4-7" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="anthropic small fast model helper subagent cheap haiku">
+            <td><code class="varname">ANTHROPIC_SMALL_FAST_MODEL</code></td>
+            <td><span class="val-token">&lt;model-id&gt;</span></td>
+            <td class="desc">Helper model for cheap subagent calls. Common pick: <code>claude-haiku-4-5-20251001</code>.</td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="ANTHROPIC_SMALL_FAST_MODEL=claude-haiku-4-5-20251001" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="claude code max output tokens per turn budget cap">
+            <td><code class="varname">CLAUDE_CODE_MAX_OUTPUT_TOKENS</code></td>
+            <td><span class="val-token">&lt;n&gt;</span></td>
+            <td class="desc">Per-turn output budget. Raise when Claude is being truncated mid-answer on long generations.</td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="CLAUDE_CODE_MAX_OUTPUT_TOKENS=16384" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="claude code max thinking tokens budget extended thinking">
+            <td><code class="varname">CLAUDE_CODE_MAX_THINKING_TOKENS</code></td>
+            <td><span class="val-token">&lt;n&gt;</span></td>
+            <td class="desc">Per-turn thinking-token budget. Pair with <code>ANTHROPIC_MODEL</code> on Opus for "Opus with thinking enabled" — Boris's default setup.</td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="CLAUDE_CODE_MAX_THINKING_TOKENS=8192" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="disable autoupdater pin version stability">
+            <td><code class="varname">DISABLE_AUTOUPDATER</code></td>
+            <td><span class="val-token">1</span></td>
+            <td class="desc">Pin a version — prevents Claude Code from auto-upgrading on launch. <span class="since">flag</span></td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="DISABLE_AUTOUPDATER=1" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+          <tr data-search="disable telemetry opt out analytics">
+            <td><code class="varname">DISABLE_TELEMETRY</code></td>
+            <td><span class="val-token">1</span></td>
+            <td class="desc">Opt out of telemetry. <span class="since">flag</span></td>
+            <td class="col-act"><button type="button" class="copy-icon" data-copy="DISABLE_TELEMETRY=1" aria-label="Copy assignment to clipboard">copy</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="src">
+        <a href="https://gist.github.com/mculp/e6a573f2a45ef7dbbf30f6a8574c7351" target="_blank" rel="noopener noreferrer">mculp env-vars gist (v2.1.104)</a>
+        <a href="https://code.claude.com/docs/en/env-vars" target="_blank" rel="noopener noreferrer">official env-vars docs</a>
+        <a href="https://claudelab.net/en/articles/claude-code/claude-code-environment-variables-configuration-flags-guide" target="_blank" rel="noopener noreferrer">Claude Lab guide</a>
+        <a href="https://theplanettools.ai/blog/claude-code-330-env-variables-32-feature-flags" target="_blank" rel="noopener noreferrer">theplanettools / 330-vars writeup</a>
+      </p>
+    </div>
+  </details>
+
+  <!-- ── CLI flags ────────────────────────────────────────────────── -->
+  <details open class="section" id="cli-flags" data-section="cli-flags">
+    <summary>
+      <span class="stitle">CLI flags worth knowing</span>
+      <span class="stagline">resumption · automation · debugging</span>
+      <span class="scat">cli-flags</span>
+    </summary>
+    <div class="body">
+      <p>The flag set is small; these four cover most of the leverage.</p>
+      <div class="flag-list">
+        <div class="flag-row" data-search="dangerously skip permissions yolo container pre-approve all">
+          <code class="varname">--dangerously-skip-permissions</code>
+          <span class="desc">Pre-approve every permission prompt for the entire session. Equivalent to permission mode <code>bypassPermissions</code>. Containers only — don't aim it at your real home directory.</span>
+          <span class="col-act"><button type="button" class="copy-icon" data-copy="claude --dangerously-skip-permissions" aria-label="Copy flag invocation">copy</button></span>
+        </div>
+        <div class="flag-row" data-search="mcp debug verbose logs server misbehaving">
+          <code class="varname">--mcp-debug</code>
+          <span class="desc">Verbose MCP logs. First thing to reach for when an MCP server is connecting but its tools don't show up, or when a tool errors mysteriously.</span>
+          <span class="col-act"><button type="button" class="copy-icon" data-copy="claude --mcp-debug" aria-label="Copy flag invocation">copy</button></span>
+        </div>
+        <div class="flag-row" data-search="continue session last most recent resume">
+          <code class="varname">--continue</code>
+          <span class="desc">Resume your most recent session.</span>
+          <span class="col-act"><button type="button" class="copy-icon" data-copy="claude --continue" aria-label="Copy flag invocation">copy</button></span>
+        </div>
+        <div class="flag-row" data-search="resume session id specific">
+          <code class="varname">--resume &lt;session_id&gt;</code>
+          <span class="desc">Resume a specific session by ID.</span>
+          <span class="col-act"><button type="button" class="copy-icon" data-copy="claude --resume <session_id>" aria-label="Copy flag invocation">copy</button></span>
+        </div>
+        <div class="flag-row" data-search="print one shot output format json automation scripting">
+          <code class="varname">--print --output-format json</code>
+          <span class="desc">One-shot, scripting-friendly output. Run Claude inside a shell pipeline and get parseable JSON back.</span>
+          <span class="col-act"><button type="button" class="copy-icon" data-copy='claude --print --output-format json "explain this diff"' aria-label="Copy flag invocation">copy</button></span>
+        </div>
+      </div>
+      <p class="src">
+        <a href="https://www.conor.fyi/writing/claudeflags" target="_blank" rel="noopener noreferrer">conor.fyi / every flag</a>
+        <a href="https://code.claude.com/docs/en/env-vars" target="_blank" rel="noopener noreferrer">official docs</a>
+      </p>
+    </div>
+  </details>
+
+  <!-- ── settings.json power moves ────────────────────────────────── -->
+  <details open class="section" id="settings-json" data-section="settings.json">
+    <summary>
+      <span class="stitle"><code>settings.json</code> power moves</span>
+      <span class="stagline">experimental.* · disabling MCPs · permission patterns · env</span>
+      <span class="scat">settings.json</span>
+    </summary>
+    <div class="body">
+      <p>
+        Four patterns that pay back the first day you adopt them. Settings live in
+        <code>~/.claude/settings.json</code> (global) or <code>&lt;project&gt;/.claude/settings.json</code> (per-repo).
+      </p>
+
+      <div class="feature" data-search="experimental block beta toggles landing zone settings.json">
+        <p class="ftitle"><code>experimental.*</code> block</p>
+        <p>The most likely landing zone for new beta toggles. Worth watching across releases — new flags show up here before they get documented.</p>
+        <div class="snippet">
+          <pre><code>{
+  "experimental": {
+    "featureName": true
+  }
+}</code></pre>
+          <button type="button" class="copy" aria-label="Copy experimental block to clipboard">copy</button>
+        </div>
+      </div>
+
+      <div class="feature" data-search="mcpservers disabled true silence temporarily without removing">
+        <p class="ftitle"><code>mcpServers[*].disabled: true</code></p>
+        <p>Temporarily silence an MCP server without ripping it out of your config. Re-enable by flipping the bool. Useful when one server is noisy or broken and you want to keep the others running.</p>
+        <div class="snippet">
+          <pre><code>{
+  "mcpServers": {
+    "noisy-server": {
+      "command": "noisy-server-binary",
+      "disabled": true
+    }
+  }
+}</code></pre>
+          <button type="button" class="copy" aria-label="Copy disabled MCP example to clipboard">copy</button>
+        </div>
+      </div>
+
+      <div class="feature" data-search="permissions allow deny auto approve patterns alternative dangerously skip">
+        <p class="ftitle"><code>permissions.allow</code> / <code>permissions.deny</code></p>
+        <p>Auto-approve patterns — the structured, surgical alternative to <code>--dangerously-skip-permissions</code>. Allowlist specific commands or tool calls you trust; the rest still prompt.</p>
+        <div class="snippet">
+          <pre><code>{
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(npm test)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)"
+    ]
+  }
+}</code></pre>
+          <button type="button" class="copy" aria-label="Copy permissions block to clipboard">copy</button>
+        </div>
+      </div>
+
+      <div class="feature" data-search="env block environment variables per session agent teams settings.json">
+        <p class="ftitle"><code>env: { ... }</code></p>
+        <p>Set env vars per Claude Code session, including the Agent Teams flag from the critical-correction section above. Lives anywhere Claude Code's settings get loaded from.</p>
+        <div class="snippet">
+          <pre><code>{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_MCP_INSTR_DELTA": "1",
+    "ANTHROPIC_MODEL": "claude-opus-4-7"
+  }
+}</code></pre>
+          <button type="button" class="copy" aria-label="Copy env block to clipboard">copy</button>
+        </div>
+      </div>
+
+      <p class="src">
+        <a href="https://engineeratheart.medium.com/the-9-claude-code-settings-power-users-change-on-day-one-acbb0c161823" target="_blank" rel="noopener noreferrer">engineeratheart / 9 settings power-users change</a>
+        <a href="https://code.claude.com/docs/en/env-vars" target="_blank" rel="noopener noreferrer">official docs</a>
+      </p>
+    </div>
+  </details>
+
+  <!-- ── Boris Cherny tips ─────────────────────────────────────────── -->
+  <details open class="section" id="boris-tips" data-section="tips">
+    <summary>
+      <span class="stitle">Boris Cherny's top tips</span>
+      <span class="stagline">from the engineer who built Claude Code</span>
+      <span class="scat">tips</span>
+    </summary>
+    <div class="body">
+      <p>
+        Boris Cherny built Claude Code. The five tips below are the ones he says give the biggest leverage in
+        practice — drawn from his public writeups and the "how Boris uses Claude Code" page.
+      </p>
+      <div class="cards">
+        <article class="card" data-search="parallel sessions git worktree boris biggest productivity unlock">
+          <p class="card-tag">workflow</p>
+          <h4>3–5 parallel sessions in separate git worktrees</h4>
+          <p>Boris calls this <em>"the single biggest productivity unlock."</em> Use <code>git worktree add</code> to spin up isolated trees and run one Claude per worktree. While one is investigating, another is implementing, a third is reviewing.</p>
+        </article>
+        <article class="card" data-search="plan mode shift tab iterate auto accept one shot">
+          <p class="card-tag">workflow</p>
+          <h4>Plan Mode first, then auto-accept</h4>
+          <p>Press <kbd>Shift</kbd>+<kbd>Tab</kbd> <kbd>Shift</kbd>+<kbd>Tab</kbd> to enter Plan Mode. Iterate the plan with Claude. Then switch to auto-accept — Claude usually one-shots the implementation cleanly because the thinking already happened.</p>
+        </article>
+        <article class="card" data-search="opus thinking enabled default less correction faster total">
+          <p class="card-tag">model</p>
+          <h4>Opus with thinking enabled — for everything</h4>
+          <p>Less correction time, faster total prompt-to-done even when the per-call latency is higher. Set <code>ANTHROPIC_MODEL=claude-opus-4-7</code> and bump <code>CLAUDE_CODE_MAX_THINKING_TOKENS</code>.</p>
+        </article>
+        <article class="card" data-search="claudemd living document team shared check in rule">
+          <p class="card-tag">memory</p>
+          <h4><code>CLAUDE.md</code> as a living document</h4>
+          <p>Every time Claude does something wrong, add a rule. Check it in. Share it with the team. The file becomes shared institutional memory — onboarding for your AI collaborator that improves every week.</p>
+        </article>
+        <article class="card" data-search="slash commands claude commands directory repeated workflows team shared">
+          <p class="card-tag">commands</p>
+          <h4>Slash commands for every repeated workflow</h4>
+          <p>Drop a markdown file at <code>.claude/commands/&lt;name&gt;.md</code>, check it into git, share it across the team. Anything you've typed twice belongs here — code-review prompts, release checklists, debug rituals.</p>
+        </article>
+      </div>
+      <p class="src">
+        <a href="https://www.anup.io/35-claude-code-tips-from-the-guy-who-built-it/" target="_blank" rel="noopener noreferrer">anup.io / 35 tips from Boris</a>
+        <a href="https://howborisusesclaudecode.com/" target="_blank" rel="noopener noreferrer">howborisusesclaudecode.com</a>
+        <a href="https://github.com/ykdojo/claude-code-tips" target="_blank" rel="noopener noreferrer">ykdojo / 45-tips repo</a>
+      </p>
+    </div>
+  </details>
+
+  <!-- ── unusual tricks ────────────────────────────────────────────── -->
+  <details open class="section" id="unusual-tricks" data-section="unusual-tricks">
+    <summary>
+      <span class="stitle">Unusual / less-known tricks</span>
+      <span class="stagline">statusline · context-halving · Gemini-as-minion · containers</span>
+      <span class="scat">unusual-tricks</span>
+    </summary>
+    <div class="body">
+      <p>The long-tail of community-discovered patterns. Lower confidence than Boris's tips — verify against your own workflow before relying on them.</p>
+      <div class="cards">
+        <article class="card" data-search="custom statusline script status bar model branch token budget">
+          <p class="card-tag">customization</p>
+          <h4>Custom statusline script</h4>
+          <p>Roll your own status bar showing model, branch, and remaining token budget. Reduces context-switching cost when you're juggling parallel sessions.</p>
+        </article>
+        <article class="card" data-search="halve system prompt claudemd aggressive structuring context savings">
+          <p class="card-tag">context</p>
+          <h4>Halve the system prompt via aggressive <code>CLAUDE.md</code> structuring</h4>
+          <p>Multiple writeups report measurable context savings by tightening <code>CLAUDE.md</code>. The trick is to make every rule earn its keep — short, specific, no preamble.</p>
+        </article>
+        <article class="card" data-search="gemini cli minion bash shell out cheap lookups opus context real work">
+          <p class="card-tag">multi-model</p>
+          <h4>Gemini CLI as a "minion"</h4>
+          <p>Have Claude shell out to <code>gemini-cli</code> via Bash for cheap lookups (file summaries, structured extraction). Keep Opus context reserved for the real reasoning work.</p>
+        </article>
+        <article class="card" data-search="claude code container docker risky destructive isolate blast radius">
+          <p class="card-tag">safety</p>
+          <h4>Claude Code in a container</h4>
+          <p>For risky or destructive tasks (mass refactors, scripted migrations, "fix every package.json"), run Claude inside a container with <code>--dangerously-skip-permissions</code>. The blast radius is bounded by the container's filesystem.</p>
+        </article>
+        <article class="card" data-search="tight context reset new session two line recap 50 70 percent token savings">
+          <p class="card-tag">context</p>
+          <h4>Tight context reset over long conversations</h4>
+          <p>Instead of running one long thread, start a fresh session with a 2–3 line context recap. Reports cite 50–70% token savings at equal output quality — long threads accumulate dead context the model still has to attend to.</p>
+        </article>
+      </div>
+      <p class="src">
+        <a href="https://github.com/ykdojo/claude-code-tips" target="_blank" rel="noopener noreferrer">ykdojo / claude-code-tips</a>
+        <a href="https://support.claude.com/en/articles/14554000-claude-code-power-user-tips" target="_blank" rel="noopener noreferrer">support.claude.com / power-user tips</a>
+      </p>
+    </div>
+  </details>
+
+  <!-- ── sources ──────────────────────────────────────────────────── -->
+  <section id="sources" data-always="true" aria-label="All sources">
+    <h2>All sources</h2>
+    <ol>
+      <li>
+        <span class="src-title">mculp env-vars gist · v2.1.104 · April 2026</span>
+        <br><a class="src-url" href="https://gist.github.com/mculp/e6a573f2a45ef7dbbf30f6a8574c7351" target="_blank" rel="noopener noreferrer">https://gist.github.com/mculp/e6a573f2a45ef7dbbf30f6a8574c7351</a>
+      </li>
+      <li>
+        <span class="src-title">Claude Lab — env-vars configuration &amp; flags guide</span>
+        <br><a class="src-url" href="https://claudelab.net/en/articles/claude-code/claude-code-environment-variables-configuration-flags-guide" target="_blank" rel="noopener noreferrer">https://claudelab.net/en/articles/claude-code/claude-code-environment-variables-configuration-flags-guide</a>
+      </li>
+      <li>
+        <span class="src-title">Official env-vars docs</span>
+        <br><a class="src-url" href="https://code.claude.com/docs/en/env-vars" target="_blank" rel="noopener noreferrer">https://code.claude.com/docs/en/env-vars</a>
+      </li>
+      <li>
+        <span class="src-title">Conor Luddy — unofficial guide to every flag</span>
+        <br><a class="src-url" href="https://www.conor.fyi/writing/claudeflags" target="_blank" rel="noopener noreferrer">https://www.conor.fyi/writing/claudeflags</a>
+      </li>
+      <li>
+        <span class="src-title">theplanettools — 330 env vars, 32 feature flags</span>
+        <br><a class="src-url" href="https://theplanettools.ai/blog/claude-code-330-env-variables-32-feature-flags" target="_blank" rel="noopener noreferrer">https://theplanettools.ai/blog/claude-code-330-env-variables-32-feature-flags</a>
+      </li>
+      <li>
+        <span class="src-title">Official Agent Teams docs</span>
+        <br><a class="src-url" href="https://code.claude.com/docs/en/agent-teams" target="_blank" rel="noopener noreferrer">https://code.claude.com/docs/en/agent-teams</a>
+      </li>
+      <li>
+        <span class="src-title">Official hooks reference</span>
+        <br><a class="src-url" href="https://code.claude.com/docs/en/hooks" target="_blank" rel="noopener noreferrer">https://code.claude.com/docs/en/hooks</a>
+      </li>
+      <li>
+        <span class="src-title">anup.io — Boris Cherny tips recap (35 tips)</span>
+        <br><a class="src-url" href="https://www.anup.io/35-claude-code-tips-from-the-guy-who-built-it/" target="_blank" rel="noopener noreferrer">https://www.anup.io/35-claude-code-tips-from-the-guy-who-built-it/</a>
+      </li>
+      <li>
+        <span class="src-title">How Boris Uses Claude Code</span>
+        <br><a class="src-url" href="https://howborisusesclaudecode.com/" target="_blank" rel="noopener noreferrer">https://howborisusesclaudecode.com/</a>
+      </li>
+      <li>
+        <span class="src-title">howdoiuseai — <code>/btw</code> command writeup (Mar 2026)</span>
+        <br><a class="src-url" href="https://www.howdoiuseai.com/blog/2026-03-12-the-simple-btw-command-that-cuts-claude-code-costs" target="_blank" rel="noopener noreferrer">https://www.howdoiuseai.com/blog/2026-03-12-the-simple-btw-command-that-cuts-claude-code-costs</a>
+      </li>
+      <li>
+        <span class="src-title">engineeratheart — 9 settings power users change on day one</span>
+        <br><a class="src-url" href="https://engineeratheart.medium.com/the-9-claude-code-settings-power-users-change-on-day-one-acbb0c161823" target="_blank" rel="noopener noreferrer">https://engineeratheart.medium.com/the-9-claude-code-settings-power-users-change-on-day-one-acbb0c161823</a>
+      </li>
+      <li>
+        <span class="src-title">ykdojo — 45-tips community repo</span>
+        <br><a class="src-url" href="https://github.com/ykdojo/claude-code-tips" target="_blank" rel="noopener noreferrer">https://github.com/ykdojo/claude-code-tips</a>
+      </li>
+      <li>
+        <span class="src-title">Claude Help Center — power-user tips</span>
+        <br><a class="src-url" href="https://support.claude.com/en/articles/14554000-claude-code-power-user-tips" target="_blank" rel="noopener noreferrer">https://support.claude.com/en/articles/14554000-claude-code-power-user-tips</a>
+      </li>
+    </ol>
+  </section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Generated 2026-05-16. Knowledge cutoff caveats apply — verify against live docs before relying on undocumented flags or env vars.</p>
+    <p>Single self-contained file. No network calls, no localStorage, in-memory state only.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var searchInput  = document.getElementById("search");
+  var pills        = Array.prototype.slice.call(document.querySelectorAll(".pill[data-pill]"));
+  var clearBtn     = document.getElementById("clearFilters");
+  var sections     = Array.prototype.slice.call(document.querySelectorAll("[data-section]"));
+  var alwaysOn     = Array.prototype.slice.call(document.querySelectorAll("[data-always='true']"));
+  var allRows      = Array.prototype.slice.call(document.querySelectorAll("[data-search]"));
+  var resultCount  = document.getElementById("resultCount");
+  var noResults    = document.getElementById("noResults");
+  var themeBtn     = document.getElementById("themeToggle");
+
+  var activePills = Object.create(null); // { pillKey: true }
+  var activeCount = 0;
+  var searchTerm = "";
+
+  // ── filter application ─────────────────────────────
+  function applyFilters() {
+    pills.forEach(function (p) {
+      var on = !!activePills[p.dataset.pill];
+      p.classList.toggle("on", on);
+      p.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    clearBtn.hidden = activeCount === 0 && searchTerm === "";
+
+    var totalRows = allRows.length;
+    var visibleRowCount = 0;
+    var anySectionVisible = false;
+
+    sections.forEach(function (sec) {
+      var cat = sec.dataset.section;
+      var sectionPillOk = (activeCount === 0) || activePills[cat];
+
+      if (!sectionPillOk) {
+        sec.classList.add("hidden");
+        return;
+      }
+
+      var rows = sec.querySelectorAll("[data-search]");
+      if (rows.length === 0) {
+        // section has no filterable rows; honor search match against its own text
+        if (searchTerm === "" || sec.textContent.toLowerCase().indexOf(searchTerm) !== -1) {
+          sec.classList.remove("hidden");
+          anySectionVisible = true;
+        } else {
+          sec.classList.add("hidden");
+        }
+        return;
+      }
+
+      var rowsShown = 0;
+      Array.prototype.forEach.call(rows, function (r) {
+        var hay = (r.getAttribute("data-search") + " " + r.textContent).toLowerCase();
+        var matches = (searchTerm === "" || hay.indexOf(searchTerm) !== -1);
+        r.classList.toggle("hidden", !matches);
+        if (matches) rowsShown++;
+      });
+
+      if (rowsShown === 0) {
+        sec.classList.add("hidden");
+      } else {
+        sec.classList.remove("hidden");
+        anySectionVisible = true;
+        visibleRowCount += rowsShown;
+      }
+    });
+
+    // always-on blocks stay visible regardless of filters
+    alwaysOn.forEach(function (el) { el.classList.remove("hidden"); });
+
+    if (searchTerm === "" && activeCount === 0) {
+      resultCount.innerHTML = "<b>" + totalRows + "</b> entries";
+    } else {
+      resultCount.innerHTML = "<b>" + visibleRowCount + "</b> / " + totalRows + " entries";
+    }
+
+    noResults.classList.toggle("on", !anySectionVisible && (searchTerm !== "" || activeCount > 0));
+  }
+
+  // ── pill clicks ────────────────────────────────────
+  pills.forEach(function (p) {
+    p.addEventListener("click", function () {
+      var key = p.dataset.pill;
+      if (activePills[key]) {
+        delete activePills[key];
+        activeCount--;
+      } else {
+        activePills[key] = true;
+        activeCount++;
+      }
+      applyFilters();
+    });
+  });
+
+  clearBtn.addEventListener("click", function () {
+    activePills = Object.create(null);
+    activeCount = 0;
+    searchInput.value = "";
+    searchTerm = "";
+    applyFilters();
+    searchInput.focus();
+  });
+
+  // ── search input ───────────────────────────────────
+  var searchDebounce = null;
+  searchInput.addEventListener("input", function (e) {
+    var next = e.target.value.trim().toLowerCase();
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(function () {
+      searchTerm = next;
+      applyFilters();
+    }, 60);
+  });
+
+  // ── copy buttons ───────────────────────────────────
+  function flashCopied(btn) {
+    var prev = btn.textContent;
+    btn.textContent = "Copied";
+    btn.classList.add("copied");
+    setTimeout(function () {
+      btn.textContent = prev;
+      btn.classList.remove("copied");
+    }, 1100);
+  }
+
+  function copyText(text, btn) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(
+        function () { flashCopied(btn); },
+        function () { fallbackCopy(text, btn); }
+      );
+    } else {
+      fallbackCopy(text, btn);
+    }
+  }
+
+  function fallbackCopy(text, btn) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "absolute";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta);
+    flashCopied(btn);
+  }
+
+  // copy-icon buttons (data-copy attribute)
+  Array.prototype.forEach.call(document.querySelectorAll(".copy-icon[data-copy]"), function (btn) {
+    btn.addEventListener("click", function () {
+      copyText(btn.getAttribute("data-copy"), btn);
+    });
+  });
+
+  // snippet copy buttons (sibling pre>code)
+  Array.prototype.forEach.call(document.querySelectorAll(".snippet .copy"), function (btn) {
+    btn.addEventListener("click", function () {
+      var snip = btn.closest(".snippet");
+      if (!snip) return;
+      var pre = snip.querySelector("pre");
+      if (!pre) return;
+      copyText(pre.textContent.replace(/\s+$/, ""), btn);
+    });
+  });
+
+  // ── theme toggle ───────────────────────────────────
+  themeBtn.addEventListener("click", function () {
+    var root = document.documentElement;
+    var isDark = (root.getAttribute("data-theme") || "dark") === "dark";
+    root.setAttribute("data-theme", isDark ? "light" : "dark");
+    themeBtn.textContent = isDark ? "Dark" : "Light";
+    themeBtn.setAttribute("aria-label", "Toggle theme. Currently " + (isDark ? "light" : "dark") + ".");
+  });
+
+  // ── deep-link: open targeted section on load + hashchange ──
+  function openHashSection() {
+    var hash = location.hash.replace(/^#/, "");
+    if (!hash) return;
+    var el = document.getElementById(hash);
+    if (!el) return;
+    // open the target if it's a details
+    if (el.tagName === "DETAILS" && !el.open) el.open = true;
+    // open any ancestor details too
+    var p = el.parentElement;
+    while (p) {
+      if (p.tagName === "DETAILS" && !p.open) p.open = true;
+      p = p.parentElement;
+    }
+    requestAnimationFrame(function () {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  window.addEventListener("hashchange", openHashSection);
+
+  // ── init ───────────────────────────────────────────
+  applyFilters();
+  openHashSection();
+})();
+</script>
+</body>
+</html>
