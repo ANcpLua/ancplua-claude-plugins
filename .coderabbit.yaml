@@ -1,45 +1,753 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
-# ─────────────────────────────────────────────────────────────────────────────
-# ancplua-claude-plugins — Claude Code plugin marketplace & agent lab
-# Stack: Markdown + YAML frontmatter (skills/commands/agents) + Shell (hooks/scripts)
-# CI:    claude plugin validate, shellcheck, markdownlint, actionlint, jq
-# Scope: 16 plugins — NO C#/.NET code
 #
-# Schema-validated against: https://coderabbit.ai/integrations/schema.v2.json
-# ─────────────────────────────────────────────────────────────────────────────
+# CodeRabbit Pro+ / Enterprise-grade review configuration for ANcpLua/ancplua-claude-plugins.
+# Generated 2026-05-16 from the current schema-backed configuration reference.
+#
+# Repository context: Agent/plugin/skill repository where instructions, MCP manifests, and generated plugin assets must stay coherent.
+#
+# Posture: maximum useful review depth. CodeRabbit may spend extra context on
+# cross-repo knowledge, web search, linked issues/PRs, security tools,
+# pre-merge checks, finishing touches, and issue planning. The request-changes
+# workflow is enabled intentionally so error-mode checks can block unsafe PRs.
 
 language: en-US
-tone_instructions: >-
-  Principal-engineer review. Direct, concise. Flag structural violations as blocking.
-  One actionable sentence over three hedging ones. No praise for obvious correctness.
-  Plugin marketplace — files consumed by AI agents, clarity is paramount.
+tone_instructions: 'Principal/staff-level review. Spend extra context on architecture,
+  correctness, maintainability, security, CI/release safety, generated-file drift,
+  and cross-repo contract drift. Be direct: no praise, no filler, no style nits without
+  risk.'
 early_access: true
 enable_free_tier: false
-
+inheritance: false
 reviews:
   profile: assertive
-  request_changes_workflow: false
+  request_changes_workflow: true
   high_level_summary: true
+  high_level_summary_instructions: 'Write a dense engineering summary: behavior changed,
+    risk surface, validation evidence, generated artifacts, and cross-repo implications.
+    Avoid praise and filler.'
+  high_level_summary_placeholder: "@coderabbitai summary"
   high_level_summary_in_walkthrough: true
+  auto_title_placeholder: "@coderabbitai title"
+  auto_title_instructions: 'Use conventional commits with an area prefix. Keep under
+    72 characters and omit trailing punctuation. Examples: feat(api): add document
+    search filters, fix(build): pin Codecov upload.'
   review_status: true
   review_details: true
   commit_status: true
   fail_commit_status: true
   collapse_walkthrough: false
-  changed_files_summary: false
-  sequence_diagrams: false
+  changed_files_summary: true
+  sequence_diagrams: true
   estimate_code_review_effort: true
   assess_linked_issues: true
   related_issues: true
   related_prs: true
   suggested_labels: true
-  suggested_reviewers: false
+  labeling_instructions:
+  - label: area:api
+    instructions: Apply when REST, RPC, MCP, public endpoints, contracts, or request/response
+      models change.
+  - label: area:ui
+    instructions: Apply when frontend UI, styling, accessibility, or client-side state
+      changes.
+  - label: area:build
+    instructions: Apply when build scripts, NUKE/MSBuild, package managers, Docker,
+      CI, or release automation change.
+  - label: area:test
+    instructions: Apply when tests, fixtures, test infrastructure, coverage, or snapshots
+      change.
+  - label: area:docs
+    instructions: Apply when docs, AGENTS.md, CLAUDE.md, README, changelogs, specs,
+      or generated reference docs change.
+  - label: area:security
+    instructions: Apply when authentication, authorization, secrets, token handling,
+      logging of sensitive data, or dependency security changes.
+  - label: area:data
+    instructions: Apply when database schema, persistence, migrations, queues, storage,
+      serialization, generated data, or data contracts change.
+  - label: area:agents
+    instructions: Apply when agent prompts, MCP tools, AI workflow code, model calls,
+      tool schemas, or agent-facing instructions change.
+  - label: area:generated
+    instructions: Apply when generated files, generators, schemas, OpenAPI/TypeSpec/semconv
+      models, lockfiles, or generated docs change.
+  - label: breaking
+    instructions: Apply when public APIs, CLI flags, package surfaces, endpoint schemas,
+      storage formats, config keys, or emitted artifacts change incompatibly.
+  - label: review:slop
+    instructions: Auto-applied by CodeRabbit slop detection for low-quality AI-generated
+      changes. Do not apply manually.
+  - label: area:exodia
+    instructions: Apply when the PR modifies files under plugins/exodia/.
+  - label: area:metacognitive-guard
+    instructions: Apply when the PR modifies files under plugins/metacognitive-guard/.
+  - label: area:hookify
+    instructions: Apply when the PR modifies files under plugins/hookify/.
+  - label: area:feature-dev
+    instructions: Apply when the PR modifies files under plugins/feature-dev/.
+  - label: area:dotnet-lint
+    instructions: Apply when the PR modifies files under plugins/dotnet-architecture-lint/.
+  - label: area:council
+    instructions: Apply when the PR modifies files under plugins/council/.
+  - label: area:design-studio
+    instructions: Apply when the PR modifies files under plugins/design-studio/.
+  - label: area:elegance
+    instructions: Apply when the PR modifies files under plugins/elegance-pipeline/.
+  - label: area:code-simplifier
+    instructions: Apply when the PR modifies files under plugins/code-simplifier/.
+  - label: area:ancplua
+    instructions: Apply when the PR modifies files under plugins/ancplua/.
+  - label: area:rider-respect
+    instructions: Apply when the PR modifies files under plugins/rider-respect/.
+  - label: area:release-pilot
+    instructions: Apply when the PR modifies files under plugins/release-pilot/.
+  - label: area:infra
+    instructions: Apply when the PR modifies .github/, tooling/, or build infrastructure
+      files.
+  auto_apply_labels: true
+  suggested_reviewers: true
   auto_assign_reviewers: false
+  suggested_reviewers_instructions:
+  - reviewers:
+    - handle: ANcpLua
+      type: user
+    instructions: Suggest for PRs touching architecture, public APIs, security-sensitive
+      code, release automation, generated artifacts, or cross-repository contracts.
   in_progress_fortune: false
   poem: false
   enable_prompt_for_ai_agents: true
-
-  labeling_instructions:
+  path_filters:
+  - "!**/*.g.cs"
+  - "!**/*.g.ts"
+  - "!**/*.g.sql"
+  - "!**/*.g.tsp"
+  - "!**/*.Designer.cs"
+  - "!**/Generated/**"
+  - "!**/generated/**"
+  - "!**/bin/**"
+  - "!**/obj/**"
+  - "!**/dist/**"
+  - "!**/node_modules/**"
+  - "!**/coverage/**"
+  - "!**/.angular/**"
+  - "!**/.vite/**"
+  - "!**/.next/**"
+  - "!**/*.min.js"
+  - "!**/*.min.css"
+  - "!**/package-lock.json"
+  - "!**/pnpm-lock.yaml"
+  - "!**/yarn.lock"
+  - "!Artifacts/**"
+  - "!artifacts/**"
+  - "!**/*.sarif"
+  - "!**/*.trx"
+  path_instructions:
+  - path: "**/*.{ts,tsx,js,jsx,mjs,cjs,json}"
+    instructions: TypeScript/JavaScript review. Flag `any` without a narrow justification,
+      unsafe casts, stale hook dependencies, direct network calls that bypass shared
+      clients, client/server contract drift, swallowed promise rejections, accessibility
+      regressions, missing loading/error states, bundle-heavy dependencies, and package-script
+      drift. Generated clients or schemas must be regenerated from the source contract;
+      do not hand-edit generated output.
+  - path: "**/*.{spec,test}.{ts,tsx,js,jsx}"
+    instructions: Frontend tests. Prefer user-visible assertions by role/text/state,
+      not implementation selectors. Avoid fixed sleeps and brittle snapshots. Validate
+      unhappy paths, loading states, and accessibility-critical behavior when UI logic
+      changes.
+  - path: "**/*.py"
+    instructions: Python review. Flag broad except blocks, implicit network/file side
+      effects, untyped public functions, path traversal risks, nondeterministic temp-file
+      handling, dependency pin drift, missing timeouts, and tests that require live
+      services without explicit gating.
+  - path: ".github/workflows/**"
+    instructions: GitHub Actions review. Pin third-party actions to immutable SHAs
+      unless the repo explicitly documents tag-pinning; keep permissions minimal per
+      job; use concurrency for push/PR workflows; avoid secrets in command lines/logs;
+      keep required and non-blocking jobs clear; preserve tokenless OIDC upload patterns
+      where used; and flag any admin-bypass, force-push, destructive cleanup, or auto-merge
+      behavior that can mask a failed required check.
+  - path: "**/*.{md,mdx}"
+    instructions: 'Documentation review. Treat docs as executable team memory: flag
+      instructions that disagree with actual scripts, package versions, branch protection,
+      generated-file workflows, or repo layout. Keep AGENTS.md/CLAUDE.md rules coherent
+      with automation. Do not request cosmetic prose changes unless ambiguity would
+      mislead an agent or maintainer.'
+  - path: "**/*.{g.cs,g.ts,g.sql,g.tsp,Designer.cs,generated.*,snap}"
+    instructions: Generated-output discipline. Do not suggest hand-editing generated
+      files. If generated output is wrong or missing, identify the generator/source
+      input and require regeneration in the same PR. If source model changes without
+      matching generated artifacts, flag it.
+  - path: "**/SKILL.md"
+    instructions: Codex/Claude skill instructions. Check trigger clarity, progressive
+      disclosure, tool mappings, safety gates, and absence of contradictory or impossible
+      workflow steps. Skills should be specific enough for agents to follow without
+      overloading unrelated tasks.
+  - path: "**/.codex-plugin/**"
+    instructions: Plugin manifests and assets. Verify plugin.json metadata, skill
+      paths, MCP/app wiring, versioned cache compatibility, and that generated plugin
+      assets are regenerated from sources.
+  - path: plugins/**/plugin.json
+    instructions: 'Plugin manifest — the single source of identity for each plugin.
+      Review for: required fields (name, version, description, author), valid semver
+      version, description accuracy matching actual plugin capabilities, and that
+      the name matches the directory name. Flag missing fields as blocking. Flag version
+      that wasn''t bumped when plugin code changed.'
+  - path: plugins/**/SKILL.md
+    instructions: |-
+      Skill definitions consumed by Claude Code agents. Review for: YAML frontmatter with required fields (name, description), name is kebab-case and max 64 chars, description is max 1024 chars and clearly explains WHEN to use the skill. Skill body should have clear workflow steps, verification criteria, and failure conditions. Flag phantom tool references (tools that don't exist in Claude Code). Flag skills that reference absolute paths or user-specific directories.
+      STRUCTURAL INVARIANTS — flag violations as blocking: 1. Every SKILL.md must start with valid YAML frontmatter (--- delimiters). 2. name and description fields are required in frontmatter. 3. Skills must not reference MCP tools that may not be installed. 4. Skills should not duplicate content already in CLAUDE.md.
+  - path: plugins/**/hooks.json
+    instructions: 'Hook configuration consumed by Claude Code runtime. Review for:
+      valid JSON syntax, correct hook event types (PreToolUse, PostToolUse, Notification,
+      Stop), proper matcher patterns, correct script paths (relative to plugin root),
+      and that referenced scripts exist. Flag hooks that filter on agent_type or agent_id
+      incorrectly. Flag hooks without proper error handling in their scripts.'
+  - path: plugins/**/commands/*.md
+    instructions: 'Slash command definitions. Review for: clear command description,
+      proper argument documentation, that the command body provides actionable instructions
+      for the agent, and no hardcoded paths. Commands should be self-contained — an
+      agent reading only the command file should be able to execute it.'
+  - path: plugins/**/agents/*.md
+    instructions: 'Agent definitions for Claude Code Agent SDK. Review for: valid
+      YAML frontmatter with required fields, clear agent description, proper tool
+      restrictions (allowed-tools), and that the agent prompt is specific enough to
+      be useful but not so rigid it can''t adapt. Flag agents that request tools they
+      shouldn''t need.'
+  - path: plugins/exodia/**
+    instructions: 'Multi-agent orchestration plugin — the most complex plugin in the
+      marketplace (9 commands + 2 skills: eight-gates, hades). Review for: correct
+      agent spawning patterns, proper task decomposition, that phase gates actually
+      enforce their constraints, and that Smart Hades infrastructure (session IDs,
+      deletion permits, audit ledger) maintains idempotency. Flag any command that
+      spawns agents without clear completion criteria. The hades skill uses Teams
+      API — verify SendMessage patterns and team lifecycle management.'
+  - path: plugins/ancplua/**
+    instructions: |-
+      Agent operating system plugin — leaderless multi-agent swarms with Playwright oracle validation. First skill: carlini-jr (spawns 2-8 autonomous workers in git worktrees). Review for: correct worktree isolation patterns (isolation: "worktree" on Agent spawns), that .carlini-jr/ coordination substrate uses file locks correctly for task claiming, that DOD (Definition of Done) parsing produces actionable items, and that workers use Playwright MCP screenshots as the sole oracle — never code review or build output.
+      ARCHITECTURAL INVARIANTS — flag violations as blocking: 1. No orchestrator/leader pattern — workers self-select tasks from
+         DOD items via file locks. If any code introduces a central
+         coordinator that assigns work, flag it.
+      2. Validation is Playwright-only — flag any worker logic that judges
+         correctness by reading source code, build output, or test results.
+         The oracle is observable behavior via screenshots.
+      3. File locks in .carlini-jr/current_tasks/ must be atomic — flag
+         lock implementations that could race (check-then-create without
+         exclusive open).
+      4. Agent count auto-scales as min(max(2, ceil(dod_items / 2)), 8) —
+         flag hardcoded agent counts unless the user explicitly overrides.
+      5. All workers must be spawned in a single message (parallel Agent
+         tool calls) — flag sequential spawning.
+  - path: plugins/metacognitive-guard/**
+    instructions: 'Cognitive amplification plugin — hooks that guard against hallucination,
+      struggle, and commit integrity violations. Review for: correct hook event filtering,
+      that epistemic checks actually verify claims before allowing them, that commit-integrity-hook
+      correctly blocks suppressions (#pragma, [SuppressMessage], NoWarn), and that
+      struggle detection thresholds are reasonable. Flag any guard that could silently
+      pass when it should block.'
+  - path: plugins/hookify/**
+    instructions: 'User-configurable hook engine. Review for: correct rule schema,
+      that rule matching logic handles edge cases (empty patterns, regex escaping),
+      and that blocking vs warning severity is clearly distinguished. Flag rules that
+      could match too broadly and block legitimate operations.'
+  - path: plugins/release-pilot/**
+    instructions: ".NET release orchestrator for the four ANcpLua framework repos.
+      Review for: correct ghost-tag handling (never delete or reassign remote tags),
+      bounded auto-fix iterations (max 1 dotnet format whitespace), classify-failure.sh
+      hard-stop allowlist accuracy, and that the three release patterns (auto-bump
+      / tag-with-gate / tag-direct) match the consuming repos' workflows. Flag any
+      broadening of the auto-fix allowlist beyond format-only."
+  - path: plugins/rider-respect/**
+    instructions: 'Rider IDE dry-run plugin. Review for: hard invariant that the skill
+      NEVER commits, pushes, merges, or suppresses (#pragma / NoWarn / SuppressMessage).
+      Scope must be captured BEFORE any git stash (stash-after-scope ordering bug).
+      Discard command must clean untracked files (git clean -fd) since Rider refactors
+      can create new .cs files. Flag any "fix" that adds suppression rather than rewriting
+      the diagnostic.'
+  - path: plugins/**/scripts/*.sh
+    instructions: 'Shell scripts executed by hooks and commands. Review for: shellcheck
+      compliance (SC2086 quoting, SC2155 declare/assign, SC2034 unused vars), set
+      -euo pipefail at script start, proper error handling with meaningful exit codes,
+      no hardcoded absolute paths, and correct use of environment variables provided
+      by Claude Code runtime (CLAUDE_SKILL_DIR, CLAUDE_PLUGIN_ROOT). Flag scripts
+      that source external files without checking existence. Flag unquoted variables
+      in any context.'
+  - path: plugins/**/bin/*.sh
+    instructions: Shell scripts under plugin bin/ directories — executed by skills
+      and commands. Same shellcheck rules as scripts/. Pay special attention to release-pilot/bin/
+      scripts which interact with git tags and NuGet — flag any retag or tag-deletion
+      logic.
+  - path: ".claude-plugin/marketplace.json"
+    instructions: 'Plugin registry — the single source of truth for published plugins.
+      Review for: that every plugin entry has name, source, description, and version
+      fields, that source paths point to existing directories, that versions match
+      the corresponding plugin.json, and that descriptions accurately reflect current
+      plugin capabilities. Flag orphaned entries (source dir doesn''t exist) as blocking.'
+  - path: docs/**
+    instructions: 'Documentation consumed by humans and AI agents. Review for: clarity
+      and accuracy, proper markdown formatting, valid internal links, that specs follow
+      the spec-XXXX-*.md naming convention, and that ADRs follow ADR-XXXX-*.md naming.
+      Flag stale references to removed plugins or renamed files. ARCHITECTURE.md is
+      the canonical structure reference — flag any drift from actual repo layout.'
+  - path: docs/specs/**
+    instructions: 'Feature specifications. Review for: proper template structure (Problem,
+      Value, Signatures, Usage), that spec IDs are sequential and unique, and that
+      the spec matches the actual implementation. Flag specs that describe behavior
+      not yet implemented without marking it as proposed.'
+  - path: docs/decisions/**
+    instructions: 'Architecture Decision Records (ADRs). Review for: proper template
+      structure (Status, Context, Decision, Consequences), that status is one of proposed/accepted/rejected/deprecated/superseded,
+      and that alternatives were actually considered. Flag ADRs without consequences
+      section.'
+  - path: tooling/scripts/**
+    instructions: 'Build and validation scripts. weave-validate.sh is the single validation
+      entrypoint — all CI checks must be reproducible locally through this script.
+      Review for: shellcheck compliance, idempotency, clear error messages, and that
+      new validation steps are added to both weave-validate.sh and ci.yml.'
+  - path: CLAUDE.md
+    instructions: 'The operational brain for Claude Code sessions. Changes here affect
+      every AI agent session in this repo. Review for: consistency with actual repo
+      structure, that routing trees match available skills and commands, that plugin
+      counts and capability numbers are accurate, and that no contradictory instructions
+      exist. Flag any instruction that references a removed plugin or skill.'
+  - path: AGENTS.md
+    instructions: 'Coordination file for external AI agents (Copilot, CodeRabbit,
+      humans). Review for: consistency with CLAUDE.md, accurate plugin descriptions,
+      and that review scope instructions match across all AI config files (CLAUDE.md,
+      copilot-instructions.md, .coderabbit.yaml).'
+  abort_on_close: true
+  disable_cache: true
+  slop_detection:
+    enabled: true
+    label: review:slop
+  auto_review:
+    enabled: true
+    description_keyword: "@coderabbitai review"
+    auto_incremental_review: true
+    auto_pause_after_reviewed_commits: 0
+    ignore_title_keywords:
+    - "[skip review]"
+    labels: []
+    drafts: true
+    base_branches:
+    - ".*"
+    ignore_usernames: []
+  finishing_touches:
+    docstrings:
+      enabled: true
+    unit_tests:
+      enabled: true
+    simplify:
+      enabled: true
+    custom:
+    - enabled: true
+      name: architecture hardening
+      instructions: Refactor only changed code where doing so removes meaningful duplication,
+        hidden fallback paths, tangled responsibilities, or brittle coupling. Preserve
+        behavior unless the PR explicitly changes it. Prefer deleting bad indirection
+        over adding wrappers. Include tests or note exactly why no test can cover
+        the improvement.
+    - enabled: true
+      name: security pass
+      instructions: Inspect the PR for secrets, injection risk, path traversal, unsafe
+        deserialization, authz/authn drift, overbroad logging, unsafe dependency changes,
+        and CI token permission expansion. Apply minimal fixes directly when safe;
+        otherwise leave precise comments.
+    - enabled: true
+      name: test gap closure
+      instructions: Generate focused tests for changed behavior and edge cases. Prefer
+        existing test frameworks and fixtures. Do not create broad snapshot churn
+        or tests that merely assert implementation details. Include regression tests
+        for bugs and riskier boundary changes.
+    - enabled: true
+      name: docs and changelog alignment
+      instructions: Update docs, README, AGENTS/CLAUDE guidance, generated reference
+        docs, and changelog entries only where the PR changes user-visible behavior,
+        public contracts, workflows, or agent instructions. Keep entries concise and
+        consistent with repo rules.
+    - enabled: true
+      name: performance and allocation pass
+      instructions: Review changed hot paths for avoidable allocations, repeated parsing,
+        unbounded concurrency, N+1 calls, missing streaming/backpressure, and inefficient
+        data structures. Apply low-risk improvements with tests or benchmarks where
+        the repo already has them.
+  pre_merge_checks:
+    override_requested_reviewers_only: true
+    docstrings:
+      mode: warning
+      threshold: 75
+    title:
+      mode: error
+      requirements: Conventional commits with an area scope; under 72 characters;
+        no trailing punctuation; accurately names the highest-impact change.
+    description:
+      mode: error
+    issue_assessment:
+      mode: warning
+    custom_checks:
+    - mode: error
+      name: No Secrets Or PII
+      instructions: 'Pass/fail criteria: fail if the PR adds secrets, tokens, credentials,
+        private keys, real user data, personal data, API keys, connection strings,
+        or logs that expose sensitive request/response bodies. Test placeholders are
+        allowed only when obviously synthetic and documented.'
+    - mode: error
+      name: Generated Files Regenerated
+      instructions: 'Pass/fail criteria: if a source schema/model/template/generator
+        input changes, all generated downstream files required by the repository must
+        be updated in the same PR. Fail if generated files appear hand-edited without
+        the source generator/input change, or if generated output is missing after
+        source-model changes.'
+    - mode: error
+      name: Async And Cancellation Safe
+      instructions: 'Pass/fail criteria: fail C#/TS/Python changes that introduce
+        sync-over-async, unobserved fire-and-forget work, missing CancellationToken/AbortSignal
+        propagation on public/internal async boundaries, sleeps for synchronization,
+        or resource disposal paths that can drop in-flight work.'
+    - mode: error
+      name: Public Contract Documented
+      instructions: 'Pass/fail criteria: fail if public APIs, endpoint schemas, CLI
+        flags, config keys, package surfaces, storage formats, event schemas, MCP
+        tool schemas, or generated contracts change without matching docs/tests and
+        explicit compatibility notes in the PR description or changelog where the
+        repo uses one.'
+    - mode: error
+      name: CI Release Safety
+      instructions: 'Pass/fail criteria: fail workflow/build/release changes that
+        reduce required validation, introduce admin bypasses, broaden token permissions
+        without justification, leak secrets, remove concurrency where needed, make
+        publish steps run on the wrong trigger, or allow failed required checks to
+        be ignored.'
+    - mode: warning
+      name: Tests Match Risk
+      instructions: 'Pass/fail criteria: warn when production behavior changes without
+        focused tests or when tests only assert implementation details. Require integration/e2e
+        coverage for persistence, queues, external-service boundaries, generated contracts,
+        migrations, or user-visible workflows touched by the PR.'
+    - mode: warning
+      name: No Copy Paste Tables
+      instructions: 'Pass/fail criteria: warn when a PR introduces hardcoded repetitive
+        case lists, hand-maintained mapping tables, duplicate switch branches, or
+        parallel arrays where a data-driven or generated structure would be more maintainable.
+        Do not warn for small explicit protocol enums or tests where duplication clarifies
+        cases.'
+    - mode: warning
+      name: No Hidden Fallback Path
+      instructions: 'Pass/fail criteria: warn when code catches and silently falls
+        back, adds compatibility wrappers, duplicate implementation paths, or default
+        behavior that hides upstream failure unless the fallback is a documented product
+        requirement with tests for both paths.'
+    - mode: warning
+      name: Observability Boundary
+      instructions: 'Pass/fail criteria: warn when new services, background jobs,
+        queues, network clients, storage writers, MCP tools, or agent workflows lack
+        structured logging, tracing/metrics where the repository already uses them,
+        or actionable error context.'
+    - mode: warning
+      name: Dependency Hygiene
+      instructions: 'Pass/fail criteria: warn when dependencies are added without
+        clear need, version pins drift from central package files, lockfile changes
+        do not match manifest changes, transitive security-sensitive packages are
+        introduced, or package manager conventions are violated.'
+    - mode: error
+      name: CHANGELOG updated
+      instructions: 'Every PR that changes plugin code, skills, commands, hooks, or
+        agents MUST update CHANGELOG.md with an entry under [Unreleased]. Pass if:
+        only docs/CI changes, or CHANGELOG.md is in the diff. Fail if: plugin code
+        changed but CHANGELOG.md is not modified.'
+    - mode: error
+      name: No hardcoded absolute paths
+      instructions: 'Scan all changed files for hardcoded absolute paths like /Users/,
+        /home/, /tmp/ (except in documentation examples clearly marked as such). Plugin
+        code must use CLAUDE_PLUGIN_ROOT or CLAUDE_SKILL_DIR environment variables.
+        Pass if: no absolute paths found. Fail if: any hardcoded path outside of documentation
+        examples.'
+    - mode: error
+      name: No C# or .NET code
+      instructions: 'This is a plugin marketplace — no C#, .csproj, .sln, or .NET
+        code belongs here. Pass if: no .cs, .csproj, .sln, .fsproj files added. Fail
+        if: any .NET project files or C# source files are added.'
+    - mode: warning
+      name: SKILL.md frontmatter required
+      instructions: 'If this PR adds or modifies SKILL.md files, verify each has valid
+        YAML frontmatter with name and description fields. Pass if: no SKILL.md changes,
+        or all SKILL.md files have valid frontmatter. Fail if: a SKILL.md lacks frontmatter
+        or required fields.'
+    - mode: warning
+      name: Plugin version and marketplace sync
+      instructions: 'If this PR modifies plugin code (skills, commands, hooks, agents,
+        scripts) under plugins/<name>/, verify: (1) plugin.json version was bumped,
+        (2) .claude-plugin/marketplace.json matches. Pass if: no plugin code changes,
+        or both are updated. Fail if: either is stale.'
+  tools:
+    ast-grep:
+      essential_rules: true
+    shellcheck:
+      enabled: true
+    ruff:
+      enabled: true
+    markdownlint:
+      enabled: true
+    github-checks:
+      enabled: true
+      timeout_ms: 900000
+    languagetool:
+      enabled: true
+      level: picky
+    biome:
+      enabled: true
+    hadolint:
+      enabled: false
+    swiftlint:
+      enabled: false
+    phpstan:
+      enabled: false
+    phpmd:
+      enabled: false
+    phpcs:
+      enabled: false
+    golangci-lint:
+      enabled: false
+    yamllint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    trufflehog:
+      enabled: true
+    checkov:
+      enabled: true
+    tflint:
+      enabled: false
+    detekt:
+      enabled: false
+    eslint:
+      enabled: true
+    flake8:
+      enabled: true
+    fortitudeLint:
+      enabled: false
+    rubocop:
+      enabled: false
+    buf:
+      enabled: false
+    regal:
+      enabled: false
+    actionlint:
+      enabled: true
+    pmd:
+      enabled: false
+    clang:
+      enabled: false
+    cppcheck:
+      enabled: false
+    opengrep:
+      enabled: true
+    semgrep:
+      enabled: true
+    circleci:
+      enabled: false
+    clippy:
+      enabled: false
+    sqlfluff:
+      enabled: false
+    trivy:
+      enabled: true
+    prismaLint:
+      enabled: false
+    pylint:
+      enabled: true
+    oxc:
+      enabled: true
+    shopifyThemeCheck:
+      enabled: false
+    luacheck:
+      enabled: false
+    brakeman:
+      enabled: false
+    dotenvLint:
+      enabled: false
+    htmlhint:
+      enabled: true
+    stylelint:
+      enabled: false
+    checkmake:
+      enabled: false
+    osvScanner:
+      enabled: true
+    presidio:
+      enabled: true
+    blinter:
+      enabled: false
+    smartyLint:
+      enabled: false
+    emberTemplateLint:
+      enabled: false
+    psscriptanalyzer:
+      enabled: false
+chat:
+  art: false
+  allow_non_org_members: false
+  auto_reply: true
+  integrations:
+    jira:
+      usage: disabled
+    linear:
+      usage: disabled
+knowledge_base:
+  opt_out: false
+  web_search:
+    enabled: true
+  code_guidelines:
+    enabled: true
+    filePatterns:
+    - CLAUDE.md
+    - AGENTS.md
+    - "**/CLAUDE.md"
+    - "**/AGENTS.md"
+    - ".editorconfig"
+    - README.md
+    - docs/**/*.md
+    - Directory.Build.props
+    - Directory.Packages.props
+    - global.json
+    - package.json
+    - pnpm-workspace.yaml
+    - Version.props
+  learnings:
+    scope: global
+  issues:
+    scope: global
+  jira:
+    usage: disabled
+  linear:
+    usage: disabled
+  pull_requests:
+    scope: global
+  mcp:
+    usage: enabled
+  linked_repositories:
+  - repository: ANcpLua/ANcpLua.Agents
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: ANcpLua/ANcpLua.Analyzers
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: ANcpLua/ANcpLua.NET.Sdk
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: O-ANcppLua/ANcpLua.OtelConventions.Api
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: ANcpLua/ANcpLua.Roslyn.Utilities
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: ANcpLua/Arqio
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: ANcpLua/BSc_2025_Alexander_Nachtmann
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: ANcpLua/C64AIToolChain
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: ANcpLua/ErrorOrX
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: O-ANcppLua/Nuke.OpenTelemetry.Conventions
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: ANcpLua/Paperless
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: ANcpLua/dotcov
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: ANcpLua/nhmw-digital-collection
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: O-ANcppLua/qyl
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: ANcpLua/safe-autoresearch
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: ANcpLua/typespec-otel-semconv
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+  - repository: ANcpLua/yt-transcript
+    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
+      build, telemetry, and agent workflow context when reviewing changes.
+code_generation:
+  docstrings:
+    language: en-US
+    path_instructions:
+    - path: "**/*.cs"
+      instructions: Generate XML docs for public/protected APIs and package surfaces.
+        Document intent, contracts, cancellation, exceptions, and compatibility. Do
+        not add obvious comments to private implementation details.
+    - path: "**/*.{ts,tsx}"
+      instructions: Generate concise TSDoc only for exported APIs, hooks, reusable
+        components, schemas, and non-obvious utility behavior. Avoid restating prop
+        names.
+  unit_tests:
+    path_instructions:
+    - path: "**/*.cs"
+      instructions: Use the repo test stack (xUnit v3/Microsoft Testing Platform where
+        present). Prefer focused unit tests plus integration tests for persistence,
+        queues, external clients, and generated contracts. Avoid sleeps; use fakes/signals.
+    - path: "**/*.{ts,tsx}"
+      instructions: Use the repo frontend test stack. Assert user-visible behavior
+        and accessible roles/states. Avoid waitForTimeout and brittle snapshots.
+    - path: "**/*.py"
+      instructions: Use pytest-style focused tests where a Python test stack exists.
+        Mock network and filesystem boundaries unless explicitly live-gated.
+issue_enrichment:
+  auto_enrich:
+    enabled: true
+  planning:
+    enabled: true
+    auto_planning:
+      enabled: true
+      labels:
+      - plan:auto
+      - enhancement
+      - bug
+      - good-first-issue
+      - help-wanted
+  labeling:
+    labeling_instructions:
+    - label: area:api
+      instructions: Apply when REST, RPC, MCP, public endpoints, contracts, or request/response
+        models change.
+    - label: area:ui
+      instructions: Apply when frontend UI, styling, accessibility, or client-side
+        state changes.
+    - label: area:build
+      instructions: Apply when build scripts, NUKE/MSBuild, package managers, Docker,
+        CI, or release automation change.
+    - label: area:test
+      instructions: Apply when tests, fixtures, test infrastructure, coverage, or
+        snapshots change.
+    - label: area:docs
+      instructions: Apply when docs, AGENTS.md, CLAUDE.md, README, changelogs, specs,
+        or generated reference docs change.
+    - label: area:security
+      instructions: Apply when authentication, authorization, secrets, token handling,
+        logging of sensitive data, or dependency security changes.
+    - label: area:data
+      instructions: Apply when database schema, persistence, migrations, queues, storage,
+        serialization, generated data, or data contracts change.
+    - label: area:agents
+      instructions: Apply when agent prompts, MCP tools, AI workflow code, model calls,
+        tool schemas, or agent-facing instructions change.
+    - label: area:generated
+      instructions: Apply when generated files, generators, schemas, OpenAPI/TypeSpec/semconv
+        models, lockfiles, or generated docs change.
+    - label: breaking
+      instructions: Apply when public APIs, CLI flags, package surfaces, endpoint
+        schemas, storage formats, config keys, or emitted artifacts change incompatibly.
+    - label: review:slop
+      instructions: Auto-applied by CodeRabbit slop detection for low-quality AI-generated
+        changes. Do not apply manually.
     - label: area:exodia
       instructions: Apply when the PR modifies files under plugins/exodia/.
     - label: area:metacognitive-guard
@@ -65,471 +773,6 @@ reviews:
     - label: area:release-pilot
       instructions: Apply when the PR modifies files under plugins/release-pilot/.
     - label: area:infra
-      instructions: Apply when the PR modifies .github/, tooling/, or build infrastructure files.
-    - label: area:docs
-      instructions: Apply when the PR modifies docs/, CHANGELOG.md, README.md, or AGENTS.md.
-    - label: breaking
-      instructions: >-
-        Apply when the PR introduces breaking changes to plugin APIs, skill contracts,
-        hook schemas, command signatures, or marketplace.json structure.
-  auto_apply_labels: true
-
-  # ── Path filters ──────────────────────────────────────────────────────────
-  path_filters:
-    - plugins/**
-    - docs/**
-    - tooling/**
-    - .github/**
-    - .claude/**
-    - .claude-plugin/**
-    - CLAUDE.md
-    - AGENTS.md
-    - CHANGELOG.md
-    - '*.json'
-    - '*.sh'
-    - '*.md'
-    - '*.yaml'
-    - '*.yml'
-    - '!**/node_modules/**'
-    - '!**/.git/**'
-
-  # ── Path instructions ─────────────────────────────────────────────────────
-  path_instructions:
-    - path: plugins/**/plugin.json
-      instructions: >-
-        Plugin manifest — the single source of identity for each plugin.
-        Review for: required fields (name, version, description, author),
-        valid semver version, description accuracy matching actual plugin
-        capabilities, and that the name matches the directory name.
-        Flag missing fields as blocking. Flag version that wasn't bumped
-        when plugin code changed.
-
-    - path: plugins/**/SKILL.md
-      instructions: >-
-        Skill definitions consumed by Claude Code agents. Review for:
-        YAML frontmatter with required fields (name, description),
-        name is kebab-case and max 64 chars, description is max 1024 chars
-        and clearly explains WHEN to use the skill. Skill body should have
-        clear workflow steps, verification criteria, and failure conditions.
-        Flag phantom tool references (tools that don't exist in Claude Code).
-        Flag skills that reference absolute paths or user-specific directories.
-
-        STRUCTURAL INVARIANTS — flag violations as blocking:
-        1. Every SKILL.md must start with valid YAML frontmatter (--- delimiters).
-        2. name and description fields are required in frontmatter.
-        3. Skills must not reference MCP tools that may not be installed.
-        4. Skills should not duplicate content already in CLAUDE.md.
-
-    - path: plugins/**/hooks.json
-      instructions: >-
-        Hook configuration consumed by Claude Code runtime. Review for:
-        valid JSON syntax, correct hook event types (PreToolUse, PostToolUse,
-        Notification, Stop), proper matcher patterns, correct script paths
-        (relative to plugin root), and that referenced scripts exist.
-        Flag hooks that filter on agent_type or agent_id incorrectly.
-        Flag hooks without proper error handling in their scripts.
-
-    - path: plugins/**/commands/*.md
-      instructions: >-
-        Slash command definitions. Review for: clear command description,
-        proper argument documentation, that the command body provides
-        actionable instructions for the agent, and no hardcoded paths.
-        Commands should be self-contained — an agent reading only the
-        command file should be able to execute it.
-
-    - path: plugins/**/agents/*.md
-      instructions: >-
-        Agent definitions for Claude Code Agent SDK. Review for: valid YAML
-        frontmatter with required fields, clear agent description, proper
-        tool restrictions (allowed-tools), and that the agent prompt is
-        specific enough to be useful but not so rigid it can't adapt.
-        Flag agents that request tools they shouldn't need.
-
-    - path: plugins/exodia/**
-      instructions: >-
-        Multi-agent orchestration plugin — the most complex plugin in the
-        marketplace (9 commands + 2 skills: eight-gates, hades). Review for:
-        correct agent spawning patterns, proper task decomposition, that
-        phase gates actually enforce their constraints, and that Smart Hades
-        infrastructure (session IDs, deletion permits, audit ledger) maintains
-        idempotency. Flag any command that spawns agents without clear
-        completion criteria. The hades skill uses Teams API — verify
-        SendMessage patterns and team lifecycle management.
-
-    - path: plugins/ancplua/**
-      instructions: >-
-        Agent operating system plugin — leaderless multi-agent swarms with
-        Playwright oracle validation. First skill: carlini-jr (spawns 2-8
-        autonomous workers in git worktrees). Review for: correct worktree
-        isolation patterns (isolation: "worktree" on Agent spawns), that
-        .carlini-jr/ coordination substrate uses file locks correctly for
-        task claiming, that DOD (Definition of Done) parsing produces
-        actionable items, and that workers use Playwright MCP screenshots
-        as the sole oracle — never code review or build output.
-
-        ARCHITECTURAL INVARIANTS — flag violations as blocking:
-        1. No orchestrator/leader pattern — workers self-select tasks from
-           DOD items via file locks. If any code introduces a central
-           coordinator that assigns work, flag it.
-        2. Validation is Playwright-only — flag any worker logic that judges
-           correctness by reading source code, build output, or test results.
-           The oracle is observable behavior via screenshots.
-        3. File locks in .carlini-jr/current_tasks/ must be atomic — flag
-           lock implementations that could race (check-then-create without
-           exclusive open).
-        4. Agent count auto-scales as min(max(2, ceil(dod_items / 2)), 8) —
-           flag hardcoded agent counts unless the user explicitly overrides.
-        5. All workers must be spawned in a single message (parallel Agent
-           tool calls) — flag sequential spawning.
-
-    - path: plugins/metacognitive-guard/**
-      instructions: >-
-        Cognitive amplification plugin — hooks that guard against hallucination,
-        struggle, and commit integrity violations. Review for: correct hook
-        event filtering, that epistemic checks actually verify claims before
-        allowing them, that commit-integrity-hook correctly blocks suppressions
-        (#pragma, [SuppressMessage], NoWarn), and that struggle detection
-        thresholds are reasonable. Flag any guard that could silently pass
-        when it should block.
-
-    - path: plugins/hookify/**
-      instructions: >-
-        User-configurable hook engine. Review for: correct rule schema,
-        that rule matching logic handles edge cases (empty patterns, regex
-        escaping), and that blocking vs warning severity is clearly
-        distinguished. Flag rules that could match too broadly and block
-        legitimate operations.
-
-    - path: plugins/release-pilot/**
-      instructions: >-
-        .NET release orchestrator for the four ANcpLua framework repos.
-        Review for: correct ghost-tag handling (never delete or reassign
-        remote tags), bounded auto-fix iterations (max 1 dotnet format
-        whitespace), classify-failure.sh hard-stop allowlist accuracy,
-        and that the three release patterns (auto-bump / tag-with-gate /
-        tag-direct) match the consuming repos' workflows. Flag any
-        broadening of the auto-fix allowlist beyond format-only.
-
-    - path: plugins/rider-respect/**
-      instructions: >-
-        Rider IDE dry-run plugin. Review for: hard invariant that the skill
-        NEVER commits, pushes, merges, or suppresses (#pragma / NoWarn /
-        SuppressMessage). Scope must be captured BEFORE any git stash
-        (stash-after-scope ordering bug). Discard command must clean
-        untracked files (git clean -fd) since Rider refactors can create
-        new .cs files. Flag any "fix" that adds suppression rather than
-        rewriting the diagnostic.
-
-    - path: plugins/**/scripts/*.sh
-      instructions: >-
-        Shell scripts executed by hooks and commands. Review for: shellcheck
-        compliance (SC2086 quoting, SC2155 declare/assign, SC2034 unused vars),
-        set -euo pipefail at script start, proper error handling with meaningful
-        exit codes, no hardcoded absolute paths, and correct use of environment
-        variables provided by Claude Code runtime (CLAUDE_SKILL_DIR,
-        CLAUDE_PLUGIN_ROOT). Flag scripts that source external files without
-        checking existence. Flag unquoted variables in any context.
-
-    - path: plugins/**/bin/*.sh
-      instructions: >-
-        Shell scripts under plugin bin/ directories — executed by skills and
-        commands. Same shellcheck rules as scripts/. Pay special attention
-        to release-pilot/bin/ scripts which interact with git tags and
-        NuGet — flag any retag or tag-deletion logic.
-
-    - path: .github/workflows/**
-      instructions: >-
-        GitHub Actions workflows for CI, auto-merge, and AI code review.
-        Review for: action version pinning (SHA for third-party, tags for
-        first-party GitHub actions), proper secret handling (secrets via env:
-        not inline, no secrets in logs), minimal permissions (principle of
-        least privilege), proper concurrency groups on push-triggered workflows,
-        and that security-sensitive inputs use env: variables to prevent
-        code injection (CWE-94). Flag missing continue-on-error on non-critical
-        steps. Flag workflows that could trigger infinite loops between AI agents.
-
-    - path: .claude-plugin/marketplace.json
-      instructions: >-
-        Plugin registry — the single source of truth for published plugins.
-        Review for: that every plugin entry has name, source, description,
-        and version fields, that source paths point to existing directories,
-        that versions match the corresponding plugin.json, and that
-        descriptions accurately reflect current plugin capabilities.
-        Flag orphaned entries (source dir doesn't exist) as blocking.
-
-    - path: docs/**
-      instructions: >-
-        Documentation consumed by humans and AI agents. Review for: clarity
-        and accuracy, proper markdown formatting, valid internal links,
-        that specs follow the spec-XXXX-*.md naming convention, and that
-        ADRs follow ADR-XXXX-*.md naming. Flag stale references to removed
-        plugins or renamed files. ARCHITECTURE.md is the canonical structure
-        reference — flag any drift from actual repo layout.
-
-    - path: docs/specs/**
-      instructions: >-
-        Feature specifications. Review for: proper template structure
-        (Problem, Value, Signatures, Usage), that spec IDs are sequential
-        and unique, and that the spec matches the actual implementation.
-        Flag specs that describe behavior not yet implemented without
-        marking it as proposed.
-
-    - path: docs/decisions/**
-      instructions: >-
-        Architecture Decision Records (ADRs). Review for: proper template
-        structure (Status, Context, Decision, Consequences), that status
-        is one of proposed/accepted/rejected/deprecated/superseded, and
-        that alternatives were actually considered. Flag ADRs without
-        consequences section.
-
-    - path: tooling/scripts/**
-      instructions: >-
-        Build and validation scripts. weave-validate.sh is the single
-        validation entrypoint — all CI checks must be reproducible locally
-        through this script. Review for: shellcheck compliance, idempotency,
-        clear error messages, and that new validation steps are added to
-        both weave-validate.sh and ci.yml.
-
-    - path: CLAUDE.md
-      instructions: >-
-        The operational brain for Claude Code sessions. Changes here affect
-        every AI agent session in this repo. Review for: consistency with
-        actual repo structure, that routing trees match available skills
-        and commands, that plugin counts and capability numbers are accurate,
-        and that no contradictory instructions exist. Flag any instruction
-        that references a removed plugin or skill.
-
-    - path: AGENTS.md
-      instructions: >-
-        Coordination file for external AI agents (Copilot, CodeRabbit, humans).
-        Review for: consistency with CLAUDE.md, accurate plugin descriptions,
-        and that review scope instructions match across all AI config files
-        (CLAUDE.md, copilot-instructions.md, .coderabbit.yaml).
-
-  # ── Auto review ───────────────────────────────────────────────────────────
-  auto_review:
-    enabled: true
-    auto_incremental_review: true
-    auto_pause_after_reviewed_commits: 0
-    drafts: false
-    ignore_title_keywords:
-      - '[skip ci]'
-      - '[skip review]'
-      - 'wip'
-    labels: []
-    base_branches: []
-    ignore_usernames:
-      - 'dependabot[bot]'
-      - 'renovate[bot]'
-
-  # ── Finishing touches ─────────────────────────────────────────────────────
-  finishing_touches:
-    docstrings:
-      enabled: false
-    unit_tests:
-      enabled: false
-
-  # ── Pre-merge checks ─────────────────────────────────────────────────────
-  pre_merge_checks:
-    docstrings:
-      mode: 'off'
-    title:
-      mode: error
-      requirements: >-
-        Conventional commits: feat|fix|refactor|chore|docs|test|ci|perf.
-        Include scope matching plugin name or area: (exodia), (metacognitive-guard),
-        (hookify), (feature-dev), (dotnet-lint), (routing), (council),
-        (design-studio), (elegance), (code-simplifier), (qyl), (otelhook),
-        (ancplua), (rider-respect), (release-pilot), (infra), (docs), (ci).
-        Under 72 characters. No trailing period.
-        Examples: feat(exodia): add baryon-mode command, fix(hookify): escape regex in rule matching
-    description:
-      mode: warning
-    issue_assessment:
-      mode: warning
-    custom_checks:
-      - mode: error
-        name: CHANGELOG updated
-        instructions: >-
-          Every PR that changes plugin code, skills, commands, hooks, or agents
-          MUST update CHANGELOG.md with an entry under [Unreleased]. Pass if:
-          only docs/CI changes, or CHANGELOG.md is in the diff. Fail if:
-          plugin code changed but CHANGELOG.md is not modified.
-      - mode: error
-        name: No hardcoded absolute paths
-        instructions: >-
-          Scan all changed files for hardcoded absolute paths like /Users/,
-          /home/, /tmp/ (except in documentation examples clearly marked as
-          such). Plugin code must use CLAUDE_PLUGIN_ROOT or CLAUDE_SKILL_DIR
-          environment variables. Pass if: no absolute paths found. Fail if:
-          any hardcoded path outside of documentation examples.
-      - mode: error
-        name: No C# or .NET code
-        instructions: >-
-          This is a plugin marketplace — no C#, .csproj, .sln, or .NET code
-          belongs here. Pass if: no .cs, .csproj, .sln, .fsproj files added.
-          Fail if: any .NET project files or C# source files are added.
-      - mode: warning
-        name: SKILL.md frontmatter required
-        instructions: >-
-          If this PR adds or modifies SKILL.md files, verify each has valid
-          YAML frontmatter with name and description fields. Pass if: no
-          SKILL.md changes, or all SKILL.md files have valid frontmatter.
-          Fail if: a SKILL.md lacks frontmatter or required fields.
-      - mode: warning
-        name: Plugin version and marketplace sync
-        instructions: >-
-          If this PR modifies plugin code (skills, commands, hooks, agents,
-          scripts) under plugins/<name>/, verify: (1) plugin.json version was
-          bumped, (2) .claude-plugin/marketplace.json matches. Pass if: no
-          plugin code changes, or both are updated. Fail if: either is stale.
-
-  # ── Tools ─────────────────────────────────────────────────────────────────
-  # Schema default for ALL tools is enabled:true.
-  # Explicitly keep what's relevant, disable everything else.
-  tools:
-    # ── Active for this stack ──
-    shellcheck:
-      enabled: true
-    actionlint:
-      enabled: true
-    markdownlint:
-      enabled: true
-    gitleaks:
-      enabled: true
-    github-checks:
-      enabled: true
-      timeout_ms: 120000
-    ast-grep:
-      essential_rules: true
-
-    # ── Explicitly disabled: not in our stack ──
-    eslint:
-      enabled: false
-    oxc:
-      enabled: false
-    biome:
-      enabled: false
-    ruff:
-      enabled: false
-    pylint:
-      enabled: false
-    flake8:
-      enabled: false
-    phpstan:
-      enabled: false
-    phpmd:
-      enabled: false
-    phpcs:
-      enabled: false
-    swiftlint:
-      enabled: false
-    detekt:
-      enabled: false
-    pmd:
-      enabled: false
-    semgrep:
-      enabled: false
-    opengrep:
-      enabled: false
-    trufflehog:
-      enabled: false
-    checkov:
-      enabled: false
-    tflint:
-      enabled: false
-    fortitudeLint:
-      enabled: false
-    rubocop:
-      enabled: false
-    buf:
-      enabled: false
-    regal:
-      enabled: false
-    clang:
-      enabled: false
-    cppcheck:
-      enabled: false
-    circleci:
-      enabled: false
-    clippy:
-      enabled: false
-    sqlfluff:
-      enabled: false
-    trivy:
-      enabled: false
-    prismaLint:
-      enabled: false
-    shopifyThemeCheck:
-      enabled: false
-    luacheck:
-      enabled: false
-    brakeman:
-      enabled: false
-    dotenvLint:
-      enabled: false
-    htmlhint:
-      enabled: false
-    stylelint:
-      enabled: false
-    checkmake:
-      enabled: false
-    osvScanner:
-      enabled: false
-    blinter:
-      enabled: false
-    yamllint:
-      enabled: false
-    psscriptanalyzer:
-      enabled: false
-    languagetool:
-      enabled: false
-    hadolint:
-      enabled: false
-    golangci-lint:
-      enabled: false
-
-# ── Chat ──────────────────────────────────────────────────────────────────
-chat:
-  auto_reply: true
-  art: false
-  integrations:
-    jira:
-      usage: disabled
-    linear:
-      usage: disabled
-
-# ── Knowledge base ────────────────────────────────────────────────────────
-knowledge_base:
-  opt_out: false
-  web_search:
-    enabled: true
-  code_guidelines:
-    enabled: true
-    filePatterns:
-      - '**/CLAUDE.md'
-      - '**/AGENTS.md'
-      - '**/.claude/rules/*.md'
-      - '.claude-plugin/marketplace.json'
-  learnings:
-    scope: auto
-  issues:
-    scope: auto
-  pull_requests:
-    scope: auto
-  jira:
-    usage: disabled
-  linear:
-    usage: disabled
-  mcp:
-    usage: auto
-
-# ── Issue enrichment ──────────────────────────────────────────────────────
-issue_enrichment:
-  auto_enrich:
-    enabled: true
-  planning:
-    auto_planning:
-      enabled: false
-  labeling:
+      instructions: Apply when the PR modifies .github/, tooling/, or build infrastructure
+        files.
     auto_apply_labels: true
