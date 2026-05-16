@@ -7,6 +7,7 @@ Tell Claude "give me a report / dashboard / triage board / status update / postm
 - **`skills/html-effectiveness/SKILL.md`** — decision protocol Claude follows: load `patterns.json`, match user intent against `decision_tree`, study the canonical pattern from Thariq's repo, replicate with the user's real data.
 - **`skills/html-effectiveness/references/patterns.json`** — data-driven routing table: 20 patterns × `if_user_says` triggers, design tokens (Anthropic Coral DNA), principles.
 - **`skills/html-effectiveness/assets/otel-semconv-demo.html`** — concrete proof-of-concept built on the side-by-side pattern, showing OTel v1.40 → v1.41 generator diff with breaking-change filter and "Copy upgrade-notes" button.
+- **`claude-code-bleeding-edge.html`** — curated reference doc built on pattern 14 (research-feature-explainer) DNA: post-May-2025 features (`/btw`, v2.1 permission modes, 2026 hook extensions), hidden/undocumented env vars, CLI flags, `settings.json` power moves, Boris Cherny tips. Sticky-toolbar search + category filter pills + copy-to-clipboard on every row. Single self-contained file; open offline.
 
 ## Source philosophy
 
@@ -25,3 +26,11 @@ open ~/RiderProjects/ancplua-claude-plugins/plugins/html-effectiveness/skills/ht
 ```
 
 Click "Breaking only" to filter, then "Copy upgrade-notes" — the visible groups land on your clipboard as CHANGELOG-ready markdown.
+
+For the bleeding-edge reference:
+
+```bash
+open ~/RiderProjects/ancplua-claude-plugins/plugins/html-effectiveness/claude-code-bleeding-edge.html
+```
+
+Toggle category pills, search any env var or flag, jump straight to `#agent-teams` for the typo correction.
