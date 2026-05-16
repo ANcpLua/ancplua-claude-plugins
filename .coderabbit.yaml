@@ -242,11 +242,6 @@ reviews:
       generated-file workflows, or repo layout. Keep AGENTS.md/CLAUDE.md rules coherent
       with automation. Do not request cosmetic prose changes unless ambiguity would
       mislead an agent or maintainer.'
-  - path: "**/*.g.cs"
-    instructions: Generated-output discipline. Do not suggest hand-editing generated
-      files. If generated output is wrong or missing, identify the generator/source
-      input and require regeneration in the same PR. If source model changes without
-      matching generated artifacts, flag it.
   - path: "**/*.g.ts"
     instructions: Generated-output discipline. Do not suggest hand-editing generated
       files. If generated output is wrong or missing, identify the generator/source
@@ -258,11 +253,6 @@ reviews:
       input and require regeneration in the same PR. If source model changes without
       matching generated artifacts, flag it.
   - path: "**/*.g.tsp"
-    instructions: Generated-output discipline. Do not suggest hand-editing generated
-      files. If generated output is wrong or missing, identify the generator/source
-      input and require regeneration in the same PR. If source model changes without
-      matching generated artifacts, flag it.
-  - path: "**/*.Designer.cs"
     instructions: Generated-output discipline. Do not suggest hand-editing generated
       files. If generated output is wrong or missing, identify the generator/source
       input and require regeneration in the same PR. If source model changes without
@@ -708,12 +698,8 @@ knowledge_base:
     - ".editorconfig"
     - README.md
     - docs/**/*.md
-    - Directory.Build.props
-    - Directory.Packages.props
-    - global.json
     - package.json
     - pnpm-workspace.yaml
-    - Version.props
   learnings:
     scope: global
   issues:
@@ -761,10 +747,6 @@ code_generation:
   docstrings:
     language: en-US
     path_instructions:
-    - path: "**/*.cs"
-      instructions: Generate XML docs for public/protected APIs and package surfaces.
-        Document intent, contracts, cancellation, exceptions, and compatibility. Do
-        not add obvious comments to private implementation details.
     - path: "**/*.ts"
       instructions: Generate concise TSDoc only for exported APIs, hooks, reusable
         components, schemas, and non-obvious utility behavior. Avoid restating prop
@@ -775,10 +757,6 @@ code_generation:
         names.
   unit_tests:
     path_instructions:
-    - path: "**/*.cs"
-      instructions: Use the repo test stack (xUnit v3/Microsoft Testing Platform where
-        present). Prefer focused unit tests plus integration tests for persistence,
-        queues, external clients, and generated contracts. Avoid sleeps; use fakes/signals.
     - path: "**/*.ts"
       instructions: Use the repo frontend test stack. Assert user-visible behavior
         and accessible roles/states. Avoid waitForTimeout and brittle snapshots.
