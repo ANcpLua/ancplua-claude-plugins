@@ -117,7 +117,6 @@ reviews:
   poem: false
   enable_prompt_for_ai_agents: true
   path_filters:
-  - "!**/bin/**"
   - "!**/obj/**"
   - "!**/dist/**"
   - "!**/node_modules/**"
@@ -283,11 +282,11 @@ reviews:
       disclosure, tool mappings, safety gates, and absence of contradictory or impossible
       workflow steps. Skills should be specific enough for agents to follow without
       overloading unrelated tasks.
-  - path: "**/.codex-plugin/**"
+  - path: "**/.claude-plugin/**"
     instructions: Plugin manifests and assets. Verify plugin.json metadata, skill
       paths, MCP/app wiring, versioned cache compatibility, and that generated plugin
       assets are regenerated from sources.
-  - path: plugins/**/plugin.json
+  - path: plugins/**/.claude-plugin/plugin.json
     instructions: 'Plugin manifest — the single source of identity for each plugin.
       Review for: required fields (name, version, description, author), valid semver
       version, description accuracy matching actual plugin capabilities, and that
@@ -297,7 +296,7 @@ reviews:
     instructions: |-
       Skill definitions consumed by Claude Code agents. Review for: YAML frontmatter with required fields (name, description), name is kebab-case and max 64 chars, description is max 1024 chars and clearly explains WHEN to use the skill. Skill body should have clear workflow steps, verification criteria, and failure conditions. Flag phantom tool references (tools that don't exist in Claude Code). Flag skills that reference absolute paths or user-specific directories.
       STRUCTURAL INVARIANTS — flag violations as blocking: 1. Every SKILL.md must start with valid YAML frontmatter (--- delimiters). 2. name and description fields are required in frontmatter. 3. Skills must not reference MCP tools that may not be installed. 4. Skills should not duplicate content already in CLAUDE.md.
-  - path: plugins/**/hooks.json
+  - path: plugins/**/hooks/hooks.json
     instructions: 'Hook configuration consumed by Claude Code runtime. Review for:
       valid JSON syntax, correct hook event types (PreToolUse, PostToolUse, Notification,
       Stop), proper matcher patterns, correct script paths (relative to plugin root),
@@ -372,7 +371,7 @@ reviews:
       by Claude Code runtime (CLAUDE_SKILL_DIR, CLAUDE_PLUGIN_ROOT). Flag scripts
       that source external files without checking existence. Flag unquoted variables
       in any context.'
-  - path: plugins/**/bin/*.sh
+  - path: plugins/**/bin/**
     instructions: Shell scripts under plugin bin/ directories — executed by skills
       and commands. Same shellcheck rules as scripts/. Pay special attention to release-pilot/bin/
       scripts which interact with git tags and NuGet — flag any retag or tag-deletion
@@ -756,27 +755,6 @@ knowledge_base:
     instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
       build, telemetry, and agent workflow context when reviewing changes.
   - repository: O-ANcppLua/Nuke.OpenTelemetry.Conventions
-    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
-      build, telemetry, and agent workflow context when reviewing changes.
-  - repository: ANcpLua/Paperless
-    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
-      build, telemetry, and agent workflow context when reviewing changes.
-  - repository: ANcpLua/dotcov
-    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
-      build, telemetry, and agent workflow context when reviewing changes.
-  - repository: ANcpLua/nhmw-digital-collection
-    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
-      build, telemetry, and agent workflow context when reviewing changes.
-  - repository: O-ANcppLua/qyl
-    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
-      build, telemetry, and agent workflow context when reviewing changes.
-  - repository: ANcpLua/safe-autoresearch
-    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
-      build, telemetry, and agent workflow context when reviewing changes.
-  - repository: ANcpLua/typespec-otel-semconv
-    instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
-      build, telemetry, and agent workflow context when reviewing changes.
-  - repository: ANcpLua/yt-transcript
     instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
       build, telemetry, and agent workflow context when reviewing changes.
 code_generation:
