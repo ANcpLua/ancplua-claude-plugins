@@ -68,16 +68,14 @@ echo ""
 echo "[2/6] ShellCheck"
 
 if command -v shellcheck >/dev/null 2>&1; then
-  SHELL_FILES=()
-  while IFS= read -r -d '' f; do
-    SHELL_FILES+=("$f")
-  done < <(find tooling plugins agents -type f -name "*.sh" -print0 2>/dev/null)
+  SHELL_FILES=$(find tooling plugins agents -type f -name "*.sh" 2>/dev/null)
 
-  if [ ${#SHELL_FILES[@]} -gt 0 ]; then
-    if ! shellcheck --severity=warning "${SHELL_FILES[@]}" 2>&1; then
+  if [ -n "$SHELL_FILES" ]; then
+    SHELL_COUNT=$(echo "$SHELL_FILES" | wc -l)
+    if ! echo "$SHELL_FILES" | xargs shellcheck --severity=warning 2>&1; then
       hard_fail "shellcheck violations found"
     else
-      echo "  OK: ${#SHELL_FILES[@]} scripts clean"
+      echo "  OK: $SHELL_COUNT scripts clean"
     fi
   else
     echo "  OK: no shell scripts found"
@@ -127,13 +125,17 @@ echo "[5/6] JSON syntax"
 
 JSON_COUNT=0
 JSON_ERRORS=0
-while IFS= read -r f; do
-  JSON_COUNT=$((JSON_COUNT + 1))
-  if ! jq . "$f" >/dev/null 2>&1; then
-    hard_fail "invalid JSON: $f"
-    JSON_ERRORS=$((JSON_ERRORS + 1))
-  fi
-done < <(find . -name "*.json" -not -path "*/node_modules/*" -not -path "*/.git/*" -type f 2>/dev/null)
+JSON_FILES=$(find . -name "*.json" -not -path "*/node_modules/*" -not -path "*/.git/*" -type f 2>/dev/null)
+
+if [ -n "$JSON_FILES" ]; then
+  while IFS= read -r f; do
+    JSON_COUNT=$((JSON_COUNT + 1))
+    if ! jq . "$f" >/dev/null 2>&1; then
+      hard_fail "invalid JSON: $f"
+      JSON_ERRORS=$((JSON_ERRORS + 1))
+    fi
+  done <<< "$JSON_FILES"
+fi
 
 if [ "$JSON_ERRORS" -eq 0 ]; then
   echo "  OK: $JSON_COUNT JSON files valid"

@@ -1524,10 +1524,13 @@ claude</code></pre>
     if (!el) return;
     // open the target if it's a details
     if (el.tagName === "DETAILS" && !el.open) el.open = true;
-    // open any ancestor details too
+    // remove .hidden from target and ancestors (undo filters)
+    el.classList.remove("hidden");
+    // open any ancestor details too and remove .hidden
     var p = el.parentElement;
     while (p) {
       if (p.tagName === "DETAILS" && !p.open) p.open = true;
+      p.classList.remove("hidden");
       p = p.parentElement;
     }
     requestAnimationFrame(function () {
