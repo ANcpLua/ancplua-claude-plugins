@@ -1476,9 +1476,12 @@ claude</code></pre>
     ta.style.left = "-9999px";
     document.body.appendChild(ta);
     ta.select();
-    try { document.execCommand("copy"); } catch (e) {}
+    var success = false;
+    try { success = document.execCommand("copy"); } catch (e) {}
     document.body.removeChild(ta);
-    flashCopied(btn);
+    if (success) {
+      flashCopied(btn);
+    }
   }
 
   // copy-icon buttons (data-copy attribute)
