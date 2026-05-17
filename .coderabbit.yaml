@@ -698,8 +698,6 @@ knowledge_base:
     - ".editorconfig"
     - README.md
     - docs/**/*.md
-    - package.json
-    - pnpm-workspace.yaml
   learnings:
     scope: global
   issues:
@@ -711,7 +709,7 @@ knowledge_base:
   pull_requests:
     scope: global
   mcp:
-    usage: auto
+    enabled: true
   linked_repositories:
   - repository: ANcpLua/ANcpLua.Agents
     instructions: Related ANcpLua/O-ANcppLua repository. Use for cross-repo API, package,
