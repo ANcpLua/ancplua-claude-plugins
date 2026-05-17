@@ -1,42 +1,16 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark light">
+<meta name="color-scheme" content="light dark">
 <meta name="description" content="Claude Code bleeding-edge reference: hidden env vars, undocumented CLI flags, hook extensions, Boris Cherny workflow tips. Curated, 2026-05.">
 <title>Claude Code bleeding-edge reference</title>
 <style>
+  /* ── default palette: coral (patterns.json:palettes.coral) ── */
   :root {
-    --bg:            #0d0e10;
-    --surface:       #15171b;
-    --surface-2:     #1d2025;
-    --surface-3:     #24272d;
-    --border:        #2a2d32;
-    --border-strong: #3a3d44;
-    --text:          #e8e6e3;
-    --text-muted:    #a4a59f;
-    --text-dim:      #76776f;
-    --accent:        #d97757;
-    --accent-strong: #ea8e6f;
-    --accent-dim:    #b85c3e;
-    --warn:          #d4a35a;
-    --danger:        #e08e6f;
-    --critical-bg:   rgba(212, 163, 90, 0.09);
-    --critical-bd:   #6e5224;
-    --critical-text: #f0c989;
-    --success:       #8fa873;
-    --link:          #e8a988;
-    --shadow:        0 1px 0 rgba(255,255,255,0.02), 0 8px 28px rgba(0,0,0,0.45);
-    --focus-ring:    0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
-
-    --serif: ui-serif, Georgia, "Times New Roman", serif;
-    --sans:  system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --mono:  ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
-  }
-  :root[data-theme="light"] {
     --bg:            #FAF9F5;
-    --surface:       #ffffff;
+    --surface:       #FFFFFF;
     --surface-2:     #F0EEE6;
     --surface-3:     #E3DACC;
     --border:        #D1CFC5;
@@ -44,17 +18,45 @@
     --text:          #141413;
     --text-muted:    #3D3D3A;
     --text-dim:      #87867F;
-    --accent:        #B85C3E;
-    --accent-strong: #D97757;
+    --accent:        #D97757;
+    --accent-strong: #B85C3E;
     --accent-dim:    #8d4329;
     --warn:          #8a6925;
     --danger:        #B85C3E;
-    --critical-bg:   rgba(217, 119, 87, 0.10);
+    --critical-bg:   rgba(217, 119, 87, 0.08);
     --critical-bd:   #d4a35a;
     --critical-text: #8a4d2a;
-    --success:       #5C6F44;
+    --success:       #788C5D;
     --link:          #B85C3E;
     --shadow:        0 1px 0 rgba(255,255,255,0.6), 0 4px 14px rgba(20,20,19,0.06);
+    --focus-ring:    0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+
+    --serif: ui-serif, Georgia, "Times New Roman", serif;
+    --sans:  system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  }
+  /* ── toggle palette: github_dark (patterns.json:palettes.github_dark) ── */
+  :root[data-theme="dark"] {
+    --bg:            #0d1117;
+    --surface:       #161b22;
+    --surface-2:     #21262d;
+    --surface-3:     #30363d;
+    --border:        #30363d;
+    --border-strong: #484f58;
+    --text:          #e6edf3;
+    --text-muted:    #c9d1d9;
+    --text-dim:      #8b949e;
+    --accent:        #58a6ff;
+    --accent-strong: #79b8ff;
+    --accent-dim:    #1f6feb;
+    --warn:          #d29922;
+    --danger:        #f85149;
+    --critical-bg:   rgba(210, 153, 34, 0.09);
+    --critical-bd:   #6e5224;
+    --critical-text: #e3b341;
+    --success:       #3fb950;
+    --link:          #58a6ff;
+    --shadow:        0 1px 0 rgba(255,255,255,0.02), 0 8px 28px rgba(0,0,0,0.45);
   }
 
   * { box-sizing: border-box; }
@@ -104,7 +106,7 @@
     top: 8px;
     padding: 8px 14px;
     background: var(--accent);
-    color: #0d0e10;
+    color: #141413;
     border-radius: 6px;
     font-family: var(--mono);
     font-size: 12px;
@@ -181,8 +183,8 @@
   }
   .critical p { margin: 0 0 12px; color: var(--text); max-width: 820px; }
   .critical p:last-child { margin-bottom: 0; }
-  .critical code { background: rgba(0,0,0,0.25); border-color: var(--critical-bd); }
-  :root[data-theme="light"] .critical code { background: rgba(255,255,255,0.55); }
+  .critical code { background: rgba(255,255,255,0.55); border-color: var(--critical-bd); }
+  :root[data-theme="dark"] .critical code { background: rgba(0,0,0,0.25); }
 
   /* ── toolbar ──────────────────────────── */
   .toolbar {
@@ -247,10 +249,9 @@
   .pill:hover { border-color: var(--border-strong); color: var(--text); }
   .pill.on {
     background: var(--accent);
-    color: #0d0e10;
+    color: #141413;
     border-color: var(--accent);
   }
-  :root[data-theme="light"] .pill.on { color: #FAF9F5; }
   .pill-clear {
     color: var(--accent);
     border-color: var(--accent-dim);
@@ -397,8 +398,8 @@
   }
   .env-table tbody tr:last-child td { border-bottom: none; }
   .env-table tbody tr.hidden { display: none; }
-  .env-table tbody tr:hover { background: rgba(255,255,255,0.015); }
-  :root[data-theme="light"] .env-table tbody tr:hover { background: rgba(20,20,19,0.025); }
+  .env-table tbody tr:hover { background: rgba(20,20,19,0.025); }
+  :root[data-theme="dark"] .env-table tbody tr:hover { background: rgba(255,255,255,0.015); }
   .env-table .col-var { width: 38%; }
   .env-table .col-val { width: 14%; }
   .env-table .col-act { width: 60px; text-align: right; }
@@ -479,10 +480,9 @@
   .snippet .copy:hover { color: var(--text); border-color: var(--border-strong); }
   .snippet .copy.copied {
     background: var(--success);
-    color: #0d0e10;
+    color: #141413;
     border-color: var(--success);
   }
-  :root[data-theme="light"] .snippet .copy.copied { color: #FAF9F5; }
 
   .copy-icon {
     appearance: none;
@@ -499,10 +499,9 @@
   .copy-icon:hover { border-color: var(--border-strong); color: var(--text); }
   .copy-icon.copied {
     background: var(--success);
-    color: #0d0e10;
+    color: #141413;
     border-color: var(--success);
   }
-  :root[data-theme="light"] .copy-icon.copied { color: #FAF9F5; }
 
   /* ── card grid (tips, tricks, etc.) ────── */
   .cards {
@@ -761,7 +760,7 @@ claude</code></pre>
     </div>
     <div class="toolbar-end">
       <span class="count" id="resultCount" aria-live="polite"></span>
-      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark theme">Light</button>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme. Currently light.">Dark</button>
     </div>
   </div>
 </div>
@@ -1505,10 +1504,16 @@ claude</code></pre>
   // ── theme toggle ───────────────────────────────────
   themeBtn.addEventListener("click", function () {
     var root = document.documentElement;
-    var isDark = (root.getAttribute("data-theme") || "dark") === "dark";
-    root.setAttribute("data-theme", isDark ? "light" : "dark");
-    themeBtn.textContent = isDark ? "Dark" : "Light";
-    themeBtn.setAttribute("aria-label", "Toggle theme. Currently " + (isDark ? "light" : "dark") + ".");
+    var isDark = root.getAttribute("data-theme") === "dark";
+    if (isDark) {
+      root.removeAttribute("data-theme");
+      themeBtn.textContent = "Dark";
+      themeBtn.setAttribute("aria-label", "Toggle theme. Currently light.");
+    } else {
+      root.setAttribute("data-theme", "dark");
+      themeBtn.textContent = "Light";
+      themeBtn.setAttribute("aria-label", "Toggle theme. Currently dark.");
+    }
   });
 
   // ── deep-link: open targeted section on load + hashchange ──
