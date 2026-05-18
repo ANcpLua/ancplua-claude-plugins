@@ -3,7 +3,7 @@
 #
 # Who handles what:
 # - Renovate bot PRs   → handled entirely by the shared preset
-#                        (github>O-ANcppLua/renovate-config) which sets
+#                        (github>ANcpLua/renovate-config) which sets
 #                        platformAutomerge:true (Renovate default) and
 #                        automerge:true on the relevant packageRules. Renovate
 #                        enables native GitHub auto-merge at PR-open time.
