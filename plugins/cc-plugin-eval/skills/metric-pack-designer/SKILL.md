@@ -1,10 +1,8 @@
 ---
 name: metric-pack-designer
-description: >
-  Design a local metric pack so a team can extend cc-plugin-eval with custom
-  evaluation criteria that emit schema-compatible findings, metrics, and
-  artifacts. Use when the user wants their own rubric, custom checks, or a
-  domain-specific report on top of the deterministic engine.
+description: This skill should be used when the user asks to "add a rubric for X to cc-plugin-eval", "write a metric pack", "make cc-plugin-eval check Y", "emit my own findings", "create a custom rubric", "extend cc-plugin-eval with custom checks", or "build a domain-specific report on top of the deterministic engine". Designs a local metric pack — manifest plus a script that prints JSON to stdout — that emits schema-compatible checks, metrics, and artifacts the core engine merges into its result.
+version: 0.1.0
+author: AncpLua
 ---
 
 # Metric Pack Designer
@@ -77,7 +75,7 @@ The metric pack must print JSON to stdout in this shape:
 - Prefer deterministic local signals over subjective text generation.
 - Use unique IDs that do not collide with the built-in `CC1xx`-`CC9xx` codes.
 
-## Reference
+## References
 
 - `../../references/metric-pack-manifest.md`
 - `../../references/evaluation-result-schema.md`

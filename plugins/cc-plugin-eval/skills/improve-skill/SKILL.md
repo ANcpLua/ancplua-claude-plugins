@@ -1,11 +1,8 @@
 ---
 name: improve-skill
-description: >
-  Turn cc-plugin-eval findings into a concrete rewrite brief for a Claude Code
-  skill, then hand off to skill-creator for the actual rewrite pass. Use when
-  the user already evaluated a skill and now wants a rewrite plan, especially
-  after asking "what should I fix first" or "rewrite this skill using the
-  cc-plugin-eval findings".
+description: This skill should be used when the user asks to "improve this skill based on the evaluation", "rewrite this skill using the cc-plugin-eval findings", "produce a rewrite brief", "hand the brief to skill-creator", or "fix what's most important first in this skill" after a prior cc-plugin-eval run. Turns deterministic findings into a structured rewrite brief; hands the brief off to the user's skill-creator plugin for the actual LLM-graded rewrite pass.
+version: 0.1.0
+author: AncpLua
 ---
 
 # Improve Skill
@@ -47,7 +44,7 @@ cc-plugin-eval analyze <skill-path> --output ./after.json
 cc-plugin-eval compare ./before.json ./after.json --format markdown
 ```
 
-## Reference
+## References
 
 - `../../references/chat-first-workflows.md`
 - `../../references/evaluation-result-schema.md`

@@ -29,6 +29,12 @@ const ALLOWED_FRONTMATTER_KEYS = new Set([
   // skill-creator (the user's existing plugin) emits this; it is not in the ref but is in
   // the wild and harmless. Treated as info-level.
   "compatibility",
+  // Not in the May-2026 docs.claude.com SKILL.md spec, but used by every plugin-dev
+  // skill in anthropics/claude-plugins-official (skill-development, hook-development,
+  // agent-development, command-development all ship `version: 0.1.0`). Tolerated.
+  "version",
+  // Informal convention across the ecosystem; harmless metadata. Tolerated.
+  "author",
 ]);
 
 // Claude Code per-entry description budget: combined description + when_to_use is
@@ -241,7 +247,10 @@ export async function evaluateSkill(skillRoot, options = {}) {
         }),
       );
     }
-    const triggerPattern = /(use when|trigger|triggers on)/i;
+    // Accepts either canonical form: the official docs example "Use when..." or the
+    // plugin-dev/skill-development prescription "This skill should be used when...".
+    // Also matches "trigger" / "triggers on" for skills that document triggers explicitly.
+    const triggerPattern = /(use when|should be used when|trigger|triggers on)/i;
     if (!triggerPattern.test(combinedDescription)) {
       checks.push(
         createCheck({
@@ -251,7 +260,9 @@ export async function evaluateSkill(skillRoot, options = {}) {
           status: "warn",
           message: "The description does not advertise when the skill should trigger.",
           evidence: ["Descriptions plus when_to_use are the auto-load surface in Claude Code."],
-          remediation: ["Rewrite the description (or when_to_use) to include a clear 'Use when ...' trigger sentence."],
+          remediation: [
+            "Rewrite the description to include a 'Use when ...' or 'This skill should be used when ...' trigger sentence.",
+          ],
           targetPath,
         }),
       );
