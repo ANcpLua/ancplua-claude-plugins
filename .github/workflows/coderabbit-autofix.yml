@@ -1,19 +1,11 @@
 name: CodeRabbit Autofix Trigger
 
-# Eliminates the manual "Push a commit to this branch (recommended)" checkbox
-# by auto-commenting `@coderabbitai autofix` on every PR open/sync.
-# CodeRabbit then pushes its fix as a commit, no human click needed.
-
 on:
   pull_request:
     types: [opened, synchronize]
 
 jobs:
   trigger:
-    # Skip when we shouldn't be the one driving:
-    # - bot-authored PRs (dependabot/renovate already minimal-diff)
-    # - CodeRabbit's own pushes (loop prevention)
-    # - explicit opt-out via skip-autofix label
     if: |
       github.actor != 'coderabbitai[bot]' &&
       github.actor != 'dependabot[bot]' &&

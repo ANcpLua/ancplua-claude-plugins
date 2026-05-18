@@ -1,162 +1,55 @@
-# Auto-merge workflow for trusted PRs - Maximum Autonomy
+# Auto-merge — native GitHub auto-merge via GITHUB_TOKEN. No custom App, no
+# AUTOMERGE_* secrets, no reusable workflow. The 2026 pattern.
 #
-# Tiers:
-# 1a. Dependabot PRs: Auto-approve + auto-merge for patch/minor
-# 1b. Renovate PRs: Auto-approve + auto-merge
-# 2.  CodeRabbit/Claude/Codex approved PRs: Auto-merge when CI passes
+# Who handles what:
+# - Renovate bot PRs   → handled entirely by the shared preset
+#                        (github>O-ANcppLua/renovate-config) which sets
+#                        platformAutomerge:true (Renovate default) and
+#                        automerge:true on the relevant packageRules. Renovate
+#                        enables native GitHub auto-merge at PR-open time.
+# - Owner PRs          → this workflow enables native auto-merge on PR open
+# - AI Agent PRs       → branches matching claude/, copilot/, jules/
+# - CodeRabbit-approved → enabled when an approving review lands
 #
-# Auto-approval of agent-authored fix PRs is intentionally NOT a tier here.
-# Rubber-stamping the workflow's own output provides no quality signal. The
-# desired loop is: reviewer agent posts findings -> autofix workflow applies
-# them -> re-review on push -> reviewer approves once it has no more
-# findings -> Tier 2 auto-merges based on that *real* approval state.
+# Prereqs (one-time): repo Settings → General → "Allow auto-merge" enabled
+# (verified across all four framework repos). Branch protection on main
+# lists the required status checks; native auto-merge waits for them.
 #
-# Requirements:
-# - Repo setting "Allow auto-merge" must be enabled
-# - Branch protection bypass for bot accounts in Rulesets
+# Dependabot: not used in any ANcpLua framework repo, so no tier here.
 #
-# Security: All external inputs are passed via env: to prevent code injection
+# Background: the AUTOMERGE_APP_ID GitHub App was deleted on 2026-05-12 as an
+# antipattern (single point of failure across 4 repos, maintenance overhead,
+# and Renovate's platformAutomerge already does the bot tier natively without
+# it). For the human/agent tiers, GITHUB_TOKEN's pull-request:write scope is
+# enough — branch protection still gates the actual merge on required checks.
 
 name: Auto-merge
 
 on:
   pull_request_target:
-    types: [ opened, synchronize, reopened, ready_for_review ]
+    types: [opened, synchronize, reopened, ready_for_review]
   pull_request_review:
-    types: [ submitted ]
-  check_suite:
-    types: [ completed ]
+    types: [submitted]
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  # Tier 1a: Auto-approve and auto-merge Dependabot PRs
-  dependabot-auto-merge:
-    name: Dependabot auto-merge
-    runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
-
-    steps:
-      - name: Fetch Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Auto-approve patch and minor updates
-        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr review --approve "$PR_URL"
-
-      - name: Enable auto-merge for patch and minor
-        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
-        uses: peter-evans/enable-pull-request-automerge@a660677d5469627102a1c1e11409dd063606628d # v3.0.0
-        continue-on-error: true
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ github.event.pull_request.number }}
-          merge-method: squash
-
-      - name: Comment on major updates
-        if: steps.metadata.outputs.update-type == 'version-update:semver-major'
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEP_NAMES: ${{ steps.metadata.outputs.dependency-names }}
-          PREV_VERSION: ${{ steps.metadata.outputs.previous-version }}
-          NEW_VERSION: ${{ steps.metadata.outputs.new-version }}
-        run: |
-          gh pr comment "$PR_URL" --body "## ⚠️ Major Version Update
-
-          This is a **major version update** that may contain breaking changes.
-
-          **Manual review required.** Please:
-          1. Check the changelog for breaking changes
-          2. Test locally if needed
-          3. Approve and merge manually
-
-          Dependency: \`$DEP_NAMES\`
-          Update: \`$PREV_VERSION\` → \`$NEW_VERSION\`"
-
-  # Tier 1b: Auto-merge Renovate PRs
-  renovate-auto-merge:
-    name: Renovate auto-merge
-    runs-on: ubuntu-latest
-    if: github.actor == 'renovate[bot]'
-
-    steps:
-      - name: Auto-approve Renovate PRs
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr review --approve "$PR_URL"
-
-      - name: Enable auto-merge for Renovate
-        uses: peter-evans/enable-pull-request-automerge@a660677d5469627102a1c1e11409dd063606628d # v3.0.0
-        continue-on-error: true
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ github.event.pull_request.number }}
-          merge-method: squash
-
-  # Tier 2a: Auto-merge PRs approved by CodeRabbit
-  coderabbit-auto-merge:
-    name: CodeRabbit auto-merge
+  enable-auto-merge:
     runs-on: ubuntu-latest
     if: |
-      github.event_name == 'pull_request_review' &&
-      github.event.review.state == 'approved' &&
-      github.event.review.user.login == 'coderabbitai[bot]'
-
+      github.event.pull_request.draft == false && (
+        startsWith(github.event.pull_request.head.ref, 'claude/') ||
+        startsWith(github.event.pull_request.head.ref, 'copilot/') ||
+        startsWith(github.event.pull_request.head.ref, 'jules/') ||
+        github.event.pull_request.user.login == github.repository_owner ||
+        (github.event_name == 'pull_request_review'
+         && github.event.review.state == 'approved'
+         && github.event.review.user.login == 'coderabbitai[bot]')
+      )
     steps:
-      - name: Enable auto-merge for CodeRabbit approved PRs
-        uses: peter-evans/enable-pull-request-automerge@a660677d5469627102a1c1e11409dd063606628d # v3.0.0
-        continue-on-error: true
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ github.event.pull_request.number }}
-          merge-method: squash
-
-  # Tier 2b: Auto-merge PRs approved by Claude
-  # SECURITY: Requires github-actions[bot] to prevent spoofing by humans
-  claude-approved-auto-merge:
-    name: Claude approved auto-merge
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request_review' &&
-      github.event.review.state == 'approved' &&
-      github.event.review.user.login == 'github-actions[bot]' &&
-      contains(github.event.review.body, '## Claude Code Review')
-
-    steps:
-      - name: Enable auto-merge for Claude approved PRs
-        uses: peter-evans/enable-pull-request-automerge@a660677d5469627102a1c1e11409dd063606628d # v3.0.0
-        continue-on-error: true
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ github.event.pull_request.number }}
-          merge-method: squash
-
-  # Tier 2c: Auto-merge PRs approved by Codex
-  # SECURITY: Requires github-actions[bot] to prevent spoofing by humans
-  codex-approved-auto-merge:
-    name: Codex approved auto-merge
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request_review' &&
-      github.event.review.state == 'approved' &&
-      github.event.review.user.login == 'github-actions[bot]' &&
-      contains(github.event.review.body, '## Codex Review')
-
-    steps:
-      - name: Enable auto-merge for Codex approved PRs
-        uses: peter-evans/enable-pull-request-automerge@a660677d5469627102a1c1e11409dd063606628d # v3.0.0
-        continue-on-error: true
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ github.event.pull_request.number }}
-          merge-method: squash
+      - name: Enable native auto-merge (squash)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge ${{ github.event.pull_request.number }} --auto --squash --repo ${{ github.repository }}
