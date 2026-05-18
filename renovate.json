@@ -1,19 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
-  "platformAutomerge": true,
-  "packageRules": [
-    {
-      "description": "Automerge everything safe — digest, pin, lockfile, patch, minor",
-      "matchUpdateTypes": ["pin", "digest", "pinDigest", "lockFileMaintenance", "patch", "minor"],
-      "automerge": true,
-      "automergeType": "pr"
-    },
-    {
-      "description": "Major bumps require manual review",
-      "matchUpdateTypes": ["major"],
-      "automerge": false,
-      "labels": ["dependencies", "major"]
-    }
-  ]
+  "extends": ["github>ANcpLua/renovate-config"]
 }
