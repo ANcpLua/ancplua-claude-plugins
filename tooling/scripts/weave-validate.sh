@@ -79,7 +79,7 @@ if command -v shellcheck >/dev/null 2>&1; then
   if [ "${#SHELL_DIRS[@]}" -gt 0 ]; then
     find "${SHELL_DIRS[@]}" -type f -name "*.sh" -print0 > "$SHELL_TMPFILE"
   fi
-  SHELL_COUNT=$(grep -zc . "$SHELL_TMPFILE" || echo 0)
+  SHELL_COUNT=$(grep -zc . "$SHELL_TMPFILE" || true)
 
   if [ "$SHELL_COUNT" -gt 0 ]; then
     if ! xargs -0 shellcheck --severity=warning < "$SHELL_TMPFILE" 2>&1; then
