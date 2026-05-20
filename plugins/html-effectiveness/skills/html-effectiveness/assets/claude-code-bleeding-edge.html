@@ -1538,6 +1538,16 @@ claude</code></pre>
     requestAnimationFrame(function () {
       var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       el.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
+      // Set keyboard/screen-reader focus on the target element
+      var hadTabindex = el.hasAttribute("tabindex");
+      var originalTabindex = el.getAttribute("tabindex");
+      el.setAttribute("tabindex", "-1");
+      el.focus();
+      if (!hadTabindex) {
+        el.removeAttribute("tabindex");
+      } else if (originalTabindex !== null) {
+        el.setAttribute("tabindex", originalTabindex);
+      }
     });
   }
 

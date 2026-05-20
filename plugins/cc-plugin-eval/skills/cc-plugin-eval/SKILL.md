@@ -18,7 +18,7 @@ Umbrella entrypoint for local plugin and skill evaluation. Deterministic, local-
    - Skill-shaped target → `../evaluate-skill/SKILL.md`.
    - Rewrite plan / brief → `../improve-skill/SKILL.md` (briefs only; rewrite via the user's `skill-creator` plugin).
    - Custom rubric → `../metric-pack-designer/SKILL.md`.
-4. If the user names a plugin or skill instead of a path, resolve locally first: `~/.claude/plugins/cache/<plugin-id>` then any repo-local `plugins/<name>` or `skills/<name>`. Ask one short clarifying question if still ambiguous.
+4. If the user names a plugin or skill instead of a path, resolve locally first: the plugin cache directory (`<PLUGIN_CACHE_DIR>/<plugin-id>`) then any repo-local `plugins/<name>` or `skills/<name>`. Ask one short clarifying question if still ambiguous.
 5. For "give me a full analysis" requests, run `analyze` then `init-benchmark` and preview the first benchmark command. The detailed chat-phrase → command map lives in `../../references/chat-first-workflows.md`.
 
 ## Subcommands

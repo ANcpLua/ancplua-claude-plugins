@@ -249,8 +249,8 @@ export async function evaluateSkill(skillRoot, options = {}) {
     }
     // Accepts either canonical form: the official docs example "Use when..." or the
     // plugin-dev/skill-development prescription "This skill should be used when...".
-    // Also matches "trigger" / "triggers on" for skills that document triggers explicitly.
-    const triggerPattern = /(use when|should be used when|trigger|triggers on)/i;
+    // Also matches phrase-level trigger wording like "triggers when", "triggers on", "triggered when".
+    const triggerPattern = /\b(use when|should be used when|trigger(?:s|ed)?\s+(?:when|on))\b/i;
     if (!triggerPattern.test(combinedDescription)) {
       checks.push(
         createCheck({

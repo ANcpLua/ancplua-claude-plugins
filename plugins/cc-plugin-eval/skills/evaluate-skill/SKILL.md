@@ -11,7 +11,7 @@ Targets a local skill directory or `SKILL.md` file. cc-plugin-eval covers determ
 
 ## Workflow
 
-1. Default entrypoint: "Evaluate this skill." If the user names a skill instead of a path, resolve under `~/.claude/plugins/cache/<plugin-id>/skills/<skill-name>` first, then any repo-local `skills/<skill-name>`. Ask one short clarifying question if ambiguous.
+1. Default entrypoint: "Evaluate this skill." If the user names a skill instead of a path, resolve under `<PLUGIN_CACHE_DIR>/<plugin-id>/skills/<skill-name>` first, then any repo-local `skills/<skill-name>`. Ask one short clarifying question if ambiguous.
 2. Run `cc-plugin-eval analyze <skill-path> --format markdown` (or the `evaluate-skill` alias, which errors out on non-skill paths). Read `At a Glance` → `Why It Matters` → `Fix First` → `Recommended Next Step` before drilling in.
 3. Classify findings as structural (frontmatter, size, links), budget (trigger / invoke / deferred), or best-practice (`allowed-tools` syntax, progressive disclosure).
 4. For full analysis, follow with `cc-plugin-eval init-benchmark <skill-path>` and the setup questions in `.cc-plugin-eval/benchmark.json`. For measured usage, run the benchmark flow then `measurement-plan --observed-usage <usage.jsonl>`.
