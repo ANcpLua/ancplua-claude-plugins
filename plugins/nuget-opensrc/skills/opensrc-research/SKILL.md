@@ -63,5 +63,5 @@ Fire this skill whenever the next answer would otherwise be a guess about how a 
 - `opensrc list` — see what's cached
 - `opensrc remove <pkg>` — drop one
 - `opensrc clean` — drop everything (regret-only-if-no-network)
-- Cache lives at `~/.opensrc/repos/github.com/<owner>/<repo>/<ref>/`
+- Cache lives at `<OPEN_SRC_CACHE_DIR>/repos/github.com/<owner>/<repo>/<ref>/`
 - Microsoft repos (especially `dotnet/dotnet`, the unified VMR) are large (~3-4 GB cloned). Don't pre-warm aggressively.

@@ -17,24 +17,53 @@ const SEMVER2_GZ = (id) => `https://api.nuget.org/v3/registration5-gz-semver2/${
 async function fetchJson(url) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
-  const res = await fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timeout));
-  if (!res.ok) {
-    const err = new Error(`HTTP ${res.status} ${res.statusText} for ${url}`);
-    err.status = res.status;
-    throw err;
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
+    if (!res.ok) {
+      const err = new Error(`HTTP ${res.status} ${res.statusText} for ${url}`);
+      err.status = res.status;
+      throw err;
+    }
+    return res.json();
+  } catch (e) {
+    clearTimeout(timeout);
+    if (e.name === 'AbortError') {
+      throw new Error(`Request timeout after 15s for ${url}`);
+    }
+    throw e;
   }
-  return res.json();
 }
 
 async function fetchRegistration(lower) {
   const c1 = new AbortController();
   const t1 = setTimeout(() => c1.abort(), 15000);
-  const r1 = await fetch(SEMVER1(lower), { signal: c1.signal }).finally(() => clearTimeout(t1));
+  let r1;
+  try {
+    r1 = await fetch(SEMVER1(lower), { signal: c1.signal });
+    clearTimeout(t1);
+  } catch (e) {
+    clearTimeout(t1);
+    if (e.name === 'AbortError') {
+      throw new Error(`Request timeout after 15s for semver1 endpoint`);
+    }
+    throw e;
+  }
   if (r1.ok) return r1.json();
   if (r1.status !== 404) throw new Error(`semver1 endpoint returned HTTP ${r1.status}`);
   const c2 = new AbortController();
   const t2 = setTimeout(() => c2.abort(), 15000);
-  const r2 = await fetch(SEMVER2_GZ(lower), { signal: c2.signal }).finally(() => clearTimeout(t2));
+  let r2;
+  try {
+    r2 = await fetch(SEMVER2_GZ(lower), { signal: c2.signal });
+    clearTimeout(t2);
+  } catch (e) {
+    clearTimeout(t2);
+    if (e.name === 'AbortError') {
+      throw new Error(`Request timeout after 15s for gz-semver2 endpoint`);
+    }
+    throw e;
+  }
   if (r2.status === 404) {
     const err = new Error(`package not found on NuGet`);
     err.status = 404;
