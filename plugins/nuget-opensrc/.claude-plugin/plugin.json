@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "nuget-opensrc",
   "version": "0.1.0",
   "description": "Commit-pinned NuGet→GitHub source fetcher. Wraps opensrc with NuGet catalog metadata so coding agents grep the exact commit a package was built from, not whatever's on main.",
@@ -6,6 +7,7 @@
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"
   },
+  "homepage": "https://github.com/ANcpLua/ancplua-claude-plugins/tree/main/plugins/nuget-opensrc",
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
   "license": "MIT",
   "keywords": [
@@ -16,7 +18,5 @@
     "ai-coding",
     "research",
     "commit-pinning"
-  ],
-  "commands": "./commands",
-  "skills": "./skills"
+  ]
 }
