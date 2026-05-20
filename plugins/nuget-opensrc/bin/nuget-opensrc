@@ -1,0 +1,215 @@
+#!/usr/bin/env node
+// nuget-opensrc — resolve NuGet package → GitHub repo + commit → opensrc path
+//
+// Why: opensrc on its own snaps bare GitHub repos to default branch. NuGet's
+// catalog carries the exact commit each package was built from. This wrapper
+// reads that commit and invokes `opensrc path owner/repo#<commit>` so you
+// grep the source the package actually shipped, not whatever's on main.
+
+'use strict';
+
+const { spawnSync } = require('node:child_process');
+const { gunzipSync } = require('node:zlib');
+
+const SEMVER1 = (id) => `https://api.nuget.org/v3/registration5-semver1/${id}/index.json`;
+const SEMVER2_GZ = (id) => `https://api.nuget.org/v3/registration5-gz-semver2/${id}/index.json`;
+
+async function fetchJson(url) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
+    if (!res.ok) {
+      const err = new Error(`HTTP ${res.status} ${res.statusText} for ${url}`);
+      err.status = res.status;
+      throw err;
+    }
+    return res.json();
+  } catch (e) {
+    clearTimeout(timeout);
+    if (e.name === 'AbortError') {
+      throw new Error(`Request timeout after 15s for ${url}`);
+    }
+    throw e;
+  }
+}
+
+async function fetchRegistration(lower) {
+  const c1 = new AbortController();
+  const t1 = setTimeout(() => c1.abort(), 15000);
+  let r1;
+  try {
+    r1 = await fetch(SEMVER1(lower), { signal: c1.signal });
+    clearTimeout(t1);
+  } catch (e) {
+    clearTimeout(t1);
+    if (e.name === 'AbortError') {
+      throw new Error(`Request timeout after 15s for semver1 endpoint`);
+    }
+    throw e;
+  }
+  if (r1.ok) return r1.json();
+  if (r1.status !== 404) throw new Error(`semver1 endpoint returned HTTP ${r1.status}`);
+  const c2 = new AbortController();
+  const t2 = setTimeout(() => c2.abort(), 15000);
+  let r2;
+  try {
+    r2 = await fetch(SEMVER2_GZ(lower), { signal: c2.signal });
+    clearTimeout(t2);
+  } catch (e) {
+    clearTimeout(t2);
+    if (e.name === 'AbortError') {
+      throw new Error(`Request timeout after 15s for gz-semver2 endpoint`);
+    }
+    throw e;
+  }
+  if (r2.status === 404) {
+    const err = new Error(`package not found on NuGet`);
+    err.status = 404;
+    throw err;
+  }
+  if (!r2.ok) throw new Error(`gz-semver2 endpoint returned HTTP ${r2.status}`);
+  const buf = Buffer.from(await r2.arrayBuffer());
+  return JSON.parse(gunzipSync(buf).toString('utf8'));
+}
+
+async function pageItems(page) {
+  return page.items || (await fetchJson(page['@id'])).items;
+}
+
+async function findEntry(idx, wantedVersion) {
+  let latest = null;
+  for (const page of idx.items) {
+    const items = await pageItems(page);
+    for (const it of items) {
+      latest = it;
+      if (wantedVersion && it.catalogEntry.version === wantedVersion) return it;
+    }
+  }
+  if (wantedVersion) return null;
+  return latest;
+}
+
+async function resolve(spec) {
+  const at = spec.indexOf('@');
+  const id = at >= 0 ? spec.slice(0, at) : spec;
+  const wantedVersion = at >= 0 ? spec.slice(at + 1) : null;
+  if (!id) throw new Error(`empty package id in '${spec}'`);
+
+  const idx = await fetchRegistration(id.toLowerCase());
+  const item = await findEntry(idx, wantedVersion);
+  if (!item) throw new Error(`version ${wantedVersion} not found for ${id}`);
+
+  const entry = await fetchJson(item.catalogEntry['@id']);
+  const repo = entry.repository;
+  if (!repo || typeof repo !== 'object' || !repo.url) {
+    throw new Error(
+      `${id}@${entry.version}: no <repository> metadata in nuspec ` +
+      `(publisher omitted it; we do NOT fall back to projectUrl)`
+    );
+  }
+  if (!repo.url.startsWith('https://github.com/')) {
+    throw new Error(`${id}@${entry.version}: repository.url is ${repo.url} (not github.com)`);
+  }
+  const slug = repo.url
+    .replace(/^https:\/\/github\.com\//, '')
+    .replace(/\.git$/, '');
+  return {
+    id,
+    version: entry.version,
+    slug,
+    commit: repo.commit || null,
+    repoUrl: repo.url,
+  };
+}
+
+function help() {
+  process.stdout.write(`nuget-opensrc — commit-pinned NuGet→GitHub source fetcher
+
+USAGE
+  nuget-opensrc path <Pkg>[@<ver>]    resolve + fetch + print local path
+  nuget-opensrc info <Pkg>[@<ver>]    print repo + commit, do not fetch
+  nuget-opensrc --help
+
+EXAMPLES
+  nuget-opensrc path Microsoft.Extensions.Logging
+  nuget-opensrc path Microsoft.OpenTelemetry@1.0.2
+  rg "JwtBearerEvents" "$(nuget-opensrc path Microsoft.AspNetCore.Authentication.JwtBearer)"
+
+WHY THIS WRAPS opensrc
+  opensrc on its own snaps bare GitHub repos to the default branch. NuGet's
+  catalog metadata carries the exact commit each package was built from.
+  This wrapper reads repository.url + repository.commit from the NuGet
+  catalog and invokes:
+      opensrc path owner/repo#<commit>
+  so you grep the source the package actually shipped, not whatever's on main.
+
+VERSION RESOLUTION
+  - No @version  -> latest published version in the registration feed
+  - @<version>   -> exact match required (e.g. @1.0.2, @10.0.8-preview.1)
+  - semver1 endpoint tried first (stable); falls back to gz-semver2
+    (includes prerelease + SemVer2 packages)
+
+FAILURES (and why they're errors, not silent fallbacks)
+  - "no <repository> metadata"   publisher omitted it in nuspec.
+                                  We do NOT use projectUrl as a substitute -
+                                  it lies for Microsoft packages (points at
+                                  https://dot.net/).
+  - "repository.url is not github.com"
+                                  package is on GitLab/Azure DevOps/etc.
+                                  Not supported by opensrc.
+  - "version not found"           the requested version isn't in either
+                                  registration feed. Check spelling, try
+                                  without @version for latest.
+
+EXIT CODES
+  0  success
+  1  resolution or fetch failure
+  2  bad usage
+`);
+}
+
+async function main() {
+  const args = process.argv.slice(2);
+  if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
+    help();
+    return 0;
+  }
+  const cmd = args[0];
+  const spec = args[1];
+  if (!['path', 'info'].includes(cmd) || !spec) {
+    process.stderr.write('usage: nuget-opensrc (path|info) <Package.Id>[@<version>]\n');
+    return 2;
+  }
+  try {
+    const r = await resolve(spec);
+    if (cmd === 'info') {
+      process.stdout.write(
+        `id:      ${r.id}\n` +
+        `version: ${r.version}\n` +
+        `repo:    ${r.slug}\n` +
+        `commit:  ${r.commit || '(missing in NuGet metadata - will fall back to default branch)'}\n`
+      );
+      return 0;
+    }
+    const ref = r.commit ? `${r.slug}#${r.commit}` : r.slug;
+    if (!r.commit) {
+      process.stderr.write(
+        `warning: ${r.id}@${r.version} has no commit metadata; using default branch of ${r.slug}\n`
+      );
+    }
+    const result = spawnSync('opensrc', ['path', ref], {
+      stdio: ['inherit', 'inherit', 'inherit'],
+    });
+    return result.status ?? 1;
+  } catch (e) {
+    process.stderr.write(`nuget-opensrc: ${e.message}\n`);
+    return 1;
+  }
+}
+
+main().then((code) => process.exit(code), (e) => {
+  process.stderr.write(`nuget-opensrc: ${e?.stack || e}\n`);
+  process.exit(1);
+});
