@@ -35,7 +35,7 @@ async function fetchJson(url) {
   }
 }
 
-async function fetchRegistration(lower) {
+async function fetchRegistration(lower, wantedVersion = null) {
   const c1 = new AbortController();
   const t1 = setTimeout(() => c1.abort(), 15000);
   let r1;
@@ -49,7 +49,46 @@ async function fetchRegistration(lower) {
     }
     throw e;
   }
-  if (r1.ok) return r1.json();
+  if (r1.ok) {
+    const idx1 = await r1.json();
+    if (wantedVersion) {
+      let found = false;
+      for (const page of idx1.items) {
+        const items = page.items || (await fetchJson(page['@id'])).items;
+        for (const it of items) {
+          if (it.catalogEntry.version === wantedVersion) {
+            found = true;
+            break;
+          }
+        }
+        if (found) break;
+      }
+      if (!found) {
+        const c2 = new AbortController();
+        const t2 = setTimeout(() => c2.abort(), 15000);
+        let r2;
+        try {
+          r2 = await fetch(SEMVER2_GZ(lower), { signal: c2.signal });
+          clearTimeout(t2);
+        } catch (e) {
+          clearTimeout(t2);
+          if (e.name === 'AbortError') {
+            throw new Error(`Request timeout after 15s for gz-semver2 endpoint`);
+          }
+          throw e;
+        }
+        if (r2.status === 404) {
+          const err = new Error(`package not found on NuGet`);
+          err.status = 404;
+          throw err;
+        }
+        if (!r2.ok) throw new Error(`gz-semver2 endpoint returned HTTP ${r2.status}`);
+        const buf = Buffer.from(await r2.arrayBuffer());
+        return JSON.parse(gunzipSync(buf).toString('utf8'));
+      }
+    }
+    return idx1;
+  }
   if (r1.status !== 404) throw new Error(`semver1 endpoint returned HTTP ${r1.status}`);
   const c2 = new AbortController();
   const t2 = setTimeout(() => c2.abort(), 15000);
@@ -97,7 +136,7 @@ async function resolve(spec) {
   const wantedVersion = at >= 0 ? spec.slice(at + 1) : null;
   if (!id) throw new Error(`empty package id in '${spec}'`);
 
-  const idx = await fetchRegistration(id.toLowerCase());
+  const idx = await fetchRegistration(id.toLowerCase(), wantedVersion);
   const item = await findEntry(idx, wantedVersion);
   if (!item) throw new Error(`version ${wantedVersion} not found for ${id}`);
 
