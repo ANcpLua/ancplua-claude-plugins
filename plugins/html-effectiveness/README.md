@@ -31,15 +31,14 @@ to pick **when**, so the user doesn't have to keep saying "do it like demo
 ## Local prerequisite
 
 The skill expects Thariq's repo cloned at
-`~/RiderProjects/thariq-html-effectiveness/` so it can study the canonical
-source byte-for-byte. If missing, the skill instructs Claude to run `gh
-repo clone ThariqS/html-effectiveness
-~/RiderProjects/thariq-html-effectiveness`.
+`$HOME/.cache/thariq-html-effectiveness/` so it can study the canonical
+source byte-for-byte. If missing, the skill instructs Claude to run
+`gh repo clone ThariqS/html-effectiveness "$HOME/.cache/thariq-html-effectiveness"`.
 
 ## Trying the demo
 
 ```bash
-open ~/RiderProjects/ancplua-claude-plugins/plugins/html-effectiveness/skills/html-effectiveness/assets/otel-semconv-demo.html
+open ./plugins/html-effectiveness/skills/html-effectiveness/assets/otel-semconv-demo.html
 ```
 
 Click "Breaking only" to filter, then "Copy upgrade-notes" — the visible
@@ -48,7 +47,7 @@ groups land on your clipboard as CHANGELOG-ready markdown.
 For the bleeding-edge reference:
 
 ```bash
-open ~/RiderProjects/ancplua-claude-plugins/plugins/html-effectiveness/skills/html-effectiveness/assets/claude-code-bleeding-edge.html
+open ./plugins/html-effectiveness/skills/html-effectiveness/assets/claude-code-bleeding-edge.html
 ```
 
 Toggle category pills, search any env var or flag, jump straight to

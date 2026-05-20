@@ -345,7 +345,7 @@ function buildCli(t) {
   return [
     "# Teammate " + t.id,
     "claude -p --no-session-persistence --max-budget-usd 3 " +
-      "--add-dir /Users/ancplua/repo-audit " +
+      "--add-dir $HOME/repo-audit " +
       "'" + t.prompt.replace(/'/g, "'\\''") + "' \\",
     "  > ~/repo-audit/scans/" + t.id + ".log 2>&1 &"
   ].join("\n");

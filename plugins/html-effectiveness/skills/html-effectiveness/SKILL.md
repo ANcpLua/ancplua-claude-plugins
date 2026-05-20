@@ -32,21 +32,17 @@ compatibility: >
 
 Based on Thariq Shihipar's [html-effectiveness](https://github.com/ThariqS/html-effectiveness) repo. He works on Claude Code at Anthropic; the philosophy: **agents producing HTML files instead of markdown walls** because HTML carries spatial information and interaction that markdown flattens.
 
-## Canonical source — exact local path
+## Canonical source — local path
 
 The 20 canonical patterns live as standalone `.html` files at:
 
-```
-/Users/ancplua/RiderProjects/thariq-html-effectiveness/
-```
+`$HOME/.cache/thariq-html-effectiveness/`
 
 Branch: `main`. If the directory is missing, run:
 
-```bash
-gh repo clone ThariqS/html-effectiveness /Users/ancplua/RiderProjects/thariq-html-effectiveness
-```
+`gh repo clone ThariqS/html-effectiveness "$HOME/.cache/thariq-html-effectiveness"`
 
-Do **not** modify those files in place — they are the upstream reference. Read them to understand the pattern, then write a new file with the user's data into the user's project area (default: `~/<task>/<slug>.html` or alongside related artifacts, never into `~/RiderProjects/thariq-html-effectiveness/` itself).
+Do **not** modify those files in place — they are the upstream reference. Read them to understand the pattern, then write a new file with the user's data into the user's project area (default: `~/<task>/<slug>.html` or alongside related artifacts, never into the upstream reference clone).
 
 ## Decision protocol
 
@@ -54,7 +50,7 @@ Do **not** modify those files in place — they are the upstream reference. Read
 
 2. **Match user intent.** Scan the user's request for semantic fit with any entry in `decision_tree`. Match on intent regardless of language, case, or typos. If multiple patterns fit, pick the one whose `key_pattern` field most closely describes the data structure the user has. If still ambiguous, prefer the more interactive pattern (editor > report > diagram).
 
-3. **Study the canonical source.** Open `/Users/ancplua/RiderProjects/thariq-html-effectiveness/<pattern.file>` and read it end-to-end. Don't paraphrase the pattern — internalize the HTML structure, CSS tokens, JS interaction code, and copy-button mechanism. Reuse the same eyebrow / h1 / sub / sticky-toolbar / column / card markup so the output feels like one family.
+3. **Study the canonical source.** Open `$HOME/.cache/thariq-html-effectiveness/<pattern.file>` and read it end-to-end. Don't paraphrase the pattern — internalize the HTML structure, CSS tokens, JS interaction code, and copy-button mechanism. Reuse the same eyebrow / h1 / sub / sticky-toolbar / column / card markup so the output feels like one family.
 
 4. **Replicate with the user's real data.** Replace Thariq's example data (Acme tickets, Birchline comments, etc.) with the user's actual data. Keep the design tokens (`#FAF9F5` ivory bg, `#D97757` clay accent, Lora serif + system-ui + SF Mono), layout, and interaction code intact. If the user has no real data yet, ask once for a sample — do not invent fictional company data.
 

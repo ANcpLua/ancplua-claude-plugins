@@ -9,11 +9,11 @@ Commit-pinned NuGet → GitHub source fetcher for coding agents.
 ```bash
 # Without the wrapper:
 opensrc path dotnet/aspnetcore
-# → /Users/.../dotnet/aspnetcore/main         (drifts every push)
+# → $HOME/.opensrc/.../dotnet/aspnetcore/main         (drifts every push)
 
 # With the wrapper:
 node bin/nuget-opensrc path Microsoft.AspNetCore.Authentication.JwtBearer
-# → /Users/.../dotnet/dotnet/<exact-commit>   (frozen at package build time)
+# → $HOME/.opensrc/.../dotnet/dotnet/<exact-commit>   (frozen at package build time)
 ```
 
 For `Microsoft.OpenTelemetry@1.0.2` it resolves to:
@@ -97,11 +97,11 @@ node bin/nuget-opensrc info Microsoft.OpenTelemetry@1.0.2
 
 # Happy path — fetch
 node bin/nuget-opensrc path Microsoft.OpenTelemetry@1.0.2
-#  expect: /Users/.../microsoft/opentelemetry-distro-dotnet/63c50282...
+#  expect: $HOME/.opensrc/.../microsoft/opentelemetry-distro-dotnet/63c50282...
 
 # Latest version
 node bin/nuget-opensrc path Microsoft.Extensions.Logging
-#  expect: /Users/.../dotnet/dotnet/<some-commit>
+#  expect: $HOME/.opensrc/.../dotnet/dotnet/<some-commit>
 
 # Bad usage
 node bin/nuget-opensrc

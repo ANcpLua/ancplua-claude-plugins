@@ -70,7 +70,15 @@ echo "[2/6] ShellCheck"
 if command -v shellcheck >/dev/null 2>&1; then
   SHELL_COUNT=0
   SHELL_TMPFILE=$(mktemp)
-  find tooling plugins agents -type f -name "*.sh" -print0 2>/dev/null > "$SHELL_TMPFILE"
+  SHELL_DIRS=()
+  for dir in tooling plugins agents; do
+    if [ -d "$dir" ]; then
+      SHELL_DIRS+=("$dir")
+    fi
+  done
+  if [ "${#SHELL_DIRS[@]}" -gt 0 ]; then
+    find "${SHELL_DIRS[@]}" -type f -name "*.sh" -print0 > "$SHELL_TMPFILE"
+  fi
   SHELL_COUNT=$(grep -zc . "$SHELL_TMPFILE" || echo 0)
 
   if [ "$SHELL_COUNT" -gt 0 ]; then

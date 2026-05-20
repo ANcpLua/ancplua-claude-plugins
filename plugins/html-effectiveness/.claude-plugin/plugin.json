@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "html-effectiveness",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Routes agent output to single self-contained .html files based on Thariq Shihipar's html-effectiveness pattern catalog. 20 canonical patterns (triage board, status report, code review, design system, prompt tuner, etc.) with a fuzzy bilingual (EN+DE) decision tree so Claude picks the right pattern per task. Triggers eagerly on intent \u2014 not literal phrase \u2014 across English and German. Includes OTel semconv generator demo as concrete proof. Vendor-fork of https://github.com/ThariqS/html-effectiveness by Thariq Shihipar (@trq212, Claude Code @ Anthropic).",
   "author": {
     "name": "AncpLua",
