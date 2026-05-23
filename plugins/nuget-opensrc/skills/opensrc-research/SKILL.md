@@ -24,14 +24,14 @@ Fire this skill whenever the next answer would otherwise be a guess about how a 
    | npm package | bare name | `opensrc path zod` |
    | PyPI package | `pypi:` prefix | `opensrc path pypi:requests` |
    | Rust crate | `crates:` prefix | `opensrc path crates:serde` |
-   | **NuGet package** | **use the wrapper** | `node "${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc" path Microsoft.Extensions.Logging` |
+   | **NuGet package** | **use the wrapper** | `"${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc" path Microsoft.Extensions.Logging` |
    | GitHub repo | `owner/repo` (drifts with main) | `opensrc path open-telemetry/opentelemetry-dotnet` |
    | GitHub repo at commit | `owner/repo#<sha>` (pinned) | `opensrc path dotnet/runtime#abc123` |
 
 2. **Fetch and grep:**
    ```bash
    # NuGet (commit-pinned — preferred for .NET work):
-   PKG_PATH="$(node "${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc" path Microsoft.AspNetCore.Authentication.JwtBearer)"
+   PKG_PATH="$("${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc" path Microsoft.AspNetCore.Authentication.JwtBearer)"
    rg "JwtBearerEvents" "$PKG_PATH"
 
    # npm / PyPI / crates / GitHub:

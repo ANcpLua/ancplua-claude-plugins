@@ -13,7 +13,7 @@ Without this wrapper, `opensrc path dotnet/aspnetcore` returns the default branc
 ## Execution
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc" path $ARGUMENTS
+"${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc" path $ARGUMENTS
 ```
 
 ## Examples
@@ -26,7 +26,7 @@ node "${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc" path $ARGUMENTS
 /nuget-opensrc Microsoft.OpenTelemetry@1.0.2
 
 # Inspect metadata without fetching
-node "${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc" info Newtonsoft.Json
+"${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc" info Newtonsoft.Json
 ```
 
 ## Typical follow-up
@@ -34,7 +34,7 @@ node "${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc" info Newtonsoft.Json
 After the command prints a path, grep into it:
 
 ```bash
-rg "JwtBearerEvents" "$(node ${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc path Microsoft.AspNetCore.Authentication.JwtBearer)"
+rg "JwtBearerEvents" "$("${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc" path Microsoft.AspNetCore.Authentication.JwtBearer)"
 ```
 
 ## When this fails

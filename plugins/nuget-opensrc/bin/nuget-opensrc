@@ -158,6 +158,10 @@ EXAMPLES
   nuget-opensrc info Microsoft.Extensions.AI@9.0.0-preview.9.24556.5
   rg "JwtBearerEvents" "$(nuget-opensrc path Microsoft.AspNetCore.Authentication.JwtBearer)"
 
+INSIDE CLAUDE CODE
+  /nuget-opensrc <Pkg>[@<ver>]   slash command — equivalent to 'nuget-opensrc path'
+  opensrc-research               autonomous skill — fires when verifying behavior
+
 WHY THIS WRAPS opensrc
   opensrc on its own snaps bare GitHub repos to the default branch. NuGet's
   catalog metadata carries the exact commit each package was built from.

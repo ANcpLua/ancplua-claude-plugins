@@ -12,7 +12,7 @@ opensrc path dotnet/aspnetcore
 # → $HOME/.opensrc/.../dotnet/aspnetcore/main         (drifts every push)
 
 # With the wrapper:
-node bin/nuget-opensrc path Microsoft.AspNetCore.Authentication.JwtBearer
+bin/nuget-opensrc path Microsoft.AspNetCore.Authentication.JwtBearer
 # → $HOME/.opensrc/.../dotnet/dotnet/<exact-commit>   (frozen at package build time)
 ```
 
@@ -44,23 +44,44 @@ microsoft/opentelemetry-distro-dotnet#63c50282ab99f176128e926e013330a19cde8454
 /nuget-opensrc Microsoft.OpenTelemetry@1.0.2
 ```
 
+### From a subagent or external script
+
+`${CLAUDE_PLUGIN_ROOT}` is only set inside slash-command, skill, and hook execution contexts. A subagent invoked via `Task()` or an external Bash script doesn't inherit it. Use one of:
+
+```bash
+# 1. Caller is itself in a CLAUDE_PLUGIN_ROOT-aware context (skill, hook):
+"${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc" path Microsoft.Extensions.Logging
+
+# 2. Subagent or arbitrary Bash — resolve the marketplace install:
+SCRIPT="$(find "$HOME/.claude/plugins/marketplaces" -name nuget-opensrc -path '*/bin/*' 2>/dev/null | head -1)"
+"$SCRIPT" path Microsoft.Extensions.Logging
+```
+
+Which surface to prefer:
+
+| Context | Surface |
+|---------|---------|
+| Inside Claude Code main loop | `/nuget-opensrc <Pkg>[@<ver>]` slash command |
+| Verifying library behavior (autonomous trigger) | invoke skill `opensrc-research` |
+| Subagent prompt that needs a deterministic invocation | the resolution snippet (#2) above |
+
 ### Direct CLI
 
 ```bash
 # Fetch + print path
-node bin/nuget-opensrc path Microsoft.Extensions.Logging
+bin/nuget-opensrc path Microsoft.Extensions.Logging
 
 # Inspect metadata without fetching
-node bin/nuget-opensrc info Newtonsoft.Json
+bin/nuget-opensrc info Newtonsoft.Json
 
 # Help
-node bin/nuget-opensrc --help
+bin/nuget-opensrc --help
 ```
 
 ### Composed with ripgrep
 
 ```bash
-rg "JwtBearerEvents" "$(node bin/nuget-opensrc path Microsoft.AspNetCore.Authentication.JwtBearer)"
+rg "JwtBearerEvents" "$(bin/nuget-opensrc path Microsoft.AspNetCore.Authentication.JwtBearer)"
 ```
 
 ## Design choices (justifications, not rationalizations)
@@ -91,29 +112,29 @@ These are errors, not silent fallbacks:
 
 ```bash
 # Happy path — Microsoft package with commit metadata
-node bin/nuget-opensrc info Microsoft.OpenTelemetry@1.0.2
+bin/nuget-opensrc info Microsoft.OpenTelemetry@1.0.2
 #  expect: repo=microsoft/opentelemetry-distro-dotnet
 #          commit=63c50282ab99f176128e926e013330a19cde8454
 
 # Happy path — fetch
-node bin/nuget-opensrc path Microsoft.OpenTelemetry@1.0.2
+bin/nuget-opensrc path Microsoft.OpenTelemetry@1.0.2
 #  expect: $HOME/.opensrc/.../microsoft/opentelemetry-distro-dotnet/63c50282...
 
 # Latest version
-node bin/nuget-opensrc path Microsoft.Extensions.Logging
+bin/nuget-opensrc path Microsoft.Extensions.Logging
 #  expect: $HOME/.opensrc/.../dotnet/dotnet/<some-commit>
 
 # SemVer2-only prerelease (would have failed in 0.1.0 — fixed in 0.1.1)
-node bin/nuget-opensrc info Microsoft.Extensions.AI@9.0.0-preview.9.24556.5
+bin/nuget-opensrc info Microsoft.Extensions.AI@9.0.0-preview.9.24556.5
 #  expect: resolves to dotnet/extensions (or 'no <repository> metadata' if
 #          that specific older version genuinely shipped without source link)
 
 # Bad usage
-node bin/nuget-opensrc
+bin/nuget-opensrc
 #  expect exit 0 with --help text
 
 # Nonexistent package
-node bin/nuget-opensrc path Nonexistent.Made.Up.Package.12345
+bin/nuget-opensrc path Nonexistent.Made.Up.Package.12345
 #  expect: "package not found on NuGet" on stderr, exit 1
 ```
 
