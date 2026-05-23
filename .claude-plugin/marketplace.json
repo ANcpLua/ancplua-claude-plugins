@@ -131,7 +131,7 @@
     {
       "name": "nuget-opensrc",
       "description": "Commit-pinned NuGet→GitHub source fetcher. Wraps opensrc with NuGet catalog metadata so coding agents grep the exact commit a package was built from, not whatever's on main. Ships a /nuget-opensrc command, an autonomous opensrc-research skill, and a Node CLI that refuses to silently fall back to projectUrl or default branch.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "source": "./plugins/nuget-opensrc"
     }
   ]

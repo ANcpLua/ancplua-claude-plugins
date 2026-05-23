@@ -43,6 +43,8 @@ rg "JwtBearerEvents" "$(node ${CLAUDE_PLUGIN_ROOT}/bin/nuget-opensrc path Micros
 |-------|---------|--------|
 | `no <repository> metadata` | Publisher omitted the `<repository>` tag in nuspec | Source not accessible via this path — try `opensrc path <owner/repo>` directly if you know the repo |
 | `repository.url is not github.com` | Package is on GitLab / Azure DevOps / etc. | Not supported (opensrc is GitHub-only) |
-| `version not found` | Version doesn't exist in either NuGet feed | Check spelling, drop `@version` for latest |
+| `version not found` | Version doesn't exist in either NuGet feed (semver1 + gz-semver2 both checked) | Check spelling, drop `@version` for latest |
+
+SemVer2-only versions (dotted prerelease like `9.0.0-preview.9.24556.5`, or `+`-build-metadata versions) are resolved transparently — the wrapper falls through from `registration5-semver1` to `registration5-gz-semver2` when needed.
 
 The wrapper **never** falls back to `projectUrl` — that field lies for Microsoft packages (points at `https://dot.net/`). Failures are surfaced explicitly so you don't silently get wrong source.

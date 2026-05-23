@@ -69,7 +69,7 @@ rg "JwtBearerEvents" "$(node bin/nuget-opensrc path Microsoft.AspNetCore.Authent
 |--------|-----|
 | Refuses to fall back to `projectUrl` | Microsoft packages have `projectUrl=https://dot.net/` which lies about source location. Silent fallback would silently corrupt research. |
 | Refuses to silently default to `main` when commit is missing | Warns on stderr; you opt in to drift. |
-| Tries `registration5-semver1` first, falls back to `registration5-gz-semver2` | semver1 is faster (plain JSON, smaller) but excludes SemVer2/prerelease packages; gz-semver2 is the superset. |
+| Tries `registration5-semver1` first, falls back to `registration5-gz-semver2` | semver1 is faster (smaller payload, semver-1-only) but it filters out SemVer2 versions (dotted prerelease, `+` build metadata). The wrapper transparently re-checks gz-semver2 in two cases: (a) the package is 404 on semver1, and (b) the package is on semver1 but the requested `@version` isn't there — common when a stable-and-preview package has SemVer2 previews like `9.0.0-preview.9.24556.5`. |
 | Override-map for Microsoft monorepos *not* included | NuGet's `repository.url` is authoritative. Currently most Microsoft packages resolve to `dotnet/dotnet` (the unified Virtual Mono Repo) which is large but correct. Adding an override map would be a future optimization once disk-cost is measured. |
 | Wrapped as a Claude Code plugin (not standalone npm package) | Distribution + skill auto-loading match how this is actually used. Standalone npm publish is a follow-up if needed. |
 
@@ -102,6 +102,11 @@ node bin/nuget-opensrc path Microsoft.OpenTelemetry@1.0.2
 # Latest version
 node bin/nuget-opensrc path Microsoft.Extensions.Logging
 #  expect: $HOME/.opensrc/.../dotnet/dotnet/<some-commit>
+
+# SemVer2-only prerelease (would have failed in 0.1.0 — fixed in 0.1.1)
+node bin/nuget-opensrc info Microsoft.Extensions.AI@9.0.0-preview.9.24556.5
+#  expect: resolves to dotnet/extensions (or 'no <repository> metadata' if
+#          that specific older version genuinely shipped without source link)
 
 # Bad usage
 node bin/nuget-opensrc
