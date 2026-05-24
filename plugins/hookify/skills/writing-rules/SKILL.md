@@ -1,8 +1,8 @@
 ---
 name: writing-rules
-description: >
-  Guide for creating hookify rules to prevent unwanted AI behaviors.
-  Use when user asks to create, write, or configure hookify rules.
+description: >-
+  IF creating hookify rules THEN use this. IF blocking a dangerous bash command THEN this. IF preventing API-key writes to .env THEN this. IF requiring tests before stop THEN this. IF gating Edit/Write on specific paths THEN this. IF API rate-limit alerts on stopfailure THEN this. Generates .claude/hookify.*.local.md files with event matchers (bash|file|stop|stopfailure|prompt|all) and condition operators (regex_match, contains, equals, starts_with, ends_with, not_contains). Rule actions: warn (default) or block.
+allowed-tools: Read, Write, Edit, Glob, Grep
 effort: medium
 ---
 
@@ -44,6 +44,8 @@ Message shown to Claude when rule triggers.
 | `stopfailure` | `error_type`, `error_message` | API error alerts, rate limit handling |
 | `prompt` | User prompt text | Deployment gates, process enforcement |
 | `all` | All events | Cross-cutting concerns |
+
+**Event-to-tool mapping:** `bash` events fire on `Bash` tool calls; `file` events fire on `Read`, `Write`, `Edit`, and `NotebookEdit` tool calls; `prompt` events fire when the user submits input; `stop` / `stopfailure` fire when Claude attempts to halt.
 
 ## Actions
 

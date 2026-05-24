@@ -1,7 +1,9 @@
 ---
 name: claudemd-curator
-description: Audit and improve project-memory artifacts (CLAUDE.md, AGENTS.md, .claude/rules/*.md, .claude.local.md). Use when the user asks to check, audit, update, improve, or fix CLAUDE.md or AGENTS.md files, or mentions "project memory", "memory optimization", "Codex AGENTS.md sync", or ".claude/rules". Discovers all known artifacts, scores each against the rubric, prints a report, and makes targeted updates only after approval.
+description: >-
+  IF auditing CLAUDE.md / AGENTS.md / .claude.local.md / .claude/rules/*.md THEN use this. IF project-memory quality report needed THEN this. IF Codex AGENTS.md and Claude CLAUDE.md have drifted apart THEN this. IF marketplace plugin drift signals need consuming (via capability-snapshot) THEN this. IF .claude/rules/*.md need scoring THEN this. IF "memory optimization" or "project memory" mentioned THEN this. IF multi-repo workspace audit via WORKSPACE_DIRS THEN this. Discovers all memory artifacts, scores each against a 6-criterion rubric (commands, architecture, patterns, conciseness, currency, actionability), prints a report, and makes targeted Edit-tool updates only after approval. MEMORY.md (auto-memory index) is read-only.
 allowed-tools: Read, Glob, Grep, Bash, Edit, Write
+effort: medium
 ---
 
 ## MANDATORY ACTIVATION
@@ -36,6 +38,8 @@ Audit, evaluate, and improve project-memory artifacts across a codebase so Claud
 `MEMORY.md` (the auto-memory index under `~/.claude/projects/*/memory/`) is recognized but **never rewritten by this skill** — it is owned by the Claude Code memory subsystem and has its own format with frontmatter.
 
 ## Workflow
+
+**Tool surface:** `Bash` for `find` discovery, `Glob` for path expansion, `Grep` for content scanning, `Read` for artifact contents, `Edit` and `Write` for Phase 5 updates after approval. `MEMORY.md` is read-only — never written by this skill.
 
 ### Phase 1: Discovery
 
