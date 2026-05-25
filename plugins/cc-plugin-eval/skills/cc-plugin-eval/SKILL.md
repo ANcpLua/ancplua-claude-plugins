@@ -1,18 +1,7 @@
 ---
 name: cc-plugin-eval
-description: >
-  Evaluate a local Claude Code plugin or skill, explain why it scored that way,
-  surface the highest-leverage fixes first, walk through the token budget,
-  validate every component file (plugin.json, hooks, .mcp.json, .lsp.json,
-  monitors, agents, userConfig, channels, dependencies, marketplace.json), or
-  run a real claude benchmark in an isolated workspace. Use when the user says:
-  "evaluate this plugin", "evaluate this skill", "give me an analysis of this
-  plugin", "why did this score that way", "what should I fix first", "explain
-  the token budget for this plugin", "validate this manifest", "lint the
-  hooks", "inspect the mcp servers", "audit the components", "measure the real
-  token usage", "help me benchmark this plugin", or "what should I run next?".
+description: 'Evaluate a local Claude Code plugin or skill, explain why it scored that way, surface the highest-leverage fixes first, walk through the token budget, validate every component file (plugin.json, hooks, .mcp.json, .lsp.json, monitors, agents, userConfig, channels, dependencies, marketplace.json), or run a real claude benchmark in an isolated workspace. Use when the user says: "evaluate this plugin", "evaluate this skill", "give me an analysis of this plugin", "why did this score that way", "what should I fix first", "explain the token budget for this plugin", "validate this manifest", "lint the hooks", "inspect the mcp servers", "audit the components", "measure the real token usage", "help me benchmark this plugin", or "what should I run next?".'
 ---
-
 # cc-plugin-eval
 
 Use this as the umbrella entrypoint for local Claude Code plugin and skill evaluation. cc-plugin-eval is deterministic, local-first, and zero-dependency.

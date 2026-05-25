@@ -1,13 +1,9 @@
 ---
 name: elegance-pipeline
-description: >-
-  Run a persistent multi-agent code-elegance workflow with 4 scouts, 2 judges,
-  1 planner, 1 verifier, and 1 gated implementer. Use when evaluating source-file
-  elegance across a repository and optionally converting weaknesses into refactor work.
+description: "Run a persistent multi-agent code-elegance workflow with 4 scouts, 2 judges, 1 planner, 1 verifier, and 1 gated implementer. Use when evaluating source-file elegance across a repository and optionally converting weaknesses into refactor work."
 allowed-tools: Read, Grep, Glob, Bash, Agent
 effort: high
 ---
-
 # Elegance Pipeline
 
 Multi-agent code-elegance workflow with persistent state and stage gates.

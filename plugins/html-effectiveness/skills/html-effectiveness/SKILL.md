@@ -1,33 +1,10 @@
 ---
 name: html-effectiveness
-description: >
-  Produce a single self-contained .html file instead of a wall of markdown when the user wants a report,
-  dashboard, triage board, design doc, code review, flowchart, slide deck, postmortem, implementation
-  plan, RFC, feature-flag editor, prompt tuner, annotated PR writeup, status update, status report,
-  weekly recap, sprint review, module map, architecture overview, design system, component variants,
-  animation prototype, interactive explainer, concept explainer, feature explainer, SVG figures,
-  pipeline diagram, agent-spawn deck (HTML carrying multiple ready-to-paste agent prompts for fan-out
-  work), OR any artifact that benefits from layout, interaction, drag-drop, live preview, side-by-side
-  comparison, parallel agent fan-out, or a copy-to-clipboard export. Triggers eagerly on English AND
-  German phrases (case-insensitive, typo-tolerant, semantic match — NOT literal): "html instead of
-  markdown", "make me a dashboard", "build an interactive", "html report", "triage board", "triage
-  me these", "status report", "wochenbericht", "postmortem", "incident", "implementation plan",
-  "implementierungsplan", "design doc", "side by side", "drag drop", "click through", "give me an
-  editor for", "tune the prompt", "feature flag editor", "explainer with interaction", "concept
-  explainer", "annotated diff", "code review", "pr writeup", "pr beschreibung", "slide deck",
-  "präsentation", "präsi", "module map", "modulkarte", "flowchart", "flussdiagramm", "vergleich",
-  "nebeneinander", "vergleiche x y z", "x vs y vs z", "drei ansätze", "alternativen", "spawn agents",
-  "fan out", "agenten spawnen", "agenten team", "parallel scan", "paralleler audit", "multi-agent
-  prompt", "give me prompts to run", "deck of prompts". Trigger eagerly — if the output would
-  otherwise be a long markdown table, several sections of prose with categories, a list the user
-  will sort/filter/diff, OR a task that benefits from parallel agent fan-out, HTML wins. Match on
-  user intent, not literal phrase: a list of tickets → triage-board, a diff → code-review, a
-  timeline → incident-report, a parallel-audit task → 21-agent-spawn-deck.
+description: 'Produce a single self-contained .html file instead of a wall of markdown when the user wants a report, dashboard, triage board, design doc, code review, flowchart, slide deck, postmortem, implementation plan, RFC, feature-flag editor, prompt tuner, annotated PR writeup, status update, status report, weekly recap, sprint review, module map, architecture overview, design system, component variants, animation prototype, interactive explainer, concept explainer, feature explainer, SVG figures, pipeline diagram, agent-spawn deck (HTML carrying multiple ready-to-paste agent prompts for fan-out work), OR any artifact that benefits from layout, interaction, drag-drop, live preview, side-by-side comparison, parallel agent fan-out, or a copy-to-clipboard export. Triggers eagerly on English AND German phrases (case-insensitive, typo-tolerant, semantic match — NOT literal): "html instead of markdown", "make me a dashboard", "build an interactive", "html report", "triage board", "triage me these", "status report", "wochenbericht", "postmortem", "incident", "implementation plan", "implementierungsplan", "design doc", "side by side", "drag drop", "click through", "give me an editor for", "tune the prompt", "feature flag editor", "explainer with interaction", "concept explainer", "annotated diff", "code review", "pr writeup", "pr beschreibung", "slide deck", "präsentation", "präsi", "module map", "modulkarte", "flowchart", "flussdiagramm", "vergleich", "nebeneinander", "vergleiche x y z", "x vs y vs z", "drei ansätze", "alternativen", "spawn agents", "fan out", "agenten spawnen", "agenten team", "parallel scan", "paralleler audit", "multi-agent prompt", "give me prompts to run", "deck of prompts". Trigger eagerly — if the output would otherwise be a long markdown table, several sections of prose with categories, a list the user will sort/filter/diff, OR a task that benefits from parallel agent fan-out, HTML wins. Match on user intent, not literal phrase: a list of tickets → triage-board, a diff → code-review, a timeline → incident-report, a parallel-audit task → 21-agent-spawn-deck.'
 compatibility: >
   Works in any environment where the agent can write files. The output is a vanilla .html with inline
   CSS/JS — open in a browser, no build, no npm.
 ---
-
 # html-effectiveness
 
 Based on Thariq Shihipar's [html-effectiveness](https://github.com/ThariqS/html-effectiveness) repo. He works on Claude Code at Anthropic; the philosophy: **agents producing HTML files instead of markdown walls** because HTML carries spatial information and interaction that markdown flattens.

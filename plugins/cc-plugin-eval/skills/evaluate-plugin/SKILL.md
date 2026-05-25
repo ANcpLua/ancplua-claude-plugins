@@ -1,13 +1,7 @@
 ---
 name: evaluate-plugin
-description: >
-  Evaluate a local Claude Code plugin (a directory containing
-  .claude-plugin/plugin.json). Use when the user says: "evaluate this plugin",
-  "audit this plugin", "why did this plugin score that way", "what should I fix
-  first in this plugin", "validate the manifest", "lint this plugin", "inspect
-  the hooks", "inspect the mcp servers", or "help me benchmark this plugin".
+description: 'Evaluate a local Claude Code plugin (a directory containing .claude-plugin/plugin.json). Use when the user says: "evaluate this plugin", "audit this plugin", "why did this plugin score that way", "what should I fix first in this plugin", "validate the manifest", "lint this plugin", "inspect the hooks", "inspect the mcp servers", or "help me benchmark this plugin".'
 ---
-
 # Evaluate Plugin
 
 Use this skill when the target is a plugin root with `.claude-plugin/plugin.json`. If the target is a single `SKILL.md` directory, hand off to `../evaluate-skill/SKILL.md` instead.

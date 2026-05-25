@@ -1,12 +1,7 @@
 ---
 name: metric-pack-designer
-description: >
-  Design a local metric pack so a team can extend cc-plugin-eval with custom
-  evaluation criteria that emit schema-compatible findings, metrics, and
-  artifacts. Use when the user wants their own rubric, custom checks, or a
-  domain-specific report on top of the deterministic engine.
+description: "Design a local metric pack so a team can extend cc-plugin-eval with custom evaluation criteria that emit schema-compatible findings, metrics, and artifacts. Use when the user wants their own rubric, custom checks, or a domain-specific report on top of the deterministic engine."
 ---
-
 # Metric Pack Designer
 
 Use this skill when the user wants to extend `cc-plugin-eval` with a local rubric.

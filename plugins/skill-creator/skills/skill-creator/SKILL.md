@@ -1,20 +1,11 @@
 ---
 name: skill-creator
-description: >
-  Create, evaluate, and iteratively improve Claude Code skills. Use when
-  users want to create a skill from scratch, turn a workflow into a skill,
-  edit or optimize an existing skill, run evals to test skill quality,
-  benchmark performance with variance analysis, optimize a skill's
-  description for better triggering accuracy, or package a skill for
-  distribution. Triggers on: "make a skill", "create a skill", "turn this
-  into a skill", "test my skill", "improve my skill", "skill not triggering",
-  "package skill", "evaluate skill", "benchmark skill".
+description: "Create, evaluate, and iteratively improve Claude Code skills. Use when users want to create a skill from scratch, turn a workflow into a skill, edit or optimize an existing skill, run evals to test skill quality, benchmark performance with variance analysis, optimize a skill's description for better triggering accuracy, or package a skill for distribution. Triggers on: \"make a skill\", \"create a skill\", \"turn this into a skill\", \"test my skill\", \"improve my skill\", \"skill not triggering\", \"package skill\", \"evaluate skill\", \"benchmark skill\"."
 compatibility: >
   Full features require Claude Code with subagents and claude -p CLI.
   Core creation workflow works in Claude.ai and Cowork with reduced eval
   capabilities.
 ---
-
 # Skill Creator
 
 Your job is to figure out where the user is in the skill lifecycle and help them progress. Use this decision tree to route:

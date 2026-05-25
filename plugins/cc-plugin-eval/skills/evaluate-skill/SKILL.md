@@ -1,13 +1,7 @@
 ---
 name: evaluate-skill
-description: >
-  Evaluate a local Claude Code skill (a directory containing SKILL.md). Use
-  when the user says: "evaluate this skill", "give me an analysis of this
-  skill", "audit this skill", "why did this skill score that way", "what
-  should I fix first in this skill", "this skill is too big", "this skill is
-  not triggering", or "measure the real token usage of this skill".
+description: 'Evaluate a local Claude Code skill (a directory containing SKILL.md). Use when the user says: "evaluate this skill", "give me an analysis of this skill", "audit this skill", "why did this skill score that way", "what should I fix first in this skill", "this skill is too big", "this skill is not triggering", or "measure the real token usage of this skill".'
 ---
-
 # Evaluate Skill
 
 Use this skill when the target is a local skill directory or a `SKILL.md` file. cc-plugin-eval handles the structural and budget signals deterministically without an LLM. If the user wants an LLM-graded rubric or a rewrite pass, hand off to the user's existing `skill-creator` plugin (`../../../skill-creator/skills/skill-creator/SKILL.md`) - that plugin specializes in single-skill grading and rewrites, while cc-plugin-eval focuses on structural and budget signals.
