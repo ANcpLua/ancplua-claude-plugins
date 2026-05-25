@@ -1,7 +1,6 @@
 ---
 name: eight-gates
-description: >-
-  IF maximum disciplined orchestration needed THEN use this. IF multi-phase audit + execute + verify needed THEN this. IF spec implementation with progressive permissions THEN this. IF parallel-discovery + reduce + lane-execution THEN this. IF resumable workflows that survive context loss THEN this. IF dedicated per-spec parallel runs via GATES_DIR/SMART_DIR THEN this. 8 progressive gates — each unlocks more capability only if the workflow stays honest, testable, and resumable. Smart-Gates: Smart ID, session TTL, checkpoint ledger, decision log, artifact cache. Composes mega-swarm (MAP), fix pipeline (EXECUTE), hades (HAKAI). 0-12 teammates per gate.
+description: "IF maximum disciplined orchestration needed THEN use this. IF multi-phase audit + execute + verify needed THEN this. IF spec implementation with progressive permissions THEN this. IF parallel-discovery + reduce + lane-execution THEN this. IF resumable workflows that survive context loss THEN this. IF dedicated per-spec parallel runs via GATES_DIR/SMART_DIR THEN this. 8 progressive gates — each unlocks more capability only if the workflow stays honest, testable, and resumable. Smart-Gates: Smart ID, session TTL, checkpoint ledger, decision log, artifact cache. Composes mega-swarm (MAP), fix pipeline (EXECUTE), hades (HAKAI). 0-12 teammates per gate."
 argument-hint: "[objective] [scope] [gate-limit]"
 allowed-tools: Task, Bash, TodoWrite, Read, Grep, Glob, WebSearch
 effort: high

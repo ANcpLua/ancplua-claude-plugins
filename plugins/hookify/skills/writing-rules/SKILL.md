@@ -1,7 +1,6 @@
 ---
 name: writing-rules
-description: >-
-  IF creating hookify rules THEN use this. IF blocking a dangerous bash command THEN this. IF preventing API-key writes to .env THEN this. IF requiring tests before stop THEN this. IF gating Edit/Write on specific paths THEN this. IF API rate-limit alerts on stopfailure THEN this. Generates .claude/hookify.*.local.md files with event matchers (bash|file|stop|stopfailure|prompt|all) and condition operators (regex_match, contains, equals, starts_with, ends_with, not_contains). Rule actions: warn (default) or block.
+description: "IF creating hookify rules THEN use this. IF blocking a dangerous bash command THEN this. IF preventing API-key writes to .env THEN this. IF requiring tests before stop THEN this. IF gating Edit/Write on specific paths THEN this. IF API rate-limit alerts on stopfailure THEN this. Generates .claude/hookify.*.local.md files with event matchers (bash|file|stop|stopfailure|prompt|all) and condition operators (regex_match, contains, equals, starts_with, ends_with, not_contains). Rule actions: warn (default) or block."
 allowed-tools: Read, Write, Edit, Glob, Grep
 effort: medium
 ---

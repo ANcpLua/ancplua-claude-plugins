@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "claudemd-curator",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Curate project-memory artifacts (CLAUDE.md, AGENTS.md, .claude/rules/*.md, MEMORY.md). Audits quality against rubric, captures end-of-session learnings, treats Codex AGENTS.md as a peer of CLAUDE.md. Forked from anthropics/claude-plugins-official claude-md-management (Isabella He, Anthropic).",
   "author": {
     "name": "AncpLua",

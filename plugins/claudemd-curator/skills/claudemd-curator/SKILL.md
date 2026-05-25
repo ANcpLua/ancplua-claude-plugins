@@ -1,7 +1,6 @@
 ---
 name: claudemd-curator
-description: >-
-  IF auditing CLAUDE.md / AGENTS.md / .claude.local.md / .claude/rules/*.md THEN use this. IF project-memory quality report needed THEN this. IF Codex AGENTS.md and Claude CLAUDE.md have drifted apart THEN this. IF marketplace plugin drift signals need consuming (via capability-snapshot) THEN this. IF .claude/rules/*.md need scoring THEN this. IF "memory optimization" or "project memory" mentioned THEN this. IF multi-repo workspace audit via WORKSPACE_DIRS THEN this. Discovers all memory artifacts, scores each against a 6-criterion rubric (commands, architecture, patterns, conciseness, currency, actionability), prints a report, and makes targeted Edit-tool updates only after approval. MEMORY.md (auto-memory index) is read-only.
+description: 'IF auditing CLAUDE.md / AGENTS.md / .claude.local.md / .claude/rules/*.md THEN use this. IF project-memory quality report needed THEN this. IF Codex AGENTS.md and Claude CLAUDE.md have drifted apart THEN this. IF marketplace plugin drift signals need consuming (via capability-snapshot) THEN this. IF .claude/rules/*.md need scoring THEN this. IF "memory optimization" or "project memory" mentioned THEN this. IF multi-repo workspace audit via WORKSPACE_DIRS THEN this. Discovers all memory artifacts, scores each against a 6-criterion rubric (commands, architecture, patterns, conciseness, currency, actionability), prints a report, and makes targeted Edit-tool updates only after approval. MEMORY.md (auto-memory index) is read-only.'
 allowed-tools: Read, Glob, Grep, Bash, Edit, Write
 effort: medium
 ---

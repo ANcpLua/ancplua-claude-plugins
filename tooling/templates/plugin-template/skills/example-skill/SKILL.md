@@ -1,7 +1,6 @@
 ---
 name: example-skill
-description: >-
-  IF [primary trigger condition] THEN use this. IF [secondary trigger] THEN this. IF [tertiary trigger] THEN this. IF [edge case or alternate flag like --goggles] THEN this. IF [user mentions specific phrase] THEN this. [One-sentence summary of what the skill does and what it produces]. Generates / uses [concrete artifacts: file types, ledger names, tool outputs]. [Concurrency or scale hint, e.g., "4 teammates per phase + equipment adds 1-3"].
+description: 'IF [primary trigger condition] THEN use this. IF [secondary trigger] THEN this. IF [tertiary trigger] THEN this. IF [edge case or alternate flag like --goggles] THEN this. IF [user mentions specific phrase] THEN this. [One-sentence summary of what the skill does and what it produces]. Generates / uses [concrete artifacts: file types, ledger names, tool outputs]. [Concurrency or scale hint, e.g., "4 teammates per phase + equipment adds 1-3"].'
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 effort: medium
 ---
