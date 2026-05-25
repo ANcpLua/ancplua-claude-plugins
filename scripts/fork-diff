@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# scripts/fork-diff — show how plugins/hookify/ diverges from upstream/main.
+#
+# Companion to plugins/hookify/FORK.md. The FORK.md narrative is only
+# trustworthy if anyone can regenerate the underlying diff on demand —
+# this script is that regeneration.
+#
+# Usage:
+#   scripts/fork-diff                       # full diff vs upstream/main
+#   scripts/fork-diff --stat                # summary
+#   scripts/fork-diff --name-status         # added/removed/modified/renamed
+#   scripts/fork-diff -- examples/          # restrict to a subpath
+#
+# First-time setup (printed as a hint if the remote is missing):
+#   git remote add upstream https://github.com/anthropics/claude-plugins-official.git
+#   git fetch upstream main
+
+set -euo pipefail
+
+UPSTREAM_REMOTE="upstream"
+UPSTREAM_URL="https://github.com/anthropics/claude-plugins-official.git"
+UPSTREAM_BRANCH="main"
+DEFAULT_SUBTREE="plugins/hookify"
+
+cd "$(git rev-parse --show-toplevel)"
+
+if ! git remote get-url "$UPSTREAM_REMOTE" >/dev/null 2>&1; then
+    echo "fork-diff: '$UPSTREAM_REMOTE' remote not configured." >&2
+    echo "           git remote add $UPSTREAM_REMOTE $UPSTREAM_URL" >&2
+    echo "           git fetch $UPSTREAM_REMOTE $UPSTREAM_BRANCH" >&2
+    exit 2
+fi
+
+if ! git rev-parse --verify --quiet "$UPSTREAM_REMOTE/$UPSTREAM_BRANCH" >/dev/null; then
+    echo "fork-diff: fetching $UPSTREAM_REMOTE/$UPSTREAM_BRANCH ..." >&2
+    git fetch --quiet "$UPSTREAM_REMOTE" "$UPSTREAM_BRANCH"
+fi
+
+# Split args into git-diff flags (before --) and pathspec (after --).
+# When no pathspec is given, default to plugins/hookify/.
+flag_args=()
+path_args=()
+saw_dashdash=0
+for a in "$@"; do
+    if [[ $saw_dashdash -eq 0 && "$a" == "--" ]]; then
+        saw_dashdash=1
+        continue
+    fi
+    if [[ $saw_dashdash -eq 1 ]]; then
+        path_args+=("$DEFAULT_SUBTREE/$a")
+    else
+        flag_args+=("$a")
+    fi
+done
+
+if [[ ${#path_args[@]} -eq 0 ]]; then
+    path_args=("$DEFAULT_SUBTREE")
+fi
+
+exec git diff "${flag_args[@]}" "$UPSTREAM_REMOTE/$UPSTREAM_BRANCH" -- "${path_args[@]}"

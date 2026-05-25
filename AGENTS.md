@@ -166,6 +166,10 @@ For the runner overview, see [`automation/README.md`](automation/README.md).
 
 ---
 
-## Parked work
+## Fork audit — hookify
 
-**Hookify fork clarification.** `plugins/hookify/` is a fork of Anthropic's `claude-plugins-official/plugins/hookify` with three real additions: `execute` action, `stopfailure` event, global rules support (`~/.claude/global-rules/`). The README says "fork" but doesn't draw the line. Need: a `plugins/hookify/FORK.md` listing what's upstream vs added vs removed, plus a `bin/fork-diff` script running `git diff upstream/main -- plugins/hookify/` so the claim is verifiable. No `upstream` remote yet — add via `git remote add upstream https://github.com/anthropics/claude-plugins-official.git` first.
+`plugins/hookify/` is a fork of `anthropics/claude-plugins-official/plugins/hookify`.
+The line between upstream and fork is documented in
+[`plugins/hookify/FORK.md`](plugins/hookify/FORK.md); regenerate the
+byte-level diff with `scripts/fork-diff` (`--stat`, `--name-status`, or
+`-- <subpath>` for slices).
