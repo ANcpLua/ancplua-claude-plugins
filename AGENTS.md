@@ -163,3 +163,9 @@ interactive sessions.
 
 For policy details, see [`automation/policy.md`](automation/policy.md).  
 For the runner overview, see [`automation/README.md`](automation/README.md).
+
+---
+
+## Parked work
+
+**Hookify fork clarification.** `plugins/hookify/` is a fork of Anthropic's `claude-plugins-official/plugins/hookify` with three real additions: `execute` action, `stopfailure` event, global rules support (`~/.claude/global-rules/`). The README says "fork" but doesn't draw the line. Need: a `plugins/hookify/FORK.md` listing what's upstream vs added vs removed, plus a `bin/fork-diff` script running `git diff upstream/main -- plugins/hookify/` so the claim is verifiable. No `upstream` remote yet — add via `git remote add upstream https://github.com/anthropics/claude-plugins-official.git` first.
