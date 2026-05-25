@@ -1,3 +1,30 @@
+<!--
+  AGENTS.md is the single source of truth for this repo's agent guidance.
+  CLAUDE.md and GEMINI.md at the repo root are symlinks to this file.
+  Edit AGENTS.md only — the other two follow.
+-->
+
+> [!IMPORTANT]
+> **Single source.** `CLAUDE.md` and `GEMINI.md` at the repo root are symlinks
+> to this file. **Edit `AGENTS.md` only** — the other two follow.
+>
+> AGENTS.md is canonical because it's the cross-vendor spec
+> ([agents.md](https://agents.md/)) read natively by Codex, Cursor, Jules,
+> Gemini CLI, Windsurf, Aider, Zed, and ~20 other agents. Anthropic
+> officially endorses `ln -s AGENTS.md CLAUDE.md`.
+>
+> **Windows checkouts:** run `git config core.symlinks=true` (or enable
+> Developer Mode) or symlinks land as plain-text files containing the
+> target path.
+>
+> **Gemini CLI** does not follow `GEMINI.md` symlinks
+> ([gemini-cli#11547](https://github.com/google-gemini/gemini-cli/issues/11547),
+> closed not-planned). If you use Gemini CLI on this repo, add
+> `.gemini/settings.json` with
+> `{"context":{"fileName":["AGENTS.md","CLAUDE.md","GEMINI.md"]}}`.
+
+---
+
 # Agent Operating Guide — ancplua-claude-plugins
 
 > Sources: Boris Cherny (@bcherny) + Thariq (@trq212), 2026-04-16; Claude Opus 4.7 System Card (Anthropic, 2026-04-16,
@@ -135,6 +162,25 @@ entry reduces friction without compromising the deny overrides.
 
 Pattern: `<task> /go` — a per-project skill that tests end-to-end, runs `/simplify`, opens a PR.  
 Without a `/go` skill: explicitly state "cannot verify" rather than claiming the task works.
+
+---
+
+## Engineering principles
+
+Operative rules of thumb when reasoning about code changes in this repo:
+
+| Situation                       | Principle                                                                |
+|---------------------------------|--------------------------------------------------------------------------|
+| Starting a new feature          | Solve the problem, not necessarily with code. Work backward from outcome. |
+| Evaluating approaches           | No "best" — only trade-offs. Document what you're optimizing for.        |
+| Adding code                     | Less code is better code. Justify every line. Remove unused now.         |
+| Adding abstraction              | Prefer boring. Abstraction should hide complexity, not create it.        |
+| Encountering a bug              | Fix the root cause. Understand the class of bug, not one instance.       |
+| Something unexpected            | Don't trial-and-error to green. What assumption was wrong?               |
+| Making a non-obvious decision   | Document the *why*. ADR / RFC / design doc, not a commit message.        |
+| An error occurs                 | Fail loudly. Silent failures are debugging nightmares.                   |
+| Debugging / optimizing          | Change one thing at a time. Measure → change → measure again.            |
+| Designing an API                | Easy to use correctly, hard to misuse. Invalid states unrepresentable.   |
 
 ---
 
