@@ -21,36 +21,59 @@ isolated branch, then stop. The human reviews the diff and decides.
 - Rider isn't open on the solution — refuse, do not fall back to `dotnet build`. Build diagnostics are a strict subset of Rider's daemon and the user explicitly asked for IDE hints.
 - The user wants to suppress a diagnostic — refuse. Suppression (`#pragma warning disable`, `<NoWarn>`, `[SuppressMessage]`) is out of scope; this skill applies fixes or skips.
 
-## Preconditions — fail loudly if missing
+## Preconditions — only Rider's MCP is a hard stop
 
-1. `git rev-parse --git-dir` must succeed (inside a repo).
-2. `git rev-parse --verify HEAD` must succeed. If HEAD is unborn (no commits yet), stop and ask the user to commit at least once before running a dry-run — there is nothing to branch from.
-3. The `mcp__rider__*` tools must be loadable. Verify with:
-   ```
-   ToolSearch select:mcp__rider__get_file_problems
-   ```
-   If it returns nothing, stop and tell the user to open Rider on the solution.
+The only hard precondition is **Rider's MCP**. Everything else has a deterministic fallback, because the skill's safety invariants (no commit, no suppression) already prevent damage — pausing for confirmation when we could just switch modes is friction, not safety.
+
+| Check | Pass → | Fail → |
+|---|---|---|
+| `mcp__rider__get_file_problems` loadable via `ToolSearch select:mcp__rider__get_file_problems` | proceed | **STOP** — tell the user to open Rider on the solution. The daemon is the entire signal source; no fallback exists. |
+| `git rev-parse --git-dir` succeeds | continue to next git check | switch to **patch mode** — do not pause |
+| `git rev-parse --verify HEAD` succeeds | **git mode** (branch) | switch to **patch mode** — do not pause |
+| cwd-root equals Rider-root (see Workflow Step 1) | proceed silently | **ASK** which root is the target — the one legitimate question |
+
+**Modes:**
+
+- **Git mode** — branch off, apply fixes in place on the branch, `git diff` shows the dry-run. The original workflow.
+- **Patch mode** — snapshot each in-scope file to `.rider-respect/<ts>/`, apply fixes in place in the working tree, emit `rider-respect-<ts>.patch` via `git diff --no-index` (works without a repo as long as the `git` binary is installed). The hard invariants still hold; the deliverable shape just changes from "branch to inspect" to "patch + dirty files to inspect."
 
 ## Workflow
 
-### 1. Resolve scope first — before touching git state
+### 1. Resolve the target root — only ask if cwd and Rider disagree
 
-Scope must be captured before any branch / stash, otherwise the default no-arg case (which reads dirty working-tree files) silently turns into an empty set.
+Compare two roots:
+- `git rev-parse --show-toplevel` (cwd's repo root; empty / non-zero exit if not in a repo)
+- `mcp__rider__get_repositories` (the root of the solution Rider has open)
 
-| User input | Scope |
-|---|---|
-| (none) | `git diff --name-only HEAD`, restricted to `*.cs` / `*.vb`. If clean, stop — there is nothing to dry-run. |
-| Path | The path, expanded via `find`. |
-| Glob | `mcp__rider__find_files_by_glob`. |
+**If they match, or only one is non-empty:** silently use it. Move on.
+
+**If they disagree:** this is the one place this skill uses `AskUserQuestion`. Don't guess — the wrong choice means the dry-run runs against the wrong codebase.
+
+```text
+AskUserQuestion:
+  question: "Your terminal is in <cwd-root>, but Rider has <rider-root> open. Which is the target?"
+  options:
+    - "<cwd-root> (terminal cwd) — chdir there"
+    - "<rider-root> (Rider solution) — chdir there"
+```
+
+Set the working directory to the chosen root before any other step.
+
+### 2. Resolve scope — before touching git state
+
+Scope must be captured before any branch / stash / snapshot, otherwise the default no-arg case (which reads dirty working-tree files) silently turns into an empty set.
+
+| User input | Scope (git mode) | Scope (patch mode) |
+|---|---|---|
+| (none) | `git diff --name-only HEAD`, restricted to `*.cs` / `*.vb`. If clean, stop — there is nothing to dry-run. | All `*.cs` / `*.vb` under the target root via `mcp__rider__find_files_by_glob`. Same scope rules; no git diff available. |
+| Path | The path, expanded via `find`. | Same. |
+| Glob | `mcp__rider__find_files_by_glob`. | Same. |
 
 If scope is empty: stop, do not invent files.
 
-### 2. Stash policy — only when scope is explicit
+### 3. Set up the dry-run target
 
-- **No-arg (default) case:** do **not** stash. The dirty edits *are* the scope; they ride onto the dry-run branch and get inspected. Stashing first would erase the very files the user is asking us to look at.
-- **Explicit path / glob case:** if the working tree is dirty, `git stash push -u -m "rider-respect-pre"` and report the stash ref. This isolates the dry-run diff to *only* the explicit scope, instead of mixing it with unrelated dirty edits.
-
-### 3. Branch off
+**Git mode — branch off:**
 
 ```bash
 TS=$(date +%Y%m%d-%H%M%S)
@@ -58,7 +81,27 @@ BASE=$(git rev-parse --abbrev-ref HEAD)
 git checkout -b "rider-respect/${BASE}/${TS}"
 ```
 
+Stash policy (git mode only):
+
+- **No-arg (default) case:** do **not** stash. The dirty edits *are* the scope; they ride onto the dry-run branch and get inspected. Stashing first would erase the very files the user is asking us to look at.
+- **Explicit path / glob case:** if the working tree is dirty, `git stash push -u -m "rider-respect-pre"` and report the stash ref. This isolates the dry-run diff to *only* the explicit scope.
+
 State the branch name back to the user immediately so they can `git checkout -` to bail at any point.
+
+**Patch mode — snapshot before mutation:**
+
+```bash
+TS=$(date +%Y%m%d-%H%M%S)
+SNAP=".rider-respect/${TS}"
+PATCH="rider-respect-${TS}.patch"
+mkdir -p "$SNAP"
+# snapshot every in-scope file; flatten the path so the snapshot dir stays flat
+for f in <scope>; do
+  cp "$f" "$SNAP/$(printf '%s' "$f" | tr '/' '_')"
+done
+```
+
+State the patch filename and snapshot dir back to the user so they can `rm -r $SNAP $PATCH` to bail at any point. The snapshots are the patch-mode equivalent of git history; we'll diff against them in Step 7.
 
 ### 4. Pull diagnostics per file
 
@@ -93,7 +136,9 @@ If build fails, **stop** and tell the user: "Rider's daemon disagreed with the b
 
 ### 7. Report — and stop
 
-The skill never commits, so the dry-run lives entirely in the working tree of the new branch. Tailor the commands accordingly:
+The skill never commits. Tailor the report to the mode that ran.
+
+**Git mode:**
 
 ```text
 rider-respect dry run on  rider-respect/<base>/<ts>
@@ -112,7 +157,37 @@ adopt:     git add -A && git commit -m "<msg>"   (then merge / PR yourself)
 restore:   git stash pop                          (only if a stash ref is listed above)
 ```
 
-**Do not commit. Do not push. Do not open a PR.** The dry-run branch's value is precisely that the human inspects the diff and decides.
+**Patch mode:**
+
+Build the patch by diffing each in-scope file against its snapshot. Prefer `git diff --no-index` (always produces an `apply`-compatible unified diff, even outside a repo). Fall back to `diff -u` only if the `git` binary is unavailable.
+
+```bash
+: > "$PATCH"
+for f in <scope>; do
+  snap="$SNAP/$(printf '%s' "$f" | tr '/' '_')"
+  git --no-pager diff --no-index -- "$snap" "$f" >> "$PATCH" || true
+done
+```
+
+```text
+rider-respect dry run via patch file:  rider-respect-<ts>.patch
+snapshot dir:                          .rider-respect/<ts>/
+target root:                           <cwd-root or rider-root, whichever Step 1 chose>
+files in scope:                        N
+diagnostics found:                     E errors, W warnings, S suggestions
+fixes applied:                         A
+fixes skipped (no auto):               K
+build after fixes:                     pass | fail (<count> errors)
+
+review:    less rider-respect-<ts>.patch
+           # or, per-file:
+           diff -u .rider-respect/<ts>/<flattened> <original-path>
+discard:   for f in <scope>; do cp ".rider-respect/<ts>/$(printf '%s' "$f" | tr '/' '_')" "$f"; done
+           rm -r .rider-respect/<ts> rider-respect-<ts>.patch
+adopt:     keep the in-place changes; archive or delete the patch + snapshot dir.
+```
+
+**Do not commit. Do not push. Do not open a PR.** In either mode, the dry-run's value is precisely that the human inspects the diff and decides.
 
 ## Hard invariants
 
