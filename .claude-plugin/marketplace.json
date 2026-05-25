@@ -100,8 +100,8 @@
     },
     {
       "name": "rider-respect",
-      "description": "Apply every IDE hint Rider's daemon reports onto an isolated dry-run branch via the JetBrains MCP server. Naming via rename_refactoring, formatting via reformat_file, code-style via the daemon's suggested fixes. Never commits, pushes, or suppresses \u2014 leaves the branch for human review.",
-      "version": "0.1.0",
+      "description": "Apply every IDE hint Rider's daemon reports onto an isolated dry-run branch via the JetBrains MCP server \u2014 or a .patch file when git isn't a repo. Naming via rename_refactoring, formatting via reformat_file, code-style via the daemon's suggested fixes. Never commits, pushes, or suppresses \u2014 leaves the result for human review.",
+      "version": "0.1.1",
       "source": "./plugins/rider-respect"
     },
     {
