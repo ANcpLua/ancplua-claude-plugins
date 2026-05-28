@@ -1,6 +1,6 @@
 ---
 name: judging-test-quality
-description: Use when auditing an existing test suite for kill power before writing more tests — not before touching code. Applies a mutation-minded rubric to grade each test (STRONG/ACCEPTABLE/WEAK/KILL), names at least one plausible mutation each test would survive, and flags cosmetic assertions. Triggers on "audit these tests", "are these tests any good", "how strong is this suite", "mutation score", "test quality review", "tests pass but code is buggy".
+description: Grade and review an existing spec suite for kill power before adding more. Use when you must find whether specs are real or cosmetic — each gets STRONG/ACCEPTABLE/WEAK/KILL plus one mutation it survives. Triggers on "audit these tests", "how strong is this", "mutation score", "green but buggy".
 effort: medium
 ---
 

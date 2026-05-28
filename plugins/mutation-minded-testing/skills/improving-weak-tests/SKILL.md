@@ -1,6 +1,6 @@
 ---
 name: improving-weak-tests
-description: Use when a specific test is weak — uses toBeTruthy / toBeDefined / toBeFalsy as its main matcher, asserts only that a mock was called, checks only array length, snapshots an object with no semantic assertion, tests only the happy path, or peeks at internal state. Provides a concrete transformation catalogue with before/after pairs so the rewriter can apply them mechanically. Triggers on "this test is weak", "rewrite this test", "stronger assertions", "make this test catch mutations", "replace toBeTruthy".
+description: Rewrite a weak unit spec into one that kills mutations. Use when you must fix a toBeTruthy/toBeDefined/toBeFalsy assertion, a bare mock-fired check, an array-length-only check, a shapeless snapshot, or a private-state peek. Triggers on "rewrite this spec", "stronger assertions", "catch mutations".
 effort: low
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: improve-skill
-description: 'Turn cc-plugin-eval findings into a concrete rewrite brief for a Claude Code skill, then hand off to skill-creator for the actual rewrite pass. Use when the user already evaluated a skill and now wants a rewrite plan, especially after asking "what should I fix first" or "rewrite this skill using the cc-plugin-eval findings".'
+description: 'Convert cc-plugin-eval findings into a concrete rewrite brief, then hand off to skill-creator for the edit pass. Use when the user already ran an evaluation and now wants a fix plan, after asking "what should I fix first" or "rewrite this using the findings".'
 ---
 # Improve Skill
 

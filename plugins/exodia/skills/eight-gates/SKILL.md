@@ -1,6 +1,6 @@
 ---
 name: eight-gates
-description: "IF maximum disciplined orchestration needed THEN use this. IF multi-phase audit + execute + verify needed THEN this. IF spec implementation with progressive permissions THEN this. IF parallel-discovery + reduce + lane-execution THEN this. IF resumable workflows that survive context loss THEN this. IF dedicated per-spec parallel runs via GATES_DIR/SMART_DIR THEN this. 8 progressive gates — each unlocks more capability only if the workflow stays honest, testable, and resumable. Smart-Gates: Smart ID, session TTL, checkpoint ledger, decision log, artifact cache. Composes mega-swarm (MAP), fix pipeline (EXECUTE), hades (HAKAI). 0-12 teammates per gate."
+description: "Run risky changes through 8 disciplined phases that map, build, fix, and verify — each unlocks more power only if work stays honest and resumable. Use when a spec or audit needs parallel discovery, lane execution, checkpoints surviving context loss, and a ship-or-die finale."
 argument-hint: "[objective] [scope] [gate-limit]"
 allowed-tools: Task, Bash, TodoWrite, Read, Grep, Glob, WebSearch
 effort: high

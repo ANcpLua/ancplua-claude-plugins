@@ -1,6 +1,6 @@
 ---
 name: evaluate-plugin
-description: 'Evaluate a local Claude Code plugin (a directory containing .claude-plugin/plugin.json). Use when the user says: "evaluate this plugin", "audit this plugin", "why did this plugin score that way", "what should I fix first in this plugin", "validate the manifest", "lint this plugin", "inspect the hooks", "inspect the mcp servers", or "help me benchmark this plugin".'
+description: 'Audit a local Claude Code bundle that has .claude-plugin/plugin.json: validate the manifest, lint hooks, check mcp/lsp servers, monitors, and agents, then rank fixes. Use when the user says "audit this", "validate the manifest", "lint the hooks", "why did it score that way", or "benchmark this".'
 ---
 # Evaluate Plugin
 
