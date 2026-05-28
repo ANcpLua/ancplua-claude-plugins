@@ -36,16 +36,9 @@ I need to...
 │   ├── Frontend design quality ── /exodia:hades "scope" --goggles
 │   └── Maximum discipline ────── /exodia:eight-gates "objective" [scope]
 │
-├── Verify
-│   ├── Fact-check versions ──── /metacognitive-guard:epistemic-checkpoint "claim"
-│   ├── Confirm completion ───── /metacognitive-guard:verification-before-completion
-│   └── .NET lint rules ──────── /dotnet-architecture-lint:lint-dotnet
-│
-└── Hooks / Rules
-    ├── Create a new rule ──────── /hookify:hookify "behavior to prevent"
-    ├── List active rules ──────── /hookify:list
-    ├── Toggle rules ──────────── /hookify:configure
-    └── Get help ──────────────── /hookify:help
+└── Verify
+    ├── Fact-check versions ──── /metacognitive-guard:epistemic-checkpoint "claim"
+    └── Confirm completion ───── /metacognitive-guard:verification-before-completion
 ```
 
 ## Plugins at a Glance
@@ -55,8 +48,13 @@ I need to...
 | **exodia** | Multi-agent orchestration — throw agents at problems |
 | **metacognitive-guard** | Prevents wrong output, wrong reasoning, premature completion |
 | **feature-dev** | Guided feature development + code review |
-| **hookify** | User-configurable behavior rules |
-| **dotnet-architecture-lint** | .NET MSBuild/CPM pattern enforcement |
+| **cc-plugin-eval** | Evaluate & score Claude Code plugins and skills |
+| **council** | Five-agent Teams-API council for hard questions |
+| **elegance-pipeline** | Multi-agent code-elegance scoring + gated refactor |
+| **html-effectiveness** | Self-contained .html artifacts instead of markdown |
+| **mutation-minded-testing** | Behavior-first, mutation-resistant test quality |
+| **nuget-opensrc** | Fetch a NuGet package's exact build-commit source |
+| **skill-creator** | Create, evaluate, and improve Claude Code skills |
 
 ## Exodia Commands
 
@@ -117,7 +115,6 @@ I need to...
 | `arch-reviewer` | metacognitive-guard | SOLID violations, dependency issues, coupling |
 | `impl-reviewer` | metacognitive-guard | Banned APIs, version mismatches, WebSearch fact-checks |
 | `deep-think-partner` | metacognitive-guard | Async reasoning amplifier for complex problems |
-| `conversation-analyzer` | hookify | Scans transcripts for frustration patterns |
 
 ## Composition Patterns
 
