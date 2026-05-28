@@ -94,22 +94,24 @@ def check_violations(file_path: str, content: str) -> list[str]:
                 f"Use MSBuild variables from Version.props (e.g., Version=\"$(SomeVersion)\")"
             )
 
-    # RULE B: Only specific files should import Version.props
-    if p.suffix == '.props' and 'Import' in content and 'Version.props' in content:
-        allowed_names = {'Directory.Packages.props', 'Directory.Build.props', 'Sdk.props'}
+    # RULE B: match a real <Import ...Version.props> element, comment-stripped so prose ("Imported ... Version.props") can't false-trip.
+    if p.suffix == '.props':
+        uncommented = re.sub(r'<!--.*?-->', '', content, flags=re.DOTALL)
+        if re.search(r'<Import\b[^>]*\bProject\s*=\s*["\'][^"\']*Version\.props["\']', uncommented):
+            allowed_names = {'Directory.Packages.props', 'Directory.Build.props', 'Sdk.props'}
 
-        is_allowed = (
-            p.name in allowed_names or
-            'eng/Directory.Build.props' in file_path or
-            'src/common/' in file_path or
-            fnmatch.fnmatch(file_path, '*/src/Sdk/*/Sdk.props')
-        )
-
-        if not is_allowed:
-            violations.append(
-                f"RULE_B: File '{p.name}' should not import Version.props directly. "
-                f"Only Directory.Packages.props, eng/Directory.Build.props, or src/Sdk/*/Sdk.props may do this."
+            is_allowed = (
+                p.name in allowed_names or
+                'eng/Directory.Build.props' in file_path or
+                'src/common/' in file_path or
+                fnmatch.fnmatch(file_path, '*/src/Sdk/*/Sdk.props')
             )
+
+            if not is_allowed:
+                violations.append(
+                    f"RULE_B: File '{p.name}' should not import Version.props directly. "
+                    f"Only Directory.Packages.props, eng/Directory.Build.props, or src/Sdk/*/Sdk.props may do this."
+                )
 
     return violations
 

@@ -32,7 +32,7 @@ fi
 #   - src/common/*.props (shared SDK infrastructure)
 # ============================================================
 while IFS= read -r -d '' file; do
-  if grep -q 'Import.*Version\.props' "$file" 2>/dev/null; then
+  if grep -qE '<Import[[:space:]][^>]*Project[[:space:]]*=[^>]*Version\.props' "$file" 2>/dev/null; then
     BASENAME=$(basename "$file")
     # Get relative path from repo root
     RELPATH="${file#$REPO_ROOT/}"
@@ -58,7 +58,7 @@ while IFS= read -r -d '' file; do
     fi
 
     # Everything else is a violation
-    LINE=$(grep -n 'Import.*Version\.props' "$file" | head -1)
+    LINE=$(grep -nE '<Import[[:space:]][^>]*Project[[:space:]]*=[^>]*Version\.props' "$file" | head -1)
     VIOLATIONS+=("RULE_B:$file")
     echo "RULE_B|$file"
     echo "  $LINE"
