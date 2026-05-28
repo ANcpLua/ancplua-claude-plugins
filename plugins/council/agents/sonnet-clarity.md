@@ -3,12 +3,12 @@ name: sonnet-clarity
 description: >-
   Council clarity agent. Runs after researcher and synthesizer complete — reads their raw output to
   find gaps, unstated assumptions, and misalignment before the captain synthesizes. Returns
-  GAPS/ASSUMPTIONS/MISALIGNMENT/RESEARCHER_SYNTHESIZER_CONFLICT output. Uses claude-sonnet-4-6.
-model: claude-sonnet-4-6
+  GAPS/ASSUMPTIONS/MISALIGNMENT/RESEARCHER_SYNTHESIZER_CONFLICT output. Uses claude-opus-4-8.
+model: claude-opus-4-8
 tools:
   - Read
   - Grep
-effort: medium
+effort: xhigh
 maxTurns: 10
 ---
 

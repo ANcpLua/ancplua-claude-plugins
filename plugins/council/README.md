@@ -1,6 +1,6 @@
 # council
 
-Five-agent council for complex tasks. Opus captain. Three Sonnet specialists. Haiku janitor.
+Five-agent council for complex tasks. Opus captain plus four Opus specialists at differentiated effort.
 
 Inspired by Grok 4.20's multi-agent architecture — same mechanism, adapted for Claude: each agent's
 identity is defined directly in its `agents/*.md` file as inline content, loaded as passive context
@@ -11,11 +11,11 @@ definition.
 
 | Agent | Model | Role |
 |-------|-------|------|
-| `opus-captain` | claude-opus-4-6 | Decomposes task, dispatches specialists, synthesizes final answer |
-| `sonnet-researcher` | claude-sonnet-4-6 | Evidence, sources, verification — never speculates |
-| `sonnet-synthesizer` | claude-sonnet-4-6 | Logic, code, math — shows all work |
-| `sonnet-clarity` | claude-sonnet-4-6 | Gaps, assumptions, misalignment — runs after researcher + synthesizer |
-| `haiku-janitor` | claude-haiku-4-5-20251001 | Flags bloat, returns CUTS list — captain removes |
+| `opus-captain` | claude-opus-4-8 | Decomposes task, dispatches specialists, synthesizes final answer |
+| `sonnet-researcher` | claude-opus-4-8 | Evidence, sources, verification — never speculates |
+| `sonnet-synthesizer` | claude-opus-4-8 | Logic, code, math — shows all work |
+| `sonnet-clarity` | claude-opus-4-8 | Gaps, assumptions, misalignment — runs after researcher + synthesizer |
+| `haiku-janitor` | claude-opus-4-8 | Flags bloat, returns CUTS list — captain removes |
 
 ## Usage
 
@@ -29,7 +29,7 @@ Each agent file contains its full behavioral identity inline — values, protoco
 what it never does. This is the passive context pattern: the identity is always present, not retrieved.
 
 Compare to Grok 4.20: same base model, four times, different system prompts. This is the same thing —
-same Sonnet base, different agent definitions.
+same Opus base, different agent definitions.
 
 ## Structure
 

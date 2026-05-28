@@ -26,12 +26,12 @@ import { buildWorkflowGuide } from "./workflow-guide.js";
 const BENCHMARK_SCHEMA_VERSION = 1;
 const BENCHMARK_KIND = "cc-plugin-eval-benchmark";
 
-// SPEC §5.3.11: Writer A picks reasonable defaults; Sonnet is the cheaper benchmark
-// tier for skills, Opus is the default for plugin-level scenarios. The actual model
+// SPEC §5.3.11: Writer A picks reasonable defaults; the fleet is consolidated on
+// Opus 4.8 for both plugin and skill scenarios. The actual model
 // used by the runner is whatever the config or --model flag specifies.
 const DEFAULT_MODELS = {
-  plugin: "claude-opus-4-7",
-  skill: "claude-sonnet-4-7",
+  plugin: "claude-opus-4-8",
+  skill: "claude-opus-4-8",
 };
 
 // Env vars benchmark child processes inherit. Anything not on this list is dropped

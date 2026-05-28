@@ -428,7 +428,7 @@ Otherwise the routing logic (structural-failures-first, then budget-pressure, th
 
 Same structure as the OpenAI source but every Codex-specific assumption swaps to Claude:
 
-- Default model: `defaultModelForTarget(target)` returns `claude-opus-4-7` for plugins and `claude-sonnet-4-7` for skills (place these in a `DEFAULT_MODELS` constant; the user is on Opus 4.7 max but Sonnet is the cheaper benchmark tier — writer A picks reasonable defaults; flag in PR if uncertain).
+- Default model: `defaultModelForTarget(target)` returns `claude-opus-4-8` for both plugins and skills (place these in a `DEFAULT_MODELS` constant; the user runs Opus 4.8 across the fleet — writer A picks reasonable defaults; flag in PR if uncertain).
 - `runner.type` value: `"claude-cli"` not `"codex-cli"`. Reject anything else.
 - `BENCHMARK_SCHEMA_VERSION = 1` (we are starting fresh, no v2 migration).
 - `kind: "cc-plugin-eval-benchmark"` not `"plugin-eval-benchmark"`.

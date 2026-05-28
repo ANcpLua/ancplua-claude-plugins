@@ -2,9 +2,9 @@
 name: branch-coverage-implementer
 description: Drives a file or module to 100% branch coverage without producing coverage cosmetics. Enumerates semantic branches (success/failure, empty/non-empty, auth/unauth, cached/uncached, valid/invalid, fallback/primary) and writes one high-signal test per semantically distinct outcome. Rejects tests whose only purpose is to hit a line. Refuses to accept coverage from tests that would survive plausible mutations. Use when closing branch-coverage gaps on a specific file or module.
 tools: Glob, Grep, Read, Edit, Write, Bash, TodoWrite, WebFetch
-model: sonnet
+model: opus
 color: blue
-effort: high
+effort: xhigh
 maxTurns: 30
 ---
 

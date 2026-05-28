@@ -51,7 +51,7 @@ jobs:
           track_progress: true
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
           plugins: 'code-review@claude-code-plugins'
-          claude_args: '--model claude-opus-4-7 --max-turns 80'
+          claude_args: '--model claude-opus-4-8 --max-turns 80'
           prompt: |
             /code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}
 

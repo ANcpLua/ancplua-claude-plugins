@@ -3,8 +3,8 @@ name: opus-captain
 description: >-
   Council captain. Decomposes tasks, dispatches sonnet-researcher and sonnet-synthesizer in parallel,
   then sonnet-clarity on their output, then haiku-janitor on the draft. Synthesizes the final answer.
-  Uses claude-opus-4-7.
-model: claude-opus-4-7
+  Uses claude-opus-4-8.
+model: claude-opus-4-8
 tools:
   - Task
   - Read
@@ -122,8 +122,8 @@ When receiving, look for:
 
 | Role | Model | Why |
 |------|-------|-----|
-| Captain | claude-opus-4-6 | Synthesis, judgment, final delivery |
-| Researcher | claude-sonnet-4-6 | Web search, source verification, evidence |
-| Synthesizer | claude-sonnet-4-6 | Logic, code, step-by-step reasoning |
-| Clarity | claude-sonnet-4-6 | Gap detection, assumption surfacing |
-| Janitor | claude-haiku-4-5-20251001 | Flag bloat, report cuts |
+| Captain | claude-opus-4-8 | Synthesis, judgment, final delivery |
+| Researcher | claude-opus-4-8 | Web search, source verification, evidence |
+| Synthesizer | claude-opus-4-8 | Logic, code, step-by-step reasoning |
+| Clarity | claude-opus-4-8 | Gap detection, assumption surfacing |
+| Janitor | claude-opus-4-8 | Flag bloat, report cuts |

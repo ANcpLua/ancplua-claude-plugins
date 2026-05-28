@@ -239,7 +239,7 @@ plugins/exodia/scripts/smart/    <- checked-in tooling
 ## TEAM ARCHITECTURE
 
 ```text
-HADES (Lead — Delegate Mode — Opus 4.6)
+HADES (Lead — Delegate Mode — Opus 4.8)
 │
 ├─ INIT: Generate Smart ID, create deletion permit, init ledger
 │        Smart-target: detect frontend files in scope → auto-equip goggles
@@ -295,7 +295,7 @@ HADES (Lead — Delegate Mode — Opus 4.6)
 **Smart targeting:**
   - Goggles: scope contains .tsx/.jsx/.css/.html/.svelte/.vue files.
   - Guillotine: scope contains `PublicAPI.Shipped.txt`, an `<IsPackable>true</IsPackable>` csproj, or any path under `packages/`.
-**Model:** All teammates spawn as Opus 4.6 (`model: opus`).
+**Model:** All teammates spawn as Opus 4.8 (`model: opus`).
 
 ---
 
@@ -411,8 +411,8 @@ Task: name="smart-audit-duplication", team_name="hades-cleanup", subagent_type="
 Task: name="smart-audit-imports", team_name="hades-cleanup", subagent_type="general-purpose", model="opus"
 ```
 
-If GOGGLES: +3 goggles teammates from [templates/goggles.md](templates/goggles.md) (all Opus 4.6, same team_name).
-If GUILLOTINE: +1 teammate `smart-guillotine-audit` from [templates/guillotine.md](templates/guillotine.md) (Opus 4.6, same team_name).
+If GOGGLES: +3 goggles teammates from [templates/goggles.md](templates/goggles.md) (all Opus 4.8, same team_name).
+If GUILLOTINE: +1 teammate `smart-guillotine-audit` from [templates/guillotine.md](templates/guillotine.md) (Opus 4.8, same team_name).
 
 Teammates use SendMessage to debate findings with each other.
 Teammates use TaskCreate/TaskUpdate for the shared task list.
@@ -438,7 +438,7 @@ SendMessage: type="shutdown_request", recipient="smart-audit-imports"
 Wait for all `shutdown_response` messages. Then spawn Phase 1 eliminators
 (same pattern: Task with team_name="hades-cleanup", 4 teammates from [templates/eliminators.md](templates/eliminators.md)).
 Goggles findings become elimination tasks alongside standard findings.
-If GUILLOTINE: also spawn `smart-guillotine-elim` from [templates/guillotine.md](templates/guillotine.md) (Opus 4.6, same team_name) — it claims guillotine tasks, deletes/downgrades symbols, and emits one `break-manifest.jsonl` entry per BREAK task.
+If GUILLOTINE: also spawn `smart-guillotine-elim` from [templates/guillotine.md](templates/guillotine.md) (Opus 4.8, same team_name) — it claims guillotine tasks, deletes/downgrades symbols, and emits one `break-manifest.jsonl` entry per BREAK task.
 
 **STEP 6 — Evaluate GATE 1:**
 
@@ -450,7 +450,7 @@ Shut down Phase 1 teammates (SendMessage type="shutdown_request" to each).
 Wait for all shutdown_responses. Spawn Phase 2 verifiers
 (4 teammates from [templates/verifiers.md](templates/verifiers.md), same team_name).
 smart-verify-grep also checks goggles violations were resolved.
-If GUILLOTINE: also spawn `smart-guillotine-verify` from [templates/guillotine.md](templates/guillotine.md) (Opus 4.6, same team_name) — it runs the two-axis verification (shim-free + functionally equivalent) against `.smart/break-manifest.jsonl` and runs `break-manifest.sh validate`.
+If GUILLOTINE: also spawn `smart-guillotine-verify` from [templates/guillotine.md](templates/guillotine.md) (Opus 4.8, same team_name) — it runs the two-axis verification (shim-free + functionally equivalent) against `.smart/break-manifest.jsonl` and runs `break-manifest.sh validate`.
 
 **STEP 8 — Evaluate GATE 2:**
 

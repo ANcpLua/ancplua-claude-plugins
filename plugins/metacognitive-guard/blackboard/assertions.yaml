@@ -9,7 +9,7 @@
 #   - verified: Tested, high confidence
 #   - tentative: Working hypothesis, may change
 #
-# Last updated: 2026-02-06 (Opus 4.6 February learnings)
+# Last updated: 2026-05-28 (Opus 4.8 migration)
 # =============================================================================
 
 # =============================================================================
@@ -36,17 +36,17 @@ runtime:
     source: "https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14"
 
 # =============================================================================
-# CLAUDE MODEL FAMILY (February 2026)
+# CLAUDE MODEL FAMILY (May 2026)
 # =============================================================================
 claude_models:
-  family: "4.5/4.6"
+  family: "4.8"
   authority: authoritative
   models:
     opus:
-      id: "claude-opus-4-6"
+      id: "claude-opus-4-8"
       note: "Most capable. Use for deep reasoning."
     sonnet:
-      id: "claude-sonnet-4-5-20250929"
+      id: "claude-sonnet-4-6"
       note: "Balanced speed/quality."
     haiku:
       id: "claude-haiku-4-5-20251001"
@@ -56,7 +56,7 @@ claude_models:
     - "opus-3"
     - "sonnet-3.5"
     - "haiku-3"
-  correction: "Claude 4.5/4.6 is current. Use claude-opus-4-6, claude-sonnet-4-5, or claude-haiku-4-5."
+  correction: "Claude Opus 4.8 is current (most capable). Use claude-opus-4-8, claude-sonnet-4-6, or claude-haiku-4-5."
 
 # =============================================================================
 # CLAUDE CODE PLUGIN CONVENTIONS (February 2026)

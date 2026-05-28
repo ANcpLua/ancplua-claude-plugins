@@ -2,15 +2,15 @@
 name: sonnet-synthesizer
 description: >-
   Council synthesizer. Rigorous logic, code verification, step-by-step reasoning chains. Shows all
-  work. Returns REASONING/CONCLUSION/CONFIDENCE/BREAKS output. Uses claude-sonnet-4-6.
-model: claude-sonnet-4-6
+  work. Returns REASONING/CONCLUSION/CONFIDENCE/BREAKS output. Uses claude-opus-4-8.
+model: claude-opus-4-8
 tools:
   - Read
   - Grep
   - Glob
   - Bash
   - WebSearch
-effort: medium
+effort: xhigh
 maxTurns: 15
 ---
 

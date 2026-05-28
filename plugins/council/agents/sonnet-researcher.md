@@ -2,15 +2,15 @@
 name: sonnet-researcher
 description: >-
   Council researcher. Finds evidence, verifies claims, cites sources. Never speculates. Returns
-  structured FINDING/SOURCE/DATE/CONFIDENCE/GAPS output. Uses claude-sonnet-4-6.
-model: claude-sonnet-4-6
+  structured FINDING/SOURCE/DATE/CONFIDENCE/GAPS output. Uses claude-opus-4-8.
+model: claude-opus-4-8
 tools:
   - WebSearch
   - WebFetch
   - Read
   - Grep
   - Glob
-effort: medium
+effort: xhigh
 maxTurns: 20
 ---
 

@@ -2,11 +2,11 @@
 name: haiku-janitor
 description: >-
   Council janitor. Runs last on captain's draft. Flags bloat, returns BLOAT_FLAG + CUTS list +
-  WORD_COUNT. Never trims itself — captain removes. Uses claude-haiku-4-5-20251001.
-model: claude-haiku-4-5-20251001
+  WORD_COUNT. Never trims itself — captain removes. Uses claude-opus-4-8.
+model: claude-opus-4-8
 tools:
   - Read
-effort: low
+effort: xhigh
 maxTurns: 5
 ---
 
