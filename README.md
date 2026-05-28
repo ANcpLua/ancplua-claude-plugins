@@ -1,31 +1,33 @@
 # ancplua-claude-plugins
 
-Claude Code plugin marketplace. 19 plugins for parallel agent orchestration,
-quality gates, automated enforcement, OpenTelemetry semconv injection,
-.NET release driving, project-memory curation, and session debriefs.
+Claude Code plugin marketplace — an agent-teams-aware advanced software-engineering
+base set. 10 plugins for parallel agent orchestration, parallel code review,
+cognitive guardrails, behavior-first test quality, plugin/skill evaluation, and
+code-elegance work.
 
 ## What this does
 
-Spawns up to 12 parallel subagents for audits, fixes, and reviews. Each phase
-is gated — work only advances when the gate passes. No manual babysitting.
+Built around Claude Code's multi-agent capabilities — from one-shot subagent
+fan-out (exodia spawns up to 12 workers) to the experimental agent-teams feature
+(council coordinates five agents via the Teams API). Each phase is gated — work
+only advances when the gate passes. No manual babysitting.
 
 ## Plugins
 
-Sample of available plugins (full list: 19 plugins, 31 commands, 20 skills, 26 agents):
+10 plugins, 22 commands, 15 skills, 21 agents:
 
-| Plugin                       | What it does in plain language                                                                                                                                              |
-|------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **exodia**                   | Summons up to 12 AI workers that tackle different parts of your code simultaneously. One finds problems, another fixes them, another reviews the fix — all at the same time |
-| **metacognitive-guard**      | Watches the AI while it works. If it's about to cut corners, guess instead of verify, or say "done" when it isn't — this blocks it before the mistake happens               |
-| **feature-dev**              | A guided process for building new things: understand what exists, design the plan, build it, review it. No skipping steps                                                   |
-| **hookify**                  | Custom tripwires you set up. "Never do X" or "Always check Y before Z." The AI physically cannot proceed if it violates your rules                                          |
-| **dotnet-architecture-lint** | Enforces .NET project structure rules automatically — catches version mismatches and structural violations before they ship                                                 |
-| **council**                  | Five-agent council for complex tasks. Opus captain decomposes and dispatches, three Sonnet specialists research/synthesize/check, Haiku janitor flags bloat                 |
-| **design-studio**            | Design intelligence helpers for visual direction, UX patterns, and design-system generation                                                                                 |
-| **elegance-pipeline**        | Multi-agent pipeline that scores code elegance and optionally refactors the weakest files through gated stages                                                              |
-| **code-simplifier**          | Simplifies implementations while preserving behavior — measures elegance as problem-complexity / solution-complexity                                                        |
-| **claudemd-curator**         | Audits and curates project-memory artifacts such as CLAUDE.md, AGENTS.md, and `.claude/rules/*.md`                                                                          |
-| **session-debrief**          | Generates self-contained HTML reports from Claude Code session transcripts: tokens, cache, subagents, skills, and expensive prompts                                          |
+| Plugin                      | What it does in plain language                                                                                                                                              |
+|-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **exodia**                  | Summons up to 12 AI workers that tackle different parts of your code simultaneously. One finds problems, another fixes them, another reviews the fix — all at the same time |
+| **council**                 | Five-agent council for complex tasks. Opus captain decomposes and dispatches, three Sonnet specialists research/synthesize/check, Haiku janitor flags bloat (Teams API)     |
+| **elegance-pipeline**       | Multi-agent pipeline that scores code elegance and refactors the weakest files through gated stages — plus a standalone simplifier for quick diff cleanups                  |
+| **metacognitive-guard**     | Watches the AI while it works. If it's about to cut corners, guess instead of verify, or say "done" when it isn't — this blocks it before the mistake happens               |
+| **feature-dev**             | A guided process for building new things: understand what exists, design the plan, build it, review it. No skipping steps                                                   |
+| **mutation-minded-testing** | Judges whether your tests actually catch bugs, not just cover lines. Four agents review architecture, test quality, and expressiveness                                      |
+| **cc-plugin-eval**          | Evaluates and scores Claude Code plugins and skills: static analysis, token budgeting, and benchmarking across every component type                                        |
+| **skill-creator**           | Create, evaluate, and iteratively improve Claude Code skills — from scratch, from a workflow, or by optimizing an existing one                                              |
+| **html-effectiveness**      | Routes output into a single self-contained HTML file — dashboards, reports, code reviews, slide decks — instead of a wall of markdown                                       |
+| **nuget-opensrc**           | Fetches the exact source a NuGet package was built from, so the agent greps real code instead of guessing API shapes                                                        |
 
 ### How does this work without failing?
 
@@ -43,15 +45,15 @@ Add the marketplace, then install plugins individually:
 
 # Install plugins you want
 /plugin install exodia@ancplua-claude-plugins
+/plugin install council@ancplua-claude-plugins
 /plugin install metacognitive-guard@ancplua-claude-plugins
-/plugin install hookify@ancplua-claude-plugins
-/plugin install claudemd-curator@ancplua-claude-plugins
-/plugin install session-debrief@ancplua-claude-plugins
+/plugin install elegance-pipeline@ancplua-claude-plugins
+/plugin install cc-plugin-eval@ancplua-claude-plugins
 ```
 
 ## Technical details
 
-19 plugins, 31 commands, 20 skills, 26 agents.
+10 plugins, 22 commands, 15 skills, 21 agents.
 
 Tri-AI review system: Claude, Copilot, and CodeRabbit review PRs independently.
 
@@ -67,17 +69,15 @@ Codex review lives in `.github/workflows/codex-code-review.yml`.
 ```text
 plugins/
 ├── exodia/                  # parallel agent orchestration (9 commands + 2 skills)
-├── metacognitive-guard/     # quality gates + commit integrity + CI verification
-├── hookify/                 # user-configurable behavior rules
-├── feature-dev/             # guided feature development + code review
 ├── council/                 # five-agent council (Teams API)
-├── dotnet-architecture-lint/# .NET build pattern enforcement
-├── design-studio/           # design intelligence + BM25 search
-├── elegance-pipeline/       # code elegance scoring + gated refactoring
-├── code-simplifier/         # complexity reduction agent
-├── claudemd-curator/        # project-memory curation
-├── session-debrief/         # Claude Code session usage reports
-└── otelhook/                # OTel GenAI semconv passive context
+├── elegance-pipeline/       # code elegance scoring + gated refactoring + standalone simplifier
+├── metacognitive-guard/     # quality gates + commit integrity + CI verification
+├── feature-dev/             # guided feature development + code review
+├── mutation-minded-testing/ # behavior-first test quality (4 agents)
+├── cc-plugin-eval/          # plugin & skill evaluator (static analysis + benchmarking)
+├── skill-creator/           # create, evaluate, improve Claude Code skills
+├── html-effectiveness/      # route output to a self-contained HTML file
+└── nuget-opensrc/           # commit-pinned NuGet → source fetcher
 ```
 
 ## Links

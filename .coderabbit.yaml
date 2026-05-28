@@ -42,28 +42,24 @@ reviews:
   labeling_instructions:
     - label: area:exodia
       instructions: Apply when the PR modifies files under plugins/exodia/.
-    - label: area:metacognitive-guard
-      instructions: Apply when the PR modifies files under plugins/metacognitive-guard/.
-    - label: area:hookify
-      instructions: Apply when the PR modifies files under plugins/hookify/.
-    - label: area:feature-dev
-      instructions: Apply when the PR modifies files under plugins/feature-dev/.
-    - label: area:dotnet-lint
-      instructions: Apply when the PR modifies files under plugins/dotnet-architecture-lint/.
     - label: area:council
       instructions: Apply when the PR modifies files under plugins/council/.
-    - label: area:design-studio
-      instructions: Apply when the PR modifies files under plugins/design-studio/.
     - label: area:elegance
       instructions: Apply when the PR modifies files under plugins/elegance-pipeline/.
-    - label: area:code-simplifier
-      instructions: Apply when the PR modifies files under plugins/code-simplifier/.
-    - label: area:ancplua
-      instructions: Apply when the PR modifies files under plugins/ancplua/.
-    - label: area:rider-respect
-      instructions: Apply when the PR modifies files under plugins/rider-respect/.
-    - label: area:release-pilot
-      instructions: Apply when the PR modifies files under plugins/release-pilot/.
+    - label: area:metacognitive-guard
+      instructions: Apply when the PR modifies files under plugins/metacognitive-guard/.
+    - label: area:feature-dev
+      instructions: Apply when the PR modifies files under plugins/feature-dev/.
+    - label: area:mutation-testing
+      instructions: Apply when the PR modifies files under plugins/mutation-minded-testing/.
+    - label: area:cc-plugin-eval
+      instructions: Apply when the PR modifies files under plugins/cc-plugin-eval/.
+    - label: area:skill-creator
+      instructions: Apply when the PR modifies files under plugins/skill-creator/.
+    - label: area:html-effectiveness
+      instructions: Apply when the PR modifies files under plugins/html-effectiveness/.
+    - label: area:nuget-opensrc
+      instructions: Apply when the PR modifies files under plugins/nuget-opensrc/.
     - label: area:infra
       instructions: Apply when the PR modifies .github/, tooling/, or build infrastructure files.
     - label: area:docs

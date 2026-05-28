@@ -1,7 +1,7 @@
 {
   "name": "elegance-pipeline",
-  "version": "1.1.1",
-  "description": "Multi-agent code-elegance workflow: 4 scouts (sonnet-4-6, research-only), 2 judges (opus), 1 planner, 1 verifier, 1 gated implementer. Persistent state with stage gates.",
+  "version": "1.2.0",
+  "description": "Code-elegance workflow: multi-agent pipeline (4 scouts, 2 judges, planner, verifier, gated implementer) plus a standalone code-simplifier agent for quick single-pass diff cleanups. Persistent state with stage gates.",
   "author": {
     "name": "ANcpLua",
     "url": "https://github.com/ANcpLua"
@@ -15,7 +15,9 @@
     "refactoring",
     "pipeline",
     "scout",
-    "judge"
+    "judge",
+    "simplify",
+    "qyl"
   ],
   "commands": "./commands",
   "agents": [
@@ -23,6 +25,7 @@
     "./agents/elegance-judge.md",
     "./agents/elegance-planner.md",
     "./agents/elegance-verifier.md",
-    "./agents/elegance-implementer.md"
+    "./agents/elegance-implementer.md",
+    "./agents/code-simplifier.md"
   ]
 }

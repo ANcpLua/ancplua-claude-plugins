@@ -209,13 +209,3 @@ interactive sessions.
 
 For policy details, see [`automation/policy.md`](automation/policy.md).  
 For the runner overview, see [`automation/README.md`](automation/README.md).
-
----
-
-## Fork audit — hookify
-
-`plugins/hookify/` is a fork of `anthropics/claude-plugins-official/plugins/hookify`.
-The line between upstream and fork is documented in
-[`plugins/hookify/FORK.md`](plugins/hookify/FORK.md); regenerate the
-byte-level diff with `scripts/fork-diff` (`--stat`, `--name-status`, or
-`-- <subpath>` for slices).
