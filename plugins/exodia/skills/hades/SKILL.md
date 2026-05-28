@@ -1,6 +1,6 @@
 ---
 name: hades
-description: "IF cleanup/elimination needed THEN use this. IF zero suppressions THEN this. IF dead code THEN this. IF duplication THEN this. IF frontend design audit THEN --goggles. IF public API brutal break THEN --guillotine. Smart-Hades: Smart ID, deletion permit, audit ledger, break manifest. 4 teammates per phase + equipment adds 1-3."
+description: "IF cleanup needed THEN use this. IF you must delete dead code, fix duplication, check the build with zero suppressions THEN this. IF frontend design audit THEN --goggles. IF public API brutal break THEN --guillotine. Smart infra: deletion permit, audit ledger, break manifest. 4 teammates per phase."
 argument-hint: "[scope] [focus] [intensity] [--goggles] [--guillotine]"
 allowed-tools: Task, Bash, TodoWrite, TeamCreate, TeamDelete, TaskCreate, TaskList, TaskUpdate, SendMessage
 effort: xhigh

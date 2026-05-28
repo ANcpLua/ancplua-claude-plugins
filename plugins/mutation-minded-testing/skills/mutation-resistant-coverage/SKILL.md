@@ -1,6 +1,6 @@
 ---
 name: mutation-resistant-coverage
-description: Use when closing branch-coverage gaps on a file or module — enumerates semantic branches (success/failure, empty/non-empty, auth/unauth, cached/uncached, valid/invalid, primary/fallback, new/existing), writes one high-signal test per semantically distinct outcome, and refuses to accept coverage from tests that would survive plausible mutations. Triggers on "100% branch coverage", "close coverage gaps", "uncovered branches", "cover this file", "mutation testing run", "Stryker / Infection / Pitest / Mutmut score".
+description: Close branch gaps with high-signal specs, not cosmetics. Use when you run a file to 100% branches or kill survivors from Stryker/Infection/Pitest/Mutmut. Lists semantic branches and writes one real check per outcome. Triggers on "uncovered branches", "cover this file", "mutation run".
 effort: high
 ---
 

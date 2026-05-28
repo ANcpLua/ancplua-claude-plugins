@@ -1,6 +1,6 @@
 ---
 name: reviewing-testability
-description: Use when tests in a module feel shallow, hard to write, or require heavy mocking — diagnoses the structural causes (missing seams, hidden state, temporal coupling, over-broad public API, direct instantiation of collaborators) and proposes seam-level refactors. Triggers on "tests are brittle", "can't test this without mocks everywhere", "tests are too coupled to implementation", "why are these tests so weak", "mock-heavy test file".
+description: Diagnose why a module is hard to verify and fix the narrowest seam. Use when specs need heavy mocking, break on refactor, or survive plausible mutations — find missing DI seams, hidden state, temporal coupling, raw clocks. Triggers on "tests are brittle", "mocks everywhere", "too coupled".
 effort: medium
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: opensrc-research
-description: Fetch source before answering questions about library behavior. Use whenever verifying what a third-party package (npm, PyPI, NuGet, GitHub repo) actually does, rather than guessing from memory or docs. Triggers on "how does X work", "verify Y's API", "does Z ship with W", "what does <package> do internally", "grep for X in <library>", or any borderline claim about a dependency's behavior. For NuGet packages, always use the commit-pinned wrapper via /nuget-opensrc or the bin/nuget-opensrc script so you grep the exact commit the package was built from, not the default branch.
+description: Fetch and search a dependency's real source before answering, not guessing. Use when checking what a third-party package (npm, PyPI, NuGet, crate, GitHub repo) actually does. Triggers on "how does X work", "verify Y's API", "does Z ship with W", "grep X in <library>", or any shaky dependency claim.
 ---
 
 # opensrc-research

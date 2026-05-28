@@ -1,6 +1,6 @@
 ---
 name: evaluate-skill
-description: 'Evaluate a local Claude Code skill (a directory containing SKILL.md). Use when the user says: "evaluate this skill", "give me an analysis of this skill", "audit this skill", "why did this skill score that way", "what should I fix first in this skill", "this skill is too big", "this skill is not triggering", or "measure the real token usage of this skill".'
+description: 'Analyze and check a local Claude Code SKILL.md folder: review frontmatter, size, broken links, trigger words, and token budget, then rank the top fixes. Use when the user says "audit this", "why did it score that way", "this is too big", "it is not triggering", or "measure the real token usage".'
 ---
 # Evaluate Skill
 

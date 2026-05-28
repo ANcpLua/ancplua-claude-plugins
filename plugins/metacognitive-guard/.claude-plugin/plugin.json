@@ -1,6 +1,6 @@
 {
   "name": "metacognitive-guard",
-  "description": "Cognitive amplification stack: epistemic hooks, competitive review, commit integrity checks, CI verification scripts, and deep-thinking agents.",
+  "description": "Guard against overconfidence and hallucination with a metacognition stack: hooks (epistemic-guard on edits, commit-integrity on git commit, objective-drift watch, ralph-loop), commands for deep four-phase analysis, competing arch-vs-impl reviewers, and epistemic/pre-completion verification checkpoints, plus a background deep-think-partner agent and CI scripts checked against a blackboard/assertions.yaml ground truth. Use before claiming 'done', when answering stale version/date/'current' questions, before committing, or on architecture and stuck-debugging calls that deserve adversarial review.",
   "version": "0.7.1",
   "author": {
     "name": "AncpLua",
