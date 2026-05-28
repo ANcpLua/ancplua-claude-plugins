@@ -54,7 +54,6 @@ I need to...
 | **html-effectiveness** | Self-contained .html artifacts instead of markdown |
 | **mutation-minded-testing** | Behavior-first, mutation-resistant test quality |
 | **nuget-opensrc** | Fetch a NuGet package's exact build-commit source |
-| **skill-creator** | Create, evaluate, and improve Claude Code skills |
 
 ## Exodia Commands
 

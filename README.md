@@ -1,7 +1,7 @@
 # ancplua-claude-plugins
 
 Claude Code plugin marketplace — an agent-teams-aware advanced software-engineering
-base set. 10 plugins for parallel agent orchestration, parallel code review,
+base set. 9 plugins for parallel agent orchestration, parallel code review,
 cognitive guardrails, behavior-first test quality, plugin/skill evaluation, and
 code-elegance work.
 
@@ -14,7 +14,7 @@ only advances when the gate passes. No manual babysitting.
 
 ## Plugins
 
-10 plugins, 22 commands, 15 skills, 21 agents:
+9 plugins, 22 commands, 14 skills, 21 agents:
 
 | Plugin                      | What it does in plain language                                                                                                                                              |
 |-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -25,7 +25,6 @@ only advances when the gate passes. No manual babysitting.
 | **feature-dev**             | A guided process for building new things: understand what exists, design the plan, build it, review it. No skipping steps                                                   |
 | **mutation-minded-testing** | Judges whether your tests actually catch bugs, not just cover lines. Four agents review architecture, test quality, and expressiveness                                      |
 | **cc-plugin-eval**          | Evaluates and scores Claude Code plugins and skills: static analysis, token budgeting, and benchmarking across every component type                                        |
-| **skill-creator**           | Create, evaluate, and iteratively improve Claude Code skills — from scratch, from a workflow, or by optimizing an existing one                                              |
 | **html-effectiveness**      | Routes output into a single self-contained HTML file — dashboards, reports, code reviews, slide decks — instead of a wall of markdown                                       |
 | **nuget-opensrc**           | Fetches the exact source a NuGet package was built from, so the agent greps real code instead of guessing API shapes                                                        |
 
@@ -53,7 +52,7 @@ Add the marketplace, then install plugins individually:
 
 ## Technical details
 
-10 plugins, 22 commands, 15 skills, 21 agents.
+9 plugins, 22 commands, 14 skills, 21 agents.
 
 Tri-AI review system: Claude, Copilot, and CodeRabbit review PRs independently.
 
@@ -75,7 +74,6 @@ plugins/
 ├── feature-dev/             # guided feature development + code review
 ├── mutation-minded-testing/ # behavior-first test quality (4 agents)
 ├── cc-plugin-eval/          # plugin & skill evaluator (static analysis + benchmarking)
-├── skill-creator/           # create, evaluate, improve Claude Code skills
 ├── html-effectiveness/      # route output to a self-contained HTML file
 └── nuget-opensrc/           # commit-pinned NuGet → source fetcher
 ```

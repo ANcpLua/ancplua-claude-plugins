@@ -17,7 +17,7 @@ The OpenAI version covers Codex skills (`SKILL.md`) and Codex plugin manifests (
 
 **Non-goals.**
 
-- **Do not duplicate `skill-creator`'s per-skill LLM grader.** The user's existing `plugins/skill-creator/skills/skill-creator/SKILL.md` already handles single-skill grading with subagents and structured rubrics. cc-plugin-eval evaluates **structure, budget, and component validity** across an entire plugin, deterministically and without an LLM. The two are complementary; cc-plugin-eval's `improve-skill` skill explicitly hands off to skill-creator for rewrite work.
+- **Do not duplicate `skill-creator`'s per-skill LLM grader.** The `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`) already handles single-skill grading with subagents and structured rubrics. cc-plugin-eval evaluates **structure, budget, and component validity** across an entire plugin, deterministically and without an LLM. The two are complementary; cc-plugin-eval's `improve-skill` skill explicitly hands off to skill-creator for rewrite work.
 - **Do not invent Claude Code fields.** Use only what the cached refs document. If a field is not in `claude-plugins-reference.md`, do not validate against it.
 - **Do not ship a Codex compatibility shim.** The `interface{}` block, `defaultPrompt`, `composerIcon`, `developerName`, `category`, and `capabilities` are Codex-specific and have NO place in cc-plugin-eval source, fixtures, or tests.
 
@@ -246,7 +246,7 @@ runCli(process.argv.slice(2)).catch((error) => {
 
 #### 5.2.2 `src/core/improvement-brief.js`
 
-Verbatim port EXCEPT the suggested-prompt template. Replace the line `\`Use the skill-creator guidance to improve ${result.target.name}.\`` with `\`Hand the brief to skill-creator (../skill-creator/skills/skill-creator/SKILL.md) for the rewrite pass.\`` so we explicitly route improvement work back to the user's existing plugin.
+Verbatim port EXCEPT the suggested-prompt template. Replace the line `\`Use the skill-creator guidance to improve ${result.target.name}.\`` with `\`Hand the brief to skill-creator for the rewrite pass.\`` so we explicitly route improvement work back to the `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`).
 
 #### 5.2.3 `src/core/metric-packs.js`
 
@@ -372,7 +372,7 @@ const ALLOWED_FRONTMATTER_KEYS = new Set([
   "shell",
   "license",
   "metadata",
-  "compatibility", // skill-creator uses this; the ref doesn't list it but the user's tree has it; allow it as info-level
+  "compatibility", // skill-creator uses this; the ref doesn't list it but it appears in the wild; allow it as info-level
 ]);
 ```
 
@@ -747,7 +747,7 @@ Body sections (in this order):
 3. `## Chat Requests To Recognize` — bullet list of the recognized phrases (12+, including the new `validate`/`inspect` ones).
 4. `## Matching Commands` — fenced bash block with one line per recognized command.
 5. `## Output Expectations` — describes the `At a Glance` / `Why It Matters` / `Fix First` / `Recommended Next Step` rendering pattern, and the fact that JSON is the source of truth.
-6. `## When To Hand Off` — explicit handoffs: `improve-skill` for rewrite work hands off to the user's `skill-creator` plugin (cite the path: `../../../skill-creator/skills/skill-creator/SKILL.md`); `metric-pack-designer` for custom rubric design; `evaluate-plugin` and `evaluate-skill` for kind-specific paths.
+6. `## When To Hand Off` — explicit handoffs: `improve-skill` for rewrite work hands off to the `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`); `metric-pack-designer` for custom rubric design; `evaluate-plugin` and `evaluate-skill` for kind-specific paths.
 7. `## References` — list `../../references/chat-first-workflows.md`, `../../references/technical-design.md`, `../../references/evaluation-result-schema.md`, `../../references/component-validators.md`.
 
 No `agents:` block. No `agents/` subdirectory.
@@ -796,7 +796,7 @@ description: |
 ---
 ```
 
-Body: mirror the OpenAI structure but with the new error codes and Claude SKILL.md spec details (`when_to_use`, `disable-model-invocation`, `allowed-tools` syntax, etc.). Add a sentence: "If the user wants a rewrite plan, hand off to the user's existing `skill-creator` plugin (`../../../skill-creator/skills/skill-creator/SKILL.md`) — that plugin specializes in single-skill grading and rewrites, while cc-plugin-eval focuses on structural and budget signals."
+Body: mirror the OpenAI structure but with the new error codes and Claude SKILL.md spec details (`when_to_use`, `disable-model-invocation`, `allowed-tools` syntax, etc.). Add a sentence: "If the user wants a rewrite plan, hand off to the `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`) — that skill specializes in single-skill grading and rewrites, while cc-plugin-eval focuses on structural and budget signals."
 
 #### 7.1.4 `skills/improve-skill/SKILL.md`
 
@@ -816,7 +816,7 @@ Body sections:
 2. `## Workflow` — 4 steps:
    1. Run `cc-plugin-eval analyze <skill-path> --brief-out ./skill-brief.json`.
    2. Read the improvement brief, separate required fixes from recommended fixes.
-   3. Hand the brief to skill-creator (`../../../skill-creator/skills/skill-creator/SKILL.md`) — it specializes in skill rewrites with subagent-driven evals.
+   3. Hand the brief to skill-creator — it specializes in skill rewrites with subagent-driven evals.
    4. Re-run `cc-plugin-eval analyze` and use `cc-plugin-eval compare before.json after.json` to measure the delta.
 3. `## What This Skill Does NOT Do` — explicitly say: this skill does not perform LLM-driven rewrites; that is `skill-creator`'s job. cc-plugin-eval produces structured findings and a rewrite brief; skill-creator turns the brief into edits.
 4. `## Focus Areas` — bullet list (trigger/invoke budget, progressive disclosure, broken links, oversized descriptions, frontmatter validity).

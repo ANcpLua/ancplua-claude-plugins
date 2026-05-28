@@ -30,7 +30,7 @@ cc-plugin-eval is forked from [`openai/plugins` `plugin-eval`](https://github.co
 - Adds new CLI subcommands: `validate`, `inspect`, `evaluate-skill`, `improve`.
 - Uses `~/.claude/plugins/cache/` for the baseline corpus instead of `~/.codex/`.
 - Uses `claude` (instead of `codex exec`) for benchmark runs.
-- Hands off skill rewrites to the user's existing `skill-creator` plugin instead of duplicating that workflow.
+- Hands off skill rewrites to the `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`) instead of duplicating that workflow.
 
 See `THIRD_PARTY_NOTICES.md` for full attribution and the per-file porting status.
 

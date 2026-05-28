@@ -18,7 +18,7 @@ The first version is intentionally static:
 - Provide concrete quality signals for each Claude component (manifest, hooks, MCP, LSP, monitors, agents, marketplace, userConfig).
 - Provide concrete quality signals for TypeScript and Python helper code.
 - Create a normalized extension point for custom metric packs.
-- Generate improvement briefs that pair naturally with the user's existing `skill-creator` plugin.
+- Generate improvement briefs that pair naturally with the `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`).
 - Make the recommended chat-first workflow obvious for first-time plugin authors.
 
 ## Non-Goals For V1
@@ -27,7 +27,7 @@ The first version is intentionally static:
 - Running a skill inside the live `claude` host as part of the routine evaluation
 - Replacing model or product-level eval frameworks
 - Language-specific deep analysis for every language beyond TypeScript and Python
-- Per-skill LLM grading or LLM-driven rewrites - those belong to the user's existing `skill-creator` plugin
+- Per-skill LLM grading or LLM-driven rewrites - those belong to `skill-creator`
 
 ## Architecture
 
@@ -266,7 +266,7 @@ The improvement loop is:
 1. Evaluate a skill or plugin with `cc-plugin-eval analyze`.
 2. Review the prioritized checks and budget findings.
 3. Run `cc-plugin-eval improve` (or `analyze --brief-out`) to produce the rewrite brief.
-4. Hand the brief to the user's existing `skill-creator` plugin (`../../../skill-creator/skills/skill-creator/SKILL.md`) for the actual rewrite pass.
+4. Hand the brief to the `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`) for the actual rewrite pass.
 5. Re-run evaluation and use `cc-plugin-eval compare before.json after.json` to measure the delta.
 
 ## Testing Strategy

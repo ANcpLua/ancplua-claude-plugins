@@ -4,7 +4,7 @@ description: 'Analyze and check a local Claude Code SKILL.md folder: review fron
 ---
 # Evaluate Skill
 
-Use this skill when the target is a local skill directory or a `SKILL.md` file. cc-plugin-eval handles the structural and budget signals deterministically without an LLM. If the user wants an LLM-graded rubric or a rewrite pass, hand off to the user's existing `skill-creator` plugin (`../../../skill-creator/skills/skill-creator/SKILL.md`) - that plugin specializes in single-skill grading and rewrites, while cc-plugin-eval focuses on structural and budget signals.
+Use this skill when the target is a local skill directory or a `SKILL.md` file. cc-plugin-eval handles the structural and budget signals deterministically without an LLM. If the user wants an LLM-graded rubric or a rewrite pass, hand off to the `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`) - that skill specializes in single-skill grading and rewrites, while cc-plugin-eval focuses on structural and budget signals.
 
 ## Workflow
 
@@ -17,7 +17,7 @@ Use this skill when the target is a local skill directory or a `SKILL.md` file. 
 7. If the user asks for an "analysis" of the skill, do not stop at the report. Also run `cc-plugin-eval init-benchmark <skill-path>` and show the setup questions for refining the starter scenarios in `.cc-plugin-eval/benchmark.json`.
 8. If the user wants real usage numbers, switch to "Measure the real token usage of this skill." and run the benchmark flow.
 9. After observed usage is available, use `cc-plugin-eval measurement-plan <skill-path> --observed-usage <usage.jsonl> --format markdown` to recommend what to instrument next.
-10. If the user wants a rewrite plan, route to `../improve-skill/SKILL.md`. That skill writes a brief and hands it to the user's existing `skill-creator` plugin for the actual rewrite.
+10. If the user wants a rewrite plan, route to `../improve-skill/SKILL.md`. That skill writes a brief and hands it to `skill-creator` for the actual rewrite.
 
 ## Skill-Specific Priorities
 

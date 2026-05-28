@@ -26,7 +26,7 @@ const ALLOWED_FRONTMATTER_KEYS = new Set([
   "shell",
   "license",
   "metadata",
-  // skill-creator (the user's existing plugin) emits this; it is not in the ref but is in
+  // skill-creator emits this; it is not in the ref but is in
   // the wild and harmless. Treated as info-level.
   "compatibility",
 ]);
