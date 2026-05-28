@@ -36,7 +36,7 @@ ancplua-claude-plugins/
 │       ├── coderabbit-autofix.yml   # Auto-comments @coderabbitai autofix on PR open/sync
 │       └── codex-code-review.yml    # Codex formal PR review
 │
-├── plugins/                     # 10 plugins (22 commands, 15 skills, 21 agents)
+├── plugins/                     # 9 plugins (22 commands, 14 skills, 21 agents)
 │   ├── cc-plugin-eval/           # Claude-Code-native plugin/skill evaluator (token budget, scoring, validators)
 │   ├── council/                  # Five-agent council via Teams API: Opus captain, researcher, clarity, synth, janitor
 │   ├── elegance-pipeline/        # Multi-agent code-elegance workflow: scouts → judges → planner → verifier → implementer
@@ -45,8 +45,7 @@ ancplua-claude-plugins/
 │   ├── html-effectiveness/       # Produce self-contained .html artifacts (dashboards, reports, diagrams) over markdown
 │   ├── metacognitive-guard/      # Cognitive amplification + epistemic hooks + competitive review
 │   ├── mutation-minded-testing/  # Mutation-minded, behavior-first test quality (4 agents)
-│   ├── nuget-opensrc/            # Fetch a NuGet package's exact build-commit source via opensrc
-│   └── skill-creator/            # Create, evaluate, and iteratively improve Claude Code skills
+│   └── nuget-opensrc/            # Fetch a NuGet package's exact build-commit source via opensrc
 │
 ├── docs/
 │   ├── ARCHITECTURE.md          # This file

@@ -5,7 +5,7 @@
     "url": "https://github.com/ANcpLua"
   },
   "metadata": {
-    "description": "Claude Code plugin marketplace — an agent-teams-aware advanced software-engineering base set. Multi-agent orchestration and parallel code review (council, exodia, elegance-pipeline, feature-dev), cognitive amplification (metacognitive-guard), behavior-first test quality (mutation-minded-testing), plugin/skill evaluation (cc-plugin-eval), skill authoring (skill-creator), HTML output routing (html-effectiveness), and commit-pinned NuGet source fetching (nuget-opensrc)."
+    "description": "Claude Code plugin marketplace — an agent-teams-aware advanced software-engineering base set. Multi-agent orchestration and parallel code review (council, exodia, elegance-pipeline, feature-dev), cognitive amplification (metacognitive-guard), behavior-first test quality (mutation-minded-testing), plugin/skill evaluation (cc-plugin-eval), HTML output routing (html-effectiveness), and commit-pinned NuGet source fetching (nuget-opensrc)."
   },
   "plugins": [
     {
@@ -37,12 +37,6 @@
       "description": "Code-elegance workflow: multi-agent pipeline (4 scouts, 2 judges, planner, verifier, gated implementer) plus a standalone code-simplifier agent for quick single-pass diff cleanups. Persistent state with stage gates.",
       "version": "1.2.0",
       "source": "./plugins/elegance-pipeline"
-    },
-    {
-      "name": "skill-creator",
-      "description": "Create, evaluate, and iteratively improve Claude Code skills.",
-      "version": "1.0.1",
-      "source": "./plugins/skill-creator"
     },
     {
       "name": "mutation-minded-testing",

@@ -26,7 +26,7 @@ export function buildImprovementBrief(result) {
       remediation: check.remediation,
     })),
     suggestedPrompt: [
-      `Hand the brief to skill-creator (../skill-creator/skills/skill-creator/SKILL.md) for the rewrite pass.`,
+      `Hand the brief to skill-creator for the rewrite pass.`,
       `Keep the structure compact and move bulky details into references or scripts.`,
       ...(measurementGoals.length > 0
         ? [`Define success measures with these toolsets: ${measurementGoals.join(", ")}.`]

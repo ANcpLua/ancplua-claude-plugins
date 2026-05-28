@@ -8,13 +8,13 @@ Use this skill after `cc-plugin-eval` has already produced findings for a local 
 
 ## What This Skill Does NOT Do
 
-This skill does not perform LLM-driven rewrites. That is the job of the user's existing `skill-creator` plugin (`../../../skill-creator/skills/skill-creator/SKILL.md`). cc-plugin-eval produces structured findings and a rewrite brief; skill-creator turns the brief into edits with subagent-driven evals and grading. Keep the two boundaries clear.
+This skill does not perform LLM-driven rewrites. That is the job of the `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`). cc-plugin-eval produces structured findings and a rewrite brief; skill-creator turns the brief into edits with subagent-driven evals and grading. Keep the two boundaries clear.
 
 ## Workflow
 
 1. Run `cc-plugin-eval analyze <skill-path> --brief-out ./skill-brief.json`. The same payload is also produced by `cc-plugin-eval improve <skill-path> --brief-out ./skill-brief.json`, which writes the improvement brief as the top-level payload.
 2. Read the improvement brief. Group work into required fixes (severity `error` or `fail`) versus recommended fixes (severity `warn` or `info`).
-3. Hand the brief to the user's existing `skill-creator` plugin (`../../../skill-creator/skills/skill-creator/SKILL.md`). That plugin specializes in skill rewrites with subagent-driven evals.
+3. Hand the brief to `skill-creator`. That skill specializes in skill rewrites with subagent-driven evals.
 4. Re-run `cc-plugin-eval analyze <skill-path> --output ./after.json` and use `cc-plugin-eval compare ./before.json ./after.json --format markdown` to measure the delta.
 
 ## Focus Areas

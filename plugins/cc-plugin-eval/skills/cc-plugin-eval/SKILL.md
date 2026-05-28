@@ -26,7 +26,7 @@ cc-plugin-eval start <path> --request "<user request>" --format markdown
    - "Measure the real token usage of this skill." -> `init-benchmark` then `benchmark`, then `analyze --observed-usage`, then `measurement-plan`
    - "Help me benchmark this plugin." -> starter benchmark flow
    - "What should I run next?" -> `cc-plugin-eval start <path> --request "What should I run next?" --format markdown`
-4. If the user wants a rewrite plan, route to `../improve-skill/SKILL.md`. That skill produces a brief and then hands the brief to the user's existing `skill-creator` plugin for the actual rewrite pass.
+4. If the user wants a rewrite plan, route to `../improve-skill/SKILL.md`. That skill produces a brief and then hands the brief to `skill-creator` for the actual rewrite pass.
 5. If the user wants a custom rubric, route to `../metric-pack-designer/SKILL.md`.
 6. If the user names a plugin or skill instead of giving a path, resolve it locally before running commands. Prefer `~/.claude/plugins/cache/<plugin-id>` for installed plugins, then any repo-local `plugins/<name>` or `skills/<name>` directory. If still ambiguous, ask one short clarifying question.
 7. When the request sounds like "give me a full analysis" rather than just "evaluate", do the fuller path:
@@ -82,7 +82,7 @@ cc-plugin-eval compare before.json after.json --format markdown
 
 ## When To Hand Off
 
-- For a skill rewrite plan: `../improve-skill/SKILL.md`. That skill writes a brief and then hands the brief to the user's existing `skill-creator` plugin (see `../../../skill-creator/skills/skill-creator/SKILL.md`). cc-plugin-eval focuses on structural and budget signals; skill-creator owns LLM-graded per-skill rewrites.
+- For a skill rewrite plan: `../improve-skill/SKILL.md`. That skill writes a brief and then hands the brief to the `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`). cc-plugin-eval focuses on structural and budget signals; skill-creator owns LLM-graded per-skill rewrites.
 - For a custom rubric or domain-specific check: `../metric-pack-designer/SKILL.md`.
 - For plugin-specific evaluation: `../evaluate-plugin/SKILL.md`.
 - For skill-specific evaluation: `../evaluate-skill/SKILL.md`.

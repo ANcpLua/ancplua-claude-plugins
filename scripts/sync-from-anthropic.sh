@@ -7,7 +7,7 @@
 #
 # Usage:
 #   ./scripts/sync-from-anthropic.sh                  # pull upstream + diff all tracked skills
-#   ./scripts/sync-from-anthropic.sh --apply skill-creator   # actually copy upstream over local
+#   ./scripts/sync-from-anthropic.sh --apply <skill-name>    # actually copy upstream over local
 #   ./scripts/sync-from-anthropic.sh --list                  # list skills upstream has, plugin status
 #   ./scripts/sync-from-anthropic.sh --add docx              # add a new skill as a new plugin
 set -euo pipefail
