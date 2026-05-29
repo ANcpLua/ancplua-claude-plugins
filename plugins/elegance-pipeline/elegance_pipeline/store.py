@@ -44,12 +44,14 @@ class FileStore:
             self.save_state(state)
             return state
         raw = json.loads(self.state_path.read_text(encoding="utf-8"))
-        agents = {key: AgentRecord(**value) for key, value in raw.get("agents", {}).items()}
-        return WorkflowState(
-            implementation_signal=raw.get("implementation_signal", False),
-            verifier_signal_source=raw.get("verifier_signal_source"),
-            agents=agents,
-        )
+        # Start from a fresh state so every required slot exists, then overlay the persisted
+        # records. A partial or stale state file can't drop slots that downstream code indexes.
+        state = build_fresh_state(cfg)
+        state.implementation_signal = raw.get("implementation_signal", False)
+        state.verifier_signal_source = raw.get("verifier_signal_source")
+        for key, value in raw.get("agents", {}).items():
+            state.agents[key] = AgentRecord(**value)
+        return state
 
     def save_state(self, state: WorkflowState) -> None:
         self.ensure_dirs()
@@ -70,6 +72,7 @@ class FileStore:
         return path.read_text(encoding="utf-8").strip()
 
     def write_output(self, slot: str, text: str) -> str:
+        self.ensure_dirs()
         output_rel = f"outputs/{slot}.md"
         (self.state_dir / output_rel).write_text(text, encoding="utf-8")
         return output_rel

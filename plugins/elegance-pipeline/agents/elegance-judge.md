@@ -2,7 +2,7 @@
 name: elegance-judge
 description: Code elegance judge. Verifies scout findings against the actual codebase and produces the final top-5 ranking. Use when running the elegance pipeline judge phase.
 tools: Read, Grep, Glob, Bash
-model: opus
+model: claude-opus-4-8
 effort: high
 disallowedTools: [Edit, Write]
 maxTurns: 15

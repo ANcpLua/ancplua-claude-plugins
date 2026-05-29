@@ -34,7 +34,9 @@ const DEFAULT_BASELINE = {
   directory: {
     trigger_cost_tokens: [1, 1, 1],
     invoke_cost_tokens: [1, 1, 1],
-    deferred_cost_tokens: [2000, 6000, 12000],
+    // Generic directory deferred is a SUM of all text files (see computeBudgetProfile), so
+    // these bands stay strict — a directory holding lots of text is the cost signal here.
+    deferred_cost_tokens: [240, 640, 1600],
   },
 };
 

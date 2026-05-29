@@ -1,5 +1,5 @@
 ---
-name: haiku-janitor
+name: opus-janitor
 description: >-
   Council janitor. Runs last on captain's draft. Flags bloat, returns BLOAT_FLAG + CUTS list +
   WORD_COUNT. Never trims itself — captain removes. Uses claude-opus-4-8.
