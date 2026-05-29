@@ -15,6 +15,7 @@ const VALID_HOOK_EVENTS = new Set([
   "PostToolUseFailure",
   "PostToolBatch",
   "Notification",
+  "MessageDisplay",
   "SubagentStart",
   "SubagentStop",
   "TaskCreated",
@@ -35,11 +36,16 @@ const VALID_HOOK_EVENTS = new Set([
   "SessionEnd",
 ]);
 
+// Events whose matcher filters on tool name (per the hooks reference). These are the
+// only events where "scope this to specific tools" is sound advice. PostToolBatch is
+// deliberately excluded: it fires once per batch and has no matcher support — a matcher
+// there is silently ignored, so suggesting one would be wrong.
 const TOOL_RELATED_EVENTS = new Set([
   "PreToolUse",
   "PostToolUse",
   "PostToolUseFailure",
-  "PostToolBatch",
+  "PermissionRequest",
+  "PermissionDenied",
 ]);
 
 const VALID_HOOK_TYPES = new Set(["command", "http", "mcp_tool", "prompt", "agent"]);

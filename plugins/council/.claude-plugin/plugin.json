@@ -1,7 +1,8 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "council",
   "version": "1.3.0",
-  "description": "Convene a five-agent council on hard questions via the /council command: a captain decomposes the task and orchestrates a Teams-API team where researcher and synthesizer run in parallel and cross-pollinate live via SendMessage, a clarity agent reads their output and asks real follow-ups, and a janitor flags bloat before delivery. Use when a question needs both cited evidence and rigorous reasoning, gap-checking before the answer ships, or reactive multi-agent collaboration instead of one-shot fire-and-forget subagents.",
+  "description": "Five-agent /council: a captain orchestrates a parallel researcher and synthesizer that cross-talk live via SendMessage, a clarity agent asks follow-ups, and a janitor flags bloat before delivery.",
   "author": {
     "name": "ANcpLua",
     "url": "https://github.com/ANcpLua"

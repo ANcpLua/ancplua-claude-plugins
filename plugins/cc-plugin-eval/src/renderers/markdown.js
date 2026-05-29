@@ -372,7 +372,7 @@ function renderBudgetExplanation(payload) {
     `- Budget method: ${budgets.method}.`,
     `- Trigger and invoke tokens matter most because they are closest to always-loaded or frequently-loaded context.`,
     ...(budgetPayload.baselineEvidence
-      ? [`- Baseline corpus: skills=${budgetPayload.baselineEvidence.skillSamples}, plugins=${budgetPayload.baselineEvidence.pluginSamples}.`]
+      ? [`- Baseline: ${budgetPayload.baselineEvidence.source} (fixed, reproducible bands).`]
       : []),
   ];
   const fixFirst = ["- Nothing to fix from this view alone; use the next step to validate or contextualize the estimate."];

@@ -17,6 +17,9 @@ const ALLOWED_AGENT_KEYS = new Set([
   "memory",
   "background",
   "isolation",
+  // Documented subagent frontmatter field that sets the agent's display color
+  // (see the plugin-dev/agent-development reference). Valid, not an unknown key.
+  "color",
 ]);
 
 const FORBIDDEN_AGENT_KEYS = new Set(["hooks", "mcpServers", "permissionMode"]);

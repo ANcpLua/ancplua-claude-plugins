@@ -1,6 +1,7 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "metacognitive-guard",
-  "description": "Guard against overconfidence and hallucination with a metacognition stack: hooks (epistemic-guard on edits, commit-integrity on git commit, objective-drift watch, ralph-loop), commands for deep four-phase analysis, competing arch-vs-impl reviewers, and epistemic/pre-completion verification checkpoints, plus a background deep-think-partner agent and CI scripts checked against a blackboard/assertions.yaml ground truth. Use before claiming 'done', when answering stale version/date/'current' questions, before committing, or on architecture and stuck-debugging calls that deserve adversarial review.",
+  "description": "Guards against overconfidence and hallucination: epistemic/commit hooks, deep analysis, competing arch-vs-impl reviewers, pre-completion verification, and a background deep-think-partner agent.",
   "version": "0.7.1",
   "author": {
     "name": "AncpLua",

@@ -1,7 +1,8 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "feature-dev",
   "version": "1.3.0",
-  "description": "Drive a feature from idea to reviewed code with the /feature-dev command: a seven-phase workflow (discovery, parallel codebase exploration, clarifying questions, architecture design, gated implementation, quality review, summary) backed by code-explorer, code-architect, and code-reviewer agents, plus a standalone /review for security, style, performance, and best-practice audits. Use when building a new feature in an unfamiliar codebase, when you want clarifying questions and an approved plan before any code is written, or when you need a multi-reviewer pass on a diff.",
+  "description": "/feature-dev takes a feature from idea to reviewed code in seven gated phases via code-explorer, code-architect, and code-reviewer agents, plus a standalone /review for quality audits.",
   "author": {
     "name": "Sid Bidasaria",
     "email": "sbidasaria@anthropic.com"
