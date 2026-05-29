@@ -261,19 +261,6 @@ export async function evaluateManifest(manifest, pluginRoot) {
     }
   }
 
-  // CC132 — `commands` deprecated nudge
-  if (manifest?.commands != null) {
-    findings.push(
-      createFinding({
-        severity: "warn",
-        code: "CC132",
-        message: "Manifest uses `commands` (deprecated). Prefer `skills/` for new plugins.",
-        location: loc,
-        fix: "Migrate flat command files to `skills/<name>/SKILL.md` directories.",
-      }),
-    );
-  }
-
   // Metrics
   const fieldCount = manifest && typeof manifest === "object" ? Object.keys(manifest).length : 0;
   metrics.push(

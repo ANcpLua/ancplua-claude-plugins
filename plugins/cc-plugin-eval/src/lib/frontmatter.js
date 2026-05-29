@@ -154,16 +154,31 @@ function parseBlock(lines, startIndex, indent) {
     }
 
     if (isArray) {
-      if (!trimmed.startsWith("- ")) {
+      if (trimmed !== "-" && !trimmed.startsWith("- ")) {
         break;
       }
-      const payload = trimmed.slice(2).trim();
-      index += 1;
+      const payload = trimmed === "-" ? "" : trimmed.slice(2).trim();
+      const contentIndent = currentIndent + 2;
       if (!payload) {
-        const nested = parseBlock(lines, index, indent + 2);
+        // "- " alone: the item's value is a nested block on the following lines, at
+        // whatever indent that block actually uses.
+        index += 1;
+        const childIndex = nextMeaningfulIndex(lines, index);
+        const childIndent = childIndex === -1 ? contentIndent : countIndent(lines[childIndex]);
+        const nested = parseBlock(lines, index, childIndent);
+        container.push(nested.value);
+        index = nested.nextIndex;
+      } else if (/^[A-Za-z0-9_-]+:(\s|$)/.test(payload)) {
+        // "- key: value" begins a mapping item. Rewrite the dash to spaces so the
+        // inline key and any deeper sibling keys (e.g. a nested `hooks:` block) parse
+        // as one mapping at the content indent. This is a YAML block sequence of
+        // mappings — the shape skill/agent `hooks:` frontmatter uses.
+        lines[index] = " ".repeat(contentIndent) + payload;
+        const nested = parseBlock(lines, index, contentIndent);
         container.push(nested.value);
         index = nested.nextIndex;
       } else {
+        index += 1;
         container.push(parseScalar(payload));
       }
       continue;
@@ -196,7 +211,10 @@ function parseBlock(lines, startIndex, indent) {
       continue;
     }
 
-    const nested = parseBlock(lines, index + 1, indent + 2);
+    // Recurse at the child's ACTUAL indent, not a hardcoded indent + 2. YAML permits any
+    // consistent deeper indentation (a 4-space `tools:` list is as valid as a 2-space one),
+    // and assuming exactly +2 made the parser throw on legal frontmatter.
+    const nested = parseBlock(lines, index + 1, countIndent(lines[nestedIndex]));
     container[key] = nested.value;
     index = nested.nextIndex;
   }

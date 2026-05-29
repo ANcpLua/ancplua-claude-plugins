@@ -55,7 +55,7 @@ function addBudgetFindings(result, budgets, baselineEvidence) {
           message: `${bucketName} is ${bucket.band} relative to the current Claude Code baseline.`,
           evidence: [
             `Value: ${bucket.value} tokens`,
-            `Baseline samples: skills=${baselineEvidence.skillSamples}, plugins=${baselineEvidence.pluginSamples}`,
+            `Baseline: ${baselineEvidence.source} (${bucket.thresholds.goodMax}/${bucket.thresholds.moderateMax}/${bucket.thresholds.heavyMax} good/moderate/heavy)`,
           ],
           remediation: ["Reduce repeated instruction text and move detail into deferred supporting files."],
         }),

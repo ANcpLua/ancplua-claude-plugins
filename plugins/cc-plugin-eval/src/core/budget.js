@@ -7,6 +7,32 @@ import { parseFrontmatter } from "../lib/frontmatter.js";
 import { isDirectory, isProbablyTextFile, pathExists, readJson, readText, relativePath, walkFiles } from "../lib/files.js";
 import { estimateTokenCount, sumTokenCounts } from "../lib/tokens.js";
 
+// Trigger cost is the always-loaded routing surface, so all descriptions are summed — you
+// pay for every one at once. Invoke and deferred are mutually-exclusive on-demand loads:
+// Claude loads ONE skill body when a skill is invoked, dispatches ONE agent, pulls ONE
+// reference at a time. The honest per-interaction cost is therefore the heaviest single
+// component, not the sum. Summing them penalized a plugin for shipping more than one of
+// anything — the same bytes-on-disk ≠ tokens-in-context mistake as counting src/.
+function maxTokenCount(components) {
+  return components.reduce((max, component) => Math.max(max, component.tokens), 0);
+}
+
+// The set of Claude Code plugin directories that ship content which can enter a Claude
+// context: commands/agents/skills bodies load on invoke, and skill `references/` load on
+// demand via progressive disclosure. Everything else in a plugin repo never reaches a
+// context and must NOT count against the deferred-token budget:
+//   - src/, scripts/, tests/, README/SPEC/CHANGELOG, package.json, build output → scaffolding
+//   - hooks/ → hook scripts are EXECUTED as processes (their stdout is the interface); their
+//     file contents are never loaded as tokens. Hook *quality* is judged by the hooks
+//     evaluator, not the token budget.
+// Counting any of these tanked code-/hook-shipping plugins on a cost they never pay.
+const PLUGIN_CONTENT_DIRS = new Set(["commands", "agents", "skills", "references"]);
+
+function isWithinPluginContentDir(rootPath, filePath) {
+  const [firstSegment] = relativePath(rootPath, filePath).split("/");
+  return PLUGIN_CONTENT_DIRS.has(firstSegment);
+}
+
 function createComponent(label, componentPath, tokens, note) {
   return {
     label,
@@ -32,15 +58,18 @@ function buildBudgetBucket(value, thresholds, components) {
   };
 }
 
-async function gatherDeferredTextFiles(rootPath, excludeFiles = []) {
+async function gatherDeferredTextFiles(rootPath, excludeFiles = [], { contentDirsOnly = false } = {}) {
   const files = await walkFiles(rootPath);
   return files.filter(
-    (filePath) => !excludeFiles.includes(filePath) && isProbablyTextFile(filePath),
+    (filePath) =>
+      !excludeFiles.includes(filePath) &&
+      isProbablyTextFile(filePath) &&
+      (!contentDirsOnly || isWithinPluginContentDir(rootPath, filePath)),
   );
 }
 
-async function computeDeferredComponents(rootPath, excludeFiles = []) {
-  const files = await gatherDeferredTextFiles(rootPath, excludeFiles);
+async function computeDeferredComponents(rootPath, excludeFiles = [], options = {}) {
+  const files = await gatherDeferredTextFiles(rootPath, excludeFiles, options);
   const components = [];
   for (const filePath of files) {
     const content = await readText(filePath);
@@ -83,11 +112,11 @@ export async function computeSkillBudget(skillRoot) {
       components: triggerComponents,
     },
     invoke_cost_tokens: {
-      value: sumTokenCounts(invokeComponents),
+      value: maxTokenCount(invokeComponents),
       components: invokeComponents,
     },
     deferred_cost_tokens: {
-      value: sumTokenCounts(deferredComponents),
+      value: maxTokenCount(deferredComponents),
       components: deferredComponents,
     },
   };
@@ -146,10 +175,11 @@ export async function computePluginBudget(pluginRoot, manifest) {
     );
   }
 
-  const deferredComponents = await computeDeferredComponents(pluginRoot, [
-    manifestPath,
-    ...skillDirs.map((skillDir) => path.join(skillDir, "SKILL.md")),
-  ]);
+  const deferredComponents = await computeDeferredComponents(
+    pluginRoot,
+    [manifestPath, ...skillDirs.map((skillDir) => path.join(skillDir, "SKILL.md"))],
+    { contentDirsOnly: true },
+  );
 
   return {
     kind: "plugin",
@@ -158,11 +188,11 @@ export async function computePluginBudget(pluginRoot, manifest) {
       components: triggerComponents,
     },
     invoke_cost_tokens: {
-      value: sumTokenCounts(invokeComponents),
+      value: maxTokenCount(invokeComponents),
       components: invokeComponents,
     },
     deferred_cost_tokens: {
-      value: sumTokenCounts(deferredComponents),
+      value: maxTokenCount(deferredComponents),
       components: deferredComponents,
     },
   };
@@ -202,7 +232,7 @@ export async function computeBudgetProfile(target) {
     kind: target.kind,
     trigger_cost_tokens: { value: 0, components: [] },
     invoke_cost_tokens: { value: 0, components: [] },
-    deferred_cost_tokens: { value: sumTokenCounts(components), components },
+    deferred_cost_tokens: { value: maxTokenCount(components), components },
   };
 }
 

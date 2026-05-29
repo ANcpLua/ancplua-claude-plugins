@@ -1,7 +1,8 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "exodia",
   "version": "2.2.2",
-  "description": "Multi-agent workflow orchestration (9 commands + 2 skills: eight-gates, hades): fix, turbo-fix, fix-pipeline, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, baryon-mode. Hades, eight-gates, and red-blue-review use Teams API for reactive collaboration.",
+  "description": "Multi-agent workflow orchestration: 9 commands (fix, turbo-fix, tournament, mega-swarm, red-blue-review, baryon-mode...) plus eight-gates and hades skills using the Teams API for reactive work.",
   "author": {
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"
