@@ -4,7 +4,7 @@ description: >-
   Architecture-focused competitive reviewer. Finds structural problems like dependency violations,
   SSOT violations, layer boundary issues, coupling problems, and SOLID principle violations.
   Competes with impl-reviewer - whoever finds more valid issues gets promoted.
-model: opus
+model: claude-opus-4-8
 memory: user
 tools:
   - Read

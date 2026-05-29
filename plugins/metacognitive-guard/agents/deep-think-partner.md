@@ -25,7 +25,7 @@ description: |
     assistant: "Race conditions require methodical state transition analysis. Let me engage deep-think-partner to reason through timing scenarios."
     <commentary>Concurrency debugging needs systematic exploration of state spaces.</commentary>
     </example>
-model: opus
+model: claude-opus-4-8
 color: red
 tools:
     - Read

@@ -9,7 +9,7 @@ code-elegance work.
 
 Built around Claude Code's multi-agent capabilities — from one-shot subagent
 fan-out (exodia spawns up to 12 workers) to the experimental agent-teams feature
-(council coordinates five agents via the Teams API). Each phase is gated — work
+(council reconciles an Opus team against a /deep-research report via the Teams API). Each phase is gated — work
 only advances when the gate passes. No manual babysitting.
 
 ## Plugins
@@ -19,7 +19,7 @@ only advances when the gate passes. No manual babysitting.
 | Plugin                      | What it does in plain language                                                                                                                                              |
 |-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **exodia**                  | Summons up to 12 AI workers that tackle different parts of your code simultaneously. One finds problems, another fixes them, another reviews the fix — all at the same time |
-| **council**                 | Five-agent council for complex tasks. Opus captain decomposes and dispatches, three Sonnet specialists research/synthesize/check, Haiku janitor flags bloat (Teams API)     |
+| **council**                 | Council for complex tasks. Opus captain decomposes and runs the /deep-research dynamic workflow, an Opus synthesizer reasons over it, an Opus clarity agent gap-checks it live, and an Opus janitor flags bloat (Teams API) |
 | **elegance-pipeline**       | Multi-agent pipeline that scores code elegance and refactors the weakest files through gated stages — plus a standalone simplifier for quick diff cleanups                  |
 | **metacognitive-guard**     | Watches the AI while it works. If it's about to cut corners, guess instead of verify, or say "done" when it isn't — this blocks it before the mistake happens               |
 | **feature-dev**             | A guided process for building new things: understand what exists, design the plan, build it, review it. No skipping steps                                                   |
@@ -68,7 +68,7 @@ Codex review lives in `.github/workflows/codex-code-review.yml`.
 ```text
 plugins/
 ├── exodia/                  # parallel agent orchestration (9 commands + 2 skills)
-├── council/                 # five-agent council (Teams API)
+├── council/                 # Opus council + /deep-research workflow (Teams API)
 ├── elegance-pipeline/       # code elegance scoring + gated refactoring + standalone simplifier
 ├── metacognitive-guard/     # quality gates + commit integrity + CI verification
 ├── feature-dev/             # guided feature development + code review

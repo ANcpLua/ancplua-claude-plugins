@@ -2,7 +2,7 @@
 name: senior-tester-judge
 description: Senior test reviewer that grades existing tests on kill power, not line coverage. For each test, returns a verdict (STRONG / ACCEPTABLE / WEAK / KILL) and names at least one plausible mutation the test would survive. Rejects cosmetic assertions (toBeTruthy, toBeDefined, length checks without content checks, "mock was called" as the main signal, semantically-empty snapshots). Use when auditing a test suite before adding more tests.
 tools: Glob, Grep, Read, TodoWrite, WebFetch, WebSearch
-model: opus
+model: claude-opus-4-8
 color: red
 effort: high
 maxTurns: 20

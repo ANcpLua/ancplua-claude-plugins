@@ -4,7 +4,7 @@ description: >-
   Simplifies recently modified code using qyl engineering principles.
   Measures elegance as problem-complexity / solution-complexity.
   Language-agnostic — reads CLAUDE.md for project standards.
-model: opus
+model: claude-opus-4-8
 effort: high
 maxTurns: 20
 ---
