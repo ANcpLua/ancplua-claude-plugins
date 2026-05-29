@@ -2,7 +2,7 @@
 name: expressive-verifier-improver
 description: Rewrites weak tests into mutation-resistant tests using a concrete pattern catalogue. Takes tests graded WEAK or KILL by senior-tester-judge and transforms them — replacing toBeTruthy/toBeDefined with exact shape assertions, "mock was called" with state-transition checks, happy-path-only with happy + error + negative-space, implementation-coupled with behavioral contracts. Outputs concrete before/after diffs, not advice. Use when a specific test asserts little, uses vague matchers, or only checks that a call happened.
 tools: Glob, Grep, Read, Edit, Write, TodoWrite, WebFetch
-model: opus
+model: claude-opus-4-8
 color: green
 effort: xhigh
 maxTurns: 25

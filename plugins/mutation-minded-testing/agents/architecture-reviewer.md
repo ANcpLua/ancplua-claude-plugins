@@ -2,7 +2,7 @@
 name: architecture-reviewer
 description: Reviews architecture through the lens of testability. Finds structural smells that force weak tests — god objects, hidden state, temporal coupling, missing seams, implementation-coupled public APIs, static singletons. Output is a ranked list of structural changes that would unlock high-signal, mutation-resistant tests. Not a general architecture review; specifically diagnoses why tests in this code are shallow.
 tools: Glob, Grep, Read, TodoWrite, WebFetch, WebSearch
-model: opus
+model: claude-opus-4-8
 color: purple
 effort: high
 maxTurns: 15

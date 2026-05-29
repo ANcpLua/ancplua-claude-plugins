@@ -1,8 +1,9 @@
 ---
 description: >-
-  Invoke the five-agent council on any complex task. Opus captain decomposes and synthesizes.
-  Researcher and synthesizer run in parallel and cross-pollinate via SendMessage.
-  Clarity reads their output and asks follow-ups. Haiku janitor flags bloat. Captain removes cuts and delivers.
+  Invoke the council on any complex task. Opus captain decomposes, frames a research question, and
+  runs the /deep-research dynamic workflow for a cited report. An Opus synthesizer reasons over the
+  report; an Opus clarity agent gap-checks it and asks the synthesizer live follow-ups via
+  SendMessage. An Opus janitor flags bloat. Captain removes cuts and delivers.
 argument-hint: [task description]
 effort: high
 ---
@@ -13,66 +14,75 @@ Invoke the council on `[task]`.
 
 ## When to use
 
-- Question requires both evidence (research) and reasoning (logic) in parallel
+- Question requires both cited evidence (research) and rigorous reasoning (logic)
 - Answer needs gap-checking before delivery
 - Task is complex enough that a single pass will miss something
-- You want Opus judgment on top of Sonnet specialist work
+- You want the synthesis reconciled live against the evidence before it ships
 
 ## How it runs
 
 ```text
-captain (lead) creates team "council"
+captain (lead) frames a research question
   │
-  ├── researcher   (teammate, parallel) ─┐
-  └── synthesizer  (teammate, parallel) ─┤── cross-pollinate via SendMessage
-  │                                       │
-  │   captain waits for convergence       │
-  │                                       │
-  └── clarity (teammate) reads task list + messages researcher/synthesizer
-        → flags GAPS/ASSUMPTIONS/MISALIGNMENT via SendMessage
-  │
-  └── captain reads all messages → produces draft
+  └── /deep-research <question>  (dynamic workflow — fans out searches, returns a cited report)
         │
-        └── janitor (teammate) → BLOAT_FLAG + CUTS via SendMessage
+        └── captain creates team "council" and hands the report to the teammates
               │
-              └── captain removes cuts → final output
+              ├── synthesizer (teammate) reasons over the report + task
+              └── clarity     (teammate) gap-checks the synthesis against the report
+                    → asks synthesizer live follow-ups via SendMessage
+                    → synthesizer responds in real time (reactive cross-pollination)
               │
-              └── TeamDelete
+              └── captain reads report + team messages → produces draft
+                    │
+                    └── janitor (teammate) → BLOAT_FLAG + CUTS via SendMessage
+                          │
+                          └── captain removes cuts → final output
+                          │
+                          └── TeamDelete
 ```
+
+`/deep-research` is a dynamic workflow, not a live SendMessage teammate — it returns a report. The
+live cross-pollination is between the synthesizer and clarity reconciling that report.
 
 ## Orchestration
 
-1. **TeamCreate:** `team_name="council"`, description = "Council: [task summary]"
-2. **Spawn researcher + synthesizer** (both in ONE message, parallel):
-   - `Task: team_name="council", name="researcher", subagent_type="council:sonnet-researcher"`
-   - `Task: team_name="council", name="synthesizer", subagent_type="council:sonnet-synthesizer"`
-   - They cross-pollinate via `SendMessage`: "My sources say X" / "That contradicts my reasoning on Y"
-3. **Wait for convergence** — both go idle, no new messages for sustained period
-4. **Spawn clarity** (researcher + synthesizer stay alive):
-   - `Task: team_name="council", name="clarity", subagent_type="council:sonnet-clarity"`
-   - Clarity reads team message history AND messages researcher/synthesizer for follow-ups
-   - Researcher/synthesizer respond to clarifying questions in real time
-5. **When clarity converges:** shutdown researcher + synthesizer + clarity
-   (`SendMessage type="shutdown_request"` to each)
-6. **Captain synthesizes** from all team messages into draft answer
-7. **Spawn janitor:**
-   - `Task: team_name="council", name="janitor", subagent_type="council:haiku-janitor"`
-   - Janitor sends `BLOAT_FLAG` + `CUTS` via `SendMessage`
-8. **Shutdown janitor** (`SendMessage type="shutdown_request"`)
-9. **Captain applies cuts** → final output
-10. **TeamDelete** — clean up team
+1. **Decompose + frame the research question.** Captain breaks down `[task]` and frames one focused,
+   answerable research question.
+2. **Research = run the `/deep-research` dynamic workflow** on that question. It fans out web
+   searches, cross-checks sources, and returns a single cited report (the workflow inside the
+   command). It is not a live teammate — wait for the report.
+3. **TeamCreate:** `team_name="council"`, description = "Council: [task summary]".
+4. **Spawn synthesizer:**
+   - `Task: team_name="council", name="synthesizer", subagent_type="council:opus-synthesizer"`
+   - It reasons over the `/deep-research` report + the task and posts its synthesis to the team.
+5. **Spawn clarity** (synthesizer stays alive):
+   - `Task: team_name="council", name="clarity", subagent_type="council:opus-clarity"`
+   - Clarity gap-checks the synthesis against the report and messages the synthesizer for
+     follow-ups; the synthesizer responds in real time. This is the reactive collaboration that
+     justifies Teams over fire-and-forget subagents.
+6. **When clarity converges:** shutdown synthesizer + clarity
+   (`SendMessage type="shutdown_request"` to each).
+7. **Captain synthesizes** from the `/deep-research` report + all team messages into a draft answer.
+8. **Spawn janitor:**
+   - `Task: team_name="council", name="janitor", subagent_type="council:opus-janitor"`
+   - Janitor sends `BLOAT_FLAG` + `CUTS` via `SendMessage`.
+9. **Shutdown janitor** (`SendMessage type="shutdown_request"`).
+10. **Captain applies cuts** → final output.
+11. **TeamDelete** — clean up team.
 
-**Why researcher + synthesizer stay alive through clarity:**
-Clarity's value comes from asking follow-up questions — "Your source X contradicts synthesizer's
-assumption Y, can you clarify?" — which requires live teammates. Shutting them down early
-saves tokens but eliminates the reactive collaboration that justifies using Teams over
-fire-and-forget subagents.
+**Why research is a workflow, not a teammate:**
+`/deep-research` already fans out and cross-checks sources internally and returns a finished cited
+report, so keeping it alive as a SendMessage teammate buys nothing. The live cross-pollination that
+justifies Teams happens between the synthesizer and clarity: clarity asks "your conclusion sits on a
+report GAP — can you re-ground it?" and the synthesizer answers in real time. Shutting them down
+early saves tokens but eliminates that reactive reconciliation.
 
 ## Usage
 
 ```text
 /council explain why the weave-validate.sh script fails on missing plugin.json
-/council what is the best way to structure CLAUDE.md for a researcher agent
+/council what is the best way to structure CLAUDE.md for an orchestrator agent
 /council review this architecture decision: [paste decision]
 ```
 
@@ -87,12 +97,12 @@ fire-and-forget subagents.
 
 | Agent | Model | Relative cost |
 |-------|-------|---------------|
-| opus-captain | opus-4.6 | High (runs three times: dispatch + clarity read + synthesis) |
-| sonnet-researcher | sonnet-4.6 | Medium-High (stays alive through clarity phase for follow-ups) |
-| sonnet-synthesizer | sonnet-4.6 | Medium-High (stays alive through clarity phase for follow-ups) |
-| sonnet-clarity | sonnet-4.6 | Medium — reads output, asks follow-ups, receives responses |
-| haiku-janitor | haiku-4.5 | Minimal |
+| opus-captain | claude-opus-4-8 | High (runs three times: frame + reconcile + synthesis) |
+| /deep-research (dynamic workflow) | claude-opus-4-8 | High — fans out web searches and cross-checks sources, returns a cited report |
+| opus-synthesizer | claude-opus-4-8 | Medium-High (stays alive through clarity phase for follow-ups) |
+| opus-clarity | claude-opus-4-8 | Medium — gap-checks the synthesis, asks follow-ups, receives responses |
+| opus-janitor | claude-opus-4-8 | Minimal |
 
-Total: ~3x a single Opus pass. Higher than fire-and-forget (~2.5x) because researcher
-and synthesizer stay alive through the clarity phase. The cost buys reactive
-cross-pollination and real follow-up conversations instead of one-shot reads.
+Total: ~3x a single Opus pass plus the `/deep-research` workflow's own search fan-out. The cost buys
+a cited evidence base from `/deep-research` and reactive cross-pollination between the synthesizer
+and clarity — real follow-up conversations instead of one-shot reads.
