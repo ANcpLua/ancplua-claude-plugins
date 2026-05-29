@@ -133,7 +133,11 @@ function parseBlock(lines, startIndex, indent) {
   }
 
   const firstLine = lines[firstIndex];
-  const isArray = firstLine.trim().startsWith("- ");
+  const firstTrimmed = firstLine.trim();
+  // A block sequence item is "- value" OR a bare "-" with the item's value nested on the
+  // following lines. Detect both so a sequence whose first item uses the bare-dash form
+  // is still parsed as an array rather than mis-parsed as a mapping.
+  const isArray = firstTrimmed === "-" || firstTrimmed.startsWith("- ");
   const container = isArray ? [] : {};
   let index = firstIndex;
 

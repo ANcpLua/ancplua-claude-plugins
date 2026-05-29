@@ -175,9 +175,29 @@ export async function computePluginBudget(pluginRoot, manifest) {
     );
   }
 
+  // Command and agent bodies load when that component is invoked or dispatched — the same
+  // "loaded on use" cost as a skill body — so they belong in invoke, not deferred. Resolve
+  // their locations from the manifest (honoring custom paths) with the conventional defaults.
+  const commandFiles = await discoverComponentFiles(pluginRoot, manifest?.commands, "./commands/");
+  const agentFiles = await discoverComponentFiles(pluginRoot, manifest?.agents, "./agents/");
+  for (const filePath of [...commandFiles, ...agentFiles]) {
+    const rel = relativePath(pluginRoot, filePath);
+    invokeComponents.push(
+      createComponent(rel, rel, estimateTokenCount(await readText(filePath)), "Command or agent body loaded on invoke"),
+    );
+  }
+
+  // Deferred is now only progressive-disclosure content (skill references, templates, other
+  // support files). Everything loaded on use — manifest, skill/command/agent bodies — is
+  // excluded because it is already counted under invoke.
   const deferredComponents = await computeDeferredComponents(
     pluginRoot,
-    [manifestPath, ...skillDirs.map((skillDir) => path.join(skillDir, "SKILL.md"))],
+    [
+      manifestPath,
+      ...skillDirs.map((skillDir) => path.join(skillDir, "SKILL.md")),
+      ...commandFiles,
+      ...agentFiles,
+    ],
     { contentDirsOnly: true },
   );
 
@@ -196,6 +216,38 @@ export async function computePluginBudget(pluginRoot, manifest) {
       components: deferredComponents,
     },
   };
+}
+
+async function discoverComponentFiles(pluginRoot, declared, defaultDir) {
+  // Resolve a manifest component field (commands/agents) to its .md body files. `declared`
+  // may be a directory path string, an array of file/dir paths, or undefined (fall back to
+  // the conventional default directory). Honors custom paths so a plugin that points
+  // commands/agents elsewhere still has its bodies counted.
+  const candidates = [];
+  if (typeof declared === "string") {
+    candidates.push(declared);
+  } else if (Array.isArray(declared)) {
+    candidates.push(...declared.filter((entry) => typeof entry === "string"));
+  } else {
+    candidates.push(defaultDir);
+  }
+  const files = [];
+  for (const candidate of candidates) {
+    const target = path.join(pluginRoot, candidate.replace(/^\.\//, ""));
+    if (!(await pathExists(target))) {
+      continue;
+    }
+    if (await isDirectory(target)) {
+      for (const entry of await fs.readdir(target)) {
+        if (entry.endsWith(".md")) {
+          files.push(path.join(target, entry));
+        }
+      }
+    } else if (target.endsWith(".md")) {
+      files.push(target);
+    }
+  }
+  return [...new Set(files)].sort();
 }
 
 async function discoverSkillDirs(pluginRoot, skillsPath) {
@@ -232,7 +284,10 @@ export async function computeBudgetProfile(target) {
     kind: target.kind,
     trigger_cost_tokens: { value: 0, components: [] },
     invoke_cost_tokens: { value: 0, components: [] },
-    deferred_cost_tokens: { value: maxTokenCount(components), components },
+    // Generic directory mode has no per-component on-demand semantics — it just measures how
+    // much text a directory holds — so the total is summed, not maxed. (Per-component max is
+    // only meaningful for plugin/skill invoke/deferred, where one component loads at a time.)
+    deferred_cost_tokens: { value: sumTokenCounts(components), components },
   };
 }
 
