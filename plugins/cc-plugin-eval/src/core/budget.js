@@ -234,13 +234,22 @@ async function discoverComponentFiles(pluginRoot, declared, defaultDir) {
   const files = [];
   for (const candidate of candidates) {
     const target = path.join(pluginRoot, candidate.replace(/^\.\//, ""));
+    // Containment: never follow a manifest path that escapes the plugin root. An untrusted
+    // manifest could point commands/agents at "../../etc" to read and count files outside the
+    // plugin; compare resolved absolutes so `..` and symlinks can't sneak past.
+    const rel = path.relative(path.resolve(pluginRoot), path.resolve(target));
+    if (rel === ".." || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel)) {
+      continue;
+    }
     if (!(await pathExists(target))) {
       continue;
     }
     if (await isDirectory(target)) {
-      for (const entry of await fs.readdir(target)) {
-        if (entry.endsWith(".md")) {
-          files.push(path.join(target, entry));
+      // Walk recursively so namespaced commands in subdirs (commands/frontend/x.md, which
+      // Claude Code exposes as /frontend:x) are counted, not just top-level files.
+      for (const filePath of await walkFiles(target)) {
+        if (filePath.endsWith(".md")) {
+          files.push(filePath);
         }
       }
     } else if (target.endsWith(".md")) {

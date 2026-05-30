@@ -164,14 +164,19 @@ function parseBlock(lines, startIndex, indent) {
       const payload = trimmed === "-" ? "" : trimmed.slice(2).trim();
       const contentIndent = currentIndent + 2;
       if (!payload) {
-        // "- " alone: the item's value is a nested block on the following lines, at
-        // whatever indent that block actually uses.
+        // "-" alone: the item's value is a nested block on the following lines, which must be
+        // indented DEEPER than the dash. If the next meaningful line is at or below the dash
+        // indent, this is an empty item (YAML null) — do not consume a lower-indent sibling
+        // key (e.g. a `model:` after a bare `-` under `tools:`) as the item's value.
         index += 1;
         const childIndex = nextMeaningfulIndex(lines, index);
-        const childIndent = childIndex === -1 ? contentIndent : countIndent(lines[childIndex]);
-        const nested = parseBlock(lines, index, childIndent);
-        container.push(nested.value);
-        index = nested.nextIndex;
+        if (childIndex === -1 || countIndent(lines[childIndex]) <= currentIndent) {
+          container.push(null);
+        } else {
+          const nested = parseBlock(lines, index, countIndent(lines[childIndex]));
+          container.push(nested.value);
+          index = nested.nextIndex;
+        }
       } else if (/^[A-Za-z0-9_-]+:(\s|$)/.test(payload)) {
         // "- key: value" begins a mapping item. Rewrite the dash to spaces so the
         // inline key and any deeper sibling keys (e.g. a nested `hooks:` block) parse
