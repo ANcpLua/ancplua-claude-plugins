@@ -64,7 +64,7 @@
     },
     {
       "name": "derot",
-      "description": "Truth-drift auditor: find & fix comment/doc/CI/version/dependency rot that contradicts the actual code, with root + transitive verification (correct beats delete). Parallel read-only rot-scouts plus a dependency-rationalization analyst that questions sub-vs-parent and superseded packages (e.g. SemanticKernel vs Agents.AI).",
+      "description": "Truth-drift auditor: find & fix comment/doc/CI/version/dependency rot that contradicts the actual code, with root + transitive verification. Parallel rot-scouts + a dependency analyst.",
       "version": "0.1.0",
       "source": "./plugins/derot"
     }
