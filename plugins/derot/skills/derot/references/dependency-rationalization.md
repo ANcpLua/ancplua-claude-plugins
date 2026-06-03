@@ -15,9 +15,9 @@ Several narrow sub-packages of one family used where a single parent/meta packag
 - **Trade-off:** a meta package can pull *more* than you need. Recommend the swap only when you already reference enough of the family that the meta is net-smaller or net-clearer — and say which.
 
 ### 3. Superseded / successor
-Package **X** still used after its official successor **Y** shipped, where Y replaces X (often reusing X's work). This is a strategic vendor decision and is **not** in the dependency graph.
-- **Canonical example:** `Microsoft.SemanticKernel` is effectively a subset of `Microsoft.Agents.AI`, which supersedes Semantic Kernel while reusing its work. Using SK directly in new code where Agents.AI is the intended path is rot.
-- **Evidence:** vendor docs / blogs / release notes stating the succession — **fetch and quote them**. A succession claim with no cited source is `unverified`; report it, never apply it.
+Package **X** still used after its official successor **Y** shipped, where Y replaces X (often reusing X's work) — e.g. a vendor ships a successor SDK that supersedes a predecessor while reusing it. This is a strategic vendor decision and is **not** in the dependency graph.
+- **Do not hardcode X→Y pairs.** A baked-in succession list goes stale and becomes the exact rot this dimension exists to catch — discover and verify each succession fresh, per run. (This page deliberately names no specific pair.)
+- **Evidence:** vendor docs / blogs / release notes stating the succession — **fetch and quote them per run**. A succession claim with no cited source is `unverified`; report it, never apply it.
 
 ## How to verify (don't guess)
 

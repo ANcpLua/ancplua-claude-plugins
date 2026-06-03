@@ -16,7 +16,7 @@ Run a pass over the repo (optionally scoped to a path/glob). The `derot` skill a
 2. **Doc rot** — `CLAUDE.md` / `README` / `CHANGELOG` / workflow tables vs. reality.
 3. **Infra rot** — unpinned actions, hardcoded publish accounts, expired API keys → SHA-pins + dynamic OIDC trusted publishing.
 4. **Version sync** — pins/claims out of sync across `Version.props` / `Directory.Packages.props` / `global.json` / docs.
-5. **Dependency rationalization** — sub-package where a parent suffices; a package superseded by a shipped successor (e.g. `Microsoft.SemanticKernel` ⊂ `Microsoft.Agents.AI`); direct refs already present transitively.
+5. **Dependency rationalization** — sub-package where a parent suffices; a package superseded by a shipped successor (verified per run via cited vendor docs, never a baked-in list); direct refs already present transitively.
 
 ## How it works
 
