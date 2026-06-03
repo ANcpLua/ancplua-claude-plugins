@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "derot",
+  "version": "0.1.0",
+  "description": "Truth-drift auditor: find & fix every place a repo's stated intent (comments, docs, CI infra, versions, dependency choices) has drifted from what the code/build actually is. Root + transitive verification, correct-beats-delete. Parallel read-only rot-scouts plus a dependency-rationalization analyst.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "derot",
+    "rot",
+    "comment-rot",
+    "doc-drift",
+    "stale-comments",
+    "documentation",
+    "ci",
+    "trusted-publishing",
+    "version-sync",
+    "dependency-rationalization",
+    "cleanup",
+    "multi-agent"
+  ],
+  "commands": "./commands",
+  "agents": [
+    "./agents/rot-scout.md",
+    "./agents/dep-analyst.md"
+  ]
+}

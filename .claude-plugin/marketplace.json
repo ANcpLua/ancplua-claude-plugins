@@ -5,7 +5,7 @@
     "url": "https://github.com/ANcpLua"
   },
   "metadata": {
-    "description": "Claude Code plugin marketplace — an agent-teams-aware advanced software-engineering base set. Multi-agent orchestration and parallel code review (council, exodia, elegance-pipeline, feature-dev), cognitive amplification (metacognitive-guard), behavior-first test quality (mutation-minded-testing), plugin/skill evaluation (cc-plugin-eval), HTML output routing (html-effectiveness), and commit-pinned NuGet source fetching (nuget-opensrc)."
+    "description": "Claude Code plugin marketplace — an agent-teams-aware advanced software-engineering base set. Multi-agent orchestration and parallel code review (council, exodia, elegance-pipeline, feature-dev), cognitive amplification (metacognitive-guard), behavior-first test quality (mutation-minded-testing), plugin/skill evaluation (cc-plugin-eval), HTML output routing (html-effectiveness), commit-pinned NuGet source fetching (nuget-opensrc), and truth-drift / documentation auditing (derot)."
   },
   "plugins": [
     {
@@ -61,6 +61,12 @@
       "description": "Commit-pinned NuGet→GitHub source fetcher. Wraps opensrc with NuGet catalog metadata so coding agents grep the exact commit a package was built from, not whatever's on main. Ships a /nuget-opensrc command, an autonomous opensrc-research skill, and a Node CLI that refuses to silently fall back to projectUrl or default branch.",
       "version": "0.1.2",
       "source": "./plugins/nuget-opensrc"
+    },
+    {
+      "name": "derot",
+      "description": "Truth-drift auditor: find & fix comment/doc/CI/version/dependency rot that contradicts the actual code, with root + transitive verification (correct beats delete). Parallel read-only rot-scouts plus a dependency-rationalization analyst that questions sub-vs-parent and superseded packages (e.g. SemanticKernel vs Agents.AI).",
+      "version": "0.1.0",
+      "source": "./plugins/derot"
     }
   ]
 }
