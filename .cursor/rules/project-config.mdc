@@ -1,3 +1,10 @@
+---
+description: ancplua-claude-plugins agent operating guide (generated from AGENTS.md — do not edit; edit AGENTS.md)
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
 <!--
   AGENTS.md is the single editorial source for this repo's agent guidance.
   CLAUDE.md, GEMINI.md, .cursor/rules/, and .windsurf/rules/ are GENERATED
