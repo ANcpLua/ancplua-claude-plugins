@@ -7,7 +7,7 @@ weaknesses into narrowly scoped refactor work.
 ## Pipeline
 
 ```text
-4 Scouts (parallel, sonnet) -> 2 Judges (parallel, opus) -> 1 Planner (opus)
+4 Scouts (parallel, opus) -> 2 Judges (parallel, opus) -> 1 Planner (opus)
   -> 1 Verifier (opus) -> 1 Implementer (gated, opus)
 ```
 
@@ -24,7 +24,7 @@ python plugins/elegance-pipeline/elegance_pipeline/pipeline.py --state-dir .clau
   --project-anchor CLAUDE.md \
   --scope plugins/exodia \
   --scope plugins/metacognitive-guard \
-  --scope plugins/hookify \
+  --scope plugins/council \
   --scope plugins/feature-dev
 ```
 
@@ -38,7 +38,7 @@ python plugins/elegance-pipeline/elegance_pipeline/pipeline.py --state-dir .clau
 
 ## State
 
-Default state is project-local at `.claude/elegance_pipeline/state/`. Not committed to git.
+Default state is project-local at `.claude/elegance_pipeline/state/`; keep it out of version control.
 Use `--state-dir` to isolate parallel runs per spec, for example `.claude/elegance_pipeline/dashboard`
 and `.claude/elegance_pipeline/mcp`.
 
@@ -50,5 +50,5 @@ and `elegance-pipeline:elegance-implementer`.
 ## Origin
 
 Converted from the Codex `elegance-pipeline-bundle.zip`. All `.codex/` references rewritten
-to Claude Code native plugin structure. Codex-Spark -> sonnet, GPT-5.4 -> opus.
+to Claude Code native plugin structure; every Codex model tier maps to Claude Opus 4.8.
 Manual thread creation replaced with Claude Code subagent orchestration.

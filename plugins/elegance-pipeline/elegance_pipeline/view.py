@@ -14,8 +14,10 @@ from readiness import ready_agents
 from store import FileStore
 
 
-def signal_label(state: WorkflowState) -> str:
-    return "READY" if state.implementation_signal else "BLOCKED"
+def signal_line(state: WorkflowState) -> str:
+    source = state.verifier_signal_source
+    suffix = f" (source: {source})" if source else ""
+    return f"{state.signal_label}{suffix}"
 
 
 def state_dir_label(state_dir: Path, explicit: bool) -> str:
@@ -34,7 +36,8 @@ def pipeline_cmd(state_dir: Path, explicit: bool) -> str:
 def agent_line(record: AgentRecord) -> str:
     extra = f" scope={record.scope}" if record.scope else ""
     out = f" output={record.output_file}" if record.output_file else ""
-    return f"- {record.slot}: {record.status}{extra}{out}"
+    when = f" at={record.submitted_at}" if record.submitted_at else ""
+    return f"- {record.slot}: {record.status}{extra}{out}{when}"
 
 
 def print_ready(state: WorkflowState) -> None:

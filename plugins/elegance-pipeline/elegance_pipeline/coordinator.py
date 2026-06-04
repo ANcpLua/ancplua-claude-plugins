@@ -6,6 +6,7 @@ public method maps to one CLI verb (init / status / prompt / submit / signal).
 from __future__ import annotations
 
 import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional
@@ -13,7 +14,7 @@ from typing import List, Optional
 import view
 from models import AgentRecord, WorkflowConfig, WorkflowState, build_fresh_state, normalize_scopes
 from prompts import build_context, parse_signal
-from readiness import ready_agents
+from readiness import downstream_submitted, ready_agents
 from renderer import TemplateRenderer
 from store import FileStore
 
@@ -51,7 +52,7 @@ class WorkflowCoordinator:
         print(f"Project anchor: {cfg.project_anchor}")
         print(f"Project root: {cfg.project_root}")
         print(f"State dir: {self._label()}")
-        print(f"Implementation signal: {view.signal_label(state)}")
+        print(f"Implementation signal: {view.signal_line(state)}")
         print("")
         for slot in sorted(state.agents.keys()):
             print(view.agent_line(state.agents[slot]))
@@ -71,6 +72,11 @@ class WorkflowCoordinator:
         cfg = self.store.load_config()
         state = self.store.load_state(cfg)
         record = self._record_for_slot(state, slot, role)
+        if record.status == "submitted" and downstream_submitted(state, slot):
+            raise SystemExit(
+                f"{slot} is already submitted and a later stage has advanced. "
+                "Re-init or roll back the downstream slots before re-submitting."
+            )
         record.output_file = self.store.write_output(slot, text)
         record.status = "submitted"
         record.submitted_at = datetime.now(timezone.utc).isoformat()
@@ -86,7 +92,7 @@ class WorkflowCoordinator:
         state.implementation_signal = on
         state.verifier_signal_source = "manual"
         self.store.save_state(state)
-        print(f"Implementation signal set to {view.signal_label(state)}")
+        print(f"Implementation signal set to {view.signal_line(state)}")
 
     # -- helpers --------------------------------------------------------
 
@@ -94,7 +100,15 @@ class WorkflowCoordinator:
         return view.state_dir_label(self.store.state_dir, self.explicit_state_dir)
 
     def _apply_verifier_verdict(self, state: WorkflowState, slot: str, text: str) -> None:
-        state.implementation_signal = bool(parse_signal(text))
+        verdict = parse_signal(text)
+        if verdict is None:
+            print(
+                "Warning: no verifier verdict found "
+                "(expected 'Implementation approved: yes|no'). Gate left BLOCKED; "
+                "use 'signal on' to override.",
+                file=sys.stderr,
+            )
+        state.implementation_signal = bool(verdict)
         state.verifier_signal_source = slot
 
     def _record_for_slot(self, state: WorkflowState, slot: str, role: str) -> AgentRecord:
@@ -106,8 +120,6 @@ class WorkflowCoordinator:
         return record
 
     def _assert_ready(self, state: WorkflowState, record: AgentRecord) -> None:
-        eligible = set(ready_agents(state))
-        eligible.add(record.slot if record.status == "submitted" else "")
-        if record.slot in eligible:
+        if record.status == "submitted" or record.slot in ready_agents(state):
             return
         raise SystemExit(_NOT_READY.get(record.role, "This slot is not ready yet."))
