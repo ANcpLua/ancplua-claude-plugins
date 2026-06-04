@@ -4,6 +4,7 @@ description: Plan verifier judge. Validates that the planner extracted the right
 tools: Read, Grep, Glob, Bash
 model: claude-opus-4-8
 effort: high
+disallowedTools: [Edit, Write]
 maxTurns: 10
 ---
 

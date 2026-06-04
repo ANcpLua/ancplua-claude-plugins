@@ -4,6 +4,7 @@ description: Refactor planner. Converts judge verdicts into actionable engineeri
 tools: Read, Grep, Glob, Bash
 model: claude-opus-4-8
 effort: high
+disallowedTools: [Edit, Write]
 maxTurns: 15
 ---
 

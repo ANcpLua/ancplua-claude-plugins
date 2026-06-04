@@ -9,10 +9,9 @@ from __future__ import annotations
 
 from typing import List
 
-from models import JUDGE_COUNT, SCOUT_COUNT, WorkflowState
+from models import JUDGE_SLOTS, SCOUT_SLOTS, WorkflowState
 
-SCOUT_SLOTS = [f"scout-{index}" for index in range(1, SCOUT_COUNT + 1)]
-JUDGE_SLOTS = [f"judge-{index}" for index in range(1, JUDGE_COUNT + 1)]
+STAGES = [SCOUT_SLOTS, JUDGE_SLOTS, ["planner-1"], ["verifier-1"], ["implementer-1"]]
 
 
 def _status(state: WorkflowState, slot: str) -> str:
@@ -38,3 +37,17 @@ def ready_agents(state: WorkflowState) -> List[str]:
     if state.implementation_signal:
         ready += _pending(state, ["implementer-1"])
     return ready
+
+
+def downstream_submitted(state: WorkflowState, slot: str) -> bool:
+    """True once any slot in a stage after ``slot``'s stage has submitted.
+
+    Lets ``submit`` reject re-submitting a slot whose downstream work has
+    already advanced, which would otherwise silently invalidate later stages
+    or flip an already-open gate shut.
+    """
+    for index, slots in enumerate(STAGES):
+        if slot in slots:
+            later = [s for stage in STAGES[index + 1:] for s in stage]
+            return any(state.agents[s].status == "submitted" for s in later)
+    return False

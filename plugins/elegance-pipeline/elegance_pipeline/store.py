@@ -6,10 +6,20 @@ or under an explicit --state-dir.
 from __future__ import annotations
 
 import json
-from dataclasses import asdict
+from dataclasses import asdict, fields
 from pathlib import Path
 
 from models import AgentRecord, WorkflowConfig, WorkflowState, build_fresh_state
+
+
+def _from_dict(cls, data):
+    """Build a dataclass from a dict, dropping keys the dataclass doesn't define.
+
+    Keeps loading resilient to extra fields (a newer schema, a hand-edit)
+    instead of crashing on an unexpected keyword argument.
+    """
+    known = {f.name for f in fields(cls)}
+    return cls(**{key: value for key, value in data.items() if key in known})
 
 
 class FileStore:
@@ -32,7 +42,7 @@ class FileStore:
         if not self.config_path.exists():
             raise SystemExit(f"Missing config: {self.config_path}. Run init first.")
         data = json.loads(self.config_path.read_text(encoding="utf-8"))
-        return WorkflowConfig(**data)
+        return _from_dict(WorkflowConfig, data)
 
     def save_config(self, cfg: WorkflowConfig) -> None:
         self.ensure_dirs()
@@ -50,7 +60,7 @@ class FileStore:
         state.implementation_signal = raw.get("implementation_signal", False)
         state.verifier_signal_source = raw.get("verifier_signal_source")
         for key, value in raw.get("agents", {}).items():
-            state.agents[key] = AgentRecord(**value)
+            state.agents[key] = _from_dict(AgentRecord, value)
         return state
 
     def save_state(self, state: WorkflowState) -> None:

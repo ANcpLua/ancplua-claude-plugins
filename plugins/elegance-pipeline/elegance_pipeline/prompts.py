@@ -8,7 +8,7 @@ from __future__ import annotations
 import re
 from typing import Dict, List, Optional
 
-from models import JUDGE_COUNT, SCOUT_COUNT, AgentRecord, WorkflowConfig, WorkflowState
+from models import JUDGE_SLOTS, SCOUT_SLOTS, AgentRecord, WorkflowConfig, WorkflowState
 from readiness import ready_agents
 from store import FileStore
 
@@ -40,8 +40,8 @@ def build_context(
     record: AgentRecord,
     pipeline_cmd: str,
 ) -> Dict[str, str]:
-    scout_outputs = [store.read_output(state, slot) for slot in _scout_slots()]
-    judge_outputs = [store.read_output(state, slot) for slot in _judge_slots()]
+    scout_outputs = [store.read_output(state, slot) for slot in SCOUT_SLOTS]
+    judge_outputs = [store.read_output(state, slot) for slot in JUDGE_SLOTS]
     planner_output = store.read_output(state, "planner-1")
     verifier_output = store.read_output(state, "verifier-1")
     return {
@@ -52,19 +52,7 @@ def build_context(
         "judge_outputs": join_outputs("Judge outputs", judge_outputs),
         "planner_output": planner_output or "<none yet>",
         "verifier_output": verifier_output or "<none yet>",
-        "implementation_signal": _signal_label(state),
+        "implementation_signal": state.signal_label,
         "ready_agents": ", ".join(ready_agents(state)) or "<none>",
         "pipeline_cmd": pipeline_cmd,
     }
-
-
-def _scout_slots() -> List[str]:
-    return [f"scout-{index}" for index in range(1, SCOUT_COUNT + 1)]
-
-
-def _judge_slots() -> List[str]:
-    return [f"judge-{index}" for index in range(1, JUDGE_COUNT + 1)]
-
-
-def _signal_label(state: WorkflowState) -> str:
-    return "READY" if state.implementation_signal else "BLOCKED"

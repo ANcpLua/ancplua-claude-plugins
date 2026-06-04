@@ -11,6 +11,9 @@ from typing import Dict, List, Optional
 SCOUT_COUNT = 4
 JUDGE_COUNT = 2
 
+SCOUT_SLOTS = [f"scout-{index}" for index in range(1, SCOUT_COUNT + 1)]
+JUDGE_SLOTS = [f"judge-{index}" for index in range(1, JUDGE_COUNT + 1)]
+
 
 @dataclass
 class AgentRecord:
@@ -35,6 +38,10 @@ class WorkflowState:
     verifier_signal_source: Optional[str] = None
     agents: Dict[str, AgentRecord] = field(default_factory=dict)
 
+    @property
+    def signal_label(self) -> str:
+        return "READY" if self.implementation_signal else "BLOCKED"
+
 
 def normalize_scopes(scopes: List[str]) -> List[str]:
     """Trim blanks, require at least one scope, pad up to SCOUT_COUNT."""
@@ -48,12 +55,10 @@ def normalize_scopes(scopes: List[str]) -> List[str]:
 def build_fresh_state(cfg: WorkflowConfig) -> WorkflowState:
     """Seed every pipeline slot in its initial pending state."""
     agents: Dict[str, AgentRecord] = {}
-    for index in range(1, SCOUT_COUNT + 1):
-        slot = f"scout-{index}"
+    for index, slot in enumerate(SCOUT_SLOTS, start=1):
         scope = cfg.scopes[index - 1] if index - 1 < len(cfg.scopes) else None
         agents[slot] = AgentRecord(role="scout", slot=slot, scope=scope)
-    for index in range(1, JUDGE_COUNT + 1):
-        slot = f"judge-{index}"
+    for slot in JUDGE_SLOTS:
         agents[slot] = AgentRecord(role="judge", slot=slot)
     for role in ("planner", "verifier", "implementer"):
         slot = f"{role}-1"

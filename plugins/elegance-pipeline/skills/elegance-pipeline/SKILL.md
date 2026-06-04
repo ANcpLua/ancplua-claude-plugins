@@ -11,7 +11,7 @@ Multi-agent code-elegance workflow with persistent state and stage gates.
 ## Pipeline stages
 
 ```text
-4 Scouts (parallel, sonnet) -> 2 Judges (parallel, opus) -> 1 Planner (opus)
+4 Scouts (parallel, opus) -> 2 Judges (parallel, opus) -> 1 Planner (opus)
   -> 1 Verifier (opus) -> 1 Implementer (gated, opus)
 ```
 
@@ -54,7 +54,7 @@ If you want one dedicated team per spec, give each run its own `--state-dir`.
 
 | Role | Agent | Model | Access |
 |------|-------|-------|--------|
-| Scout | elegance-pipeline:elegance-scout | sonnet | read-only |
+| Scout | elegance-pipeline:elegance-scout | opus | read-only |
 | Judge | elegance-pipeline:elegance-judge | opus | read-only |
 | Planner | elegance-pipeline:elegance-planner | opus | read-only |
 | Verifier | elegance-pipeline:elegance-verifier | opus | read-only |
@@ -66,10 +66,3 @@ If you want one dedicated team per spec, give each run its own `--state-dir`.
 python ${CLAUDE_PLUGIN_ROOT}/elegance_pipeline/pipeline.py [--state-dir <dir>] signal on
 python ${CLAUDE_PLUGIN_ROOT}/elegance_pipeline/pipeline.py [--state-dir <dir>] signal off
 ```
-
-## If Connectors Available
-
-- ~~github~~ Post elegance score deltas as PR review comments
-- ~~linear~~ Create refactor tasks from planner output when implementer gate opens
-- ~~slack~~ Notify on pipeline completion with verdict and scout findings summary
-- ~~jira~~ Log verifier decision and refactor scope as a Jira ticket
