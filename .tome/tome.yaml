@@ -1,0 +1,56 @@
+# .tome/tome.yaml — TomeVault manifest (tome-spec-draft-01)
+#
+# Full TomeVault adoption with TWO config sources so nothing is lost:
+#   1. AGENTS.md  — the agent operating guide; drives CLAUDE.md, GEMINI.md
+#      (same content) plus the Cursor / Windsurf format conversions.
+#   2. .github/copilot-instructions.md — a SEPARATE 449-line plugin-development
+#      manual. It is NOT a render of AGENTS.md; it is its own source, kept
+#      verbatim. Rendering it from AGENTS.md would delete it.
+#
+# NOTE: the render `template:` names below follow TomeVault's documented
+# `<format>-from-<source>` convention but were not validated against the live
+# renderer registry. Verify with:  npx tomevault publish --dry-run .tome/tome.yaml
+manifest:
+  schema_version: tome-spec-draft-01
+  id: ANcpLua/ancplua-claude-plugins
+  name: ancplua-claude-plugins
+  version: 0.1.0
+  authors:
+    - name: Alexander Nachtmann
+      handle: ANcpLua
+      url: https://github.com/ANcpLua
+  license: MIT
+  created_at: 2026-06-04T00:00:00Z
+  updated_at: 2026-06-04T00:00:00Z
+
+includes:
+  configs:
+    - path: AGENTS.md
+      kind: agents-md
+    - path: .github/copilot-instructions.md
+      kind: copilot-instructions
+
+targets:
+  # --- driven by AGENTS.md (configs[0]) ---
+  - format: agents-md            # ship the source verbatim
+    output: AGENTS.md
+    source: { type: include, ref: configs[0] }
+  - format: claude-md            # replaces the CLAUDE.md symlink with a rendered file
+    output: CLAUDE.md
+    source: { type: render, template: claude-md-from-agents-md, input: configs[0] }
+  - format: gemini-md            # replaces the GEMINI.md symlink with a rendered file
+    output: GEMINI.md
+    source: { type: render, template: gemini-md-from-agents-md, input: configs[0] }
+  - format: cursor-rules         # real format conversion (.mdc) — new
+    output: .cursor/rules/project-config.mdc
+    source: { type: render, template: cursor-rules-from-agents-md, input: configs[0] }
+  - format: windsurf-rules       # real format conversion — new
+    output: .windsurf/rules/project-config.md
+    source: { type: render, template: windsurf-rules-from-agents-md, input: configs[0] }
+
+  # --- its own source (configs[1]); preserved, NOT rendered from AGENTS.md ---
+  - format: copilot-instructions
+    output: .github/copilot-instructions.md
+    source: { type: include, ref: configs[1] }
+
+# security: omitted → strict default (scan required, no permissions, ruleset @latest)

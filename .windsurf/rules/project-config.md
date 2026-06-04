@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 <!--
   AGENTS.md is the single editorial source for this repo's agent guidance.
   CLAUDE.md, GEMINI.md, .cursor/rules/, and .windsurf/rules/ are GENERATED
