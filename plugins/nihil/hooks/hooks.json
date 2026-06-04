@@ -1,0 +1,42 @@
+{
+  "description": "Nihil mode discipline: UserPromptExpansion pins the mode, PreToolUse guards mutating/release tools, Stop enforces output format.",
+  "hooks": {
+    "UserPromptExpansion": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/nihil-mode.py",
+            "timeout": 10,
+            "statusMessage": "Nihil: setting mode..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/nihil-pretooluse.py",
+            "timeout": 10,
+            "statusMessage": "Nihil: checking mode guard..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/nihil-stop.py",
+            "timeout": 15,
+            "statusMessage": "Nihil: checking output discipline..."
+          }
+        ]
+      }
+    ]
+  }
+}

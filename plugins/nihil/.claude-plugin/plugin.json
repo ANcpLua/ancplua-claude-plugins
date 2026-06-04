@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "nihil",
+  "displayName": "Nihil",
+  "version": "0.1.0",
+  "description": "Evidence-gated maintainability review and refactor workflow with strict mode separation, confidence scoring, scope control, and release-gate discipline.",
+  "author": {
+    "name": "AncpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "code-review",
+    "maintainability",
+    "refactor",
+    "evidence",
+    "quality-gate",
+    "mode-separation",
+    "release-gate",
+    "confidence-scoring"
+  ]
+}

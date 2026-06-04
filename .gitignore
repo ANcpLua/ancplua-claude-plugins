@@ -63,6 +63,9 @@ obj/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+# Plugin skill directories named "release" are source, not .NET build output
+!plugins/*/skills/[Rr]elease/
+!plugins/*/skills/[Rr]elease/**
 x64/
 x86/
 [Ww][Ii][Nn]32/
