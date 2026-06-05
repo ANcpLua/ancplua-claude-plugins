@@ -73,6 +73,12 @@
       "description": "Evidence-gated maintainability review and refactor workflow with strict mode separation, confidence scoring, scope control, and release-gate discipline. Three enforced modes (/nihil:review, /nihil:implement, /nihil:release) backed by five read-only review agents and PreToolUse/Stop hooks that block out-of-mode actions and malformed output.",
       "version": "0.1.0",
       "source": "./plugins/nihil"
+    },
+    {
+      "name": "tomevault-publish",
+      "description": "One distilled skill for publishing to TomeVault: the Skill/Tome/AGENTS.md model, the npx tomevault CLI, the Studio web publish flow, and the Gold grading rubric.",
+      "version": "0.1.0",
+      "source": "./plugins/tomevault-publish"
     }
   ]
 }
