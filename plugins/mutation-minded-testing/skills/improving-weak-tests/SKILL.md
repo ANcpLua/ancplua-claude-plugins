@@ -12,6 +12,11 @@ Every rewrite must answer: **what plausible mutation does the new test catch
 that the old one did not?** If you cannot name that mutation in one
 sentence, the rewrite is not done.
 
+The catalogue below is written in TypeScript against jest/vitest matchers
+(`toEqual`, `toHaveBeenCalledWith`, `expect.any`), but the weak-assertion
+patterns are language-agnostic — the same rewrites apply to pytest in Python
+(see the pytest note under rule 1).
+
 ## The catalogue
 
 ### 1. `toBeTruthy()` → exact shape
@@ -30,6 +35,20 @@ expect(result).toEqual({
 ```
 
 Catches: `saveUser` returning `{}` or echoing the input.
+
+The same weakness in pytest is a bare truthy `assert`; rewrite it to pin the
+exact shape:
+
+```python
+# WEAK
+assert save_user(valid_input)
+
+# STRONG
+result = save_user(valid_input)
+assert result.email == valid_input.email
+assert isinstance(result.id, str)
+assert isinstance(result.created_at, datetime)
+```
 
 ### 2. "mock was called" → state + args + output
 

@@ -43,6 +43,25 @@ Walk the target module. For each of these, answer yes/no:
 Each "yes" is a seam missing at a specific line. Name it, cite it, and
 propose the narrowest refactor that introduces the seam.
 
+The non-injectable clock is the most common one. The untestable version
+forces a test runner (jest, vitest, or pytest) to monkey-patch global time;
+the seam lets a fake pass through the same door as production:
+
+```typescript
+// Untestable: reads the clock directly, no seam.
+function isExpired(token: Token): boolean {
+  return token.expiresAt < Date.now();
+}
+
+// Testable: clock injected, so vitest/jest passes a fixed value.
+function isExpired(token: Token, now: () => number): boolean {
+  return token.expiresAt < now();
+}
+
+// Test asserts the boundary instead of patching globals.
+expect(isExpired(token, () => 1000)).toBe(false);
+```
+
 ## Refactor directions (narrowest-first)
 
 - **Direct `new`** → constructor-inject an interface. Test passes a fake
