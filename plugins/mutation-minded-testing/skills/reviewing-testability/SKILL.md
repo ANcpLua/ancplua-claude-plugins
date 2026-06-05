@@ -54,12 +54,12 @@ function isExpired(token: Token): boolean {
 }
 
 // Testable: clock injected, so vitest/jest passes a fixed value.
-function isExpired(token: Token, now: () => number): boolean {
+function isExpiredWithClock(token: Token, now: () => number): boolean {
   return token.expiresAt < now();
 }
 
 // Test asserts the boundary instead of patching globals.
-expect(isExpired(token, () => 1000)).toBe(false);
+expect(isExpiredWithClock(token, () => 1000)).toBe(false);
 ```
 
 ## Refactor directions (narrowest-first)

@@ -44,6 +44,8 @@ exact shape:
 assert save_user(valid_input)
 
 # STRONG
+from datetime import datetime
+
 result = save_user(valid_input)
 assert result.email == valid_input.email
 assert isinstance(result.id, str)

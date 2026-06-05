@@ -72,14 +72,14 @@ returns the input unchanged; a strong one names the exact computed value:
 
 ```ts
 // WEAK — survives "return input instead of computed result"
-const out = applyDiscount(cart, "SAVE10");
-expect(out).toBeDefined();
-expect(out.items.length).toBe(cart.items.length);
+const outWeak = applyDiscount(cart, "SAVE10");
+expect(outWeak).toBeDefined();
+expect(outWeak.items.length).toBe(cart.items.length);
 
 // STRONG — dies under arithmetic, rounding, and off-by-one mutations
-const out = applyDiscount(cart, "SAVE10");
-expect(out.total).toBe(90);
-expect(out.discountApplied).toBe(10);
+const outStrong = applyDiscount(cart, "SAVE10");
+expect(outStrong.total).toBe(90);
+expect(outStrong.discountApplied).toBe(10);
 ```
 
 The same shape holds in pytest: `assert result` is weak; `assert result.total
