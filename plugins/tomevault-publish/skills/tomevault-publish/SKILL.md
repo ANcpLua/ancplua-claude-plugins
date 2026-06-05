@@ -21,7 +21,7 @@ The test for "config vs skill": *does this apply to almost every task in the rep
 ### Skill
 A folder plus a `SKILL.md` with two parts:
 
-1. **Header (frontmatter `description`)** — under 1024 characters, imperative, intent-focused. The description *is* the trigger.
+1. **Header (frontmatter `description`)** — under 1024 characters, imperative, intent-focused. The description *is* the trigger. Write the body in the same voice — direct, imperative lines, which agents follow more reliably than soft suggestions.
 2. **Body** — under 500 lines or 5000 tokens. Steps, gotchas, examples. Bulk goes into a `references/` folder, loaded on demand.
 
 Write a Skill when you would otherwise explain the same procedure more than twice. Universal rules belong in AGENTS.md, not a Skill.
@@ -93,7 +93,7 @@ npx tomevault install facebook/react   # install someone else's Tome or skills
 Publishing is a signed-in web action; the CLI cannot do it.
 
 0. **Sign in first.** TomeVault is free; sign in with GitHub from `https://tomevault.io/account`. Your **creator handle is your GitHub handle** (for example `ANcpLua`) — that is also the name others install by.
-1. Open `https://tomevault.io/account/overview` and click **Open Studio** (the bare `/studio` URL redirects to docs).
+1. Go straight to `https://tomevault.io/studio` — it opens the editor directly and your draft auto-saves in the browser; signing in is required only to **publish**, not to edit or grade. (You can also reach it via **Open Studio** on `https://tomevault.io/account/overview`.)
 2. **New Tome**, then set **name**, **description** (one sentence), and **slug**.
 3. **New file**, toggle **Skill** or **Config**, set the filename (`SKILL.md` or `AGENTS.md`), and paste the content. The right panel scores Quality and Security live as you type.
 4. When the Tome reads **Gold** (see section 4), click **Publish**, then the confirm panel's **Publish**, until it shows "Tome queued".
@@ -104,14 +104,15 @@ To index a whole **repo** instead, submit its GitHub URL at `https://tomevault.i
 
 ## 4. Grading rubric — hit GOLD honestly
 
-A file is scored on 13 checks. **12 of 13 is Gold (about 45 points); 11 of 13 is Silver (40).** You do not need a perfect 13.
+A SKILL.md is scored on **13 quality checks worth 50 points** (10 shared + 3 Skill-only), graded by **points, not check count**: **Gold 41+, Silver 25–40, Bronze 0–24.** You do not need every check — the twelve checks other than `imperative_tone` are worth **45 points**, so a file can miss imperative tone entirely and still land comfortably in Gold.
 
 Structure checks (easy): substance (roughly 1500+ characters), healthy length, four or more `##` headings, well-structured, uses lists, no filler or stub text, frontmatter `name`, frontmatter `description`, a "Use when" trigger line, unique content, and at least one fenced code block.
 
-The two finicky checks:
+The one check that takes real care:
 
-- **Names specific tools** needs **two or more recognized framework or language names** from a whitelist: for example python, typescript, go, rust, node.js, jest, vitest, pytest, supabase, postgresql, next.js, react, tailwind. It does **not** count Read, Write, or Bash, nor bare HTML or CSS. Name the technologies the skill **genuinely** relates to — never inject irrelevant names to game the grade; that makes the content worse for a vanity badge.
-- **Imperative tone** is currently **broken on TomeVault's side** (it counts zero even for clear imperatives). Ignore it; 12 of 13 is already Gold.
+- **Specific tools** (`specific_tools`, 5 pts) needs **two or more recognized framework or language names**: for example python, typescript, go, rust, node.js, jest, vitest, pytest, supabase, postgresql, next.js, react, tailwind. It does **not** count Read, Write, or Bash, nor bare HTML or CSS. Name the technologies the skill **genuinely** relates to — never inject irrelevant names to game the grade; that makes the content worse for a vanity badge.
+
+**Imperative tone** (`imperative_tone`, 5 pts) wants **three or more literal directive lines** in the Always / Never / Use / Avoid shape. It is **not broken** — rule-heavy configs score it fine — but **expository prose often registers zero**, and that is fine: the other twelve checks already clear the 41-point Gold line. Don't bend explanatory writing into fake commands to chase the last five points.
 
 **Security must score 6 of 6.** The scanner rejects leaked secrets, destructive shell commands, covert channels that smuggle data out, instruction-override text, reads outside the project tree, and encoded payloads that hide intent. Keep examples clean — no real keys, no destructive commands.
 
@@ -122,7 +123,7 @@ The two finicky checks:
 - Names two or more real, relevant technologies.
 - No secrets and no destructive commands.
 
-Then publish via Studio (section 3). Expect Gold (12 of 13).
+Then publish via Studio (section 3). Expect Gold (41+ of 50).
 
 ## 5. Decision tree
 
