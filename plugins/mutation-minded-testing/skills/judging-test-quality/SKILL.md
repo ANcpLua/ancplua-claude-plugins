@@ -51,7 +51,10 @@ applied to the production code?**
 
 ## Automatic downgrades
 
-A test earns at most `WEAK` if **any** of these apply:
+These apply across the runners mutation testing targets — jest and vitest in
+the JavaScript/TypeScript world, pytest in Python — since the same vacuous
+assertions show up in every one. A test earns at most `WEAK` if **any** of
+these apply:
 
 - Primary assertion is `toBeTruthy()`, `toBeDefined()`, `toBeFalsy()`, or
   `not.toBeNull()` with no follow-up shape check.
@@ -63,6 +66,24 @@ A test earns at most `WEAK` if **any** of these apply:
 - Test name is "should work" / "should be defined" / "should render".
 - Only the happy path; no failure-path sibling exists for the behavior.
 - Asserts on private state, internal caches, or impl-only helpers.
+
+The contrast is concrete. A weak vitest assertion survives the mutation that
+returns the input unchanged; a strong one names the exact computed value:
+
+```ts
+// WEAK — survives "return input instead of computed result"
+const out = applyDiscount(cart, "SAVE10");
+expect(out).toBeDefined();
+expect(out.items.length).toBe(cart.items.length);
+
+// STRONG — dies under arithmetic, rounding, and off-by-one mutations
+const out = applyDiscount(cart, "SAVE10");
+expect(out.total).toBe(90);
+expect(out.discountApplied).toBe(10);
+```
+
+The same shape holds in pytest: `assert result` is weak; `assert result.total
+== 90` dies the moment the discount math is mutated.
 
 ## Negative-space rule
 

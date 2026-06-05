@@ -8,6 +8,10 @@ effort: high
 
 Multi-agent code-elegance workflow with persistent state and stage gates.
 
+The orchestrator runs in Python (`pipeline.py`); the scoring is language-agnostic
+over the target repo, anchored by whatever root file fits it — `CLAUDE.md`,
+`package.json` for a Node.js project, or `*.sln` for a .NET solution.
+
 ## Pipeline stages
 
 ```text

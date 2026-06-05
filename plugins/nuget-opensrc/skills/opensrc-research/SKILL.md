@@ -5,6 +5,16 @@ description: Fetch and search a dependency's real source before answering, not g
 
 # opensrc-research
 
+## Quickstart
+
+One command grounds an answer: resolve the package's real source path, then search it.
+
+```bash
+rg "useQuery" "$(opensrc path @tanstack/react-query)"
+```
+
+`opensrc path` prints the on-disk checkout (fetching on first use); `rg` greps it for the symbol you're about to make a claim about. Everything below is variations on this shape.
+
 ## When to fire
 
 Fire this skill whenever the next answer would otherwise be a guess about how a dependency behaves. Signals:
@@ -12,7 +22,7 @@ Fire this skill whenever the next answer would otherwise be a guess about how a 
 - "Does library X support Y?" / "How does X actually do Y?"
 - "Is the doc claim about X accurate?"
 - "Grep for Z in package W"
-- Borderline confidence answering an API question — about to write `[Δ: not verified]`
+- Borderline confidence answering an API question — about to write `[unverified]`
 - Code under review imports a package and you want to ground a review comment in actual source
 
 ## The grounded-answer workflow
@@ -54,7 +64,7 @@ Fire this skill whenever the next answer would otherwise be a guess about how a 
 
 ## Anti-patterns to avoid
 
-- **Guessing then marking `[Δ: not verified]`** when opensrc would have given the answer in one command. The marker is for when verification is impossible, not when it's mildly inconvenient.
+- **Guessing then marking `[unverified]`** when opensrc would have given the answer in one command. The marker is for when verification is impossible, not when it's mildly inconvenient.
 - **Resolving NuGet packages via plain `opensrc path owner/repo`** without commit-pinning — silently reads `main` and the source you grep may not be what the package shipped. Use the wrapper for NuGet.
 - **Falling back to projectUrl** if NuGet metadata lacks repository.url — projectUrl points at marketing pages (e.g. `https://dot.net/`) and lies about source location. The wrapper refuses to use it; you should too.
 
