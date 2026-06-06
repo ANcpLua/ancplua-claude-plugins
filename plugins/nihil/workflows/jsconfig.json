@@ -1,0 +1,9 @@
+{
+  "//": "Nihil dynamic-workflow scripts run in the Claude Code workflow runtime, which wraps each file body in an async function (so top-level await and return are valid) and injects the globals agent, parallel, pipeline, phase, log, workflow, args, and budget. These files are NOT standalone TypeScript/ES modules. JS type-checking is disabled here so the editor does not emit false 'return outside function' or unused-variable diagnostics for the workflow dialect.",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true
+  },
+  "include": ["*.js"]
+}

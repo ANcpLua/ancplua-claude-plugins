@@ -8,6 +8,17 @@ discipline.
 > confidence, scope, and mode discipline so human review becomes faster and less
 > ambiguous.
 
+Nihil ships in **two layers**:
+
+1. **The plugin** (native — everything below the pantheon section). Hook-enforced
+   `/nihil:review` → `/nihil:implement` → `/nihil:release` mode discipline. A discipline
+   aid, not a security boundary.
+2. **The pantheon** (summonable — see
+   [The pantheon](#the-pantheon--summonable-dynamic-workflows)). Five first-principles
+   **dynamic workflows** (`/nihil`, `/nihil-maat`, `/nihil-odin`, `/nihil-shiva`,
+   `/nihil-athena`). A Claude Code plugin cannot register dynamic workflows, so these
+   ride along as payload and install with `/nihil:summon`.
+
 ## What Nihil is
 
 Three namespaced workflows plus hooks that **enforce** how you work in each:
@@ -27,6 +38,39 @@ It is **not** an MCP server, an LSP server, a background monitor, or a release
 automator. It does not publish anything, add telemetry, or pull in external services.
 It does not think for you — it makes the *discipline* repeatable: every finding must
 carry evidence and confidence, every mode forbids the actions that don't belong in it.
+
+## The pantheon — summonable dynamic workflows
+
+The second layer is the *original* Nihil: first-principles repository transformation
+delivered as five **dynamic workflows**. A Claude Code plugin cannot register dynamic
+workflows (the manifest has no `workflows/` component), so they ship here under
+`workflows/` as payload and install with one command:
+
+```text
+/nihil:summon          # copies workflows/*.js + jsconfig.json into ./.claude/workflows/
+```
+
+After summoning (and a session restart if needed) the gods run as `/<name>` commands:
+
+| Command         | God                  | Pattern                                    | Writes?                                |
+| --------------- | -------------------- | ------------------------------------------ | -------------------------------------- |
+| `/nihil`        | Zeus orchestrates    | inspect → council → verdict + plan         | never (plan-only)                      |
+| `/nihil-maat`   | Ma'at reviews        | dimensions → adversarial refute → judge    | never                                  |
+| `/nihil-odin`   | Odin researches      | angles → gather → cross-check → cite        | never                                  |
+| `/nihil-shiva`  | Shiva deletes        | loop-until-dry → prove → gated execute      | gated (`execute=true`, private only)   |
+| `/nihil-athena` | Athena restructures  | N drafts → score → synthesize              | never                                  |
+
+The four specialists are namespaced `nihil-*` (not bare `/maat`, `/odin`, …) so they do
+not collide with other workflows in a shared project. Only `/nihil-shiva` writes, and
+only with `execute=true`, applying just the *private* removals that survived adversarial
+proof; public breaks and rewrites always require human sign-off. The master `/nihil`
+plans and delegates execution to `/nihil-shiva` — the orchestrator never writes, which
+also avoids a write-while-reading race in its parallel council.
+
+The doctrine behind the pantheon lives in `skills/nihil/SKILL.md`; the review standard
+`/nihil-maat` enforces lives in
+`skills/absence-of-value-and-meaning-code-quality-review/SKILL.md`. To install the
+workflows for every project instead of one, copy them into `~/.claude/workflows/`.
 
 ## Install / local testing
 

@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "nihil",
   "displayName": "Nihil",
-  "version": "0.1.0",
-  "description": "Evidence-gated maintainability review and refactor workflow with strict mode separation, confidence scoring, scope control, and release-gate discipline.",
+  "version": "0.2.0",
+  "description": "Evidence-gated maintainability discipline in two layers: a native hook-enforced review/implement/release mode plugin (a discipline aid, not a security boundary) plus a summonable pantheon of five first-principles dynamic workflows (/nihil, /nihil-maat, /nihil-odin, /nihil-shiva, /nihil-athena) installed via /nihil:summon.",
   "author": {
     "name": "AncpLua",
     "url": "https://github.com/ANcpLua"
@@ -18,6 +18,9 @@
     "quality-gate",
     "mode-separation",
     "release-gate",
-    "confidence-scoring"
+    "confidence-scoring",
+    "dynamic-workflow",
+    "first-principles",
+    "multi-agent"
   ]
 }
