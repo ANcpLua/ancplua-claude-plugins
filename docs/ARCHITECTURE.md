@@ -9,7 +9,6 @@ Claude Code plugin marketplace and agent lab.
 ```text
 ancplua-claude-plugins/
 ├── CLAUDE.md                    # Operational brain (routing, workflows, constraints)
-├── AGENTS.md                    # Agent catalog for other AIs (Copilot, CodeRabbit)
 ├── README.md                    # Human-facing overview
 ├── CHANGELOG.md                 # Chronological change log
 ├── LICENSE
@@ -47,22 +46,11 @@ ancplua-claude-plugins/
 │   ├── mutation-minded-testing/  # Mutation-minded, behavior-first test quality (4 agents)
 │   └── nuget-opensrc/            # Fetch a NuGet package's exact build-commit source via opensrc
 │
-├── docs/
-│   ├── ARCHITECTURE.md          # This file
-│   ├── ENGINEERING-PRINCIPLES.md # Alexander's 26 engineering principles (full narrative)
-│   ├── PLUGINS.md               # Plugin creation guide
-│   ├── QUICK-REFERENCE.md       # Quick reference card
-│   ├── WORKFLOWS.md             # CI workflows and local validation
-│   ├── specs/                   # Feature specs (spec-XXXX-*.md)
-│   ├── decisions/               # ADRs (ADR-XXXX-*.md)
-│   └── designs/                 # Design documents
-│
-└── tooling/
-    ├── scripts/
-    │   ├── weave-validate.sh    # Single validation entrypoint
-    │   └── sync-marketplace.sh  # Marketplace sync helper
-    └── templates/
-        └── plugin-template/     # Scaffold for new plugins
+└── docs/
+    ├── ARCHITECTURE.md          # This file
+    ├── specs/                   # Feature specs (spec-XXXX-*.md)
+    ├── decisions/               # ADRs (ADR-XXXX-*.md)
+    └── schemas/                 # Agent-workflow JSON/YAML schemas
 ```
 
 ---
@@ -118,9 +106,9 @@ project-specific routing). Use CLAUDE.md for stable rules. Use skill description
 
 ## 4. Validation and quality gates
 
-Single local entrypoint: `./tooling/scripts/weave-validate.sh`
-
-CI mirrors the same checks via `.github/workflows/ci.yml`.
+Validation runs in CI via `.github/workflows/ci.yml`. The former local wrapper
+`tooling/scripts/weave-validate.sh` was removed in the manual cleanup; run the gate
+tools below directly, or rely on CI.
 
 | Gate | Tool | What it checks |
 |------|------|----------------|
@@ -149,8 +137,8 @@ Config files per agent:
 | Agent | Config |
 |-------|--------|
 | Claude | `CLAUDE.md`, `.claude/rules/`, SessionStart hooks |
-| Copilot | `.github/copilot-instructions.md`, `AGENTS.md` |
-| CodeRabbit | `.coderabbit.yaml`, `AGENTS.md` |
+| Copilot | `.github/copilot-instructions.md` |
+| CodeRabbit | `.coderabbit.yaml` |
 
 No real-time communication between AI systems.
 
@@ -160,7 +148,6 @@ No real-time communication between AI systems.
 
 | Stage | Tool | Purpose |
 |-------|------|---------|
-| Local | `weave-validate.sh` | Pre-commit checks |
 | CI | `ci.yml` | Automated validation |
 | Review | `claude-code-review.yml` | AI-assisted review |
 | Merge | `auto-merge.yml` | Tiered auto-merge |
@@ -227,4 +214,4 @@ export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
 
 ---
 
-**Last Verified:** 2026-04-02
+**Last Verified:** 2026-06-06
