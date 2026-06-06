@@ -98,7 +98,7 @@ Publishing is a signed-in web action; the CLI cannot do it.
 3. **New file**, toggle **Skill** or **Config**, set the filename (`SKILL.md` or `AGENTS.md`), and paste the content. The right panel scores Quality and Security live as you type.
 4. When the Tome reads **Gold** (see section 4), click **Publish**, then the confirm panel's **Publish**, until it shows "Tome queued".
 5. Verify under `/account/repos`, in the **Published Tomes** list. Distribution to Claude, Cursor, Gemini, Copilot, and Windsurf lands within about ten minutes.
-6. Anyone installs your work with `npx tomevault install ANcpLua` (swap in your own GitHub handle as the creator name).
+6. Anyone installs your work with `npx tomevault install ANcpLua/ancplua-claude-plugins` — install targets are `owner/repo`, not a bare handle (the CLI rejects `install ANcpLua` with "Invalid target. Use owner/repo format.").
 
 To index a whole **repo** instead, submit its GitHub URL at `https://tomevault.io/convert` while signed in (owner-only; the CLI just points there).
 
@@ -112,7 +112,7 @@ The one check that takes real care:
 
 - **Specific tools** (`specific_tools`, 5 pts) needs **two or more recognized framework or language names**: for example python, typescript, go, rust, node.js, jest, vitest, pytest, supabase, postgresql, next.js, react, tailwind. It does **not** count Read, Write, or Bash, nor bare HTML or CSS. Name the technologies the skill **genuinely** relates to — never inject irrelevant names to game the grade; that makes the content worse for a vanity badge.
 
-**Imperative tone** (`imperative_tone`, 5 pts) wants **three or more literal directive lines** in the Always / Never / Use / Avoid shape. It is **not broken** — rule-heavy configs score it fine — but **expository prose often registers zero**, and that is fine: the other twelve checks already clear the 41-point Gold line. Don't bend explanatory writing into fake commands to chase the last five points.
+**Imperative tone** (`imperative_tone`, 5 pts) wants **three or more directive lines that open with** `Always` / `Never` / `Use` / `Avoid`. The detector is form-sensitive: a keyword wrapped in bold or buried mid-sentence often does **not** register — even a rule-heavy `AGENTS.md` scores zero if its directives never start a line with the bare verb. State your genuine hard rules as clean openers (see **Hard rules** below) and it passes honestly. If a file is pure exposition with no real rules, leave it — the other twelve checks are worth **45**, so you still reach Gold. Never fabricate commands to chase the points.
 
 **Security must score 6 of 6.** The scanner rejects leaked secrets, destructive shell commands, covert channels that smuggle data out, instruction-override text, reads outside the project tree, and encoded payloads that hide intent. Keep examples clean — no real keys, no destructive commands.
 
@@ -124,6 +124,22 @@ The one check that takes real care:
 - No secrets and no destructive commands.
 
 Then publish via Studio (section 3). Expect Gold (41+ of 50).
+
+## Hard rules
+
+Always sign in before publishing — the CLI is unauthenticated and cannot submit to the remote.
+
+Always confirm the Tome reads Gold before you click Publish.
+
+Never hand-write `tome.lock` — the tooling generates its hash, and a mismatch refuses to render.
+
+Never inject irrelevant tool names to pass `specific_tools`; padding the grade only degrades the skill.
+
+Use Studio to publish; the CLI just checks status and prints the web URL.
+
+Use `AGENTS.md` as the one canonical config; make the other formats thin pointers.
+
+Avoid the bare-handle `install` — every install target is `owner/repo`.
 
 ## 5. Decision tree
 
