@@ -1,0 +1,179 @@
+{
+  "spec_version": "1.0.0",
+  "id": "ANcpLua/ancplua-claude-plugins",
+  "name": "ancplua-claude-plugins",
+  "version": "0.1.0",
+  "description": "A Claude Code plugin marketplace (12 plugins): multi-agent workflows, code-quality and mutation-testing pipelines, first-principles repository transformation, dependency-source research, MCP/docs tooling, and TomeVault publishing — as reusable skills, commands, agents, and hooks.",
+  "creator": "ANcpLua",
+  "license": "MIT",
+  "homepage": "https://tomevault.io/tome/ANcpLua/ancplua-claude-plugins",
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "kind": "tome",
+  "tags": [
+    "claude-code",
+    "agent-skills",
+    "plugins",
+    "marketplace",
+    "multi-agent",
+    "mcp",
+    "tomevault"
+  ],
+  "components": [
+    {
+      "id": "cc-plugin-eval/cc-plugin-eval",
+      "kind": "skill",
+      "filename": "plugins/cc-plugin-eval/skills/cc-plugin-eval/SKILL.md",
+      "description": "Analyze, lint, and check a local Claude Code add-on or capability, explain the result, and rank the top fixes first. Use when the user says \"audit this\", \"why did it score that way\", \"what should I fix first\", \"validate the manifest\", \"lint the hooks\", or \"benchmark the real token usage\"."
+    },
+    {
+      "id": "cc-plugin-eval/evaluate-plugin",
+      "kind": "skill",
+      "filename": "plugins/cc-plugin-eval/skills/evaluate-plugin/SKILL.md",
+      "description": "Audit a local Claude Code bundle that has .claude-plugin/plugin.json: validate the manifest, lint hooks, check mcp/lsp servers, monitors, and agents, then rank fixes. Use when the user says \"audit this\", \"validate the manifest\", \"lint the hooks\", \"why did it score that way\", or \"benchmark this\"."
+    },
+    {
+      "id": "cc-plugin-eval/evaluate-skill",
+      "kind": "skill",
+      "filename": "plugins/cc-plugin-eval/skills/evaluate-skill/SKILL.md",
+      "description": "Analyze and check a local Claude Code SKILL.md folder: review frontmatter, size, broken links, trigger words, and token budget, then rank the top fixes. Use when the user says \"audit this\", \"why did it score that way\", \"this is too big\", \"it is not triggering\", or \"measure the real token usage\"."
+    },
+    {
+      "id": "cc-plugin-eval/improve-skill",
+      "kind": "skill",
+      "filename": "plugins/cc-plugin-eval/skills/improve-skill/SKILL.md",
+      "description": "Convert cc-plugin-eval findings into a concrete rewrite brief, then hand off to skill-creator for the edit pass. Use when the user already ran an evaluation and now wants a fix plan, after asking \"what should I fix first\" or \"rewrite this using the findings\"."
+    },
+    {
+      "id": "cc-plugin-eval/metric-pack-designer",
+      "kind": "skill",
+      "filename": "plugins/cc-plugin-eval/skills/metric-pack-designer/SKILL.md",
+      "description": "Build a local rubric extension so a team can add custom checks that emit schema-compatible findings, metrics, and artifacts on top of the deterministic engine. Use when the user wants their own scoring rules, domain-specific audits, or a custom report wired into analyze runs."
+    },
+    {
+      "id": "derot/derot",
+      "kind": "skill",
+      "filename": "plugins/derot/skills/derot/SKILL.md",
+      "description": "Truth-drift auditor — find & fix comment/doc/CI/version/dependency rot that contradicts the current code, with root + transitive verification (correct beats delete). Use when the user wants to remove stale comments, fix doc drift (CLAUDE.md/README/CHANGELOG), modernize CI publish auth, sync package versions, or question why a sub-library is used instead of a parent/successor package. Triggers on \\\"stale comments\\\", \\\"derot\\\", \\\"doc rot\\\", \\\"comments are out of date\\\", \\\"docs don't match the code\\\", \\\"clean up the docs\\\", \\\"why this dependency\\\", \\\"überarbeitung\\\"."
+    },
+    {
+      "id": "elegance-pipeline/elegance-pipeline",
+      "kind": "skill",
+      "filename": "plugins/elegance-pipeline/skills/elegance-pipeline/SKILL.md",
+      "description": "Run a persistent multi-agent workflow scoring source-file code quality: 4 scouts, 2 judges, a planner, a verifier, and 1 gated implementer. Use when you want to rank how clean a repo's files are and convert the weakest into gated refactor work. Triggers on \\\"find ugly files\\\", \\\"review code quality\\\"."
+    },
+    {
+      "id": "exodia/eight-gates",
+      "kind": "skill",
+      "filename": "plugins/exodia/skills/eight-gates/SKILL.md",
+      "description": "Run risky changes through 8 disciplined phases that map, build, fix, and verify — each unlocks more power only if work stays honest and resumable. Use when a spec or audit needs parallel discovery, lane execution, checkpoints surviving context loss, and a ship-or-die finale."
+    },
+    {
+      "id": "exodia/hades",
+      "kind": "skill",
+      "filename": "plugins/exodia/skills/hades/SKILL.md",
+      "description": "This skill should be used when the user asks to clean up dead code, remove suppressions/warnings, fix duplication or imports, verify the build is clean with zero suppressions, run a frontend design audit (--goggles), or make a public-API brutal break (--guillotine). Smart infra: deletion permit, audit ledger, break manifest. 4 teammates per phase. Use when cleanup/scope/intensity, goggles, or guillotine is requested."
+    },
+    {
+      "id": "html-effectiveness/html-effectiveness",
+      "kind": "skill",
+      "filename": "plugins/html-effectiveness/skills/html-effectiveness/SKILL.md",
+      "description": "Produce a single self-contained .html file instead of a wall of markdown when the user wants a report, dashboard, triage board, design doc, code review, flowchart, slide deck, postmortem, implementation plan, prompt tuner, feature-flag editor, or an agent-spawn deck (HTML carrying ready-to-paste prompts for parallel fan-out) — any artifact that benefits from layout, interaction, drag-drop, side-by-side comparison, or copy-to-clipboard export. Use when the user asks (English OR German, case-insensitive, typo-tolerant, semantic, NOT literal): \"html instead of markdown\", \"make me a dashboard\", \"html report\", \"triage board\", \"status report\", \"wochenbericht\", \"postmortem\", \"implementierungsplan\", \"side by side\", \"vergleiche x y z\", \"code review\", \"slide deck\", \"präsentation\", \"feature flag editor\", \"spawn agents\", \"agenten spawnen\". Fire eagerly when the output would otherwise be a long markdown table or a sortable/filterable list. Match on intent: tickets→triage-board, diff→code-review."
+    },
+    {
+      "id": "mutation-minded-testing/improving-weak-tests",
+      "kind": "skill",
+      "filename": "plugins/mutation-minded-testing/skills/improving-weak-tests/SKILL.md",
+      "description": "Rewrite a weak unit spec into one that kills mutations. Use when you must fix a toBeTruthy/toBeDefined/toBeFalsy assertion, a bare mock-fired check, an array-length-only check, a shapeless snapshot, or a private-state peek. Triggers on \"rewrite this spec\", \"stronger assertions\", \"catch mutations\"."
+    },
+    {
+      "id": "mutation-minded-testing/judging-test-quality",
+      "kind": "skill",
+      "filename": "plugins/mutation-minded-testing/skills/judging-test-quality/SKILL.md",
+      "description": "Grade and review an existing spec suite for kill power before adding more. Use when you must find whether specs are real or cosmetic — each gets STRONG/ACCEPTABLE/WEAK/KILL plus one mutation it survives. Triggers on \"audit these tests\", \"how strong is this\", \"mutation score\", \"green but buggy\"."
+    },
+    {
+      "id": "mutation-minded-testing/mutation-resistant-coverage",
+      "kind": "skill",
+      "filename": "plugins/mutation-minded-testing/skills/mutation-resistant-coverage/SKILL.md",
+      "description": "Close branch gaps with high-signal specs, not cosmetics. Use when you run a file to 100% branches or kill survivors from Stryker/Infection/Pitest/Mutmut. Lists semantic branches and writes one real check per outcome. Triggers on \"uncovered branches\", \"cover this file\", \"mutation run\"."
+    },
+    {
+      "id": "mutation-minded-testing/reviewing-testability",
+      "kind": "skill",
+      "filename": "plugins/mutation-minded-testing/skills/reviewing-testability/SKILL.md",
+      "description": "Diagnose why a module is hard to verify and fix the narrowest seam. Use when specs need heavy mocking, break on refactor, or survive plausible mutations — find missing DI seams, hidden state, temporal coupling, raw clocks. Triggers on \"tests are brittle\", \"mocks everywhere\", \"too coupled\"."
+    },
+    {
+      "id": "nihil/absence-of-value-and-meaning-code-quality-review",
+      "kind": "skill",
+      "filename": "plugins/nihil/skills/absence-of-value-and-meaning-code-quality-review/SKILL.md",
+      "description": "Review code for extreme implementation ambition without tolerating accidental complexity. Reward code that is hard, powerful, and sophisticated only when it stays readable, cohesive, loosely coupled, expressive, and semantically named. Penalize redundant code extractable into meaningful private helpers, missed refactoring, giant or fragmented files outside the 500-1000 line range, vague abstractions, noisy comments, fake simplicity, meaningless over-extraction, under-extracted logic, duplicated intent, unstable APIs, and any structure that fails to justify its complexity. Use for absence-of-value-and-meaning reviews where the target is astonishingly simple code, not simplistic code."
+    },
+    {
+      "id": "nihil/implement",
+      "kind": "skill",
+      "filename": "plugins/nihil/skills/implement/SKILL.md",
+      "description": "Implement evidence-backed Nihil findings within a fixed scope, preserving behavior unless authorized. Modifies only scoped files and runs checks before claiming done. Blocks push/tag/publish/version-bump (those belong to release). Use after /nihil:review to apply findings. Invoked as /nihil:implement."
+    },
+    {
+      "id": "nihil/nihil",
+      "kind": "skill",
+      "filename": "plugins/nihil/skills/nihil/SKILL.md",
+      "description": "Last-resort first-principles repository transformation run as a pantheon of dynamic workflows, where no artifact has intrinsic preservation value and every no-op, patch, deletion, public-API break, or rebuild must be justified by evidence. Use for Nihil, first-principles transformation, aggressive architectural simplification, destructive code cleanup, public API redesign, dead-code evaporation, codebase rescue, or last-resort remediation. Routes to the /nihil, /nihil-maat, /nihil-odin, /nihil-shiva, and /nihil-athena workflows."
+    },
+    {
+      "id": "nihil/release",
+      "kind": "skill",
+      "filename": "plugins/nihil/skills/release/SKILL.md",
+      "description": "Release-gate workflow with strict CI and publishing discipline. Inspects the repository's release workflow, verifies versioning and CI state, and refuses to publish when checks are red or unknown. Blocks force-push/hard-reset/rm -rf. For NuGet, applies trusted-publishing rules. Invoked as /nihil:release."
+    },
+    {
+      "id": "nihil/review",
+      "kind": "skill",
+      "filename": "plugins/nihil/skills/review/SKILL.md",
+      "description": "Strict evidence-based maintainability review of a repository or diff. Read, search, compare, and trace only — never modify. Use when you want findings gated by >85% confidence and repository evidence, with strict scope control and no speculative architecture. Invoked as /nihil:review."
+    },
+    {
+      "id": "nuget-opensrc/opensrc-research",
+      "kind": "skill",
+      "filename": "plugins/nuget-opensrc/skills/opensrc-research/SKILL.md",
+      "description": "Fetch and search a dependency's real source before answering, not guessing. Use when checking what a third-party package (npm, PyPI, NuGet, crate, GitHub repo) actually does. Triggers on \"how does X work\", \"verify Y's API\", \"does Z ship with W\", \"grep X in <library>\", or any shaky dependency claim."
+    },
+    {
+      "id": "tomevault-publish/tomevault-publish",
+      "kind": "skill",
+      "filename": "plugins/tomevault-publish/skills/tomevault-publish/SKILL.md",
+      "description": "Publish a Skill, config, or plugin to TomeVault as a high-grade Tome — and understand the Skill / Tome / AGENTS.md model behind it. Use when shipping instruction files to TomeVault, indexing a repo, aiming for a Gold grade, passing the TomeVault scan or validator, or answering \"what is a Tome / Skill / AGENTS.md\". Covers the npx tomevault CLI, the Studio web publish flow, and the grading rubric."
+    },
+    {
+      "id": "CLAUDE.md",
+      "kind": "config",
+      "filename": "CLAUDE.md",
+      "description": "Project operating guide for Claude Code: model config, multi-agent architecture, verification contract, engineering principles."
+    },
+    {
+      "id": ".github/copilot-instructions.md",
+      "kind": "config",
+      "filename": ".github/copilot-instructions.md",
+      "description": "GitHub Copilot instructions for this repo (hand-maintained)."
+    },
+    {
+      "id": ".cursor/rules/project-config.mdc",
+      "kind": "config",
+      "filename": ".cursor/rules/project-config.mdc",
+      "description": "Cursor project rules (.mdc)."
+    },
+    {
+      "id": ".windsurf/rules/project-config.md",
+      "kind": "config",
+      "filename": ".windsurf/rules/project-config.md",
+      "description": "Windsurf project rules."
+    }
+  ],
+  "depends_on": [],
+  "provenance": {
+    "human_authored": true,
+    "ai_assisted": true,
+    "note": "Authored by ANcpLua with Claude Code (Opus 4.8); skills are dogfooded in this repo's own workflows."
+  }
+}
