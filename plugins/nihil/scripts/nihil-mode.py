@@ -46,6 +46,22 @@ BANNERS = {
         "(force-push, hard reset, rm -rf) are blocked. End with Release Readiness, "
         "Required Checks, Version/Tag Decision, Publishing Decision, and Blockers."
     ),
+    "raze": (
+        "NIHIL RAZE MODE is active — root authority on a repository you own. This is "
+        "the Touch of God: nothing here is sacred. Full rewrite, public-API break, "
+        "subsystem replacement, and deletion are PRE-AUTHORIZED — the consumers are "
+        "CI bots and your own framework, so compatibility ceremony is theater. Do NOT "
+        "stop to ask permission, do NOT write compat shims, adapters, or migration "
+        "scaffolding to keep a doomed API alive; break it directly and move on. Work "
+        "WRITE-CAPABLE and end to end: edit, commit, push, tag, bump versions, and "
+        "publish freely. Still pick the SMALLEST coherent transformation that reaches "
+        "a coherent end state, and never leave a degraded intermediate state. TWO "
+        "brakes remain, and only two: (1) never print, commit, or pass a secret / API "
+        "key / token / private key (a PreToolUse hook blocks secret exfiltration in "
+        "every mode); (2) never run a catastrophic, unrecoverable command (rm -rf / or "
+        "~, mkfs, dd of=/dev/...). git reset/force-push/clean are allowed — they are "
+        "recoverable. End with a Verification section (what you ran, what you changed)."
+    ),
 }
 
 

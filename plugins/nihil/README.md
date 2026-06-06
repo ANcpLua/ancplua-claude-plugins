@@ -11,8 +11,10 @@ discipline.
 Nihil ships in **two layers**:
 
 1. **The plugin** (native — everything below the pantheon section). Hook-enforced
-   `/nihil:review` → `/nihil:implement` → `/nihil:release` mode discipline. A discipline
-   aid, not a security boundary.
+   modes: **`/nihil:raze`** (root-authority, write-capable — the one-line default for a
+   repo you own) plus the disciplined `/nihil:review` → `/nihil:implement` →
+   `/nihil:release` path for code you do not own. A discipline aid, not a security
+   boundary — but a secret / API-key brake is active in every mode.
 2. **The pantheon** (summonable — see
    [The pantheon](#the-pantheon--summonable-dynamic-workflows)). Five first-principles
    **dynamic workflows** (`/nihil`, `/nihil-maat`, `/nihil-odin`, `/nihil-shiva`,
@@ -21,16 +23,20 @@ Nihil ships in **two layers**:
 
 ## What Nihil is
 
-Three namespaced workflows plus hooks that **enforce** how you work in each:
+Four namespaced mode commands plus hooks that **enforce** how you work in each:
 
 | Command            | Mode           | Does                                                                |
 | ------------------ | -------------- | ------------------------------------------------------------------ |
+| `/nihil:raze`      | Raze           | **The one-line default for a repo you own.** Write-capable, root authority — rewrite, break the public API, and delete freely; only secret-leak and catastrophic, unrecoverable commands are blocked. |
 | `/nihil:review`    | Review         | Read / search / compare / trace and report findings only.          |
 | `/nihil:implement` | Implementation | Apply evidence-backed findings inside scope; no release steps.     |
 | `/nihil:release`   | Release        | Gate a release on green CI and version/tag/publish discipline.     |
 
-Five read-only sub-agents back the review: `evidence-auditor`, `duplication-hunter`,
-`abstraction-critic`, `boundary-reviewer`, `release-gatekeeper`.
+`/nihil:raze` is for code you own (your framework, CI-bot consumers) — it removes the
+permission friction the other three impose. The disciplined `review` → `implement` →
+`release` path is for code you do not own. Five read-only sub-agents back the review:
+`evidence-auditor`, `duplication-hunter`, `abstraction-critic`, `boundary-reviewer`,
+`release-gatekeeper`.
 
 ## What Nihil is not
 
@@ -131,6 +137,14 @@ slowed). Denies via `permissionDecision: "deny"`.
 Read-only Bash (`git status`, `git log`, `git diff`, `ls`, `dotnet build/test`, etc.)
 is allowed in every mode.
 
+**Raze** allows every operation above except catastrophic, unrecoverable shell
+(`rm -rf /` or `~`, `mkfs`, `dd of=/dev/…`); `git reset --hard`, force-push, and
+`git clean -f` are recoverable and therefore allowed. In addition, a **secret / API-key
+brake** is active in **every** mode (raze included): printing, echoing, committing, or
+passing a credential inline — `echo $TOKEN`, `cat .env`, `git add .env`,
+`--api-key <literal>`, or a key literal like `AKIA…` / `ghp_…` /
+`-----BEGIN … PRIVATE KEY-----` — is denied.
+
 ### `Stop` (`scripts/nihil-stop.py`)
 
 Checks the last assistant message and **blocks once per mode cycle**:
@@ -140,6 +154,8 @@ Checks the last assistant message and **blocks once per mode cycle**:
 - **Implement** — if there is no `Verification` section, it blocks.
 - **Release** — if there is no Release Readiness / Blockers / Publishing Decision
   section, it blocks.
+- **Raze** — if there is no `Verification` section, it blocks. The one discipline raze
+  keeps: a write-capable transformation must report what it ran and what it changed.
 
 Loop-safe: it honors `stop_hook_active` and keeps a one-shot per-session flag, so it
 blocks at most once; `nihil-mode.py` re-arms it when a new `/nihil:*` command runs.
@@ -161,6 +177,16 @@ Inspect the repo's actual release workflow; verify required checks; publish only
 **green** CI; never on red or **unknown**. For NuGet, use
 [trusted publishing](https://learn.microsoft.com/en-gb/nuget/nuget-org/trusted-publishing).
 The hook still blocks obviously destructive commands (force-push, hard reset, `rm -rf`).
+
+### What Raze Mode frees
+
+Everything the other modes gate: writes, edits, `git commit`/`push`/`tag`, version
+bumps, dependency updates, publishing, public-API breaks, full rewrites, subsystem
+replacement, and deletion — with no per-action sign-off. It is the inverse of Review:
+free by default, with two brakes only — the secret / API-key brake (active in every
+mode) and the catastrophic-command brake (`rm -rf /` or `~`, `mkfs`, `dd of=/dev/…`).
+`git reset --hard`, force-push, and `git clean -f` are allowed because they are
+recoverable. Use it on a repository you own, where compatibility ceremony is theater.
 
 ## Deviations from the build spec
 

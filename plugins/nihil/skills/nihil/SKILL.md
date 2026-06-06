@@ -43,17 +43,21 @@ When write-capable, continue until the repository reaches a coherent end state. 
 
 ## Change-magnitude ladder
 
+These rung names are the **canonical Nihil Decision vocabulary** — the single source of
+truth. Every workflow's `Nihil Decision:` line uses an exact subset of these tokens; do
+not invent synonyms (`rewrite`, `Ex Nihilo`, `Public API correction` are not tokens).
 Select the smallest coherent transformation that reaches the target state:
 
-1. **No-op** — preserve unchanged when the current design already justifies itself.
-2. **Suggestion** — review feedback only (no write access, risk too high, or external decision required).
-3. **Patch** — the smallest safe change for an isolated defect.
-4. **Targeted rework** — rewrite a limited area when local structure is the defect.
-5. **Simplification** — delete branches, wrappers, modes, flags, helpers, or abstractions whose complexity exceeds their value.
-6. **Restructure** — move ownership boundaries, split modules, collapse layers, reshape APIs.
-7. **Public API correction** — change exposed behavior or signatures when compatibility preserves a misleading contract.
-8. **Subsystem replacement** — replace an area when preserving it keeps systemic coupling or security risk alive.
-9. **Ex Nihilo** — rebuild from nothing only when no smaller intervention can reach a coherent, validated end state.
+1. **no-op** — preserve unchanged when the current design already justifies itself.
+2. **suggestion** — review feedback only (no write access, risk too high, or external decision required).
+3. **patch** — the smallest safe change for an isolated defect.
+4. **targeted rework** — rewrite a limited area when local structure is the defect.
+5. **simplification** — collapse branches, wrappers, modes, flags, or helpers whose complexity exceeds their value.
+6. **deletion** — remove dead code, duplication, or an unjustified abstraction outright, with evidence it is unused or superseded.
+7. **restructure** — move ownership boundaries, split modules, collapse layers, reshape internal APIs.
+8. **public API break** — change exposed behavior or signatures when compatibility preserves a misleading or worse contract.
+9. **subsystem replacement** — replace an area when preserving it keeps systemic coupling or security risk alive.
+10. **rebuild** (Ex Nihilo) — rebuild from nothing only when no smaller intervention can reach a coherent, validated end state.
 
 ## Compatibility rule
 

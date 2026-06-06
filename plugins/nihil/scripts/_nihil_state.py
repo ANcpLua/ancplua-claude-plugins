@@ -21,7 +21,7 @@ import re
 import sys
 import tempfile
 
-VALID_MODES = ("review", "implement", "release")
+VALID_MODES = ("review", "implement", "release", "raze")
 
 
 def state_dir():

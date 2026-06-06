@@ -76,7 +76,7 @@ ${restructure}
 Produce exactly:
 
 Nihil Decision:
-<no-op | suggestions | patch | simplification | restructure | rewrite | public API break | deletion | rebuild>
+<no-op | suggestion | patch | targeted rework | simplification | deletion | restructure | public API break | subsystem replacement | rebuild>
 
 Selected Gods:
 <which gods drove the decision and why>

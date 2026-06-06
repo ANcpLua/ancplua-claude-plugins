@@ -128,7 +128,7 @@ If integrity is INCOMPLETE, say so prominently at the top — a partial run must
 Produce the verdict in exactly this shape:
 
 Nihil Decision:
-<no-op | suggestions | patch | simplification | restructure | rewrite | public API break | deletion | rebuild>
+<no-op | suggestion | patch | targeted rework | simplification | deletion | restructure | public API break>
 
 Evidence:
 <the strongest concrete facts behind the decision>
