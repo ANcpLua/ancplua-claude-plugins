@@ -4,6 +4,35 @@ All notable changes to the Nihil plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this plugin uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-06-06
+
+Adds `/nihil:raze` — a fourth, write-capable mode for repositories you own — and a
+universal secret / API-key brake. Inverts the plugin's default posture from "block your
+own writes until you mode-juggle" to "free by default, with two brakes only". The other
+three modes are unchanged; raze is the new one-line default for your own framework.
+
+### Added
+
+- **`/nihil:raze` (Raze Mode)** — root-authority, write-capable transformation. Edits,
+  commits, pushes, tags, version bumps, publishing, public-API breaks, full rewrites,
+  and deletion are all pre-authorized; no per-action sign-off. (`skills/raze/SKILL.md`,
+  the `raze` banner in `nihil-mode.py`, enforcement in `nihil-pretooluse.py` /
+  `nihil-stop.py`, and `raze` added to `VALID_MODES` in `_nihil_state.py`.)
+- **Universal secret / API-key brake** in `nihil-pretooluse.py`, active in *every* mode
+  (raze included): denies printing, echoing, committing, or passing a credential inline
+  — `echo $TOKEN`, `cat .env`, `git add .env`, `--api-key <literal>`, and key literals
+  (`AKIA…`, `ghp_…`, `-----BEGIN … PRIVATE KEY-----`). The plugin previously guarded no
+  secrets at all.
+
+### Changed
+
+- **Canonical decision vocabulary.** The change-magnitude ladder in
+  `skills/nihil/SKILL.md` is now the single source of truth for the `Nihil Decision:`
+  tokens; `nihil.js` and `maat.js` were reduced to exact documented subsets (drift
+  fixed: `rewrite` → `targeted rework`, `suggestions` → `suggestion`; `Public API
+  correction` and `Ex Nihilo` retired as synonyms of `public API break` / `rebuild`).
+  `shiva.js`'s tokens were already a valid subset.
+
 ## [0.2.0] - 2026-06-06
 
 Merges the original "pantheon" design (`feat/nihil-pantheon`) into the shipped
@@ -58,5 +87,6 @@ as the *plugin*, B won spec-fidelity decisively as the *original concept*.)
   and session-id sanitization; all hooks fail open if it is unavailable.
 - Required Nihil finding format and per-mode output templates baked into the skills.
 
+[0.3.0]: https://github.com/ANcpLua/ancplua-claude-plugins/releases/tag/nihil--v0.3.0
 [0.2.0]: https://github.com/ANcpLua/ancplua-claude-plugins/releases/tag/nihil--v0.2.0
 [0.1.0]: https://github.com/ANcpLua/ancplua-claude-plugins/releases/tag/nihil--v0.1.0

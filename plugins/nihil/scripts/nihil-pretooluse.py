@@ -53,6 +53,38 @@ DESTRUCTIVE = re.compile(
     r"|\bgit\s+clean\s+-[a-z]*f|\bmkfs\b|\bdd\s+if=|>\s*/dev/sd"
 )
 
+# Secret / API-key exfiltration — the one guardrail that fires in EVERY mode,
+# raze included. Catches credential literals, printing secret files, env-var
+# echoes, committing key files, and inline --api-key/--password values. Heuristic,
+# case-sensitive on the literal token prefixes; never a substitute for a scanner.
+SECRET = re.compile(
+    r"AKIA[0-9A-Z]{16}"
+    r"|gh[posru]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}"
+    r"|oy2[a-z0-9]{43}"
+    r"|xox[abprs]-[A-Za-z0-9-]{10,}"
+    r"|sk-ant-[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|sk_live_[A-Za-z0-9]{16,}"
+    r"|AIza[0-9A-Za-z_-]{35}"
+    r"|-----BEGIN [A-Z ]*PRIVATE KEY-----"
+    r"|\b(?:cat|bat|less|more|head|tail|xxd|strings|nl)\b[^\n|;&]*?"
+    r"(?:\.env(?:\.[\w.]+)?|\.pem|\.p12|\.pfx|id_rsa|id_ed25519|credentials|\.npmrc|\.pypirc)\b"
+    r"|\b(?:echo|printenv|printf|env)\b[^\n]*\$\{?[A-Za-z_]*"
+    r"(?:SECRET|TOKEN|API_?KEY|PASSWORD|PASSWD|PRIVATE_KEY|ACCESS_KEY)"
+    r"|\bgit\s+(?:add|commit)\b[^\n]*(?:\.env(?:\.[\w.]+)?|\.pem|id_rsa|id_ed25519|credentials|\.pfx|\.p12)\b"
+    r"|--api[-_]?key[=\s]+\S|--password[=\s]+\S"
+)
+
+# Catastrophic, unrecoverable operations — raze's ONLY command brake besides
+# SECRET. Deliberately narrow: only disk-wipers that no reflog or remote can undo.
+# git reset/force-push/clean are NOT here — they are recoverable, and raze allows them.
+CATASTROPHIC = re.compile(
+    r"\brm\s+-[a-zA-Z]*[rR][a-zA-Z]*\s+(?:--?[a-zA-Z][\w-]*\s+)*"
+    r"(?:/|~|\$\{?HOME\}?)(?:/\*?|\*)?(?=\s|$|;|&|\|)"
+    r"|\bmkfs(?:\.\w+)?\b"
+    r"|\bdd\b[^\n]*\bof=/dev/[a-z]"
+    r"|>\s*/dev/sd[a-z]"
+    r"|:\(\)\s*\{\s*:\s*\|\s*:\s*&\s*\}\s*;\s*:"
+)
+
 
 def deny(reason):
     print(json.dumps({
@@ -90,6 +122,12 @@ def main():
     command = bash_command(data.get("tool_input"))
     snippet = command.strip()[:200]
 
+    # Universal guardrail: never leak a secret, in ANY Nihil mode (raze included).
+    if tool == "Bash" and SECRET.search(command):
+        deny("Nihil blocks a possible secret / API-key exfiltration: `" + snippet + "`. "
+             "Do not print, echo, commit, or pass credentials inline — read them from the "
+             "environment or a secret store, and for NuGet use trusted publishing (OIDC).")
+
     if mode == "review":
         if tool in WRITE_TOOLS:
             deny("Nihil Review Mode is read-only — file writes/edits are blocked. "
@@ -120,6 +158,18 @@ def main():
         if tool == "Bash" and DESTRUCTIVE.search(command):
             deny("Nihil Release Mode blocks an obviously destructive command: `" + snippet + "`. "
                  "Release Mode permits release-like commands but not force-push / hard reset / rm -rf.")
+        sys.exit(0)
+
+    if mode == "raze":
+        # Root authority on a repo you own: writes, commits, pushes, tags, publishes,
+        # version bumps, public-API breaks, full rewrites, even git reset/force-push
+        # all flow. The secret brake above already applied. Only the unrecoverable is left.
+        if tool in WRITE_TOOLS:
+            sys.exit(0)
+        if tool == "Bash" and CATASTROPHIC.search(command):
+            deny("Nihil Raze Mode blocks one catastrophic, unrecoverable command: `" + snippet + "`. "
+                 "Raze frees everything else — writes, commit, push, tag, publish, reset, force-push — "
+                 "but rm -rf / or ~, mkfs, and dd of=/dev/... cannot be undone by any reflog or remote.")
         sys.exit(0)
 
     sys.exit(0)

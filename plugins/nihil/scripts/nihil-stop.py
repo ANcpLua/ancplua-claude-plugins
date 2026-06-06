@@ -137,6 +137,14 @@ def main():
             block("Nihil Release output is missing a release readiness / blockers section. Add "
                   "'## Release Readiness', '## Publishing Decision', and '## Blockers' before stopping.",
                   session_id)
+    elif mode == "raze":
+        # Raze frees the work but not the honesty: a transformation must report what it
+        # changed and that it was verified. This is the only discipline raze keeps.
+        if "verification" not in low:
+            block("Nihil Raze output is missing a Verification section. Raze runs write-capable and "
+                  "end-to-end, so before stopping add a '## Verification' section: what you changed and "
+                  "the checks you actually ran (build / tests / running the artifact) with their results.",
+                  session_id)
 
     sys.exit(0)
 

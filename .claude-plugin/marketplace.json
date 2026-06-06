@@ -70,8 +70,8 @@
     },
     {
       "name": "nihil",
-      "description": "Evidence-gated maintainability discipline in two layers. (1) A native plugin: three modes (/nihil:review, /nihil:implement, /nihil:release) with confidence scoring, scope control, and release gating, backed by five read-only review agents and PreToolUse/Stop hooks that steer out-of-mode mutations and malformed output — a discipline aid, not a security boundary (heuristic command matching, fail-open). (2) A summonable pantheon of five first-principles dynamic workflows (/nihil orchestrator + /nihil-maat review, /nihil-odin research, /nihil-shiva deletion, /nihil-athena restructure), installed into .claude/workflows/ via /nihil:summon.",
-      "version": "0.2.0",
+      "description": "Evidence-gated maintainability discipline in two layers. (1) A native plugin: four modes — /nihil:raze (root-authority, write-capable transformation of a repo you own; only secret-leak and catastrophic, unrecoverable commands are blocked) plus /nihil:review, /nihil:implement, /nihil:release with confidence scoring, scope control, and release gating — backed by five read-only review agents and PreToolUse/Stop hooks (a discipline aid, not a security boundary: heuristic command matching, fail-open; a secret / API-key brake is active in every mode). (2) A summonable pantheon of five first-principles dynamic workflows (/nihil orchestrator + /nihil-maat review, /nihil-odin research, /nihil-shiva deletion, /nihil-athena restructure), installed into .claude/workflows/ via /nihil:summon.",
+      "version": "0.3.0",
       "source": "./plugins/nihil"
     },
     {
