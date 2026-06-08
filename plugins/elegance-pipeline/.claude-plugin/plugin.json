@@ -19,14 +19,5 @@
     "judge",
     "simplify",
     "qyl"
-  ],
-  "commands": "./commands",
-  "agents": [
-    "./agents/elegance-scout.md",
-    "./agents/elegance-judge.md",
-    "./agents/elegance-planner.md",
-    "./agents/elegance-verifier.md",
-    "./agents/elegance-implementer.md",
-    "./agents/code-simplifier.md"
   ]
 }

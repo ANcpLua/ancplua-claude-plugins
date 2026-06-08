@@ -97,7 +97,7 @@ LANE [N] GATE:
 ### Mini-Checkpoint After Each Lane
 
 ```bash
-plugins/exodia/scripts/smart/checkpoint.sh save 7 "lane-[n]-complete" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/checkpoint.sh save 7 "lane-[n]-complete" \
   "items_done=[n]/[total]" \
   "tests_passing=[n]" \
   "build=[PASS|FAIL]" \
@@ -115,21 +115,21 @@ If context fills during execution (common for XL objectives):
 cp .eight-gates/checkpoints.jsonl .eight-gates/artifacts/handoff-checkpoints.jsonl
 
 # Record handoff decision
-plugins/exodia/scripts/smart/session-state.sh decision "handoff-created" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh decision "handoff-created" \
   "Context limit reached, checkpoint log preserved for resume"
 
 # Extend session TTL if still active
-plugins/exodia/scripts/smart/session-state.sh extend 3600
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh extend 3600
 ```
 
 ### Resume in New Session
 
 ```bash
 # 1. Verify session
-plugins/exodia/scripts/smart/session-state.sh validate
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh validate
 
 # 2. List completed lanes
-plugins/exodia/scripts/smart/checkpoint.sh list | grep "lane-"
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/checkpoint.sh list | grep "lane-"
 
 # 3. Resume from next incomplete lane
 # Load work queue artifact, skip completed items
@@ -162,7 +162,7 @@ plugins/exodia/scripts/smart/checkpoint.sh list | grep "lane-"
 ## Exit Condition
 
 ```bash
-plugins/exodia/scripts/smart/checkpoint.sh save 7 "execute-complete" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/checkpoint.sh save 7 "execute-complete" \
   "items_done=[n]/[total]" \
   "items_blocked=[n]" \
   "tests_passing=[n]" \

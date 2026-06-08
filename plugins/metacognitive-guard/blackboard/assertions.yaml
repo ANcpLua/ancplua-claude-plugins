@@ -113,6 +113,12 @@ banned_apis:
     authority: authoritative
     reason: "System.Text.Json is faster and has source generator support"
 
+  task_delay:
+    pattern: "Task\\.Delay\\(\\s*\\d"
+    replacement: "await Task.Delay(..., TimeProvider.System) / timeProvider.Delay"
+    authority: authoritative
+    reason: "Pass a TimeProvider so delays are virtualizable and testable (.NET 8+)"
+
 # =============================================================================
 # To add project-specific assertions, create ~/.claude/assertions.yaml
 # or <project>/.claude/blackboard/assertions.yaml

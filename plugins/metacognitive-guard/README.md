@@ -1,18 +1,18 @@
 # metacognitive-guard
 
 A cognitive amplification stack for Claude Code that prevents hallucinations,
-improves reasoning quality, blocks shortcut commits, verifies CI, and escalates
-complex problems to specialized deep-thinking agents.
+improves reasoning quality, blocks shortcut commits, keeps the lead agent anchored
+to its objective, and escalates complex problems to specialized deep-thinking agents.
 
-Absorbs the former `completion-integrity` and `autonomous-ci` plugins.
+Absorbs the former `completion-integrity` plugin.
 
 ## The Problem
 
 Claude has inherent limitations that cause systematic errors:
 
 1. **Stale training data** - Version info, release dates, and API status are often wrong
-2. **Poor self-assessment** - Claude does not reliably know when it is struggling
-3. **False confidence** - Claims "it works" without verification
+2. **Silent objective drift** - The lead agent pivots to a different spec without re-anchoring
+3. **False confidence** - Claims "it works" or commits with suppressions/skipped tests
 4. **Surface-level analysis** - Complex problems get incomplete treatment
 
 ## The Solution
@@ -20,14 +20,14 @@ Claude has inherent limitations that cause systematic errors:
 A layered defense system that operates at multiple cognitive levels:
 
 ```text
-Layer 0: HOOKS - Block wrong OUTPUT
+Layer 0: HOOKS - Block or steer wrong OUTPUT
          |
-         +-- truth-beacon.sh (SessionStart) - Inject facts before generation
-         +-- epistemic-guard.sh (PreToolUse Write/Edit) - Block incorrect writes
-         +-- commit-integrity-hook.sh (PreToolUse Bash) - Block shortcut commits
-         +-- struggle-detector.sh (Stop) - Detect uncertainty patterns
+         +-- epistemic-guard (PreToolUse Write/Edit) - Block version/banned-API writes
+         +-- commit-integrity-hook (PreToolUse Bash git commit) - Block shortcut commits
+         +-- objective-watch (PostToolUse + UserPromptSubmit) - Warn on objective drift
+         +-- ralph-loop (PostToolUse Write/Edit) - Inject the right engineering principle
          |
-Layers 1-5: SKILLS - Prevent wrong REASONING
+Commands: SKILLS - Prevent wrong REASONING
          |
          +-- epistemic-checkpoint - Verify before believing
          +-- competitive-review - Dual-agent analysis
@@ -65,50 +65,62 @@ Layers 1-5: SKILLS - Prevent wrong REASONING
 
 | Hook | Event | Purpose |
 |------|-------|---------|
-| `truth-beacon.sh` | SessionStart | Injects authoritative facts (runtime versions, banned APIs) before generation |
-| `epistemic-guard.sh` | PreToolUse (Write/Edit) | Blocks writing incorrect version claims or banned APIs |
-| `commit-integrity-hook.sh` | PreToolUse (Bash) | Blocks `git commit` with warning suppressions, commented tests, deleted assertions |
-| `struggle-detector.sh` | Stop | Detects hedging/uncertainty patterns; suggests deep-think-partner |
+| `epistemic-guard` | PreToolUse (Write/Edit) | Blocks writes that hallucinate the .NET 10 version or use a banned API |
+| `commit-integrity-hook` | PreToolUse (Bash `git commit`) | Blocks `git commit` with warning suppressions, commented/skipped tests, bulk TODOs, net assertion loss, or catch-all handlers |
+| `objective-watch` | PostToolUse + UserPromptSubmit | Tracks one anchor spec and warns when the lead agent silently pivots to a different one |
+| `ralph-loop` | PostToolUse (Write/Edit) | Stays silent on clean code; injects one engineering principle when an antipattern is written |
 
-### Utility Scripts
-
-| Script | Purpose |
-|--------|---------|
-| `integrity-check.sh` | Validates staged git changes for 6 shortcut patterns |
-| `verify-local.sh` | Auto-detects project type (dotnet/node/python/go) and runs build+test |
-| `wait-for-ci.sh` | Monitors GitHub Actions workflows until all pass or any fails |
+`commit-integrity-hook` delegates the staged-diff scan to `hooks/scripts/integrity-check.sh`.
 
 ## How It Works
 
-### Struggle Detection
-
-The `struggle-detector.sh` hook analyzes responses for uncertainty signals:
-
-| Signal | Pattern | Score |
-|--------|---------|-------|
-| Hedging | "I think", "probably", "might be" | +2 per instance |
-| Deflecting | Many questions, short response | +2 per question |
-| Verbose | >400 words, <2 code blocks | +5 base + scaling |
-| Contradiction | "but actually", "wait,", "I was wrong" | +15 |
-| Apologetic | "sorry", "my mistake", "let me try again" | +8 per apology |
-| Weaseling | "generally", "it depends", "typically" | +3 per instance |
-| Restarting | "let me start over", "different approach" | +20 |
-| No recommendation | Long response without clear advice | +8 |
-| Tool use | "let me read/search/check..." | -5 (negative) |
-
-**Trigger conditions:**
-
-- Single response score > 25
-- OR 2+ consecutive responses with score > 10
-
 ### Epistemic Guard
 
-The `epistemic-guard.sh` hook blocks writes containing:
+The `epistemic-guard` hook (PreToolUse Write/Edit) scans the content being written
+and denies the write with an authoritative correction when it matches a hardcoded
+danger pattern. It enforces a fixed subset of the catalog:
 
-- Incorrect version claims (e.g., claiming LTS releases are still in beta)
-- Banned APIs (legacy date/time APIs, legacy locking patterns, legacy JSON libraries)
+- **.NET version hallucination** - content that misstates the current .NET as
+  preview / unreleased / non-LTS, or targets the previous TFM
+- **`DateTime.Now`/`UtcNow` / `DateTimeOffset.Now`/`UtcNow`** - use `TimeProvider.System.GetUtcNow()`
+- **`object _lock = ...`** - use `Lock _lock = new()` (.NET 9+ `Lock` type)
+- **`Newtonsoft.Json` / `JsonConvert.`** - use `System.Text.Json`
 
-See `blackboard/assertions.yaml` for the complete list of blocked patterns and their modern replacements.
+The banned-API checks fire on code files only; documentation files (`.md`, `.yaml`,
+`.yml`, `.json`, `.txt`) and `assertions.yaml` itself are skipped so catalogs and
+examples can reference the patterns freely. The version check still applies to all
+files. An active Hades `delete-permit.json` bypasses every check.
+
+`blackboard/assertions.yaml` is the human-maintained catalog and seed for these
+rules, not a runtime config the hook parses — the four patterns above are hardcoded
+in `bin/epistemic-guard`. Keep the two in sync when you add a rule.
+
+### Objective Watch
+
+The `objective-watch` hook (PostToolUse + UserPromptSubmit) tracks a single anchor
+document — a spec, ADR, design doc, plan, RFC, or proposal under `docs/specs/`,
+`docs/decisions/`, `docs/designs/`, `.feature-dev/`, `.eight-gates/artifacts/`, or
+`.smart/artifacts/`, or a `spec-*/adr-*/design-*/plan-*/rfc-*/proposal-*.md`
+filename. Once an anchor is set, it warns (as injected context, never a block) when
+a later prompt or tool call silently pivots to a *different* spec, kicks off an
+orchestration flow, or ships, without explicitly re-anchoring. Warnings are
+cooldown-limited per anchor+category, and the hook ignores subagents.
+
+### Ralph Loop
+
+The `ralph-loop` hook (PostToolUse Write/Edit) is silent when code is clean and
+injects exactly one engineering principle when the content just written matches an
+antipattern:
+
+| Signal | Pattern | Principle |
+|--------|---------|-----------|
+| Band-aid marker | `TODO`/`FIXME`/`HACK`/`WORKAROUND`/`XXX`/`KLUDGE` | Fix root causes, not symptoms |
+| Warning suppression | `#pragma warning disable`, `eslint-disable`, `@ts-ignore`, `# noqa`, `# type: ignore`, ... | Understand why before suppressing |
+| Catch-all handler | `catch (Exception ...)`, `except:`, `rescue` | Fail loud and immediately |
+| Massive single write | content over 150 lines | Less code = better code |
+| Empty catch block | `catch (...) {}`, `except: pass` | Don't swallow errors silently |
+
+Like the other hooks, it skips documentation/config files and ignores subagents.
 
 ### Competitive Review
 
@@ -143,17 +155,23 @@ Returns structured output compatible with TodoWrite for immediate execution.
 
 ## Usage Examples
 
-### Automatic Struggle Detection
+### Automatic Objective-Drift Warning
 
 ```text
-User: "Should I use event sourcing or CQRS for the span ingestion pipeline?"
+User: "Implement docs/specs/spec-span-ingestion.md"
 
-Claude: [Hedging response with uncertainty...]
+[objective-watch sets the anchor]
 
-[struggle-detector.sh triggers]
+... later, mid-task ...
 
-Claude: "I'm finding this complex. Want me to spawn a deep-thinker
-for a more thorough analysis?"
+Claude: [about to edit docs/specs/spec-retention-policy.md]
+
+[objective-watch injects context]
+
+Note: Primary anchor is still `docs/specs/spec-span-ingestion.md`.
+Do not branch to `docs/specs/spec-retention-policy.md` for a different
+spec yet. Finish it, explicitly re-anchor, or tell the user you are
+abandoning it.
 ```
 
 ### Competitive Review (Manual)
@@ -200,24 +218,29 @@ Proceeding with verified baseline..."
 
 ### Ground Truth Assertions
 
-The plugin includes default assertions in `blackboard/assertions.yaml`. This file defines:
+`blackboard/assertions.yaml` is a human-maintained catalog of ground truth that
+seeds the rules and is read by the model through the `epistemic-checkpoint` and
+`competitive-review` skills. It documents:
 
 - **Runtime versions** - Current .NET and C# versions with release dates
 - **Banned APIs** - Legacy patterns that should be replaced with modern alternatives
 - **Authority levels** - Whether facts are authoritative, verified, or tentative
 
-Override with user-level assertions at `~/.claude/assertions.yaml`.
+It is a catalog, not a runtime config: the `epistemic-guard` hook hardcodes its own
+subset of these patterns (see [Epistemic Guard](#epistemic-guard)) and does not
+parse this file or any `~/.claude/assertions.yaml`. To change what the hook blocks,
+edit `bin/epistemic-guard` and update this catalog to match.
 
 ### Tunable Parameters
 
-Adjust in `hooks/scripts/struggle-detector.sh`:
+These thresholds are edited directly in the hook source:
 
-| Parameter | Default | Purpose |
-|-----------|---------|---------|
-| Score threshold | 25 | Single-response trigger |
-| Consecutive threshold | 2 | Multi-response trigger |
-| Hedging weight | 2x count | Uncertainty penalty |
-| Verbose threshold | 400 words | Rambling detection |
+| Parameter | Default | Where | Purpose |
+|-----------|---------|-------|---------|
+| Massive-write threshold | 150 lines | `bin/ralph-loop` | Single-write size that triggers the "less code" principle |
+| Warning cooldown | 60 seconds | `bin/objective-watch` | Minimum gap between repeat drift warnings per anchor+category |
+| Bulk-TODO threshold | >2 added | `hooks/scripts/integrity-check.sh` | New TODO/FIXME/HACK count that warns on commit |
+| Net assertion-loss threshold | >20 net | `hooks/scripts/integrity-check.sh` | Net assertions removed that blocks a commit |
 
 ## Architecture
 
@@ -229,8 +252,13 @@ metacognitive-guard/
 |   |-- arch-reviewer.md         # Architecture analysis agent
 |   |-- deep-think-partner.md    # Deep reasoning agent (Opus)
 |   `-- impl-reviewer.md         # Implementation analysis agent
+|-- bin/
+|   |-- epistemic-guard          # PreToolUse Write/Edit version/banned-API blocker
+|   |-- commit-integrity-hook    # PreToolUse Bash git-commit wrapper
+|   |-- objective-watch          # PostToolUse + UserPromptSubmit drift watchdog
+|   `-- ralph-loop               # PostToolUse Write/Edit principle injection
 |-- blackboard/
-|   `-- assertions.yaml          # Ground truth facts
+|   `-- assertions.yaml          # Ground truth catalog (model-read, hook-seeding)
 |-- commands/
 |   |-- competitive-review.md    # Dual-agent competition
 |   |-- epistemic-checkpoint.md  # Version/date verification
@@ -239,13 +267,7 @@ metacognitive-guard/
 |-- hooks/
 |   |-- hooks.json               # Hook configuration (4 hooks)
 |   `-- scripts/
-|       |-- commit-integrity-hook.sh  # PreToolUse Bash wrapper
-|       |-- epistemic-guard.sh        # PreToolUse Write/Edit blocker
-|       |-- integrity-check.sh        # Commit integrity engine (6 rules)
-|       |-- struggle-detector.sh      # Stop response analyzer
-|       |-- truth-beacon.sh           # SessionStart fact injection
-|       |-- verify-local.sh           # Local build+test runner
-|       `-- wait-for-ci.sh            # GitHub Actions monitor
+|       `-- integrity-check.sh   # Commit integrity engine (called by commit-integrity-hook)
 `-- README.md
 ```
 
@@ -270,9 +292,10 @@ metacognitive-guard/
 ## Why This Works
 
 1. **External detection beats self-assessment** - Claude's metacognition is imperfect.
-   External pattern matching catches struggle Claude does not notice.
+   `objective-watch` catches silent objective drift that Claude does not notice.
 
-2. **Proactive injection beats reactive correction** - The truth beacon establishes facts BEFORE wrong beliefs form.
+2. **Blocking at write time beats reactive correction** - `epistemic-guard` denies a
+   bad version claim or banned API at the Write/Edit boundary, before it lands on disk.
 
 3. **Competition increases thoroughness** - Agents try harder when told they are competing against each other.
 
@@ -282,8 +305,10 @@ metacognitive-guard/
 
 ## Limitations
 
-- **False positives** - Some hedging is appropriate epistemic humility
-- **Threshold tuning** - The 25-point threshold may need calibration for different question types
+- **False positives** - `ralph-loop` may flag a deliberate `TODO` or a large but
+  legitimate single write; the principle is advisory context, not a block
+- **Hardcoded subset** - `epistemic-guard` enforces a fixed pattern set; add a rule by
+  editing `bin/epistemic-guard` and keeping `assertions.yaml` in sync
 - **Scope** - Default assertions are .NET focused; customize for other stacks
 
 ## Contributing

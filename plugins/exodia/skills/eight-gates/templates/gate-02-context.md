@@ -31,17 +31,17 @@ Use Read/Grep/Glob to extract information, then cache via artifact commands:
 # Cache conventions relevant to this objective
 # (Lead: use Read tool on CLAUDE.md, .claude/rules/, relevant specs —
 #  extract sections matching the objective type, then cache the result)
-plugins/exodia/scripts/smart/session-state.sh artifact add "conventions" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh artifact add "conventions" \
   "CONTENT_FROM_READ_TOOL_HERE"
 
 # Cache dependency/API surface info
 # (Lead: use Grep to find imports, exports, public interfaces in scope files)
-plugins/exodia/scripts/smart/session-state.sh artifact add "api-surface" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh artifact add "api-surface" \
   "CONTENT_FROM_GREP_RESULTS_HERE"
 
 # Cache file relationships
 # (Lead: use Glob to map directory structure, Grep for import/require statements)
-plugins/exodia/scripts/smart/session-state.sh artifact add "dependencies" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh artifact add "dependencies" \
   "CONTENT_FROM_ANALYSIS_HERE"
 ```
 
@@ -54,7 +54,7 @@ shell functions. Subagents at later gates receive these artifacts via their spaw
 |-----------|--------|---------|
 | Allowed tools | Skill frontmatter, CLAUDE.md | "Task, Bash, TodoWrite" |
 | Forbidden patterns | .claude/rules/, CLAUDE.md | "No DateTime.Now, no Newtonsoft" |
-| Quality bars | CLAUDE.md workflow section | "weave-validate.sh must pass" |
+| Quality bars | CLAUDE.md workflow section | "build + test + lint must pass" |
 | Output formats | Skill descriptions | "GATE template, FINAL REPORT template" |
 
 ### 4. Verify Assumptions (0-2 agents if needed)
@@ -83,10 +83,10 @@ If the objective involves versions, dates, APIs, or "current" state — verify b
 ### 5. Log Initial Decisions
 
 ```bash
-plugins/exodia/scripts/smart/session-state.sh decision "context-approach" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh decision "context-approach" \
   "Loaded [n] context files, cached [n] artifacts, verified [n] assumptions"
 
-plugins/exodia/scripts/smart/session-state.sh decision "guardrails-identified" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh decision "guardrails-identified" \
   "Tools: [list] | Forbidden: [list] | Quality bar: [description]"
 ```
 
@@ -110,7 +110,7 @@ plugins/exodia/scripts/smart/session-state.sh decision "guardrails-identified" \
 ## Exit Condition
 
 ```bash
-plugins/exodia/scripts/smart/checkpoint.sh save 2 "context-loaded" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/checkpoint.sh save 2 "context-loaded" \
   "artifacts=$(find .eight-gates/artifacts -maxdepth 1 -type f | wc -l)" \
   "assumptions_verified=[n]" \
   "assumptions_failed=[n]"

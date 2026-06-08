@@ -46,9 +46,3 @@ Subagent names should be treated as fully qualified runtime IDs:
 `elegance-pipeline:elegance-scout`, `elegance-pipeline:elegance-judge`,
 `elegance-pipeline:elegance-planner`, `elegance-pipeline:elegance-verifier`,
 and `elegance-pipeline:elegance-implementer`.
-
-## Origin
-
-Converted from the Codex `elegance-pipeline-bundle.zip`. All `.codex/` references rewritten
-to Claude Code native plugin structure; every Codex model tier maps to Claude Opus 4.8.
-Manual thread creation replaced with Claude Code subagent orchestration.

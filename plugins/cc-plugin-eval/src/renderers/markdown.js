@@ -267,6 +267,10 @@ function ensureImprovementBriefPayload(payload) {
 
 function renderEvaluation(payload) {
   const result = ensureEvaluationPayload(payload);
+  // Validate mode omits budgets by design (analyze.js validatePath leaves budgets={}),
+  // so render an "n/a" line and skip the budget detail block instead of dereferencing
+  // missing buckets. Mirrors the optional chaining the HTML renderer uses (html.js).
+  const isValidate = result.mode === "validate";
 
   return [
     `# cc-plugin-eval Report: ${result.target.name}`,
@@ -276,7 +280,9 @@ function renderEvaluation(payload) {
       `- Grade: ${result.summary.grade}`,
       `- Risk: ${result.summary.riskLevel}`,
       `- Checks: ${result.summary.checkCounts.fail} fail, ${result.summary.checkCounts.warn} warn, ${result.summary.checkCounts.info} info`,
-      `- Active budget: ${result.budgets.trigger_cost_tokens.value + result.budgets.invoke_cost_tokens.value} tokens (${result.budgets.invoke_cost_tokens.band})`,
+      isValidate
+        ? `- Active budget: n/a (validate mode)`
+        : `- Active budget: ${result.budgets.trigger_cost_tokens.value + result.budgets.invoke_cost_tokens.value} tokens (${result.budgets.invoke_cost_tokens.band})`,
       `- Observed usage: ${result.observedUsage?.sampleCount ? `${result.observedUsage.sampleCount} sample${result.observedUsage.sampleCount === 1 ? "" : "s"}` : "not supplied"}`,
     ]),
     "",
@@ -303,10 +309,12 @@ function renderEvaluation(payload) {
             : []),
         ].join("\n"),
       ),
-      detailsBlock(
-        "Budgets and observed usage",
-        [renderBudgets(result.budgets), "", renderObservedUsage(result.observedUsage)].join("\n"),
-      ),
+      isValidate
+        ? ""
+        : detailsBlock(
+            "Budgets and observed usage",
+            [renderBudgets(result.budgets), "", renderObservedUsage(result.observedUsage)].join("\n"),
+          ),
       detailsBlock("Measurement plan", renderMeasurementPlan(result.measurementPlan)),
       detailsBlock("Use From Claude Code Chat", renderWorkflowGuide(result.workflowGuide)),
       detailsBlock("Checks", renderChecks(result.checks)),

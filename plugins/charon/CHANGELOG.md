@@ -10,10 +10,10 @@ Initial release — ferry a GitHub PR to merge without ever waiting forever.
 
 ### Added
 
-- **`/charon [<pr> | .]`** — ferry one PR to merge; default target is the current branch's PR.
-- **`/charon:fleet [<pr> …]`** — ferry many PRs at once as a council-style agent team (a
-  `ferryman` lead + one `lookout` per PR over a SendMessage bus, with the lead as fallback).
-- **`/charon:cancel`** — stop the active ferry and clear state; the PR is untouched.
+- **`/charon:charon`** — one arg-dispatched command (a single entry point, like `derot:derot`): no
+  args / `.` ferries the current branch's PR; `<pr>` ferries that PR; two or more PRs spin up a
+  council-style agent team (a `ferryman` lead + one `lookout` per PR over a SendMessage bus, lead as
+  fallback); `cancel` stops the ferry and clears state.
 - **`charon` skill** — the ferry brain: a snapshot-not-block state machine (GROUND → CLASSIFY →
   DISPATCH → STATUS) with handlers for `ci-running`, `ci-failed`, `behind`, `conflict`,
   `review-changes`, `blocked-on-human`, `ready`, and the terminal states.

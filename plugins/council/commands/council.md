@@ -6,6 +6,7 @@ description: >-
   SendMessage. An Opus janitor flags bloat. Captain removes cuts and delivers.
 argument-hint: [task description]
 effort: high
+allowed-tools: Bash, Read, Task, SendMessage, TeamCreate, TeamDelete
 ---
 
 # /council [task]
@@ -51,12 +52,9 @@ live cross-pollination is between the synthesizer and clarity reconciling that r
    answerable research question.
 2. **Research = run the `/deep-research` dynamic workflow** on that question. It fans out web
    searches, cross-checks sources, and returns a single cited report (the workflow inside the
-   command). It is not a live teammate — wait for the report.
-   - **If `/deep-research` is unavailable** (dynamic workflows disabled in `/config`, no
-     `WebSearch` tool, or an older Claude Code): fall back to doing the research inline —
-     run several `WebSearch`/`WebFetch` passes on the question yourself, cross-check the
-     sources, and write the same cited report. The rest of the flow is unchanged; the
-     synthesizer just reasons over the report you produced instead of the workflow's.
+   command). It is not a live teammate — wait for the report. If `/deep-research` is genuinely
+   absent, fail loudly: "/deep-research workflow not available — install/enable it." Do not
+   research inline; `/deep-research` is the plugin's declared and only research path.
 3. **TeamCreate:** `team_name="council"`, description = "Council: [task summary]".
 4. **Spawn synthesizer:**
    - `Task: team_name="council", name="synthesizer", subagent_type="council:opus-synthesizer"`

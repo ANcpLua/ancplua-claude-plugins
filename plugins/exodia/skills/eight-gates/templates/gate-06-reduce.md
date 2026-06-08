@@ -38,7 +38,7 @@ The kill list is an artifact. It's evidence of discipline, not laziness.
 
 ```bash
 # Lead: inject the kill list JSON you built above as a string here
-plugins/exodia/scripts/smart/session-state.sh artifact add "kill-list" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh artifact add "kill-list" \
   "KILL_LIST_JSON_HERE"
 ```
 
@@ -100,10 +100,10 @@ VERIFICATION:
 
 ```bash
 # Lead: inject the finalized work queue JSON you built above as a string here
-plugins/exodia/scripts/smart/session-state.sh artifact add "work-queue" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh artifact add "work-queue" \
   "WORK_QUEUE_JSON_HERE"
 
-plugins/exodia/scripts/smart/session-state.sh decision "work-queue-finalized" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh decision "work-queue-finalized" \
   "[n] items to implement, [k] killed, [l] lanes"
 ```
 
@@ -145,7 +145,7 @@ For complex objectives (L/XL) with many findings, spawn a merge agent:
 ## Exit Condition
 
 ```bash
-plugins/exodia/scripts/smart/checkpoint.sh save 6 "reduce-complete" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/checkpoint.sh save 6 "reduce-complete" \
   "work_items=[n]" \
   "killed=[n]" \
   "lanes=[n]" \

@@ -26,9 +26,6 @@ dotnet test 2>&1 || npm test 2>&1 || make test 2>&1
 
 # Lint
 dotnet format --verify-no-changes 2>&1 || npm run lint 2>&1 || make lint 2>&1
-
-# Repo-specific validation (non-fatal if absent)
-if [ -f ./tooling/scripts/weave-validate.sh ]; then ./tooling/scripts/weave-validate.sh 2>&1; fi
 ```
 
 If ANY check fails: **do not proceed.** Fix the issue or ITERATE back to Gate 7.
@@ -39,17 +36,17 @@ If the objective involved cleanup (type=CLEANUP) or implementation created dead 
 
 ```bash
 # Create deletion permit (shared Hades infrastructure)
-plugins/exodia/scripts/smart/permit.sh create "$SESSION_ID" "$SCOPE" --ttl=1800
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/permit.sh create "$SESSION_ID" "$SCOPE" --ttl=1800
 
 # For EACH deletion: log to ledger BEFORE deleting
-plugins/exodia/scripts/smart/ledger.sh append \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/ledger.sh append \
   "$SESSION_ID" "delete" "$FILE_PATH" "$REASON" "gate-8-hakai"
 
 # After all deletions: re-run full verification suite
 # Build + test + lint must still pass
 
 # Revoke permit when done
-plugins/exodia/scripts/smart/permit.sh revoke
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/permit.sh revoke
 ```
 
 Every deletion must be:
@@ -114,15 +111,15 @@ For high-risk objectives or large scopes, spawn verification agents:
 
 ```bash
 # Expire session
-plugins/exodia/scripts/smart/session-state.sh expire
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh expire
 
 # Revoke any remaining permits
-plugins/exodia/scripts/smart/permit.sh revoke 2>/dev/null || true
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/permit.sh revoke 2>/dev/null || true
 
 # Show final summaries
-plugins/exodia/scripts/smart/checkpoint.sh list
-plugins/exodia/scripts/smart/ledger.sh count 2>/dev/null || true
-plugins/exodia/scripts/smart/session-state.sh decision list
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/checkpoint.sh list
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/ledger.sh count 2>/dev/null || true
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh decision list
 ```
 
 ## Output Schema
@@ -147,7 +144,7 @@ plugins/exodia/scripts/smart/session-state.sh decision list
 ## Exit Condition
 
 ```bash
-plugins/exodia/scripts/smart/checkpoint.sh save 8 "hakai-complete" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/checkpoint.sh save 8 "hakai-complete" \
   "build=PASS" \
   "tests=PASS" \
   "lint=PASS" \

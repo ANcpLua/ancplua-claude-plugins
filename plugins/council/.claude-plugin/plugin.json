@@ -16,6 +16,5 @@
     "deep-research",
     "teams",
     "orchestration"
-  ],
-  "commands": "./commands"
+  ]
 }

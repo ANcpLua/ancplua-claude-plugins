@@ -9,21 +9,15 @@ compatibility: >
 
 Based on Thariq Shihipar's [html-effectiveness](https://github.com/ThariqS/html-effectiveness) repo. He works on Claude Code at Anthropic; the philosophy: **agents producing HTML files instead of markdown walls** because HTML carries spatial information and interaction that markdown flattens.
 
-## Canonical source — exact local path
+## Canonical source — vendored in-tree
 
-The 20 canonical patterns live as standalone `.html` files at:
-
-```
-/Users/ancplua/RiderProjects/thariq-html-effectiveness/
-```
-
-Branch: `main`. If the directory is missing, run:
-
-```bash
-gh repo clone ThariqS/html-effectiveness /Users/ancplua/RiderProjects/thariq-html-effectiveness
-```
-
-Do **not** modify those files in place — they are the upstream reference. Read them to understand the pattern, then write a new file with the user's data into the user's project area (default: `~/<task>/<slug>.html` or alongside related artifacts, never into `~/RiderProjects/thariq-html-effectiveness/` itself).
+The 20 canonical patterns ship with this plugin as standalone `.html` files under
+`${CLAUDE_PLUGIN_ROOT}/skills/html-effectiveness/references/patterns/` (one per `pattern.file`,
+e.g. `01-exploration-code-approaches.html` … `20-editor-prompt-tuner.html`). No clone, no network,
+no external setup — the plugin carries its own source of truth and works on any machine. They are
+the upstream reference (Apache-2.0, see `references/patterns/UPSTREAM-LICENSE`): read them to learn
+the pattern, then write a **new** file with the user's data into the user's project area (default:
+`~/<task>/<slug>.html` or alongside related artifacts) — never edit the vendored references in place.
 
 ## Decision protocol
 
@@ -31,12 +25,12 @@ Do **not** modify those files in place — they are the upstream reference. Read
 
 2. **Match user intent.** Scan the user's request for semantic fit with any entry in `decision_tree`. Match on intent regardless of language, case, or typos. If multiple patterns fit, pick the one whose `key_pattern` field most closely describes the data structure the user has. If still ambiguous, prefer the more interactive pattern (editor > report > diagram).
 
-3. **Study the canonical source.** Open `/Users/ancplua/RiderProjects/thariq-html-effectiveness/<pattern.file>` and read it end-to-end. Don't paraphrase the pattern — internalize the HTML structure, CSS tokens, JS interaction code, and copy-button mechanism. Reuse the same eyebrow / h1 / sub / sticky-toolbar / column / card markup so the output feels like one family.
+3. **Study the canonical source.** Open `${CLAUDE_PLUGIN_ROOT}/skills/html-effectiveness/references/patterns/<pattern.file>` and read it end-to-end. Don't paraphrase the pattern — internalize the HTML structure, CSS tokens, JS interaction code, and copy-button mechanism. Reuse the same eyebrow / h1 / sub / sticky-toolbar / column / card markup so the output feels like one family.
 
-4. **Replicate with the user's real data.** Replace Thariq's example data (Acme tickets, Birchline comments, etc.) with the user's actual data. Keep the design tokens (`#FAF9F5` ivory bg, `#D97757` clay accent, Lora serif + system-ui + SF Mono), layout, and interaction code intact. If the user has no real data yet, ask once for a sample — do not invent fictional company data.
+4. **Replicate with the user's real data.** Replace Thariq's example data (Acme tickets, Birchline comments, etc.) with the user's actual data. Keep the design tokens (`#FAF9F5` ivory bg, `#D97757` clay accent, `ui-serif, Georgia, serif` + system-ui + SF Mono), layout, and interaction code intact. If the user has no real data yet, ask once for a sample — do not invent fictional company data.
 
 5. **Honor the principles** (see `references/patterns.json:principles`):
-   - Self-contained: inline `<style>` and `<script>`, no external dependencies beyond Google Fonts.
+   - Self-contained: inline `<style>` and `<script>`, no external dependencies — fully offline, no Google Fonts.
    - Anthropic Coral DNA: design tokens in `references/patterns.json:design_tokens`.
    - Vanilla JS only. No React, no jQuery.
    - Editors end with a `Copy as markdown` (or `Copy diff` / `Copy JSON` / `Copy gh commands`) button that exports the UI state back into something the user can paste into the next prompt.
@@ -57,7 +51,7 @@ Do **not** modify those files in place — they are the upstream reference. Read
 
 `patterns.json:palettes` defines two:
 
-- **`coral`** (default) — `#FAF9F5`/`#D97757`/`#141413`/`#788C5D` + Lora serif. Use for reports, plans, design docs, status updates, research explainers, editor UIs. Anything reading-room or knowledge-work.
+- **`coral`** (default) — `#FAF9F5`/`#D97757`/`#141413`/`#788C5D` + `ui-serif, Georgia, serif`. Use for reports, plans, design docs, status updates, research explainers, editor UIs. Anything reading-room or knowledge-work.
 - **`github_dark`** — `#0d1117`/`#58a6ff`/`#3fb950`/`#f85149`. Use for codebase audits, CI/CD dashboards, fan-out agent decks, terminal-adjacent tooling. Anything that lives next to a terminal session.
 
 Pattern `21-agent-spawn-deck` defaults to `github_dark`. All others default to `coral`. The user can override per request.

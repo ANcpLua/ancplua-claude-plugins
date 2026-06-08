@@ -71,7 +71,7 @@ REANCHOR_RE = re.compile(
     re.IGNORECASE,
 )
 ORCHESTRATION_RE = re.compile(
-    r"(/elegance-pipeline|pipeline\.py\s+init|/exodia:|/hades\b|/deepthink:partner|eight[\s-]?gates|session-state\.sh\s+create|checkpoint\.sh\s+init)",
+    r"(/elegance-pipeline|pipeline\.py\s+init|/exodia:|/hades\b|eight[\s-]?gates|session-state\.sh\s+create|checkpoint\.sh\s+init)",
     re.IGNORECASE,
 )
 SHIP_RE = re.compile(

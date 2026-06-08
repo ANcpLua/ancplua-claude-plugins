@@ -6,7 +6,7 @@ import { createArtifact, createCheck, createMetric } from "../core/schema.js";
 import { parseFrontmatter } from "../lib/frontmatter.js";
 import { pathExists, readText, relativePath, walkFiles } from "../lib/files.js";
 
-// Per /tmp/plugin-compare/refs/claude-skills-reference.md (May 2026 docs.claude.com)
+// Per the Claude Code skills reference (https://code.claude.com/docs/en/skills)
 // the full list of recognized SKILL.md frontmatter keys is:
 const ALLOWED_FRONTMATTER_KEYS = new Set([
   "name",

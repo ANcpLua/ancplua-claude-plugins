@@ -6,6 +6,8 @@ description: 'Convert cc-plugin-eval findings into a concrete rewrite brief, the
 
 Use this skill after `cc-plugin-eval` has already produced findings for a local skill.
 
+The runnable commands below invoke the shipped script through the plugin root, which works in any checkout: `node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" <command> <args>`. Inline mentions of `cc-plugin-eval <command>` are shorthand for that same invocation; the bare `cc-plugin-eval` alias only exists if you ran `npm link` in the plugin directory.
+
 ## What This Skill Does NOT Do
 
 This skill does not perform LLM-driven rewrites. That is the job of the `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`). cc-plugin-eval produces structured findings and a rewrite brief; skill-creator turns the brief into edits with subagent-driven evals and grading. Keep the two boundaries clear.
@@ -35,10 +37,10 @@ This skill does not perform LLM-driven rewrites. That is the job of the `skill-c
 ## Commands
 
 ```bash
-cc-plugin-eval analyze <skill-path> --brief-out ./skill-brief.json
-cc-plugin-eval improve <skill-path> --brief-out ./skill-brief.json --format markdown
-cc-plugin-eval analyze <skill-path> --output ./after.json
-cc-plugin-eval compare ./before.json ./after.json --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" analyze <skill-path> --brief-out ./skill-brief.json
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" improve <skill-path> --brief-out ./skill-brief.json --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" analyze <skill-path> --output ./after.json
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" compare ./before.json ./after.json --format markdown
 ```
 
 ## Reference

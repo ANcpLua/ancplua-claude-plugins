@@ -1,4 +1,4 @@
-# exodia v2.0.0
+# exodia
 
 Multi-agent workflow orchestration. 9 commands + 2 skills (eight-gates, hades).
 

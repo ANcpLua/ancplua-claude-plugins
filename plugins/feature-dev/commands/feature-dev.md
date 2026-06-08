@@ -83,8 +83,8 @@ gitignored runtime path that gets cleared when the workflow finishes.
 1. If no handoff or compaction is needed, skip this phase entirely.
 2. If a handoff is needed:
    - Derive a stable lowercase kebab-case `feature-slug`
-   - Run `plugins/feature-dev/scripts/runtime-state.sh prune`
-   - Resolve `RESEARCH_PATH="$(plugins/feature-dev/scripts/runtime-state.sh path "$FEATURE_SLUG" research)"`
+   - Run `"${CLAUDE_PLUGIN_ROOT}/scripts/runtime-state.sh" prune`
+   - Resolve `RESEARCH_PATH="$("${CLAUDE_PLUGIN_ROOT}/scripts/runtime-state.sh" path "$FEATURE_SLUG" research)"`
    - Write the structured note to `RESEARCH_PATH` with the Write tool
 
    ```markdown
@@ -159,7 +159,7 @@ file reads like unfinished product work. Persist the plan only as short-lived ru
 
 **Actions**:
 
-1. Resolve `PLAN_PATH="$(plugins/feature-dev/scripts/runtime-state.sh path "$FEATURE_SLUG" plan)"`.
+1. Resolve `PLAN_PATH="$("${CLAUDE_PLUGIN_ROOT}/scripts/runtime-state.sh" path "$FEATURE_SLUG" plan)"`.
 2. Write the structured plan to `PLAN_PATH` with the Write tool:
 
    ```markdown
@@ -233,7 +233,7 @@ file reads like unfinished product work. Persist the plan only as short-lived ru
 **Actions**:
 
 1. Mark all todos complete
-2. If `FEATURE_SLUG` was created, run `plugins/feature-dev/scripts/runtime-state.sh clear "$FEATURE_SLUG"`
+2. If `FEATURE_SLUG` was created, run `"${CLAUDE_PLUGIN_ROOT}/scripts/runtime-state.sh" clear "$FEATURE_SLUG"`
 3. Confirm no runtime note still looks like product work
 4. Summarize:
    - What was built

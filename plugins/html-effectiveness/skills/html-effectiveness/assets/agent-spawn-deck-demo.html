@@ -176,10 +176,10 @@
     <p>
       Each teammate writes a JSON verdict file under <code>~/repo-audit/scans/&lt;teammate&gt;.json</code> with shape
       <code>{repo, verdict, confidence, evidence[]}</code>. When the four files exist, the lead re-runs
-      the classifier with the new evidence and produces the final triage at
-      <a href="../assets/otel-semconv-demo.html">repo-fleet-cleanup-triage.html</a> (pattern
-      <code>18-editor-triage-board</code>). The drag-drop in that triage overrides any teammate's
-      verdict — they're advisory.
+      the classifier with the new evidence and writes the final triage as a fresh
+      <code>repo-fleet-cleanup-triage.html</code> (pattern
+      <code>18-editor-triage-board</code>) into the user's project area. The drag-drop in that triage
+      overrides any teammate's verdict — they're advisory.
     </p>
     <p>
       <b>Why fan-out instead of one big audit?</b> Each scan axis (empty / fork-status / stub-name /
@@ -345,7 +345,7 @@ function buildCli(t) {
   return [
     "# Teammate " + t.id,
     "claude -p --no-session-persistence --max-budget-usd 3 " +
-      "--add-dir /Users/ancplua/repo-audit " +
+      "--add-dir ~/repo-audit " +
       "'" + t.prompt.replace(/'/g, "'\\''") + "' \\",
     "  > ~/repo-audit/scans/" + t.id + ".log 2>&1 &"
   ].join("\n");

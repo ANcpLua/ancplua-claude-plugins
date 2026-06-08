@@ -205,8 +205,9 @@ The spec said to follow current docs where they differ and record it here.
    mechanisms are applied.
 4. Everything else in the spec verified as current: `UserPromptExpansion` and
    `$CLAUDE_PLUGIN_DATA` are real (the condensed plugin-dev skill omitted them; the
-   live plugin/hook reference confirms them), `disallowedTools` is a supported agent
-   field, and `displayName` is in the official manifest schema.
+   live plugin/hook reference confirms them) and `disallowedTools` is a supported
+   agent field. (`displayName` was dropped from the manifest in the antipattern
+   pass — it is not part of the documented manifest field set.)
 
 ## Known limitations
 

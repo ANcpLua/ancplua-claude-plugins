@@ -178,7 +178,7 @@ from the lead, approve it with SendMessage type `shutdown_response`.
 > **MANDATORY: emit a break-manifest entry for every BREAK task:**
 >
 > ```bash
-> plugins/exodia/scripts/smart/break-manifest.sh append \
+> ${CLAUDE_PLUGIN_ROOT}/scripts/smart/break-manifest.sh append \
 >   "$SMART_ID" \
 >   "<removed_symbol_id>" \
 >   "<replacement_symbol_id_or_null>" \
@@ -204,7 +204,7 @@ from the lead, approve it with SendMessage type `shutdown_response`.
 > Also log to the standard ledger:
 >
 > ```bash
-> plugins/exodia/scripts/smart/ledger.sh append \
+> ${CLAUDE_PLUGIN_ROOT}/scripts/smart/ledger.sh append \
 >   "$SMART_ID" "break-public-api" "<symbol_id>" \
 >   "<one-line reason>" "smart-guillotine-elim" "$(git rev-parse HEAD)"
 > ```
@@ -293,8 +293,8 @@ from the lead, approve it with SendMessage type `shutdown_response`.
 > **Manifest completeness.**
 >
 > ```bash
-> plugins/exodia/scripts/smart/break-manifest.sh count
-> plugins/exodia/scripts/smart/break-manifest.sh validate
+> ${CLAUDE_PLUGIN_ROOT}/scripts/smart/break-manifest.sh count
+> ${CLAUDE_PLUGIN_ROOT}/scripts/smart/break-manifest.sh validate
 > ```
 >
 > Entry count must equal the number of BREAK tasks completed in Phase 1.

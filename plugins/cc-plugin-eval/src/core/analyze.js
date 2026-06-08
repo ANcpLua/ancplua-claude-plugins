@@ -14,7 +14,7 @@ import {
   createInspectNextAction,
   createMeasurementPlanNextAction,
 } from "./presentation.js";
-import { createArtifact, createCheck, createEvaluationResult, createMetric } from "./schema.js";
+import { createArtifact, createCheck, createEvaluationResult, createMetric, TOOL_NAME, TOOL_VERSION } from "./schema.js";
 import { computeSummary, summarizeChecks } from "./scoring.js";
 import { resolveTarget } from "./target.js";
 import { buildWorkflowGuide } from "./workflow-guide.js";
@@ -113,7 +113,7 @@ async function buildInspectResult(target, options) {
     kind: "inspect-result",
     schemaVersion: 1,
     createdAt: new Date().toISOString(),
-    tool: { name: "cc-plugin-eval", version: "0.1.0" },
+    tool: { name: TOOL_NAME, version: TOOL_VERSION },
     target,
     componentsRequested: components,
     findings: fragment.findings || [],

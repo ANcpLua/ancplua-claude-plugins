@@ -4,7 +4,7 @@
   "version": "0.1.2",
   "description": "Commit-pinned NuGet to GitHub source fetcher: wraps opensrc with catalog metadata so agents grep the exact commit a package shipped from. Ships a command, a research skill, and a Node CLI.",
   "author": {
-    "name": "AncpLua",
+    "name": "ANcpLua",
     "url": "https://github.com/ANcpLua"
   },
   "homepage": "https://github.com/ANcpLua/ancplua-claude-plugins/tree/main/plugins/nuget-opensrc",

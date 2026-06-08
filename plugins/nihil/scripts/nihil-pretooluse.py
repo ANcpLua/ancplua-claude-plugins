@@ -49,8 +49,8 @@ DEP_UPDATE = re.compile(
     r"|\bdotnet\s+add\s+(?:package|reference)\b|\bnuget\s+(?:install|update)\b|\bcargo\s+(?:add|update)\b"
 )
 DESTRUCTIVE = re.compile(
-    r"\brm\s+-[a-z]*[rf]|\bgit\s+reset\s+--hard\b|\bgit\s+push\b[^\n]*(?:--force\b|--force-with-lease\b|\s-f\b)"
-    r"|\bgit\s+clean\s+-[a-z]*f|\bmkfs\b|\bdd\s+if=|>\s*/dev/sd"
+    r"\brm\s+-[a-zA-Z]*[rRfF]|\bgit\s+reset\s+--hard\b|\bgit\s+push\b[^\n]*(?:--force\b|--force-with-lease\b|\s-f\b)"
+    r"|\bgit\s+clean\s+-[a-zA-Z]*[fF]|\bmkfs\b|\bdd\s+if=|>\s*/dev/sd"
 )
 
 # Secret / API-key exfiltration — the one guardrail that fires in EVERY mode,
@@ -66,11 +66,11 @@ SECRET = re.compile(
     r"|AIza[0-9A-Za-z_-]{35}"
     r"|-----BEGIN [A-Z ]*PRIVATE KEY-----"
     r"|\b(?:cat|bat|less|more|head|tail|xxd|strings|nl)\b[^\n|;&]*?"
-    r"(?:\.env(?:\.[\w.]+)?|\.pem|\.p12|\.pfx|id_rsa|id_ed25519|credentials|\.npmrc|\.pypirc)\b"
+    r"(?:\.env(?!\.(?:example|sample|template|dist)\b)(?:\.[\w.]+)?|\.pem|\.p12|\.pfx|id_rsa|id_ed25519|credentials|\.npmrc|\.pypirc)\b"
     r"|\b(?:echo|printenv|printf|env)\b[^\n]*\$\{?[A-Za-z_]*"
     r"(?:SECRET|TOKEN|API_?KEY|PASSWORD|PASSWD|PRIVATE_KEY|ACCESS_KEY)"
-    r"|\bgit\s+(?:add|commit)\b[^\n]*(?:\.env(?:\.[\w.]+)?|\.pem|id_rsa|id_ed25519|credentials|\.pfx|\.p12)\b"
-    r"|--api[-_]?key[=\s]+\S|--password[=\s]+\S"
+    r"|\bgit\s+(?:add|commit)\b[^\n]*(?:\.env(?!\.(?:example|sample|template|dist)\b)(?:\.[\w.]+)?|\.pem|id_rsa|id_ed25519|credentials|\.pfx|\.p12)\b"
+    r"|--api[-_]?key[=\s]+\S+|--password[=\s]+\S+"
 )
 
 # Catastrophic, unrecoverable operations — raze's ONLY command brake besides
@@ -124,7 +124,10 @@ def main():
 
     # Universal guardrail: never leak a secret, in ANY Nihil mode (raze included).
     if tool == "Bash" and SECRET.search(command):
-        deny("Nihil blocks a possible secret / API-key exfiltration: `" + snippet + "`. "
+        # Never echo the raw command here — it contains the matched secret. Redact every
+        # SECRET-matched span before interpolating, so the denial reason can't leak the value.
+        redacted = SECRET.sub("[redacted]", command).strip()[:200]
+        deny("Nihil blocks a possible secret / API-key exfiltration: `" + redacted + "`. "
              "Do not print, echo, commit, or pass credentials inline — read them from the "
              "environment or a secret store, and for NuGet use trusted publishing (OIDC).")
 

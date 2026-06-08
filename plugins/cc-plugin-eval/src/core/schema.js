@@ -1,13 +1,19 @@
 // Derived from openai/plugins plugin-eval (MIT). Modified for Claude Code. See ../../THIRD_PARTY_NOTICES.md.
 
+import { createRequire } from "node:module";
+
 import { relativePath } from "../lib/files.js";
 
-export const TOOL_NAME = "cc-plugin-eval";
-export const TOOL_VERSION = "0.1.0";
+// Single source of truth for the published version: read it from package.json so the
+// number never drifts between the manifest, package.json, and emitted payloads.
+const pkg = createRequire(import.meta.url)("../../package.json");
+
+export const TOOL_NAME = pkg.name;
+export const TOOL_VERSION = pkg.version;
 export const SCHEMA_VERSION = 1;
 
-// The Claude Code plugin manifest schema, sourced verbatim from
-// /tmp/plugin-compare/refs/claude-plugins-reference.md (May 2026 docs.claude.com).
+// The Claude Code plugin manifest schema, sourced from the Claude Code plugins reference
+// (https://code.claude.com/docs/en/plugins-reference).
 // Writer B's manifest evaluator uses this to validate fields. Only fields documented
 // in the reference are listed; unknown fields surface as info-level findings.
 export const CLAUDE_PLUGIN_MANIFEST_SCHEMA = {

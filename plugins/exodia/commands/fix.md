@@ -202,15 +202,15 @@ Do not create a tracked analysis file. Only if Gate 1 output would crowd out des
 short-lived runtime artifact instead:
 
 ```bash
-plugins/exodia/scripts/smart/session-state.sh cleanup
-plugins/exodia/scripts/smart/session-state.sh validate >/dev/null 2>&1 || \
-  plugins/exodia/scripts/smart/session-state.sh create "${SESSION_ID:-$(plugins/exodia/scripts/smart/smart-id.sh generate)}" 3600
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh cleanup
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh validate >/dev/null 2>&1 || \
+  ${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh create "${SESSION_ID:-$(${CLAUDE_PLUGIN_ROOT}/scripts/smart/smart-id.sh generate)}" 3600
 ```
 
 Then cache compact analysis to `.eight-gates/artifacts/analysis.md`:
 
 ```bash
-plugins/exodia/scripts/smart/session-state.sh artifact add "analysis.md" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh artifact add "analysis.md" \
 "# Analysis: [issue]
 
 ## Root Cause

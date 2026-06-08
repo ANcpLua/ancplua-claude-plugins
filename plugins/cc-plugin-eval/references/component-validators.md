@@ -1,6 +1,6 @@
 # Component Validators
 
-`cc-plugin-eval` ships eight Claude-native evaluators that each emit `findings` mapped to one of the `CC###` error code ranges. This document is the canonical lookup table downstream consumers cite when mapping a finding to remediation copy. See `claude-plugins-reference.md` for the underlying Claude Code component spec each evaluator validates.
+`cc-plugin-eval` ships eight Claude-native evaluators that each emit `findings` mapped to one of the `CC###` error code ranges. This document is the canonical lookup table downstream consumers cite when mapping a finding to remediation copy. See the [Claude Code plugins reference](https://code.claude.com/docs/en/plugins-reference) for the underlying Claude Code component spec each evaluator validates.
 
 ## Code ranges
 
@@ -152,8 +152,7 @@
 
 ## Cross-references
 
-- Claude Code plugins reference: <https://docs.claude.com/en/docs/claude-code/plugins-reference>
-- Claude Code skills reference: <https://docs.claude.com/en/docs/claude-code/skills>
-<!-- Local cache copies, if used during dev, live at /tmp/plugin-compare/refs/. Do not commit them. -->
+- Claude Code plugins reference: <https://code.claude.com/docs/en/plugins-reference>
+- Claude Code skills reference: <https://code.claude.com/docs/en/skills>
 
 - Schema for the canonical evaluation result: `evaluation-result-schema.md`

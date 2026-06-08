@@ -22,10 +22,5 @@
     "dependency-rationalization",
     "cleanup",
     "multi-agent"
-  ],
-  "commands": "./commands",
-  "agents": [
-    "./agents/rot-scout.md",
-    "./agents/dep-analyst.md"
   ]
 }

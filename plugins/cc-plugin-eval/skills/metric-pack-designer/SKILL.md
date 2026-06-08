@@ -6,6 +6,8 @@ description: "Build a local rubric extension so a team can add custom checks tha
 
 Use this skill when the user wants to extend `cc-plugin-eval` with a local rubric.
 
+Invoke the shipped script through the plugin root, which works in any checkout: `node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" <command> <args>`. Inline mentions of `cc-plugin-eval <command>` are shorthand for that same invocation; the bare `cc-plugin-eval` alias only exists if you ran `npm link` in the plugin directory.
+
 ## Workflow
 
 1. Clarify the custom rubric categories and target kinds (`skill`, `plugin`, `directory`).

@@ -8,9 +8,6 @@ model: claude-opus-4-8
 tools:
   - Task
   - Read
-  - WebSearch
-  - WebFetch
-  - Bash
 effort: high
 memory: project
 maxTurns: 30

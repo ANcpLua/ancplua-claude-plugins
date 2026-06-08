@@ -33,7 +33,7 @@ waits for shutdown_responses, then spawns fresh eliminators targeting remaining 
 **Every eliminator MUST log deletions to the ledger:**
 
 ```bash
-plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "delete" "<path>" "<reason>" "<agent-name>" "$(git rev-parse HEAD)"
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/ledger.sh append "$SMART_ID" "delete" "<path>" "<reason>" "<agent-name>" "$(git rev-parse HEAD)"
 ```
 
 ## smart-elim-suppressions
@@ -48,7 +48,7 @@ plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "delete" "<path>" "<re
 > - UPSTREAM_FIX: Fix upstream, publish, update downstream. Remove suppression.
 >
 > **MANDATORY:** After each deletion, log to ledger:
-> `plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "remove-suppression" "<file:line>" "<reason>" "smart-elim-suppressions"`
+> `${CLAUDE_PLUGIN_ROOT}/scripts/smart/ledger.sh append "$SMART_ID" "remove-suppression" "<file:line>" "<reason>" "smart-elim-suppressions"`
 >
 > Build after every 3-5 changes. If build breaks, fix immediately.
 > Use SendMessage (recipient: lead) when blocked on a file owned by another teammate.
@@ -66,7 +66,7 @@ plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "delete" "<path>" "<re
 > - Delete dead methods/classes, delete orphan files, remove unused exports
 >
 > **MANDATORY:** After each deletion, log to ledger:
-> `plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "delete-dead-code" "<file:line>" "<reason>" "smart-elim-deadcode"`
+> `${CLAUDE_PLUGIN_ROOT}/scripts/smart/ledger.sh append "$SMART_ID" "delete-dead-code" "<file:line>" "<reason>" "smart-elim-deadcode"`
 >
 > Verify zero references one final time before each deletion.
 > Build after every 3-5 deletions. If build breaks, fix immediately.
@@ -84,7 +84,7 @@ plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "delete" "<path>" "<re
 > - Tighten access modifiers (public -> internal if single assembly)
 >
 > **MANDATORY:** After each consolidation, log to ledger:
-> `plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "consolidate-dup" "<files>" "<reason>" "smart-elim-duplication"`
+> `${CLAUDE_PLUGIN_ROOT}/scripts/smart/ledger.sh append "$SMART_ID" "consolidate-dup" "<files>" "<reason>" "smart-elim-duplication"`
 >
 > Build after every consolidation. If build breaks, fix immediately.
 > Use SendMessage (recipient: "smart-elim-imports") if consolidation changes import structure.
@@ -101,7 +101,7 @@ plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "delete" "<path>" "<re
 > - Narrow broad imports, add missing imports, update deprecated references
 >
 > **MANDATORY:** After each fix, log to ledger:
-> `plugins/exodia/scripts/smart/ledger.sh append "$SMART_ID" "fix-import" "<file:line>" "<reason>" "smart-elim-imports"`
+> `${CLAUDE_PLUGIN_ROOT}/scripts/smart/ledger.sh append "$SMART_ID" "fix-import" "<file:line>" "<reason>" "smart-elim-imports"`
 >
 > Build after every batch. If build breaks, fix immediately.
 > Use SendMessage (recipient: lead) when import changes affect files owned by other teammates.

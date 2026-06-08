@@ -6,6 +6,7 @@ description: >-
   truth (the referenced code, Version.props, symbol existence) before reporting it.
   Never edits — returns structured, verified findings for the orchestrator to apply.
 model: claude-opus-4-8
+disallowedTools: Edit, Write, MultiEdit, NotebookEdit
 effort: high
 maxTurns: 30
 ---
