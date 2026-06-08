@@ -6,11 +6,11 @@
 # file's `status:` field (NEVER from the clock), whether to:
 #
 #   - re-enter   the ferry loop, because work is still ACTIONABLE
-#                (working / ci-failed / conflict / behind / review-changes / rewire)
+#                (working / ci-failed / conflict / behind / review-changes)
 #   - allow stop and rest, because we are deliberately WAITING on CI
-#                (ci-running / waiting) — a ScheduleWakeup paces the resume
+#                (ci-running) — a ScheduleWakeup paces the resume
 #   - allow stop and finish, because the PR reached a TERMINAL state
-#                (merged / closed / needs-you / cancelled / done)
+#                (merged / closed / needs-you)
 #
 # Because control flow branches only on `status:` — never on a timestamp — a
 # system-clock change, laptop sleep, or timezone swap cannot corrupt it. The
@@ -68,7 +68,7 @@ fi
 
 # --- TERMINAL: PR is done, or genuinely needs a human. Finish the ferry. ---
 case "$STATUS" in
-  merged|closed|needs-you|cancelled|done)
+  merged|closed|needs-you)
     echo "⚓ Charon: ferry for PR #$PR ended (status: $STATUS). State cleared." >&2
     rm -f "$STATE_FILE"
     exit 0
@@ -78,7 +78,7 @@ esac
 # --- WAIT: deliberately resting on CI. Allow the stop; the wakeup resumes us. ---
 # (Keep the state file — the ferry is still active, just paced.)
 case "$STATUS" in
-  ci-running|waiting)
+  ci-running)
     echo "🟡 Charon: PR #$PR — CI in flight. Resting; a wakeup will resume the ferry. Not stuck." >&2
     exit 0
     ;;
@@ -87,7 +87,7 @@ esac
 # --- Runaway guard for ACTIONABLE re-entries ---
 if [[ $MAX_ITERATIONS -gt 0 ]] && [[ $ITERATION -ge $MAX_ITERATIONS ]]; then
   echo "🛑 Charon: hit max_iterations ($MAX_ITERATIONS) for PR #$PR (last status: ${STATUS:-unknown})." >&2
-  echo "   Stopping so I do not churn. Re-run /charon to continue, or /charon:cancel to clear." >&2
+  echo "   Stopping so I do not churn. Re-run /charon:charon to continue, or /charon:charon cancel to clear." >&2
   rm -f "$STATE_FILE"
   exit 0
 fi

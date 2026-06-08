@@ -42,11 +42,14 @@ Because the Stop hook branches only on the state file's `status:` field — neve
 
 ## Commands
 
-| Command | What it does |
+One arg-dispatched command, `/charon:charon` (like `derot:derot` — a single entry point):
+
+| Invocation | What it does |
 |---|---|
-| `/charon [<pr> \| .]` | Ferry one PR to merge (default: the current branch's PR). |
-| `/charon:fleet [<pr> …]` | Ferry many PRs at once as an agent team (ferryman lead + one lookout per PR over a SendMessage bus). |
-| `/charon:cancel` | Stop the active ferry and clear its state. The PR itself is untouched. |
+| `/charon:charon` or `/charon:charon .` | Ferry the current branch's PR to merge. |
+| `/charon:charon <pr>` | Ferry that PR (number or URL). |
+| `/charon:charon <pr> <pr> …` | Ferry several PRs at once as an agent team (ferryman lead + one lookout per PR over a SendMessage bus). |
+| `/charon:charon cancel` | Stop the active ferry and clear its state. The PR itself is untouched. |
 
 It also rides `/loop` cleanly: `/loop /charon <pr>`.
 

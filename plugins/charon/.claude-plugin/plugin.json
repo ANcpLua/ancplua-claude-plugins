@@ -1,11 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "charon",
-  "displayName": "Charon",
   "version": "0.1.0",
   "description": "Ferries a GitHub PR to merge without waiting forever: an honest snapshot-not-block loop that fixes CI, repairs conflicts, version-checks reviewer suggestions, and never says 'just wait'.",
   "author": {
-    "name": "AncpLua",
+    "name": "ANcpLua",
     "url": "https://github.com/ANcpLua"
   },
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",

@@ -192,9 +192,9 @@ Surface one of these to the user — plain language, for someone who has never s
 | 🟠 `conflict` / `review-changes` | "Resolving &lt;conflict/review detail&gt; on PR #N." |
 | ⚫ `merged` / `closed` | "Done: PR #N &lt;merged/closed&gt;. &lt;one-line summary&gt;." |
 
-The status drives the Stop hook: `ci-running`/`waiting` → it lets you rest;
-`merged`/`closed`/`needs-you`/`cancelled` → it finishes; anything else → it re-enters.
-So an honest status is also correct control flow — lying about status would break the loop.
+The status drives the Stop hook: `ci-running` → it lets you rest; `merged`/`closed`/`needs-you`
+→ it finishes; anything else → it re-enters. So an honest status is also correct control flow —
+lying about status would break the loop.
 
 ---
 
