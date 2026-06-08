@@ -70,7 +70,7 @@ SECRET = re.compile(
     r"|\b(?:echo|printenv|printf|env)\b[^\n]*\$\{?[A-Za-z_]*"
     r"(?:SECRET|TOKEN|API_?KEY|PASSWORD|PASSWD|PRIVATE_KEY|ACCESS_KEY)"
     r"|\bgit\s+(?:add|commit)\b[^\n]*(?:\.env(?!\.(?:example|sample|template|dist)\b)(?:\.[\w.]+)?|\.pem|id_rsa|id_ed25519|credentials|\.pfx|\.p12)\b"
-    r"|--api[-_]?key[=\s]+\S|--password[=\s]+\S"
+    r"|--api[-_]?key[=\s]+\S+|--password[=\s]+\S+"
 )
 
 # Catastrophic, unrecoverable operations — raze's ONLY command brake besides

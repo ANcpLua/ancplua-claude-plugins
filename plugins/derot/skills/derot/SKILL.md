@@ -1,6 +1,6 @@
 ---
 name: derot
-description: "Truth-drift auditor — find & fix comment/doc/CI/version/dependency rot that contradicts the current code, with root + transitive verification (correct beats delete). Use when the user wants to remove stale comments, fix doc drift (CLAUDE.md/README/CHANGELOG), modernize CI publish auth, sync package versions, or question why a sub-library is used instead of a parent/successor package. Triggers on: \"stale comments\", \"derot\", \"doc rot\", \"comments are out of date\", \"docs don't match the code\", \"clean up the docs\", \"why this dependency\", \"überarbeitung\"."
+description: "Truth-drift auditor — find & fix comment/doc/CI/version/dependency rot that contradicts the current code, with root + transitive verification (correct beats delete). Use when the user wants to remove stale comments, fix doc drift (CLAUDE.md/README/CHANGELOG), modernize CI publish auth, sync package versions, or question why a sub-library is used instead of a parent/successor package. Triggers on \"stale comments\", \"derot\", \"doc rot\", \"comments are out of date\", \"docs don't match the code\", \"clean up the docs\", \"why this dependency\", \"überarbeitung\"."
 allowed-tools: Read Grep Glob Bash Edit Write Agent WebFetch WebSearch Skill
 effort: high
 ---
