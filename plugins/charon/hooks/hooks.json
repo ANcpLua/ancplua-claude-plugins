@@ -1,0 +1,17 @@
+{
+  "description": "Charon resume net: a clock-independent Stop hook that keeps the session ferrying a PR while work is actionable, lets it rest (trusting the paced wakeup) while CI runs, and exits cleanly when the PR is merged/closed or genuinely needs a human.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/stop-hook.sh\"",
+            "timeout": 15,
+            "statusMessage": "Charon: checking the ferry..."
+          }
+        ]
+      }
+    ]
+  }
+}
