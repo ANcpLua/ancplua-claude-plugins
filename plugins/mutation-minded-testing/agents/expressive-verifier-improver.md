@@ -67,7 +67,7 @@ it('keeps form open and exposes error when create fails', async () => {
   httpTesting.expectOne('POST', `${baseUrl}/users`).error(new ProgressEvent('error'));
   await promise;
   expect(vm.isFormVisible()).toBe(true);
-  expect(vm.errorMessage()).toBeTruthy();
+  expect(vm.errorMessage()).toMatch(/create failed|error/i);
   expect(vm.isSaving()).toBe(false);
   expect(vm.users()).toEqual([]);
 });

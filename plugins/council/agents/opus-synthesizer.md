@@ -10,7 +10,6 @@ tools:
   - Grep
   - Glob
   - Bash
-  - WebSearch
 effort: xhigh
 maxTurns: 15
 ---

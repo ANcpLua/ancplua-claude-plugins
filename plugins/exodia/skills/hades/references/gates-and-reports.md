@@ -115,8 +115,8 @@ SMART_ID: [value]
 
 1. Shut down all remaining teammates: SendMessage type="shutdown_request" to each
 2. Wait for all shutdown_responses
-3. If guillotine equipped: `plugins/exodia/scripts/smart/break-manifest.sh validate` (must exit 0)
-4. Revoke deletion permit: `plugins/exodia/scripts/smart/permit.sh revoke`
+3. If guillotine equipped: `${CLAUDE_PLUGIN_ROOT}/scripts/smart/break-manifest.sh validate` (must exit 0)
+4. Revoke deletion permit: `${CLAUDE_PLUGIN_ROOT}/scripts/smart/permit.sh revoke`
 5. Delete team: `TeamDelete: team_name = "hades-cleanup"`
 6. Present final report
 

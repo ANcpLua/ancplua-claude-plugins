@@ -71,7 +71,7 @@ For each mini-test proposed by the reflector:
 
 ```bash
 # Log reflection outcomes
-plugins/exodia/scripts/smart/session-state.sh decision "reflection-outcome" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh decision "reflection-outcome" \
   "Reviewed [n] findings: [x] confirmed, [y] challenged, [z] invalidated"
 ```
 
@@ -92,7 +92,7 @@ plugins/exodia/scripts/smart/session-state.sh decision "reflection-outcome" \
 ## Exit Condition
 
 ```bash
-plugins/exodia/scripts/smart/checkpoint.sh save 5 "reflection-complete" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/checkpoint.sh save 5 "reflection-complete" \
   "findings_reviewed=[n]" \
   "confirmed=[n]" \
   "challenged=[n]" \

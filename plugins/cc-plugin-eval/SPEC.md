@@ -2,7 +2,7 @@
 
 **Status:** scaffolding spec for parallel implementation by 3 writers
 **Source repo (MIT):** `/tmp/plugin-compare/openai-plugins/plugins/plugin-eval/` (forked from `openai/plugins`)
-**Authoritative Claude refs:** `/tmp/plugin-compare/refs/claude-plugins-reference.md`, `/tmp/plugin-compare/refs/claude-skills-reference.md`
+**Authoritative Claude refs:** https://code.claude.com/docs/en/plugins-reference, https://code.claude.com/docs/en/skills
 **Destination root:** `plugins/cc-plugin-eval/`
 
 Writers MUST read sections 1, 2, 3, 4, 8, 9, 10 (everyone), and one of 5/6/7 (their assignment). Do NOT freelance outside your section without raising it back to the architect.
@@ -13,12 +13,12 @@ Writers MUST read sections 1, 2, 3, 4, 8, 9, 10 (everyone), and one of 5/6/7 (th
 
 **Mission.** `cc-plugin-eval` is a Claude-Code-native local-first evaluator and CLI for plugin authors. It analyzes a plugin or skill, scores it against a deterministic rubric, computes token budgets across `trigger / invoke / deferred` tiers, lints every Claude-Code plugin component (`.claude-plugin/plugin.json`, `hooks/hooks.json`, `.mcp.json`, `.lsp.json`, `monitors/monitors.json`, `agents/*.md`, `userConfig`, `channels`, `dependencies`, and the workspace's `.claude-plugin/marketplace.json`), produces an improvement brief, supports observed-usage ingestion, and runs real `claude` benchmarks via the same isolated-workspace harness the OpenAI fork uses for `codex exec`. It exposes the same outputs as the original (JSON / Markdown / HTML) plus a chat-first router (`start`) and 5 chat-facing skills.
 
-The OpenAI version covers Codex skills (`SKILL.md`) and Codex plugin manifests (`.codex-plugin/plugin.json` with an `interface{}` block). cc-plugin-eval drops everything Codex-specific and replaces it with Claude-Code-native validators that have no upstream equivalent. The Claude manifest schema is documented in `/tmp/plugin-compare/refs/claude-plugins-reference.md` and is the only authority for required/optional fields, path rules, environment variables, and component file locations.
+The OpenAI version covers Codex skills (`SKILL.md`) and Codex plugin manifests (`.codex-plugin/plugin.json` with an `interface{}` block). cc-plugin-eval drops everything Codex-specific and replaces it with Claude-Code-native validators that have no upstream equivalent. The Claude manifest schema is documented at https://code.claude.com/docs/en/plugins-reference and is the only authority for required/optional fields, path rules, environment variables, and component file locations.
 
 **Non-goals.**
 
 - **Do not duplicate `skill-creator`'s per-skill LLM grader.** The `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`) already handles single-skill grading with subagents and structured rubrics. cc-plugin-eval evaluates **structure, budget, and component validity** across an entire plugin, deterministically and without an LLM. The two are complementary; cc-plugin-eval's `improve-skill` skill explicitly hands off to skill-creator for rewrite work.
-- **Do not invent Claude Code fields.** Use only what the cached refs document. If a field is not in `claude-plugins-reference.md`, do not validate against it.
+- **Do not invent Claude Code fields.** Use only what the reference documents. If a field is not in the [plugins reference](https://code.claude.com/docs/en/plugins-reference), do not validate against it.
 - **Do not ship a Codex compatibility shim.** The `interface{}` block, `defaultPrompt`, `composerIcon`, `developerName`, `category`, and `capabilities` are Codex-specific and have NO place in cc-plugin-eval source, fixtures, or tests.
 
 ---
@@ -137,7 +137,7 @@ The CLI lives at `scripts/cc-plugin-eval.js` (a 9-line wrapper that calls `runCl
 
 ## 4. Manifest expectations
 
-This section is the contract Writer B's `manifest.js` validates against. All field names, types, and rules below come verbatim from `/tmp/plugin-compare/refs/claude-plugins-reference.md`. Do not validate fields not listed here.
+This section is the contract Writer B's `manifest.js` validates against. All field names, types, and rules below come from the Claude Code plugins reference (https://code.claude.com/docs/en/plugins-reference). Do not validate fields not listed here.
 
 ### 4.1 Required fields
 
@@ -351,7 +351,7 @@ Emit the same plugin-level metrics the OpenAI version emits: `plugin_skill_count
 
 #### 5.3.8 `src/evaluators/skill.js`
 
-Rewrite the `ALLOWED_FRONTMATTER_KEYS` set to match the Claude skill spec from `/tmp/plugin-compare/refs/claude-skills-reference.md` (the full reference table):
+Rewrite the `ALLOWED_FRONTMATTER_KEYS` set to match the Claude skill spec from the Claude Code skills reference (https://code.claude.com/docs/en/skills) (the full reference table):
 
 ```js
 const ALLOWED_FRONTMATTER_KEYS = new Set([
@@ -726,7 +726,7 @@ Writer C owns five `SKILL.md` files, the entire `fixtures/` tree, all tests, the
 
 ### 7.1 Skills (5 files in `skills/<name>/SKILL.md`)
 
-All skills follow the Claude SKILL.md spec from `/tmp/plugin-compare/refs/claude-skills-reference.md`. **Drop ALL `agents/openai.yaml` files** — they are Codex-specific and Claude does not have an analog (skills can request a fork-mode agent inline via `context: fork` and `agent:`, but separate yaml files belong to Codex).
+All skills follow the Claude SKILL.md spec from the Claude Code skills reference (https://code.claude.com/docs/en/skills). **Drop ALL `agents/openai.yaml` files** — they are Codex-specific and Claude does not have an analog (skills can request a fork-mode agent inline via `context: fork` and `agent:`, but separate yaml files belong to Codex).
 
 #### 7.1.1 `skills/cc-plugin-eval/SKILL.md` (umbrella)
 
@@ -1119,7 +1119,7 @@ The reviewer runs this list, in order, against the merged result.
 
 ### 9.2 Manifest validator coverage
 
-- [ ] Every Claude-Code plugin manifest field listed in `claude-plugins-reference.md` §"Plugin manifest schema" has a corresponding validator finding code in §6.2 (`name`, `version`, `description`, `author`, `homepage`, `repository`, `license`, `keywords`, `$schema`, the path-fields). Missing required → CC101 (name only). Optional-but-missing → info-level. Path-shape violation → CC130. Path-not-found → CC131. Path-traversal → CC900.
+- [ ] Every Claude-Code plugin manifest field listed in the [plugins reference](https://code.claude.com/docs/en/plugins-reference) §"Plugin manifest schema" has a corresponding validator finding code in §6.2 (`name`, `version`, `description`, `author`, `homepage`, `repository`, `license`, `keywords`, `$schema`, the path-fields). Missing required → CC101 (name only). Optional-but-missing → info-level. Path-shape violation → CC130. Path-not-found → CC131. Path-traversal → CC900.
 - [ ] Hooks evaluator covers all 28 valid hook event names from §6.3 by recognizing them and rejecting variations. Test 6.3.CC302 hits an event name not in the set; test 6.3.CC303 hits a case-wrong variation.
 - [ ] Agents evaluator rejects `hooks`, `mcpServers`, `permissionMode` (CC703).
 - [ ] LSP evaluator requires `extensionToLanguage` (CC503) per ref.

@@ -371,7 +371,7 @@ Severity definitions:
 ## Exit Condition
 
 ```bash
-plugins/exodia/scripts/smart/checkpoint.sh save 3 "map-complete" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/checkpoint.sh save 3 "map-complete" \
   "agents_launched=[n]" \
   "agents_completed=[n]" \
   "findings=[total]" \

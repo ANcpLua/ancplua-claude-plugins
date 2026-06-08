@@ -69,7 +69,7 @@ Implementation warranted: yes/no
 
 If no work is warranted, output only:
 
-## Final Verdict
+## Verdict
 
 Implementation warranted: no
 

@@ -73,9 +73,9 @@ hooks:
 **Goggles:** $3 (default: auto — [--goggles]) — frontend design judgment (auto when scope has frontend files).
 **Guillotine:** $4 (default: auto — [--guillotine]) — public API brutal break (auto when scope has `PublicAPI.Shipped.txt`, an `<IsPackable>true</IsPackable>` csproj, or `packages/`).
 
-**Smart Infrastructure:** `plugins/exodia/scripts/smart/` — layout + ID/ledger/permit/manifest schemas in [references/team-architecture.md](references/team-architecture.md).
+**Smart Infrastructure:** `${CLAUDE_PLUGIN_ROOT}/scripts/smart/` — layout + ID/ledger/permit/manifest schemas in [references/team-architecture.md](references/team-architecture.md).
 
-**Hookify guards (optional):** `cp plugins/exodia/scripts/smart/hookify-rules/*.local.md .`
+**Hookify guards (optional):** `cp ${CLAUDE_PLUGIN_ROOT}/scripts/smart/hookify-rules/*.local.md .`
 (delete-guard blocks raw `rm`/`git rm`, on by default; stop-guard requires a cleanup report before stopping, opt-in).
 
 **Teammate prompt templates** (full prompts in [templates/](templates/)): `auditors.md` (Phase 0),
@@ -136,13 +136,13 @@ If intensity is `scan-only`: findings already exist — report them and exit imm
 
 ```bash
 # Generate session Smart ID
-SMART_ID="$(plugins/exodia/scripts/smart/smart-id.sh generate)"
+SMART_ID="$(${CLAUDE_PLUGIN_ROOT}/scripts/smart/smart-id.sh generate)"
 
 # Initialize ledger
-plugins/exodia/scripts/smart/ledger.sh init
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/ledger.sh init
 
 # Create deletion permit for scope (auto-revoked at cleanup)
-plugins/exodia/scripts/smart/permit.sh create "$SMART_ID" "$0" --ttl=3600
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/permit.sh create "$SMART_ID" "$0" --ttl=3600
 ```
 
 Store `$SMART_ID` — pass it to every teammate prompt.
@@ -220,10 +220,10 @@ review findings via TaskList and apply the GATE 0 verdict ([references/gates-and
 
 ```bash
 # Revoke deletion permit
-plugins/exodia/scripts/smart/permit.sh revoke
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/permit.sh revoke
 
 # Show ledger summary
-plugins/exodia/scripts/smart/ledger.sh count
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/ledger.sh count
 ```
 
 Shut down all remaining teammates (SendMessage type="shutdown_request").

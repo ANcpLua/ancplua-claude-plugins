@@ -4,7 +4,7 @@
   "version": "2.2.2",
   "description": "Multi-agent workflow orchestration: 9 commands (fix, turbo-fix, tournament, mega-swarm, red-blue-review, baryon-mode...) plus eight-gates and hades skills using the Teams API for reactive work.",
   "author": {
-    "name": "AncpLua",
+    "name": "ANcpLua",
     "url": "https://github.com/ANcpLua"
   },
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
@@ -16,7 +16,5 @@
     "workflow",
     "code-fix",
     "cleanup"
-  ],
-  "commands": "./commands",
-  "skills": "./skills"
+  ]
 }

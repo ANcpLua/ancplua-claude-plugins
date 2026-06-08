@@ -55,7 +55,9 @@ query() {
     echo "Error: Ledger not initialized." >&2
     exit 1
   fi
-  grep -F "\"path\":\"${path}\"" "$LEDGER_FILE" || echo "No entries for: ${path}"
+  local escaped
+  escaped="$(json_escape "$path")"
+  grep -F "\"path\":\"${escaped}\"" "$LEDGER_FILE" || echo "No entries for: ${path}"
 }
 
 count() {

@@ -6,6 +6,8 @@ description: 'Analyze and check a local Claude Code SKILL.md folder: review fron
 
 Use this skill when the target is a local skill directory or a `SKILL.md` file. cc-plugin-eval handles the structural and budget signals deterministically without an LLM. If the user wants an LLM-graded rubric or a rewrite pass, hand off to the `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`) - that skill specializes in single-skill grading and rewrites, while cc-plugin-eval focuses on structural and budget signals.
 
+The runnable commands below invoke the shipped script through the plugin root, which works in any checkout: `node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" <command> <args>`. Inline mentions of `cc-plugin-eval <command>` are shorthand for that same invocation; the bare `cc-plugin-eval` alias only exists if you ran `npm link` in the plugin directory.
+
 ## Workflow
 
 1. Treat "Evaluate this skill." as the default entrypoint.
@@ -44,14 +46,14 @@ Use this skill when the target is a local skill directory or a `SKILL.md` file. 
 ## Commands
 
 ```bash
-cc-plugin-eval start <skill-path> --request "Evaluate this skill." --format markdown
-cc-plugin-eval analyze <skill-path> --format markdown
-cc-plugin-eval evaluate-skill <skill-path> --format markdown
-cc-plugin-eval explain-budget <skill-path> --format markdown
-cc-plugin-eval measurement-plan <skill-path> --format markdown
-cc-plugin-eval init-benchmark <skill-path>
-cc-plugin-eval benchmark <skill-path>
-cc-plugin-eval analyze <skill-path> --observed-usage <usage.jsonl> --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" start <skill-path> --request "Evaluate this skill." --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" analyze <skill-path> --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" evaluate-skill <skill-path> --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" explain-budget <skill-path> --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" measurement-plan <skill-path> --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" init-benchmark <skill-path>
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" benchmark <skill-path>
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" analyze <skill-path> --observed-usage <usage.jsonl> --format markdown
 ```
 
 ## Reference

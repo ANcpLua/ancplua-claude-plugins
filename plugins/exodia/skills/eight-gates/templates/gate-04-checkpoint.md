@@ -19,7 +19,7 @@ The lead builds this by combining the text/JSON returned by each Task tool call:
 ```bash
 # Lead: construct merged findings from Gate 3 agent outputs,
 # then cache as a single artifact for later gates
-plugins/exodia/scripts/smart/session-state.sh artifact add "findings" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh artifact add "findings" \
   "MERGED_FINDINGS_JSON_HERE"
 ```
 
@@ -31,13 +31,13 @@ higher-confidence version. Note the overlap — it increases confidence.
 For every major choice, log WHY. This survives session crashes:
 
 ```bash
-plugins/exodia/scripts/smart/session-state.sh decision "prioritized-P0-over-P2" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh decision "prioritized-P0-over-P2" \
   "P0 blocks deployment, P2 is cosmetic"
 
-plugins/exodia/scripts/smart/session-state.sh decision "excluded-file-X" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh decision "excluded-file-X" \
   "Out of scope per Gate 1 boundaries"
 
-plugins/exodia/scripts/smart/session-state.sh decision "objective-type-confirmed" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh decision "objective-type-confirmed" \
   "Auto-classified as BUG, confirmed by root-cause-hunter findings"
 ```
 
@@ -60,7 +60,7 @@ artifact and extracts items with severity, file, description, and evidence:
 ```bash
 # Lead: extract actionable work items from merged findings,
 # then cache for Gate 6 to prioritize and assign
-plugins/exodia/scripts/smart/session-state.sh artifact add "work-items-raw" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh artifact add "work-items-raw" \
   "EXTRACTED_WORK_ITEMS_JSON_HERE"
 ```
 
@@ -80,7 +80,7 @@ plugins/exodia/scripts/smart/session-state.sh artifact add "work-items-raw" \
 ## Exit Condition
 
 ```bash
-plugins/exodia/scripts/smart/checkpoint.sh save 4 "checkpoint-complete" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/checkpoint.sh save 4 "checkpoint-complete" \
   "artifacts=$(find .eight-gates/artifacts -maxdepth 1 -type f | wc -l | tr -d ' ')" \
   "decisions=$(wc -l < .eight-gates/decisions.jsonl | tr -d ' ')" \
   "agents_spawned=[n]"

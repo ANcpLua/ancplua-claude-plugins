@@ -86,7 +86,7 @@ Two runtime directories (both gitignored):
 Checked-in tooling:
 
 ```text
-plugins/exodia/scripts/smart/     <- scripts (GATES_DIR=.eight-gates by default)
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/     <- scripts (GATES_DIR=.eight-gates by default)
 ├── lib.sh                        <- shared utilities (json_escape)
 ├── smart-id.sh                   <- generates SMART-YYYY-MM-DD-<epoch><random> IDs
 ├── checkpoint.sh                 <- init | save | load | verify | list
@@ -155,16 +155,16 @@ if [ -d .git ]; then
 fi
 
 # 2. Generate session ID
-SESSION_ID="$(plugins/exodia/scripts/smart/smart-id.sh generate)"
+SESSION_ID="$(${CLAUDE_PLUGIN_ROOT}/scripts/smart/smart-id.sh generate)"
 
 # 3. Initialize session state with TTL
-plugins/exodia/scripts/smart/session-state.sh create "$SESSION_ID" 7200
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh create "$SESSION_ID" 7200
 
 # 4. Initialize checkpoint log
-plugins/exodia/scripts/smart/checkpoint.sh init "$SESSION_ID"
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/checkpoint.sh init "$SESSION_ID"
 
 # 5. Initialize ledger (shared with Hades, used at Gate 8)
-plugins/exodia/scripts/smart/ledger.sh init
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/ledger.sh init
 ```
 
 Parallel isolated example:
@@ -199,9 +199,9 @@ If any gate HALTs: stop, fix the issue, resume from that gate (idempotent).
 
 ```bash
 # What's already done?
-plugins/exodia/scripts/smart/checkpoint.sh list
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/checkpoint.sh list
 # Is session still valid?
-plugins/exodia/scripts/smart/session-state.sh validate
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/session-state.sh validate
 ```
 
 Example output:
@@ -225,7 +225,6 @@ Token costs tracked via OTel, not here.
 
 **FALLBACK MODES:**
 
-- Smart scripts unavailable → inline checkpointing via TodoWrite
 - Teams API unavailable → fall back to `Task` tool without `team_name` (no shared task list or messaging)
 - Trivial scope (S estimate) → compress Gates 3-5 into minimal checkpoints
   (mark as "bypassed-trivial" with rationale), then proceed to Gate 6-7

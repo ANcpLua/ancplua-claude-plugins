@@ -4,8 +4,8 @@
   "version": "1.3.0",
   "description": "/feature-dev takes a feature from idea to reviewed code in seven gated phases via code-explorer, code-architect, and code-reviewer agents, plus a standalone /review for quality audits.",
   "author": {
-    "name": "Sid Bidasaria",
-    "email": "sbidasaria@anthropic.com"
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
   },
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
   "license": "MIT",
@@ -15,6 +15,5 @@
     "architecture",
     "agents",
     "quality-assurance"
-  ],
-  "commands": "./commands"
+  ]
 }

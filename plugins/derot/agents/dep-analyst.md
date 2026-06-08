@@ -7,6 +7,7 @@ description: >-
   transitively. Verifies against the NuGet graph + cited vendor docs; never guesses
   succession. Proposes, never disposes — dependency changes are human decisions.
 model: claude-opus-4-8
+disallowedTools: Edit, Write, MultiEdit, NotebookEdit
 effort: high
 maxTurns: 30
 ---

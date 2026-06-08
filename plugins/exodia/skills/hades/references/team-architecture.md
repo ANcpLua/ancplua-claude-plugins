@@ -67,7 +67,7 @@ HADES (Lead — Delegate Mode — Opus 4.8)
 ├── delete-permit.json           <- active deletion permit (TTL-based)
 └── break-manifest.jsonl         <- public-API break manifest (JSONL, --guillotine)
 
-plugins/exodia/scripts/smart/    <- checked-in tooling
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/    <- checked-in tooling
 ├── smart-id.sh                  <- SMART-YYYY-MM-DD-<timestamp><random>
 ├── ledger.sh                    <- init | append | query | count
 ├── permit.sh                    <- create | validate | revoke | show
@@ -103,7 +103,7 @@ if [ "$PUBLIC_API_SHIPPED" -gt 0 ] || [ "$PACKABLE_CSPROJ" -gt 0 ] \
    || [ "$PACKAGES_PATHS" -gt 0 ] \
    || [ "${3-}" = "--guillotine" ] || [ "${4-}" = "--guillotine" ]; then
   GUILLOTINE=true   # Equip the Guillotine
-  plugins/exodia/scripts/smart/break-manifest.sh init
+  ${CLAUDE_PLUGIN_ROOT}/scripts/smart/break-manifest.sh init
 fi
 ```
 

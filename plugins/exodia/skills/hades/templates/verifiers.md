@@ -42,7 +42,7 @@ When you receive a SendMessage with type `shutdown_request` from the lead, appro
 >   `// TODO: remove`, `// HACK`
 >
 > **Also verify ledger completeness:**
-> `plugins/exodia/scripts/smart/ledger.sh count` — must match total eliminations.
+> `${CLAUDE_PLUGIN_ROOT}/scripts/smart/ledger.sh count` — must match total eliminations.
 >
 > Report: count per category. Goal: all zeros + ledger complete.
 > Use SendMessage (recipient: "smart-verify-challenger") with your counts.

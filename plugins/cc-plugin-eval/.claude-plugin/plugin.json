@@ -4,7 +4,7 @@
   "version": "0.1.1",
   "description": "Local-first CLI to evaluate Claude Code plugins and skills: token-budget analysis, manifest/hook/MCP/agent linting, scoring, comparison, improvement briefs, and real claude benchmarking.",
   "author": {
-    "name": "AncpLua",
+    "name": "ANcpLua",
     "url": "https://github.com/ANcpLua"
   },
   "homepage": "https://github.com/ANcpLua/ancplua-claude-plugins/tree/main/plugins/cc-plugin-eval",
@@ -22,6 +22,5 @@
     "hooks",
     "mcp",
     "lsp"
-  ],
-  "skills": "./skills/"
+  ]
 }

@@ -1,10 +1,6 @@
 {
-  "version": "1.2.0",
   "source_repo": "https://github.com/ThariqS/html-effectiveness",
   "source_author": "Thariq Shihipar (@trq212, thariq.io) — Claude Code @ Anthropic",
-  "local_clone": "/Users/ancplua/RiderProjects/thariq-html-effectiveness",
-  "local_clone_branch": "main",
-  "clone_if_missing": "gh repo clone ThariqS/html-effectiveness /Users/ancplua/RiderProjects/thariq-html-effectiveness",
   "philosophy": "Markdown is linear and skim-able. HTML has layout, interaction, spatial information — you actually use it. Same content, different effectiveness. The agent produces a single self-contained .html instead of a wall of prose.",
   "triggering_principles": {
     "match_on_intent_not_phrase": "If the user describes a deliverable that would render better with layout + interaction than as markdown prose, fire — even if no listed trigger phrase appears literally. The triggers below are EXAMPLES of intent, not an exhaustive whitelist.",
@@ -72,9 +68,9 @@
     "mono": "ui-monospace, \"SF Mono\", Menlo, Monaco, Consolas, monospace"
   },
   "principles": [
-    "Self-contained: inline <style> + <script>, no build, no npm, no external CSS/JS (Google Fonts via <link> is OK).",
+    "Self-contained: inline <style> + <script>, no build, no npm, no external CSS/JS — fully offline, no Google Fonts.",
     "Vanilla JS only: no React, jQuery, lodash. Modern browser APIs (Clipboard, drag-and-drop, querySelector) are fine.",
-    "Anthropic Coral DNA: ivory bg #FAF9F5, slate text #141413, clay accent #D97757, Lora serif headings, system-ui body, SF Mono for code/labels.",
+    "Anthropic Coral DNA: ivory bg #FAF9F5, slate text #141413, clay accent #D97757, ui-serif/Georgia serif headings, system-ui body, SF Mono for code/labels.",
     "Editor demos end with a 'Copy as markdown' or 'Copy diff' button. The HTML is a UI; the export is what funnels into the next prompt.",
     "Eyebrow pattern: small uppercase mono label above each h1 (e.g., 'Acme / editor / triage') for breadcrumb context.",
     "Sticky toolbar with summary count + filter pill + primary action button — top of every dense view.",

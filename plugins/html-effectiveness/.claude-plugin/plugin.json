@@ -2,9 +2,9 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "html-effectiveness",
   "version": "1.2.1",
-  "description": "Routes agent output to self-contained .html via 20 patterns (triage board, status report, code review, design system...) and a fuzzy EN+DE intent decision tree. Fork of @trq212's work.",
+  "description": "Routes agent output to self-contained .html via 21 patterns (20 from Thariq's catalog + 1 agent-spawn-deck added here: triage board, status report, code review, design system...) and a fuzzy EN+DE intent decision tree. Fork of @trq212's work.",
   "author": {
-    "name": "AncpLua",
+    "name": "ANcpLua",
     "url": "https://github.com/ANcpLua"
   },
   "homepage": "https://github.com/ANcpLua/ancplua-claude-plugins/tree/main/plugins/html-effectiveness",

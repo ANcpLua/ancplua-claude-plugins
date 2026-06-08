@@ -233,6 +233,14 @@ async function main() {
     const result = spawnSync('opensrc', ['path', ref], {
       stdio: ['inherit', 'inherit', 'inherit'],
     });
+    if (result.error) {
+      if (result.error.code === 'ENOENT') {
+        process.stderr.write("nuget-opensrc: 'opensrc' not found on PATH. Install it: npm i -g opensrc\n");
+      } else {
+        process.stderr.write(`nuget-opensrc: failed to launch opensrc: ${result.error.message}\n`);
+      }
+      return 1;
+    }
     return result.status ?? 1;
   } catch (e) {
     process.stderr.write(`nuget-opensrc: ${e.message}\n`);

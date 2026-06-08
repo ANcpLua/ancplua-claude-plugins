@@ -22,14 +22,9 @@ def join_outputs(heading: str, chunks: List[str]) -> str:
 
 def parse_signal(text: str) -> Optional[bool]:
     """Read the verifier's approval verdict; None when no verdict is present."""
-    patterns = (
-        r"Implementation approved:\s*(yes|no)",
-        r"Implementation warranted:\s*(yes|no)",
-    )
-    for pattern in patterns:
-        match = re.search(pattern, text, flags=re.IGNORECASE)
-        if match:
-            return match.group(1).strip().lower() == "yes"
+    match = re.search(r"Implementation approved:\s*(yes|no)", text, flags=re.IGNORECASE)
+    if match:
+        return match.group(1).strip().lower() == "yes"
     return None
 
 

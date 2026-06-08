@@ -6,13 +6,15 @@ description: 'Analyze, lint, and check a local Claude Code add-on or capability,
 
 Use this as the umbrella entrypoint for local Claude Code plugin and skill evaluation. cc-plugin-eval is deterministic, local-first, and zero-dependency.
 
+The runnable command blocks below invoke the shipped script through the plugin root, which works in any checkout: `node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" <command> <args>`. Inline mentions of `cc-plugin-eval <command>` are shorthand for that same invocation; the bare `cc-plugin-eval` alias only exists if you ran `npm link` in the plugin directory.
+
 ## Start Here
 
 1. Resolve whether the target path is a skill (contains `SKILL.md`), a plugin (contains `.claude-plugin/plugin.json`), or another local folder.
 2. If the user spoke naturally, prefer the chat-first router so they see the routed local command:
 
 ```bash
-cc-plugin-eval start <path> --request "<user request>" --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" start <path> --request "<user request>" --format markdown
 ```
 
 3. Map natural chat requests to workflows:
@@ -55,19 +57,19 @@ cc-plugin-eval start <path> --request "<user request>" --format markdown
 ## Matching Commands
 
 ```bash
-cc-plugin-eval start <path> --request "Evaluate this plugin." --format markdown
-cc-plugin-eval start <path> --request "Give me a full analysis of this plugin, including benchmark setup." --format markdown
-cc-plugin-eval analyze <path> --format markdown
-cc-plugin-eval validate <path> --format markdown
-cc-plugin-eval validate <path> --strict
-cc-plugin-eval inspect <path> --component all --format markdown
-cc-plugin-eval inspect <path> --component hooks --format markdown
-cc-plugin-eval explain-budget <path> --format markdown
-cc-plugin-eval measurement-plan <path> --format markdown
-cc-plugin-eval init-benchmark <path>
-cc-plugin-eval benchmark <path>
-cc-plugin-eval improve <path> --brief-out ./skill-brief.json
-cc-plugin-eval compare before.json after.json --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" start <path> --request "Evaluate this plugin." --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" start <path> --request "Give me a full analysis of this plugin, including benchmark setup." --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" analyze <path> --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" validate <path> --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" validate <path> --strict
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" inspect <path> --component all --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" inspect <path> --component hooks --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" explain-budget <path> --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" measurement-plan <path> --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" init-benchmark <path>
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" benchmark <path>
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" improve <path> --brief-out ./skill-brief.json
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" compare before.json after.json --format markdown
 ```
 
 ## Output Expectations

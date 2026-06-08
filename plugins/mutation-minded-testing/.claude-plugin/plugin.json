@@ -16,12 +16,5 @@
     "behavioral-verification",
     "branch-coverage",
     "kill-power"
-  ],
-  "commands": "./commands",
-  "agents": [
-    "./agents/architecture-reviewer.md",
-    "./agents/branch-coverage-implementer.md",
-    "./agents/expressive-verifier-improver.md",
-    "./agents/senior-tester-judge.md"
   ]
 }

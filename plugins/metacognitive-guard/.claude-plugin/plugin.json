@@ -4,7 +4,7 @@
   "description": "Guards against overconfidence and hallucination: epistemic/commit hooks, deep analysis, competing arch-vs-impl reviewers, pre-completion verification, and a background deep-think-partner agent.",
   "version": "0.7.2",
   "author": {
-    "name": "AncpLua",
+    "name": "ANcpLua",
     "url": "https://github.com/ANcpLua"
   },
   "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
@@ -12,19 +12,12 @@
   "keywords": [
     "metacognition",
     "deep-thinking",
-    "struggle-detection",
+    "objective-drift",
     "agent-escalation",
     "hallucination-prevention",
     "fact-checking",
     "competitive-review",
     "epistemic-checkpoint",
-    "completion-integrity",
-    "ci-verification"
-  ],
-  "commands": "./commands",
-  "agents": [
-    "./agents/arch-reviewer.md",
-    "./agents/deep-think-partner.md",
-    "./agents/impl-reviewer.md"
+    "completion-integrity"
   ]
 }

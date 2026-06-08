@@ -6,6 +6,8 @@ description: 'Audit a local Claude Code bundle that has .claude-plugin/plugin.js
 
 Use this skill when the target is a plugin root with `.claude-plugin/plugin.json`. If the target is a single `SKILL.md` directory, hand off to `../evaluate-skill/SKILL.md` instead.
 
+The runnable commands below invoke the shipped script through the plugin root, which works in any checkout: `node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" <command> <args>`. Inline mentions of `cc-plugin-eval <command>` are shorthand for that same invocation; the bare `cc-plugin-eval` alias only exists if you ran `npm link` in the plugin directory.
+
 ## When To Use
 
 - The path passed by the user contains `.claude-plugin/plugin.json`.
@@ -56,18 +58,18 @@ If the path is a `SKILL.md` or a directory holding one, route to `../evaluate-sk
 ## Commands
 
 ```bash
-cc-plugin-eval start <plugin-root> --request "Evaluate this plugin." --format markdown
-cc-plugin-eval analyze <plugin-root> --format markdown
-cc-plugin-eval validate <plugin-root> --strict
-cc-plugin-eval inspect <plugin-root> --component all --format markdown
-cc-plugin-eval inspect <plugin-root> --component hooks --format markdown
-cc-plugin-eval inspect <plugin-root> --component mcp --format markdown
-cc-plugin-eval inspect <plugin-root> --component agents --format markdown
-cc-plugin-eval start <plugin-root> --request "What should I run next?" --format markdown
-cc-plugin-eval compare before.json after.json
-cc-plugin-eval report result.json --format html --output ./cc-plugin-eval-report.html
-cc-plugin-eval init-benchmark <plugin-root>
-cc-plugin-eval benchmark <plugin-root>
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" start <plugin-root> --request "Evaluate this plugin." --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" analyze <plugin-root> --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" validate <plugin-root> --strict
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" inspect <plugin-root> --component all --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" inspect <plugin-root> --component hooks --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" inspect <plugin-root> --component mcp --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" inspect <plugin-root> --component agents --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" start <plugin-root> --request "What should I run next?" --format markdown
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" compare before.json after.json
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" report result.json --format html --output ./cc-plugin-eval-report.html
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" init-benchmark <plugin-root>
+node "${CLAUDE_PLUGIN_ROOT}/scripts/cc-plugin-eval.js" benchmark <plugin-root>
 ```
 
 ## Reference

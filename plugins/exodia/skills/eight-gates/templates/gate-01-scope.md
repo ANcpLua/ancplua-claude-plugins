@@ -111,7 +111,7 @@ Log these counts — they inform agent selection at later gates.
 ## Exit Condition
 
 ```bash
-plugins/exodia/scripts/smart/checkpoint.sh save 1 "scope-defined" \
+${CLAUDE_PLUGIN_ROOT}/scripts/smart/checkpoint.sh save 1 "scope-defined" \
   "files=$(wc -l < .eight-gates/artifacts/scope.txt | tr -d ' ')" \
   "type=[BUG|AUDIT|FEATURE|CLEANUP|CUSTOM]" \
   "estimate=[S|M|L|XL]" \

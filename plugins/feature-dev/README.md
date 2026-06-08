@@ -55,6 +55,10 @@ Severity levels: CRITICAL > HIGH > MEDIUM > LOW > INFO
 claude plugin install feature-dev@ancplua-claude-plugins
 ```
 
+## Credits
+
+Originally Sid Bidasaria (Anthropic).
+
 ## License
 
 MIT

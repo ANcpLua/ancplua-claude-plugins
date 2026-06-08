@@ -288,6 +288,6 @@ Fixture-driven tests verify:
 
 ## References
 
-- Claude Code plugin reference: `/tmp/plugin-compare/refs/claude-plugins-reference.md` (cached snapshot)
-- Claude Code skill reference: `/tmp/plugin-compare/refs/claude-skills-reference.md` (cached snapshot)
+- Claude Code plugin reference: https://code.claude.com/docs/en/plugins-reference
+- Claude Code skill reference: https://code.claude.com/docs/en/skills
 - Claude Messages API token reporting: `https://docs.claude.com/en/api/messages`
