@@ -17,6 +17,17 @@ frustrating today:
 | Merge conflicts / "must be force-merged" / broken linear history | Reversible repair done autonomously; irreversible ops use **propose-and-pause** with a **stamped recovery ref** so nothing is ever truly lost. |
 | Blocked on a human reviewer | **Rewires** what you have authority over (post an agent review, retarget, fix the cause); honestly surfaces what only a human can approve. |
 
+## Just say it
+
+You don't need to know what a PR is — or any slash command. Tell Charon in plain English:
+
+> **"merge my PR"**  ·  **"get this branch merged"**  ·  **"babysit my open PRs"**
+
+Charon figures out *which* PR from context — the branch you're on, or the open PRs you authored —
+and asks only when it's genuinely ambiguous (it never guesses the wrong one). Then it ferries that
+PR to merge, resting while CI runs and surfacing the one thing only you can do. Power users can
+still drive the command directly (see [Commands](#commands)).
+
 ## How it works
 
 ```

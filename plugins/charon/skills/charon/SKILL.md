@@ -1,6 +1,6 @@
 ---
 name: charon
-description: "Ferry a GitHub PR to merge — one snapshot-not-block iteration that reads live PR state, classifies it, and runs exactly one handler: fix CI at the root cause, repair merge conflicts, triage reviewer threads with version-currency checks, rewire human-blocked reviews, or propose-and-pause before any force op. Use when babysitting a PR to merge, resuming a /charon ferry, or honestly handling CI / conflict / review / merge state without ever waiting forever."
+description: "Ferry a GitHub PR to merge — one snapshot-not-block iteration that reads live PR state, classifies it, and runs exactly one handler: fix CI at the root cause, repair merge conflicts, triage reviewer threads with version-currency checks, rewire human-blocked reviews, or propose-and-pause before any force op. Use when asked to merge / land / babysit a GitHub PR — including plain-language 'merge my PR', 'get this branch merged', or 'babysit my PRs' with no slash command and no state file yet — or when resuming a /charon ferry, without ever waiting forever."
 ---
 
 # Charon — the PR ferry
@@ -23,14 +23,23 @@ against the real code, and verify any version it names is current, before touchi
 
 ---
 
-## 1. GROUND — one live snapshot (never trust stale labels)
+## 1. GROUND — establish the ferry (if needed), then one live snapshot
 
 Rebuild every decision from current state. Cached branch labels, old chat summaries, and
 stale `AGENTS.md`/`CLAUDE.md` conclusions are **not authority**. This is also how you
 avoid the "multiple options / half-finished PR / preexisting implementation" confusion:
 read what is true *now*, not what something claims.
 
-Read the state file `.claude/charon.local.md` for the PR number, then take ONE snapshot:
+**If `.claude/charon.local.md` does not exist, establish the ferry first** — you may have been
+summoned in plain English ("merge my PR", "babysit my PRs") with no `/charon` run yet, and the
+magic must work anyway. Resolve the target PR (a PR the user named → the current branch → your
+open PRs; ask only when genuinely ambiguous; **never invent one**) and write the state file. The
+resolution ladder and the exact state-file schema the Stop hook requires live in
+[`references/establish.md`](references/establish.md) — read it **once, on first entry only**, so a
+natural-language start and a `/charon` start converge on identical state and an identical resume
+net. If the state file already exists, just read `pr:` from it.
+
+Either way, then take ONE live snapshot:
 
 ```bash
 PR=<number>
