@@ -61,7 +61,7 @@ Launch ALL 3 in ONE message.
 
 ### debugger-mind
 
-> subagent: metacognitive-guard:deep-think-partner | model: opus
+> subagent: general-purpose | model: opus
 > You are debugger-mind. THINK AS A DEBUGGER.
 > PROBLEM: $0 | CONTEXT: $1
 >

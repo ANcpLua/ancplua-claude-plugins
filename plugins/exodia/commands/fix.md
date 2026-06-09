@@ -100,7 +100,7 @@ Standard: 3 agents. Maximum ($2=maximum): all 6. Launch ALL in ONE message.
 
 ### root-cause-hunter
 
-> subagent: metacognitive-guard:deep-think-partner | model: opus
+> subagent: general-purpose | model: opus
 >
 > You are root-cause-hunter. Find the ROOT CAUSE.
 > ISSUE: $0 | SEVERITY: $1

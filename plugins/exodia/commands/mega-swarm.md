@@ -121,12 +121,12 @@ Each scans SCOPE=$0 through its lens. Output: issues with severity P0-P3.
 
 ### bug-hunter
 
-> subagent: metacognitive-guard:deep-think-partner | model: opus
+> subagent: general-purpose | model: opus
 > HUNT Active Bugs. Scope: $0 | Focus: $1. Null refs? Race conditions? Logic errors?
 
 ### error-auditor <- full/focused only
 
-> subagent: metacognitive-guard:deep-think-partner
+> subagent: general-purpose
 > AUDIT Error Handling. Scope: $0 | Focus: $1. Swallowed exceptions? Missing handlers?
 
 ### api-auditor <- full/focused only
