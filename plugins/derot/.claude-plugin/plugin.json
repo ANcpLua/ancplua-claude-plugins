@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "derot",
-  "version": "0.1.1",
-  "description": "Truth-drift auditor: find & fix comment/doc/CI/version/dependency rot that contradicts the actual code, with root + transitive verification. Parallel rot-scouts + a dependency analyst.",
+  "version": "0.2.0",
+  "description": "Dependency lifecycle: /derot audits comment/doc/CI/version/dependency rot and proposes fixes; /depmigrate migrates packages to their new APIs from upstream releases/tags — refutation-gated.",
   "author": {
     "name": "ANcpLua",
     "url": "https://github.com/ANcpLua"
@@ -20,6 +20,9 @@
     "trusted-publishing",
     "version-sync",
     "dependency-rationalization",
+    "dependency-migration",
+    "api-migration",
+    "adversarial-refutation",
     "cleanup",
     "multi-agent"
   ]
