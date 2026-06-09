@@ -34,7 +34,14 @@ fi
 
 # --- Parse frontmatter (YAML between the first two --- fences) ---
 FRONTMATTER=$(sed -n '/^---$/,/^---$/{ /^---$/d; p; }' "$STATE_FILE")
-get() { echo "$FRONTMATTER" | grep "^$1:" | head -n1 | sed "s/^$1: *//" | sed 's/^"\(.*\)"$/\1/'; }
+# `|| true`: a MISSING frontmatter line makes grep exit 1, which under
+# `set -euo pipefail` would abort the whole script at the assignments below —
+# silently, before the corruption guard could run. With `|| true`, a missing
+# numeric field falls through to that guard (clean removal + message), and a
+# missing status falls through to the safe ACTIONABLE default (re-enter, never
+# silently idle). Without it, field-line corruption killed the hook with RC=1
+# and left the bad file in place — a claim-vs-behaviour gap, not an infinite loop.
+get() { echo "$FRONTMATTER" | grep "^$1:" | head -n1 | sed "s/^$1: *//" | sed 's/^"\(.*\)"$/\1/' || true; }
 
 ITERATION=$(get iteration)
 MAX_ITERATIONS=$(get max_iterations)
