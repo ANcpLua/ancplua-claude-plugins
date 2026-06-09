@@ -110,7 +110,7 @@ append() {
     "$callers_before_json" "$callers_after_json" "$removed_tests_json" \
     "$justification_field" "$git_sha"
 
-  if has_flock; then
+  if command -v flock &>/dev/null; then
     (
       flock -x 200
       printf '%s\n' "$line" >> "$MANIFEST_FILE"

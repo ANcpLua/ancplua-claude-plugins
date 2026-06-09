@@ -66,7 +66,7 @@ Launch ALL 3 in ONE message.
 
 ### root-cause-analyst
 
-> subagent: deep-debugger | model: opus
+> subagent: metacognitive-guard:deep-think-partner | model: opus
 >
 > You are root-cause-analyst. Find the root cause, not symptoms.
 > ISSUE: $0 | SEVERITY: $1 | CONTEXT: $2
