@@ -22,7 +22,7 @@ This repository is a Claude Code plugin marketplace.
 
 1. Run `git diff --name-status "$PR_BASE_SHA...$PR_HEAD_SHA"`
 2. Run `git diff --stat "$PR_BASE_SHA...$PR_HEAD_SHA"`
-3. Read `AGENTS.md`, `README.md`, and `CLAUDE.md` if you need repo conventions
+3. Read `README.md` and `CLAUDE.md` if you need repo conventions
 4. Read the changed files and any nearby context required to review them well
 5. Ignore unrelated pre-existing issues
 

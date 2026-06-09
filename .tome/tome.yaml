@@ -1,15 +1,10 @@
 # .tome/tome.yaml — TomeVault manifest (tome-spec-draft-01)
 #
-# Full TomeVault adoption with TWO config sources so nothing is lost:
-#   1. AGENTS.md  — the agent operating guide; drives CLAUDE.md, GEMINI.md
-#      (same content) plus the Cursor / Windsurf format conversions.
-#   2. .github/copilot-instructions.md — a SEPARATE 449-line plugin-development
-#      manual. It is NOT a render of AGENTS.md; it is its own source, kept
-#      verbatim. Rendering it from AGENTS.md would delete it.
-#
-# NOTE: the render `template:` names below follow TomeVault's documented
-# `<format>-from-<source>` convention but were not validated against the live
-# renderer registry. Verify with:  npx tomevault publish --dry-run .tome/tome.yaml
+# CLAUDE.md is the canonical, hand-maintained agent operating guide for this repo.
+# The former AGENTS.md render-source model was retired in #289 (root-authority
+# cleanup) — AGENTS.md and GEMINI.md were deleted, and no TomeVault renderer is
+# installed — so every agent-config file below is hand-maintained and shipped
+# verbatim (no rendering). .github/copilot-instructions.md is a separate manual.
 manifest:
   schema_version: tome-spec-draft-01
   id: ANcpLua/ancplua-claude-plugins
@@ -21,36 +16,40 @@ manifest:
       url: https://github.com/ANcpLua
   license: MIT
   created_at: 2026-06-04T00:00:00Z
-  updated_at: 2026-06-04T00:00:00Z
+  updated_at: 2026-06-09T00:00:00Z
 
 includes:
   configs:
-    - path: AGENTS.md
-      kind: agents-md
+    - path: CLAUDE.md
+      kind: claude-md
     - path: .github/copilot-instructions.md
       kind: copilot-instructions
+    - path: .cursor/rules/project-config.mdc
+      kind: cursor-rules
+    - path: .windsurf/rules/project-config.md
+      kind: windsurf-rules
 
 targets:
-  # --- driven by AGENTS.md (configs[0]) ---
-  - format: agents-md            # ship the source verbatim
-    output: AGENTS.md
-    source: { type: include, ref: configs[0] }
-  - format: claude-md            # replaces the CLAUDE.md symlink with a rendered file
+  # Every file is its own source, shipped verbatim (no renderer is installed).
+  - format: claude-md
     output: CLAUDE.md
-    source: { type: render, template: claude-md-from-agents-md, input: configs[0] }
-  - format: gemini-md            # replaces the GEMINI.md symlink with a rendered file
-    output: GEMINI.md
-    source: { type: render, template: gemini-md-from-agents-md, input: configs[0] }
-  - format: cursor-rules         # real format conversion (.mdc) — new
-    output: .cursor/rules/project-config.mdc
-    source: { type: render, template: cursor-rules-from-agents-md, input: configs[0] }
-  - format: windsurf-rules       # real format conversion — new
-    output: .windsurf/rules/project-config.md
-    source: { type: render, template: windsurf-rules-from-agents-md, input: configs[0] }
-
-  # --- its own source (configs[1]); preserved, NOT rendered from AGENTS.md ---
+    source:
+      type: include
+      ref: "configs[0]"
   - format: copilot-instructions
     output: .github/copilot-instructions.md
-    source: { type: include, ref: configs[1] }
+    source:
+      type: include
+      ref: "configs[1]"
+  - format: cursor-rules
+    output: .cursor/rules/project-config.mdc
+    source:
+      type: include
+      ref: "configs[2]"
+  - format: windsurf-rules
+    output: .windsurf/rules/project-config.md
+    source:
+      type: include
+      ref: "configs[3]"
 
 # security: omitted → strict default (scan required, no permissions, ruleset @latest)

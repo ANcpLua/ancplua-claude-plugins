@@ -1,23 +1,17 @@
 <!--
-  AGENTS.md is the single editorial source for this repo's agent guidance.
-  CLAUDE.md, GEMINI.md, .cursor/rules/, and .windsurf/rules/ are GENERATED
-  real-file copies of this file (no longer symlinks). Edit AGENTS.md, then
-  regenerate. .github/copilot-instructions.md is a separate, hand-maintained doc.
+  CLAUDE.md is the canonical, hand-maintained agent operating guide for this repo.
+  .cursor/rules/project-config.mdc and .windsurf/rules/project-config.md are
+  hand-maintained copies of it; .github/copilot-instructions.md is a separate
+  hand-maintained doc. (The former AGENTS.md single-source / render model was
+  retired in #289, which deleted AGENTS.md and GEMINI.md.)
 -->
 
 > [!IMPORTANT]
-> **Single source.** Edit **`AGENTS.md`** only. `CLAUDE.md`, `GEMINI.md`,
-> `.cursor/rules/project-config.mdc`, and `.windsurf/rules/project-config.md`
-> are **generated copies** of this file — real files, not symlinks, so they
-> travel to every checkout (Windows included) and to tools that don't follow
-> symlinks (e.g. Gemini CLI). After editing AGENTS.md, regenerate them:
-> `npx tomevault init` once the repo is indexed on TomeVault, or copy the
-> same-format files directly. `.github/copilot-instructions.md` is a
-> **separate** hand-maintained document — not generated from this file.
->
-> AGENTS.md is canonical because it's the cross-vendor spec
-> ([agents.md](https://agents.md/)) read natively by Codex, Cursor, Jules,
-> Gemini CLI, Windsurf, Aider, Zed, and ~20 other agents.
+> **Canonical source.** This file (`CLAUDE.md`) is the hand-maintained agent
+> operating guide for this repo. `.cursor/rules/project-config.mdc` and
+> `.windsurf/rules/project-config.md` are hand-maintained copies — keep them in
+> sync by hand when you change this file. `.github/copilot-instructions.md` is a
+> **separate** hand-maintained document, not a copy of this one.
 
 ---
 
