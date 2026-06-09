@@ -27,7 +27,7 @@ Lead MUST replace these with actual values before spawning. Mapping from skill a
 
 Standard: 3 agents. Full: all 6.
 
-> subagent: deep-debugger
+> subagent: metacognitive-guard:deep-think-partner
 >
 > You are **root-cause-hunter**.
 > SESSION: $SESSION_ID | OBJECTIVE: $OBJECTIVE | SCOPE: $SCOPE
@@ -164,7 +164,7 @@ Quick: first 6. Focused: 8 relevant to focus area. Full: all 12.
 
 <!-- -->
 
-> subagent: deep-debugger
+> subagent: metacognitive-guard:deep-think-partner
 >
 > You are **bug-hunter**.
 > SESSION: $SESSION_ID | SCOPE: $SCOPE
@@ -175,7 +175,7 @@ Full mode adds (launch alongside the 6 above):
 
 <!-- -->
 
-> subagent: deep-debugger
+> subagent: metacognitive-guard:deep-think-partner
 >
 > You are **error-auditor**. (full/focused only)
 > SESSION: $SESSION_ID | SCOPE: $SCOPE

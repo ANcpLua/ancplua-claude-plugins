@@ -67,7 +67,7 @@ TeamCreate: team_name = "red-blue-review", description = "Adversarial review: $0
 
 **STEP 1 — Red Attack Phase:**
 Spawn 3 Red attackers as teammates (ALL in ONE message):
-Task tool: team_name="red-blue-review", name="red-crash-hunter", subagent_type="deep-debugger", model="opus"
+Task tool: team_name="red-blue-review", name="red-crash-hunter", subagent_type="metacognitive-guard:deep-think-partner", model="opus"
 Task tool: team_name="red-blue-review", name="red-security-attacker", subagent_type="general-purpose", model="opus"
 Task tool: team_name="red-blue-review", name="red-api-breaker", subagent_type="general-purpose", model="opus"
 
@@ -91,7 +91,7 @@ SendMessage type="shutdown_request" to all Blue defenders.
 
 **STEP 5 — Red Re-Attack Phase:**
 Spawn 1 Red re-attacker per module:
-Task tool: team_name="red-blue-review", name="red-reattacker-[module]", subagent_type="deep-debugger"
+Task tool: team_name="red-blue-review", name="red-reattacker-[module]", subagent_type="metacognitive-guard:deep-think-partner"
 
 Re-attackers use TaskUpdate to mark findings as DEFEATED/BYPASSED/INCOMPLETE.
 
@@ -112,7 +112,7 @@ Launch ALL 3 in ONE message.
 
 ### red-crash-hunter
 
-> teammate: red-crash-hunter | team: red-blue-review | subagent_type: deep-debugger | model: opus
+> teammate: red-crash-hunter | team: red-blue-review | subagent_type: metacognitive-guard:deep-think-partner | model: opus
 > RED TEAM — Crash Hunter. TARGET: $0 | SCOPE: $1
 > You are a teammate in the red-blue-review team.
 > Use SendMessage to coordinate with other Red team members (red-security-attacker, red-api-breaker).
@@ -184,7 +184,7 @@ Launch ONE re-attacker per Blue module (mirrors Phase 2 grouping):
 
 ### red-reattacker-N (one per module)
 
-> teammate: red-reattacker-[module] | team: red-blue-review | subagent_type: deep-debugger | model: opus
+> teammate: red-reattacker-[module] | team: red-blue-review | subagent_type: metacognitive-guard:deep-think-partner | model: opus
 > RED RE-ATTACK — Try to bypass ALL fixes in MODULE: [MODULE_PATH]
 > BLUE FIXES: [PASTE ALL BLUE FIXES FOR THIS MODULE]
 > You are a teammate in the red-blue-review team.

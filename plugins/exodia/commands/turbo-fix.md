@@ -70,7 +70,7 @@ Launch ALL 6 in ONE message.
 
 ### root-cause-hunter
 
-> subagent: deep-debugger | model: opus
+> subagent: metacognitive-guard:deep-think-partner | model: opus
 >
 > You are root-cause-hunter. Find the ROOT CAUSE.
 > ISSUE: $0 | CONTEXT: $2
