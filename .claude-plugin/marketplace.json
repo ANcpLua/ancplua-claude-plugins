@@ -47,7 +47,7 @@
     {
       "name": "cc-plugin-eval",
       "description": "Claude-Code-native plugin and skill evaluator. Static analysis + token budgeting + benchmarking across the full Claude component surface (manifest, hooks, MCP, LSP, monitors, agents, marketplace, userConfig). Forked from openai/plugins plugin-eval (MIT) and rewritten for Claude Code conventions; complements skill-creator's per-skill LLM grading with whole-plugin scoring.",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "source": "./plugins/cc-plugin-eval"
     },
     {
