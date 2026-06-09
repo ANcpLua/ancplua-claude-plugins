@@ -1,5 +1,8 @@
+import path from "node:path";
+
 import { createFinding, createMetric } from "../core/schema.js";
 import { pathExists, readText } from "../lib/files.js";
+import { findUnresolvedSubagents } from "./subagent-refs.js";
 
 export async function evaluateMarketplace(marketplacePath, pluginName, manifest = {}) {
   const findings = [];
@@ -157,6 +160,21 @@ export async function evaluateMarketplace(marketplacePath, pluginName, manifest 
       );
     }
   }
+
+  // CC710 — cross-plugin subagent-reference resolution. marketplacePath is
+  // <repoRoot>/.claude-plugin/marketplace.json, so repoRoot is two levels up.
+  const repoRoot = path.dirname(path.dirname(marketplacePath));
+  const subagents = await findUnresolvedSubagents(repoRoot, plugins);
+  findings.push(...subagents.findings);
+  metrics.push(
+    createMetric({
+      id: "subagent_references_scanned",
+      category: "agents",
+      value: subagents.scanned,
+      unit: "refs",
+      band: "info",
+    }),
+  );
 
   metrics.push(
     createMetric({
