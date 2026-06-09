@@ -32,48 +32,18 @@ commit, or merge state). Done.
 
 ---
 
-## Solo ferry (one PR)
+## Solo ferry (one PR or current branch)
 
-### 1 — Establish the ferry (once)
-Resolve and confirm the target:
-```bash
-gh pr view ${ARGUMENTS:-} --json number,headRefName,baseRefName,state,url,headRefOid \
-  -q '{n:.number, head:.headRefName, base:.baseRefName, state:.state, url:.url, sha:.headRefOid}'
-gh repo view --json nameWithOwner -q .nameWithOwner
-```
-If no PR resolves (e.g. `.` but the branch has none), stop and tell the user how to create one
-(offer `/commit-push-pr`) — do **not** invent a PR.
+Invoke the **`charon`** skill and run exactly ONE iteration — pass the user's `$ARGUMENTS`
+through as the PR hint (a number / URL; `.` or empty = current branch). The skill owns the whole
+procedure, **including establishing the ferry on first entry**: it resolves the target PR (from
+your hint, the current branch, or your open PRs — asking only when genuinely ambiguous), writes
+`.claude/charon.local.md` if it does not exist yet (the exact schema the resume net needs, with
+`max_iterations` bounding actionable re-entries), then grounds → classifies → dispatches one
+handler → writes an honest `status:`.
 
-Write `.claude/charon.local.md` with the Write tool (leave `session_id` empty — the Stop hook claims it):
-```markdown
----
-pr: <number>
-repo: <owner/name>
-url: <pr url>
-base: <base branch>
-head: <head branch>
-head_sha: <head oid>
-session_id:
-iteration: 0
-max_iterations: 40
-status: working
-started_at: <output of: date -u +%FT%TZ>
----
-Continue ferrying PR #<number> (<owner/name>) to merge.
-
-Invoke the `charon` skill and run exactly ONE iteration of the ferry loop: ground (one live
-snapshot) → classify → dispatch one handler → update this file's `status:` and `head_sha:` →
-end the turn. Never block, poll, or `gh pr checks --watch`. If CI is in flight, set
-`status: ci-running`, schedule a wakeup, and stop — the Stop hook lets you rest and resume.
-```
-`max_iterations` bounds **actionable** re-entries (runaway guard); CI waits are paced separately
-and do not consume it.
-
-### 2 — Run the first iteration
-Invoke the **`charon`** skill and execute one ferry iteration. The skill owns the full procedure:
-the state machine, the honest status vocabulary, the resume net, and every handler (CI repair,
-conflict repair, reviewer triage with version verification, human-reviewer rewiring, and
-propose-and-pause for force ops).
+If no PR resolves (e.g. `.` but the branch has none), the skill stops with `status: needs-you`
+and tells the user how to create one (`/commit-push-pr`) — it never invents a PR.
 
 End your turn normally. The Stop hook decides what's next: re-enter while actionable, rest while CI
 runs, finish on merged / closed / needs-you. Do not loop by hand — let the hook drive.

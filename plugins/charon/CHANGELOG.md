@@ -4,6 +4,25 @@ All notable changes to the Charon plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-06-09
+
+### Added
+
+- **Self-bootstrapping ferry** — the `charon` skill now establishes the ferry on first entry, so a
+  plain-language **"merge my PR"** / **"babysit my PRs"** works with no slash command and no
+  pre-existing state file. It resolves the target PR from the request, the current branch, or your
+  open PRs (asking only when genuinely ambiguous — never guessing the wrong PR), then writes
+  `.claude/charon.local.md` in the exact schema the Stop-hook resume net requires.
+
+### Changed
+
+- **One source for "establish the ferry."** `/charon:charon` now delegates ferry setup to the
+  `charon` skill instead of carrying its own copy of the resolve-and-write-state logic — a
+  natural-language start and a slash-command start converge on identical state and an identical
+  resume net, so the two entry points can never drift apart.
+- **Docs lead with the natural-language mode.** The README opens on "just say 'merge my PR'"; the
+  explicit `/charon:charon` argument table is now the power-user reference, not the headline.
+
 ## [0.1.0] - 2026-06-08
 
 Initial release — ferry a GitHub PR to merge without ever waiting forever.
