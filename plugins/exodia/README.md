@@ -1,14 +1,12 @@
 # exodia
 
-Multi-agent workflow orchestration. 9 commands + 2 skills (eight-gates, hades).
+Multi-agent workflow orchestration. 7 commands + 2 skills (eight-gates, hades).
 
 ## Commands
 
 | Command | Agents | Pattern | Best For |
 |---------|--------|---------|----------|
-| `/exodia:turbo-fix` | 13 | Phased pipeline | P0 critical bugs |
-| `/exodia:fix` | 8-16 | Configurable pipeline | Any bug fix |
-| `/exodia:fix-pipeline` | 7 | Systematic pipeline | Audit findings |
+| `/exodia:fix` | 8-14 | Gated pipeline (`severity` P0-P3, `parallelism` standard\|maximum) | Any bug — ad-hoc, P0 (add `maximum`), or audit findings (auto-inherited) |
 | `/exodia:tournament` | N+2 | Competition | Quality optimization |
 | `/exodia:mega-swarm` | 6-12 | All parallel | Codebase audit |
 | `/exodia:deep-think` | 5 | Multi-perspective | Analysis before action |
@@ -29,7 +27,7 @@ Multi-agent workflow orchestration. 9 commands + 2 skills (eight-gates, hades).
 1. Go all-in on objective     → /exodia:eight-gates "ship v2.0" . 8
 2. Audit the codebase         → /exodia:mega-swarm mode=quick
 3. Exterminate warnings       → /exodia:baryon-mode path/to/Solution.sln
-4. Fix critical issues        → /exodia:turbo-fix (P0) or /exodia:fix (P1/P2)
+4. Fix any issue              → /exodia:fix "issue" (add `maximum` for P0; auto-inherits audit findings)
 5. Security review            → /exodia:red-blue-review scope=security
 6. Architectural decisions    → /exodia:deep-think mode=architecture
 7. Batch implement features   → /exodia:batch-implement type=endpoints

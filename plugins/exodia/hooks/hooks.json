@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Given this hook event context: $ARGUMENTS\n\nCheck if there is an active exodia workflow in progress (eight-gates, fix-pipeline, mega-swarm, etc). If so, output a brief JSON summary of: {\"workflow\": \"name\", \"current_phase\": \"phase\", \"completed_steps\": [...], \"remaining_steps\": [...]}. If no active workflow, output nothing.",
+            "prompt": "Given this hook event context: $ARGUMENTS\n\nCheck if there is an active exodia workflow in progress (eight-gates, fix, mega-swarm, etc). If so, output a brief JSON summary of: {\"workflow\": \"name\", \"current_phase\": \"phase\", \"completed_steps\": [...], \"remaining_steps\": [...]}. If no active workflow, output nothing.",
             "model": "haiku"
           }
         ]

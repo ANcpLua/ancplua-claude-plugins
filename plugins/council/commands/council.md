@@ -93,7 +93,7 @@ early saves tokens but eliminates that reactive reconciliation.
 
 - Simple factual questions → just ask directly
 - Single-file code edits → use feature-dev
-- P0 bugs → use exodia:turbo-fix
+- P0 bugs → use exodia:fix `<issue>` P0 maximum
 - Cleanup tasks → use exodia:hades
 
 ## Cost profile
