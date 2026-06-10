@@ -1,7 +1,8 @@
 # ancplua-claude-plugins
 
 Claude Code plugin marketplace — an agent-teams-aware advanced software-engineering
-base set. 9 plugins for parallel agent orchestration, parallel code review,
+base set. 13 plugins for parallel agent orchestration, PR-to-merge ferrying,
+dependency migration, first-principles repo transformation, parallel code review,
 cognitive guardrails, behavior-first test quality, plugin/skill evaluation, and
 code-elegance work.
 
@@ -14,7 +15,7 @@ only advances when the gate passes. No manual babysitting.
 
 ## Plugins
 
-9 plugins, 22 commands, 14 skills, 21 agents:
+13 plugins, 24 commands, 24 skills, 30 agents:
 
 | Plugin                      | What it does in plain language                                                                                                                                              |
 |-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -27,6 +28,10 @@ only advances when the gate passes. No manual babysitting.
 | **cc-plugin-eval**          | Evaluates and scores Claude Code plugins and skills: static analysis, token budgeting, and benchmarking across every component type                                        |
 | **html-effectiveness**      | Routes output into a single self-contained HTML file — dashboards, reports, code reviews, slide decks — instead of a wall of markdown                                       |
 | **nuget-opensrc**           | Fetches the exact source a NuGet package was built from, so the agent greps real code instead of guessing API shapes                                                        |
+| **charon**                  | Babysits a pull request all the way to merge — fixes the CI, repairs conflicts, checks reviewer suggestions against real code, and never just says "wait". Say "merge my PR" and it ferries it home |
+| **derot**                   | Hunts truth-drift — stale comments, dead docs, wrong versions, dependency rot — and proposes fixes; `/depmigrate` migrates a package to its newer API and deletes the old code, gated by an adversarial refutation check |
+| **nihil**                   | The last-resort cleanup judge: decides whether each artifact still earns its existence and plans the smallest transformation that deserves to exist — nothing is sacred, and every deletion must survive a "prove it's not safe to remove" check |
+| **tomevault-publish**       | Publishes a skill, config, or plugin to TomeVault as a high-grade Tome, and explains the Skill / Tome / AGENTS.md model and grading rubric behind it |
 
 ### How does this work without failing?
 
@@ -52,7 +57,9 @@ Add the marketplace, then install plugins individually:
 
 ## Technical details
 
-9 plugins, 22 commands, 14 skills, 21 agents.
+13 plugins, 24 commands, 24 skills, 30 agents.
+
+(Counts cover shipped marketplace plugins; cc-plugin-eval's `fixtures/` test corpus is excluded.)
 
 Tri-AI review system: Claude, Copilot, and CodeRabbit review PRs independently.
 
@@ -67,7 +74,7 @@ Codex review lives in `.github/workflows/codex-code-review.yml`.
 
 ```text
 plugins/
-├── exodia/                  # parallel agent orchestration (9 commands + 2 skills)
+├── exodia/                  # parallel agent orchestration (7 commands + 2 skills)
 ├── council/                 # Opus council + /deep-research workflow (Teams API)
 ├── elegance-pipeline/       # code elegance scoring + gated refactoring + standalone simplifier
 ├── metacognitive-guard/     # quality gates + commit integrity + CI verification
@@ -75,7 +82,11 @@ plugins/
 ├── mutation-minded-testing/ # behavior-first test quality (4 agents)
 ├── cc-plugin-eval/          # plugin & skill evaluator (static analysis + benchmarking)
 ├── html-effectiveness/      # route output to a self-contained HTML file
-└── nuget-opensrc/           # commit-pinned NuGet → source fetcher
+├── nuget-opensrc/           # commit-pinned NuGet → source fetcher
+├── charon/                  # ferries a GitHub PR to merge — never waits forever
+├── derot/                   # truth-drift hunt + dependency migration (/depmigrate)
+├── nihil/                   # evidence-gated first-principles repo transformation
+└── tomevault-publish/       # publish skills / configs / plugins to TomeVault as Tomes
 ```
 
 ## Links
