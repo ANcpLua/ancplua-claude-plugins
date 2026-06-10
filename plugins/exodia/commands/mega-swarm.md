@@ -187,4 +187,5 @@ AUDIT GATE:
 | # | Category | Issue | Location |
 |---|----------|-------|----------|
 
-**Next:** `/exodia:fix "[P0 issue]"` — it auto-inherits these findings from `findings.json`.
+**Next:** `/exodia:fix "<finding-id>" P0` — fix's STEP -1 filters `findings.json` by `finding.id`
+matching `$0`, so pass the finding id (not prose) and `P0` severity to auto-inherit that finding.
