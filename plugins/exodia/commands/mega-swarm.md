@@ -1,5 +1,5 @@
 ---
-description: "IF codebase audit or release readiness check THEN use this. 6-12 agents scan in parallel. Full(12), quick(6), focused(8). Feed findings into fix-pipeline."
+description: "IF codebase audit or release readiness check THEN use this. 6-12 agents scan in parallel. Full(12), quick(6), focused(8). Feed findings into fix (auto-inherited)."
 allowed-tools: Task, TodoWrite
 effort: high
 ---
@@ -187,4 +187,4 @@ AUDIT GATE:
 | # | Category | Issue | Location |
 |---|----------|-------|----------|
 
-**Next:** `/fix-pipeline "[P0 issue]"`
+**Next:** `/exodia:fix "[P0 issue]"` — it auto-inherits these findings from `findings.json`.

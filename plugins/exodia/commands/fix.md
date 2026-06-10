@@ -1,5 +1,5 @@
 ---
-description: "IF bug fix needed THEN use this. 4 gated phases, 8 agents (standard) or 16 (maximum). For P0 critical → turbo-fix. From audit findings → fix-pipeline."
+description: "IF a bug needs fixing THEN use this — the one exodia fix command. 4 gated phases (analyze → design → implement → verify). Args: severity P0|P1|P2|P3 and parallelism standard|maximum (use maximum for P0 emergencies). Auto-inherits audit findings.json from a prior mega-swarm / eight-gates run when present."
 allowed-tools: Task, Bash, TodoWrite
 effort: high
 ---
@@ -35,9 +35,8 @@ FIX LEAD (You — Orchestrator)
 │  └── devils-advocate         ← skip if $4=true
 │  └── GATE 2 → PROCEED | HALT
 │
-├─ Phase 3: IMPLEMENTATION (standard: 1, maximum: 3)
-│  ├── tdd-implementer
-│  ├── test-writer             ← maximum only
+├─ Phase 3: IMPLEMENTATION (standard: 1, maximum: 2)
+│  ├── tdd-implementer         ← atomic: owns tests AND code
 │  └── docs-updater            ← maximum only
 │  └── GATE 3 → PROCEED | HALT
 │
@@ -294,30 +293,27 @@ Select best solution. Proceed.
 
 ## PHASE 3: IMPLEMENTATION
 
-Standard: 1 TDD implementer. Maximum: 3 agents.
+Standard: 1 atomic TDD implementer. Maximum: + docs-updater (read-only, in parallel).
 
-### tdd-implementer (standard)
+### tdd-implementer (atomic — owns tests AND code)
 
 > subagent: feature-dev:code-architect | model: opus
 >
-> IMPLEMENT the approved solution. TDD:
+> IMPLEMENT the approved solution with atomic TDD. ONE agent owns tests and code —
+> never split test-writing from implementation, they diverge:
 >
-> 1. Write failing test → 2. Minimal fix → 3. Verify pass → 4. Refactor
+> 1. Write failing test (RED) — run it, confirm failure
+> 2. Minimal fix (GREEN) — run it, confirm pass
+> 3. Edge-case + regression tests
+> 4. Refactor — tests stay green
 >
-> Output: Files changed + verification results
-
-### test-writer <- maximum only
-
-> subagent: feature-dev:code-architect
->
-> WRITE TESTS FIRST: failing unit test, edge cases, regression test.
-> DO NOT implement the fix. Output: Test files with paths
+> Output: Changed files with diffs + test results
 
 ### docs-updater <- maximum only
 
 > subagent: Explore
 >
-> CHECK what docs need updating: README, API docs, CHANGELOG, code comments.
+> CHECK what docs need updating: README, API docs, CHANGELOG, code comments. Read-only.
 > Output: Documentation updates needed
 
 ---
