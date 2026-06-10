@@ -30,16 +30,13 @@ stale `AGENTS.md`/`CLAUDE.md` conclusions are **not authority**. This is also ho
 avoid the "multiple options / half-finished PR / preexisting implementation" confusion:
 read what is true *now*, not what something claims.
 
-**If `.claude/charon.local.md` does not exist, establish the ferry first** — you may have been
-summoned in plain English ("merge my PR", "babysit my PRs") with no `/charon` run yet, and the
-magic must work anyway. Resolve the target PR (a PR the user named → the current branch → your
-open PRs; ask only when genuinely ambiguous; **never invent one**) and write the state file. The
-resolution ladder and the exact state-file schema the Stop hook requires live in
-[`references/establish.md`](references/establish.md) — read it **once, on first entry only**, so a
-natural-language start and a `/charon` start converge on identical state and an identical resume
-net. If the state file already exists, just read `pr:` from it.
-
-Either way, then take ONE live snapshot:
+**Establish the ferry** per [`references/establish.md`](references/establish.md) — read it **once, on
+first entry only** (and again only when an explicit PR redirects an existing ferry). It is the single
+"establish once" both solo entry points share, and it now also handles the **fleet-lookout skip** (a
+`charon:lookout` works its one assigned PR directly and writes no solo state file) and **explicit-PR
+precedence** (a PR the user names beats a pre-existing `.claude/charon.local.md`). Otherwise: if the
+state file already exists, read `pr:` from it; if not, resolve and write it there. Then take ONE live
+snapshot:
 
 ```bash
 PR=<number>
@@ -92,9 +89,9 @@ This is the anti-"waited-forever" core. Do **not** watch or poll.
 2. Pace the resume: call **ScheduleWakeup** with `delaySeconds` ≈ 270 (stays in the
    prompt-cache window) and a prompt that re-enters the ferry for this PR.
 3. Report honestly: *"PR #N — CI running (X of Y checks pending). I'm resting, not stuck.
-   I'll resume when the wakeup fires. If I look idle past a few minutes, re-run `/charon N`
+   I'll resume when the wakeup fires. If I look idle past a few minutes, re-run `/charon:charon N`
    (deterministic resume) or I can arm a `/schedule` backstop."*
-4. End the turn. The Stop hook lets you rest; the wakeup (or a `/charon` re-run) resumes
+4. End the turn. The Stop hook lets you rest; the wakeup (or a `/charon:charon` re-run) resumes
    you. Control flow never depends on the clock, so a missed wakeup degrades to a one-
    command resume — never a silent forever-wait.
 
@@ -196,7 +193,7 @@ Surface one of these to the user — plain language, for someone who has never s
 | status | what you tell the user |
 |---|---|
 | 🟢 `working` | "Fixing &lt;X&gt; on PR #N right now." |
-| 🟡 `ci-running` | "Pushed. CI running (X/Y checks). **Not stuck** — resting, will resume. Re-run `/charon N` if I look idle." |
+| 🟡 `ci-running` | "Pushed. CI running (X/Y checks). **Not stuck** — resting, will resume. Re-run `/charon:charon N` if I look idle." |
 | 🔵 `needs-you` | "I can't proceed without you. The one thing only you can do: &lt;precise action + url&gt;." |
 | 🟠 `conflict` / `review-changes` | "Resolving &lt;conflict/review detail&gt; on PR #N." |
 | ⚫ `merged` / `closed` | "Done: PR #N &lt;merged/closed&gt;. &lt;one-line summary&gt;." |
