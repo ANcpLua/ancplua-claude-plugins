@@ -37,14 +37,18 @@ async function listMarkdownFiles(dir) {
   if (!(await pathExists(dir))) return [];
   let entries;
   try {
-    entries = await fs.readdir(dir, { recursive: true, withFileTypes: true });
+    // Recursive STRING form returns paths relative to `dir` and is portable
+    // across all Node 20+ — unlike the Dirent form, whose `parentPath` is
+    // missing before Node 20.12 (Dirents exposed `path` there), which made a
+    // `?? dir` fallback mis-join nested files to the top directory.
+    entries = await fs.readdir(dir, { recursive: true });
   } catch {
     return [];
   }
   const files = [];
-  for (const entry of entries) {
-    if (entry.isFile() && entry.name.endsWith(".md")) {
-      files.push(path.join(entry.parentPath ?? dir, entry.name));
+  for (const rel of entries) {
+    if (rel.endsWith(".md")) {
+      files.push(path.join(dir, rel));
     }
   }
   return files;
