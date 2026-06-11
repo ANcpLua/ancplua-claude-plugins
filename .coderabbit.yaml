@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# CodeRabbit configuration for the ancplua-claude-plugins marketplace.
+#
+# Base: the cc-triad-relay harness template — a Claude / Copilot / CodeRabbit
+# "triad" review setup for Claude Code repos — tuned for this repo: markdown
+# skills, JS + Python + shell plugin tooling, plugin.json manifests, and
+# PreToolUse / Stop hooks. Static-analysis tools (shellcheck, markdownlint-cli2,
+# ruff, eslint, yamllint, actionlint, gitleaks, …) are on by CodeRabbit's
+# defaults, so they are not re-listed here.
+#
+# Docs:   https://docs.coderabbit.ai/getting-started/configure-coderabbit
+# Schema: https://coderabbit.ai/integrations/schema.v2.json
+
+language: "en-US"
+tone_instructions: "Be direct and constructive. Prioritize bugs, security issues, and fail-open or always-pass logic over style nits."
+
+reviews:
+  profile: "chill"               # actionable-only (CodeRabbit's default)
+  # request_changes_workflow makes the APPROVED state fire deterministically, so a
+  # PR-merge gate (the charon ferry) can rely on it. Flip to false if it feels too
+  # blocking day-to-day.
+  request_changes_workflow: true
+  high_level_summary: true
+  changed_files_summary: true
+  sequence_diagrams: false
+  poem: false
+  auto_review:
+    enabled: true
+    drafts: false
+    ignore_usernames:
+      - dependabot[bot]
+      - renovate[bot]
+    base_branches:               # regex, not glob
+      - "^main$"
+  path_filters:
+    - "!**/*.lock"
+    - "!**/dist/**"
+    - "!**/build/**"
+    - "!**/node_modules/**"
+    - "!**/*.min.js"
+    - "!**/*.min.css"
+    - "!plugins/cc-plugin-eval/fixtures/**"   # test scaffolding, not shipped
+  path_instructions:
+    - path: "plugins/*/skills/**/SKILL.md"
+      instructions: |
+        Skill definitions. The `description` frontmatter is the ONLY trigger mechanism — check it
+        encodes WHEN to use the skill (concrete "use when" phrasing), stays under the ~1024-char
+        cap, and has no colon-space that would break the YAML frontmatter. Flag task-style skills
+        (long imperative numbered lists, no trigger) that should set disable-model-invocation.
+    - path: "plugins/*/hooks/**"
+      instructions: |
+        PreToolUse / Stop hooks. Flag any guard or validator that FAIL-OPENS or always-passes while
+        presenting as protection, and any detection / regex that cannot match what it claims to
+        catch. Hooks must fail SAFE (allow the stop, never silently abort) and branch exhaustively
+        on their inputs.
+    - path: "**/*.{sh,bash}"
+      instructions: |
+        Shell scripts that run under `set -euo pipefail`. Flag command substitutions that can abort
+        the script on a non-match (e.g. an unguarded `grep` in `$(...)`), unquoted expansions, and
+        missing `|| true` / default-value guards.
+    - path: "**/.claude-plugin/plugin.json"
+      instructions: |
+        Plugin manifest. Verify `name` is kebab-case and `version` is valid SemVer, and that the
+        version matches this plugin's entry in /.claude-plugin/marketplace.json — the two must stay
+        in sync.
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "CLAUDE.md"
