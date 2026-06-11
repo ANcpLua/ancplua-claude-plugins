@@ -1,0 +1,38 @@
+{
+  "name": "html-effectiveness",
+  "version": "1.2.1",
+  "description": "Routes agent output to self-contained .html via 21 patterns (20 from Thariq's catalog + 1 agent-spawn-deck added here: triage board, status report, code review, design system...) and a fuzzy EN+DE intent decision tree. Fork of @trq212's work.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "Apache-2.0",
+  "keywords": [
+    "html",
+    "skills",
+    "agent-output",
+    "thariq",
+    "design",
+    "report",
+    "dashboard",
+    "triage",
+    "german",
+    "fuzzy-trigger"
+  ],
+  "interface": {
+    "displayName": "HTML Effectiveness",
+    "shortDescription": "Routes agent output to single self-contained .html files based on Thariq Shihipar's html-effectiveness pattern catalog.\u2026",
+    "longDescription": "Routes agent output to single self-contained .html files based on Thariq Shihipar's html-effectiveness pattern catalog. 20 canonical patterns (triage board, status report, code review, design system, prompt tuner, etc.) with a data-driven decision tree so Claude picks the right pattern per task. Includes OTel semconv generator demo as concrete proof.",
+    "developerName": "ANcpLua",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Use HTML Effectiveness on this repo."
+    ]
+  },
+  "homepage": "https://github.com/ANcpLua/ancplua-claude-plugins/tree/main/plugins/html-effectiveness",
+  "skills": "./skills/"
+}

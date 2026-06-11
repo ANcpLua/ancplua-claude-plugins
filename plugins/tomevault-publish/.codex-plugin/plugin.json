@@ -1,0 +1,33 @@
+{
+  "name": "tomevault-publish",
+  "version": "0.1.0",
+  "description": "One distilled skill for publishing to TomeVault: the Skill/Tome/AGENTS.md model, the npx tomevault CLI, the Studio web publish flow, and the Gold grading rubric.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "tomevault",
+    "skill",
+    "tome",
+    "agents-md",
+    "publishing",
+    "instruction-files"
+  ],
+  "interface": {
+    "displayName": "Tomevault Publish",
+    "shortDescription": "One distilled skill for publishing to TomeVault: the Skill/Tome/AGENTS.md model, the npx tomevault CLI, the Studio web\u2026",
+    "longDescription": "One distilled skill for publishing to TomeVault: the Skill/Tome/AGENTS.md model, the npx tomevault CLI, the Studio web publish flow, and the Gold grading rubric.",
+    "developerName": "ANcpLua",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Use Tomevault Publish on this repo."
+    ]
+  },
+  "skills": "./skills/"
+}

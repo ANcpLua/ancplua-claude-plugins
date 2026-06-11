@@ -41,6 +41,19 @@ anything else continues. No hoping. No skipping. No "it probably works."
 
 ## Install
 
+### Codex
+
+This repo also ships a Codex marketplace at `.agents/plugins/marketplace.json`.
+For local development, register this checkout as a Codex marketplace:
+
+```bash
+codex plugin marketplace add /Users/ancplua/RiderProjects/ancplua-claude-plugins
+```
+
+Then install plugins from the `ancplua-claude-plugins` marketplace in Codex.
+
+### Claude Code
+
 Add the marketplace, then install plugins individually:
 
 ```bash
@@ -57,7 +70,9 @@ Add the marketplace, then install plugins individually:
 
 ## Technical details
 
-13 plugins, 24 commands, 24 skills, 30 agents.
+Claude package counts: 13 plugins, 24 commands, 24 skills, 30 agents.
+Codex migration adds 13 Codex plugin manifests, a repo-local Codex marketplace,
+24 command-derived Codex skills, and 30 repo-local Codex custom agents.
 
 (Counts cover shipped marketplace plugins; cc-plugin-eval's `fixtures/` test corpus is excluded.)
 

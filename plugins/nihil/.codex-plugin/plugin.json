@@ -1,0 +1,40 @@
+{
+  "name": "nihil",
+  "version": "0.3.0",
+  "description": "Evidence-gated maintainability discipline in two layers: a native hook-enforced mode plugin \u2014 /nihil:raze (root-authority, write-capable transformation of a repo you own) plus the disciplined /nihil:review \u2192 /nihil:implement \u2192 /nihil:release path, with a secret / API-key brake active in every mode (a discipline aid, not a security boundary) \u2014 plus a summonable pantheon of five first-principles dynamic workflows (/nihil, /nihil-maat, /nihil-odin, /nihil-shiva, /nihil-athena) installed via /nihil:summon.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "code-review",
+    "maintainability",
+    "refactor",
+    "evidence",
+    "quality-gate",
+    "mode-separation",
+    "release-gate",
+    "confidence-scoring",
+    "dynamic-workflow",
+    "first-principles",
+    "multi-agent",
+    "root-authority",
+    "write-capable"
+  ],
+  "interface": {
+    "displayName": "Nihil",
+    "shortDescription": "Evidence-gated maintainability discipline in two layers. (1) A native plugin: four modes \u2014 /nihil:raze (root-authority,\u2026",
+    "longDescription": "Evidence-gated maintainability discipline in two layers. (1) A native plugin: four modes \u2014 /nihil:raze (root-authority, write-capable transformation of a repo you own; only secret-leak and catastrophic, unrecoverable commands are blocked) plus /nihil:review, /nihil:implement, /nihil:release with confidence scoring, scope control, and release gating \u2014 backed by five read-only review agents and PreToolUse/Stop hooks (a discipline aid, not a security boundary: heuristic command matching, fail-open; a secret / API-key brake is active in every mode). (2) A summonable pantheon of five first-principles dynamic workflows (/nihil orchestrator + /nihil-maat review, /nihil-odin research, /nihil-shiva deletion, /nihil-athena restructure), installed into .claude/workflows/ via /nihil:summon.",
+    "developerName": "ANcpLua",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Use Nihil on this repo."
+    ]
+  },
+  "skills": "./skills/"
+}

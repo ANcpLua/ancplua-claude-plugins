@@ -1,0 +1,33 @@
+{
+  "name": "exodia",
+  "version": "3.0.1",
+  "description": "Multi-agent workflow orchestration: 7 commands (fix, tournament, mega-swarm, red-blue-review, baryon-mode...) plus eight-gates and hades skills using the Teams API for reactive work.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "multi-agent",
+    "orchestration",
+    "parallel-execution",
+    "workflow",
+    "code-fix",
+    "cleanup"
+  ],
+  "interface": {
+    "displayName": "Exodia",
+    "shortDescription": "Multi-agent workflow orchestration (7 commands + 2 skills: eight-gates, hades): fix, tournament, mega-swarm, deep-think\u2026",
+    "longDescription": "Multi-agent workflow orchestration (7 commands + 2 skills: eight-gates, hades): fix, tournament, mega-swarm, deep-think, batch-implement, red-blue-review, baryon-mode. Hades, eight-gates, and red-blue-review use Teams API for reactive collaboration.",
+    "developerName": "ANcpLua",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Use Exodia on this repo."
+    ]
+  },
+  "skills": "./skills/"
+}

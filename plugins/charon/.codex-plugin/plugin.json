@@ -1,0 +1,45 @@
+{
+  "name": "charon",
+  "version": "0.2.1",
+  "description": "Ferries a GitHub PR to merge without waiting forever: an honest snapshot-not-block loop that fixes CI, repairs conflicts, version-checks reviewer suggestions, and never says 'just wait'.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "pull-request",
+    "github",
+    "merge",
+    "ci",
+    "code-review",
+    "ferryman",
+    "babysit",
+    "loop",
+    "stop-hook",
+    "schedulewakeup",
+    "resume",
+    "honest-status",
+    "merge-conflict",
+    "version-verification",
+    "multi-agent",
+    "teams-api",
+    "propose-and-pause",
+    "recovery-ref"
+  ],
+  "interface": {
+    "displayName": "Charon",
+    "shortDescription": "Ferries a GitHub PR to merge without ever waiting forever: a snapshot-not-block loop (never `gh pr checks --watch`) cla\u2026",
+    "longDescription": "Ferries a GitHub PR to merge without ever waiting forever: a snapshot-not-block loop (never `gh pr checks --watch`) classifies live PR state and runs one handler \u2014 root-cause CI fixes, merge-conflict repair, AI-reviewer triage (CodeRabbit/Codex/Codacy) with version-currency verification before applying, human-blocked-review rewiring, and propose-and-pause (with a stamped recovery ref) before any force-push/force-merge/history rewrite. A clock-independent Stop hook plus ScheduleWakeup form the resume net; an honest status vocabulary never says 'just wait'. One arg-dispatched command (/charon:charon): give it several PRs and it ferries them at once as a council-style agent team.",
+    "developerName": "ANcpLua",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Use Charon on this repo."
+    ]
+  },
+  "skills": "./skills/"
+}

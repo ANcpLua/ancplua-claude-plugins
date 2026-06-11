@@ -1,0 +1,32 @@
+{
+  "name": "feature-dev",
+  "version": "1.3.0",
+  "description": "/feature-dev takes a feature from idea to reviewed code in seven gated phases via code-explorer, code-architect, and code-reviewer agents, plus a standalone /review for quality audits.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "feature-development",
+    "code-review",
+    "architecture",
+    "agents",
+    "quality-assurance"
+  ],
+  "interface": {
+    "displayName": "Feature Dev",
+    "shortDescription": "/feature-dev takes a feature from idea to reviewed code in seven gated phases via code-explorer, code-architect, and co\u2026",
+    "longDescription": "/feature-dev takes a feature from idea to reviewed code in seven gated phases via code-explorer, code-architect, and code-reviewer agents, plus a standalone /review for quality audits.",
+    "developerName": "ANcpLua",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Use Feature Dev on this repo."
+    ]
+  },
+  "skills": "./skills/"
+}

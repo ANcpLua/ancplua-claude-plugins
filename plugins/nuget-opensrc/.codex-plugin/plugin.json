@@ -1,0 +1,35 @@
+{
+  "name": "nuget-opensrc",
+  "version": "0.1.2",
+  "description": "Commit-pinned NuGet to GitHub source fetcher: wraps opensrc with catalog metadata so agents grep the exact commit a package shipped from. Ships a command, a research skill, and a Node CLI.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "nuget",
+    "opensrc",
+    "dotnet",
+    "source-code",
+    "ai-coding",
+    "research",
+    "commit-pinning"
+  ],
+  "interface": {
+    "displayName": "NuGet OpenSrc",
+    "shortDescription": "Commit-pinned NuGet\u2192GitHub source fetcher. Wraps opensrc with NuGet catalog metadata so coding agents grep the exact co\u2026",
+    "longDescription": "Commit-pinned NuGet\u2192GitHub source fetcher. Wraps opensrc with NuGet catalog metadata so coding agents grep the exact commit a package was built from, not whatever's on main. Ships a /nuget-opensrc command, an autonomous opensrc-research skill, and a Node CLI that refuses to silently fall back to projectUrl or default branch.",
+    "developerName": "ANcpLua",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Use NuGet OpenSrc on this repo."
+    ]
+  },
+  "homepage": "https://github.com/ANcpLua/ancplua-claude-plugins/tree/main/plugins/nuget-opensrc",
+  "skills": "./skills/"
+}
