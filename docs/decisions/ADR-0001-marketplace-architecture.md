@@ -49,7 +49,7 @@ Include variants such as **plain plugin vs MCP server vs combined** when relevan
 3. **Option C (chosen):** One repository as a **plugin marketplace and lab**:
     - `plugins/` for plugins.
     - `.claude-plugin/marketplace.json` as the manifest.
-    - `tooling/` and `docs/` as shared infrastructure (skills and agents live inside their plugins).
+    - `docs/` as shared infrastructure (skills and agents live inside their plugins).
 
 ## Decision Outcome
 
@@ -61,7 +61,7 @@ The repository `ancplua-claude-plugins` is:
 - A **skills and agent lab** with a stable top-level layout.
 - The place where Claude Code is expected to operate with full local authority (within the rules of `CLAUDE.md`).
 
-This ADR is **accepted** and is the basis for `spec.md`, `CLAUDE.md`, and the directory structure.
+This ADR is **accepted** and is the basis for the `docs/specs/` documents, `CLAUDE.md`, and the directory structure.
 
 ## Consequences
 
@@ -135,7 +135,6 @@ These trade-offs are considered acceptable given the long-term goals.
 - `plugins/` – All Claude Code plugins.
 - `.claude-plugin/marketplace.json` – Declares plugin list and metadata.
 - `plugins/*/skills/` – Skills live inside their plugins (no repo-wide skills directory).
-- `tooling/` – Scripts and templates shared across plugins.
 - `docs/` – Architecture, plugin guidelines, workflows, and roadmap.
 - `.github/workflows/` – CI and dependency automation.
 
@@ -143,7 +142,7 @@ These trade-offs are considered acceptable given the long-term goals.
 
 - Claude is expected to have **full local authority** inside this repo (create, move, rename, delete), given the
   configured permissions.
-- Claude MUST obey `CLAUDE.md`, `spec.md`, and this ADR when making structural changes.
+- Claude MUST obey `CLAUDE.md`, the `docs/specs/` documents, and this ADR when making structural changes.
 - Validation scripts and CI pipelines are the **safety net** for any large change.
 
 ## Maintenance Rules for Claude
@@ -176,4 +175,4 @@ When in doubt, Claude MUST:
 
 1. Inspect the actual repository structure and usage.
 2. Compare with the intent written here.
-3. Either align the repo to this ADR or explicitly update this ADR and `spec.md` to match the new, intentional design.
+3. Either align the repo to this ADR or explicitly update this ADR and the `docs/specs/` documents to match the new, intentional design.
