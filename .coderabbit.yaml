@@ -17,10 +17,9 @@ tone_instructions: "Be direct and constructive. Prioritize bugs, security issues
 
 reviews:
   profile: "chill"               # actionable-only (CodeRabbit's default)
-  # request_changes_workflow makes the APPROVED state fire deterministically, so a
-  # PR-merge gate (the charon ferry) can rely on it. Flip to false if it feels too
-  # blocking day-to-day.
-  request_changes_workflow: true
+  # Advisory only — CodeRabbit never blocks a merge ("keine rules die was
+  # verbieten", 2026-06-11).
+  request_changes_workflow: false
   high_level_summary: true
   changed_files_summary: true
   sequence_diagrams: false
