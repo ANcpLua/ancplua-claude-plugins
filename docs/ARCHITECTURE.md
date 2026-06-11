@@ -13,6 +13,7 @@ ancplua-claude-plugins/
 ├── CHANGELOG.md                 # Chronological change log
 ├── LICENSE
 ├── .gitignore
+├── .coderabbit.yaml             # CodeRabbit review config (CCC-triad, Pro Plus)
 ├── .markdownlint.jsonc          # Markdown lint rules
 ├── .markdownlintignore          # Lint exclusions
 │
@@ -140,6 +141,7 @@ Config files per agent:
 |-------|--------|
 | Claude | `CLAUDE.md`, `.claude/rules/`, SessionStart hooks |
 | Copilot | `.github/copilot-instructions.md` |
+| CodeRabbit | `.coderabbit.yaml` |
 
 No real-time communication between AI systems.
 
