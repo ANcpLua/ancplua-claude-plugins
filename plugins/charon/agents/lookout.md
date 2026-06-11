@@ -32,8 +32,11 @@ the ferryman holds the whole picture and is your fallback.
 
 ## Protocol
 
-1. **Ferry.** Invoke the `charon` skill and run iterations against your one PR exactly as the solo
-   ferry does. Use `reviewer-triage` for review threads.
+1. **Ferry.** Invoke the `charon` skill against your one assigned PR, telling it you are a
+   **`charon:lookout`** so it skips the solo state-file bootstrap. Run its GROUND → CLASSIFY →
+   DISPATCH → SET STATUS loop on that PR, but track `status`/`head_sha` in your own turn and report
+   via SendMessage — do **not** write `.claude/charon.local.md` (that solo resume-net file belongs to
+   the ferryman's fleet orchestration, not to a lookout). Use `reviewer-triage` for review threads.
 2. **Report every transition.** On each status change, SendMessage to the ferryman with: PR number,
    new status, one-line reason, and (if `needs-you`) the precise human action + URL.
 3. **CI waits.** On `ci-running`, report it, rest, and let the resume net bring you back — never
@@ -44,6 +47,8 @@ the ferryman holds the whole picture and is your fallback.
 
 ## What you never do
 
+- Write `.claude/charon.local.md`. Fleet state lives with the ferryman; that solo file would collide
+  with the live orchestration. You report via SendMessage instead.
 - `gh pr checks --watch`, poll, or sleep-loop.
 - Apply a reviewer suggestion — especially a version bump — without the version-currency check.
 - Force-push / force-merge / rewrite history. You propose; the human disposes.

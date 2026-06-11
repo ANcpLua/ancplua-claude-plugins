@@ -4,6 +4,27 @@ All notable changes to the Charon plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-06-11
+
+### Fixed
+
+- **An explicitly named PR now overrides a stale state file.** The establish ladder read
+  `.claude/charon.local.md` first, so a request to ferry PR B while a state file existed for PR A
+  silently ferried A. An explicit PR number/URL the user names now wins over a pre-existing state
+  file and re-establishes it for the named PR; the "no explicit PR → existing state file →
+  branch/open-PRs" order is otherwise unchanged.
+- **Fleet lookouts no longer self-write the solo state file.** Each `charon:lookout` invokes the
+  `charon` skill, whose first-entry bootstrap would write a SOLO `.claude/charon.local.md` —
+  colliding with the ferryman's live fleet orchestration (which deliberately forgoes the solo
+  Stop-hook/state-file resume net). The skill's establish step now skips the solo bootstrap when run
+  as a fleet lookout; the lookout works its single assigned PR directly and reports via SendMessage.
+
+### Changed
+
+- Skill prose now consistently references the `/charon:charon` command (was a mix of `/charon` and
+  `/charon:charon`), and `references/establish.md` documents that `PR_HINT` is the PR number/URL the
+  user named (empty ⇒ resolve from the current branch).
+
 ## [0.2.0] - 2026-06-09
 
 ### Added

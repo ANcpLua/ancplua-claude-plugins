@@ -83,7 +83,7 @@
     {
       "name": "charon",
       "description": "Ferries a GitHub PR to merge without ever waiting forever: a snapshot-not-block loop (never `gh pr checks --watch`) classifies live PR state and runs one handler — root-cause CI fixes, merge-conflict repair, AI-reviewer triage (CodeRabbit/Codex/Codacy) with version-currency verification before applying, human-blocked-review rewiring, and propose-and-pause (with a stamped recovery ref) before any force-push/force-merge/history rewrite. A clock-independent Stop hook plus ScheduleWakeup form the resume net; an honest status vocabulary never says 'just wait'. One arg-dispatched command (/charon:charon): give it several PRs and it ferries them at once as a council-style agent team.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "source": "./plugins/charon"
     }
   ]

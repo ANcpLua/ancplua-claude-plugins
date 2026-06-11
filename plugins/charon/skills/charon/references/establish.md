@@ -1,17 +1,33 @@
 # Establishing the ferry (first entry only)
 
-Read this **once**, when `.claude/charon.local.md` does *not* yet exist — e.g. you were summoned
-in plain English ("merge my PR", "babysit my PRs") with no `/charon` command run. A
-natural-language start must converge on the *same* state and resume net as a slash start; this is
-how. On every later iteration the state file already exists, so you never load this again.
+Read this **once**, on first entry — e.g. you were summoned in plain English ("merge my PR",
+"babysit my PRs") with no `/charon:charon` command run, or a state file exists but the user named a
+*different* PR. A natural-language start must converge on the *same* state and resume net as a slash
+start; this is how. On every later iteration for the *same* PR the state file already exists, so you
+never load this again.
+
+`PR_HINT` below is the PR number / URL the user named (empty ⇒ resolve from the current branch).
+
+## Fleet lookout? Skip the solo state file entirely
+
+If you were invoked **as a `charon:lookout`** (the ferryman handed you one PR in a fleet), do **not**
+write `.claude/charon.local.md` and do **not** read this ladder. Fleet mode is a live orchestration
+that deliberately forgoes the solo Stop-hook/state-file resume net (see `commands/charon.md` Fleet
+and `agents/lookout.md`); a lookout-written solo state file would collide with the ferryman's
+orchestration. Work your single assigned PR directly — track `status`/`head_sha` in your own turn
+and report each transition via SendMessage — and ignore everything below. The rest of this file is
+for the **solo** ferry only.
 
 ## Resolve the target PR — first hit wins
 
-1. A PR number / URL the user named in the request.
-2. The **current branch's** PR — a bare `gh pr view` resolves it.
-3. If the branch has none, **your** open PRs — exactly one → use it; several → **ask which**
+1. **A PR number / URL the user explicitly named in the request** — this wins even if
+   `.claude/charon.local.md` already exists for a *different* PR (the user is redirecting the ferry):
+   (re-)establish the state file for the named PR, overwriting any prior one.
+2. Else, if `.claude/charon.local.md` already exists → use its `pr:` (the in-flight ferry).
+3. Else, the **current branch's** PR — a bare `gh pr view` resolves it.
+4. Else, **your** open PRs — exactly one → use it; several → **ask which**
    (an ask is *correct*; never ferry the wrong PR on a guess).
-4. None resolvable → set `status: needs-you`, tell the user how to create one
+5. None resolvable → set `status: needs-you`, tell the user how to create one
    (offer `/commit-push-pr`), and stop. **Never invent a PR.**
 
 ```bash
@@ -51,5 +67,5 @@ snapshot) → classify → dispatch one handler → update this file's `status:`
 end the turn. Never block, poll, or `gh pr checks --watch`.
 ```
 
-This is the single "establish once" both entry points share — the `/charon:charon` command and a
+This is the single "establish once" the solo entry points share — the `/charon:charon` command and a
 plain-language summon converge here, so they can never drift apart.
