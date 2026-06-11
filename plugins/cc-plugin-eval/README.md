@@ -238,7 +238,7 @@ This repository ships a marketplace entry for `cc-plugin-eval` in [`../../.claud
     {
       "name": "cc-plugin-eval",
       "description": "Local-first Claude Code plugin evaluator.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "source": "./plugins/cc-plugin-eval"
     }
   ]

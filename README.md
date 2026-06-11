@@ -65,12 +65,15 @@ Tri-AI review system: Claude, Copilot, and CodeRabbit review PRs independently.
 
 ## GitHub review automation
 
-Codex review lives in `.github/workflows/codex-code-review.yml`.
+Two workflows drive PR automation:
 
-- Set the `OPENAI_API_KEY` repository secret to enable the workflow
-- Codex runs in a `read-only` sandbox with `drop-sudo`
-- The workflow posts a formal PR review from structured Codex output
-- Self-review is blocked when a PR only changes Codex review automation files
+- **`.github/workflows/auto-merge.yml`** — enables native GitHub auto-merge (squash) for
+  Codex-authored PRs (`codex/` branches) and Copilot-authored PRs (`copilot/` branches),
+  plus any manual PR approved by `chatgpt-codex-connector[bot]`. Renovate enables its own
+  native auto-merge, so it needs no entry here.
+- **`.github/workflows/claude.yml`** — runs the Claude Code action on `@claude` mentions in
+  issues, pull-request reviews, and comments. The Codex review prompt and output schema live
+  in `.github/codex/` (`prompts/review.md`, `schemas/review-output.schema.json`).
 
 ```text
 plugins/

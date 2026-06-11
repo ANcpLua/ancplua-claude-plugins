@@ -13,14 +13,15 @@ ancplua-claude-plugins/
 ├── CHANGELOG.md                 # Chronological change log
 ├── LICENSE
 ├── .gitignore
-├── .coderabbit.yaml             # CodeRabbit review config
-├── .markdownlint.json           # Markdown lint rules
+├── .coderabbit.yaml             # CodeRabbit review config (CCC-triad, Pro Plus)
+├── .markdownlint.jsonc          # Markdown lint rules
 ├── .markdownlintignore          # Lint exclusions
 │
 ├── .claude/
-│   ├── rules/                   # Auto-loaded rules (engineering-principles, etc.)
-│   ├── settings.json            # Project Claude Code settings (hooks, permissions)
-│   └── settings.local.json      # Local-only overrides (gitignored)
+│   ├── commands/                # Repo-local slash commands
+│   ├── rules/                   # Holds the Opus 4.8 System Card PDF
+│   ├── workflows/               # Repo-local dynamic workflows
+│   └── worktrees/               # Isolated agent worktrees
 │
 ├── .claude-plugin/
 │   └── marketplace.json         # Plugin registry (source of truth)
@@ -30,21 +31,24 @@ ancplua-claude-plugins/
 │   ├── copilot-instructions.md  # Copilot Coding Agent instructions
 │   ├── dependabot.yml           # Dependency update config
 │   └── workflows/
-│       ├── auto-merge.yml       # Tiered auto-merge (Dependabot, Renovate, CodeRabbit, Owner — see renovate-config reusable workflow)
-│       ├── ci.yml               # Main CI (plugin validate, shellcheck, markdownlint)
-│       ├── coderabbit-autofix.yml   # Auto-comments @coderabbitai autofix on PR open/sync
-│       └── codex-code-review.yml    # Codex formal PR review
+│       ├── auto-merge.yml       # Native GitHub auto-merge for codex/ + copilot/ branches and Codex-approved PRs
+│       ├── ci.yml               # Main CI (JSON/plugin/marketplace/SKILL validation, shellcheck, markdownlint, actionlint)
+│       └── claude.yml           # Claude Code action — runs on @claude mentions in issues, PR reviews, comments
 │
-├── plugins/                     # 9 plugins (22 commands, 14 skills, 21 agents)
+├── plugins/                     # 13 plugins (24 commands, 24 skills, 30 agents)
 │   ├── cc-plugin-eval/           # Claude-Code-native plugin/skill evaluator (token budget, scoring, validators)
+│   ├── charon/                   # PR-to-merge ferry — fixes CI, repairs conflicts, never just waits
 │   ├── council/                  # Five-agent council via Teams API: Opus captain, researcher, clarity, synth, janitor
+│   ├── derot/                    # Truth-drift / doc-rot auditor (/derot, /depmigrate)
 │   ├── elegance-pipeline/        # Multi-agent code-elegance workflow: scouts → judges → planner → verifier → implementer
 │   ├── exodia/                   # Multi-agent orchestration (7 commands + 2 skills: eight-gates, hades)
 │   ├── feature-dev/              # Guided feature development with explorer/architect/reviewer agents
 │   ├── html-effectiveness/       # Produce self-contained .html artifacts (dashboards, reports, diagrams) over markdown
 │   ├── metacognitive-guard/      # Cognitive amplification + epistemic hooks + competitive review
 │   ├── mutation-minded-testing/  # Mutation-minded, behavior-first test quality (4 agents)
-│   └── nuget-opensrc/            # Fetch a NuGet package's exact build-commit source via opensrc
+│   ├── nihil/                    # First-principles repo transformation — every artifact must justify its existence
+│   ├── nuget-opensrc/            # Fetch a NuGet package's exact build-commit source via opensrc
+│   └── tomevault-publish/        # Publish skills / configs / plugins to TomeVault as Tomes
 │
 └── docs/
     ├── ARCHITECTURE.md          # This file
@@ -106,9 +110,8 @@ project-specific routing). Use CLAUDE.md for stable rules. Use skill description
 
 ## 4. Validation and quality gates
 
-Validation runs in CI via `.github/workflows/ci.yml`. The former local wrapper
-`tooling/scripts/weave-validate.sh` was removed in the manual cleanup; run the gate
-tools below directly, or rely on CI.
+Validation runs in CI via `.github/workflows/ci.yml`. There is no local wrapper
+script; run the gate tools below directly, or rely on CI.
 
 | Gate | Tool | What it checks |
 |------|------|----------------|
@@ -122,15 +125,15 @@ tools below directly, or rely on CI.
 
 ## 5. Design principles (SOLID for plugins)
 
-See `.claude/rules/solid-principles.md` (auto-loaded at session start) for the full SOLID plugin design
-constraints including the plugin responsibility table.
+Each plugin has a single responsibility and is composed, not modified: add skills/commands/hooks
+to extend behavior rather than overloading one plugin. The `.claude-plugin/plugin.json` manifest is
+the contract; optional directories (`hooks/`, `commands/`, `agents/`) stay optional.
 
 ---
 
 ## 6. Tri-AI review system
 
-Three AIs (Claude, Copilot, CodeRabbit) review PRs independently.
-Full capability matrix, workflow triggers, and auto-merge tiers: see `CLAUDE.md` Section 5.5.1.
+Multiple AIs (Claude, Copilot, CodeRabbit) review PRs independently.
 
 Config files per agent:
 
@@ -149,12 +152,8 @@ No real-time communication between AI systems.
 | Stage | Tool | Purpose |
 |-------|------|---------|
 | CI | `ci.yml` | Automated validation |
-| Review | `claude-code-review.yml` | AI-assisted review |
+| Review | `claude.yml` | AI-assisted review |
 | Merge | `auto-merge.yml` | Tiered auto-merge |
-
-### DORA targets
-
-See `.claude/rules/devops-calms.md` (auto-loaded) for DORA metric targets and CALMS framework details.
 
 ---
 
@@ -166,7 +165,7 @@ additional layers that are installed separately per user:
 ```text
 Developer
  |
- +-- 7 custom plugins (this repo -- orchestration, guards, cleanup, routing)
+ +-- 13 custom plugins (this repo -- orchestration, guards, cleanup, routing)
  |
  +-- LSP plugins (Anthropic official -- per-language diagnostics + navigation)
  |    +-- C#, TypeScript, Python, C/C++, Go, Rust, etc.
@@ -214,4 +213,4 @@ export CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1
 
 ---
 
-**Last Verified:** 2026-06-06
+**Last Verified:** 2026-06-11

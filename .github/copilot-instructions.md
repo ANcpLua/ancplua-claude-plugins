@@ -23,7 +23,7 @@ This repo is a **Claude Code plugin marketplace** — plugins, skills, hooks, an
 
 1. **Act decisively** - Don't ask for permission on routine tasks
 2. **Fix forward** - When you find issues, fix them immediately
-3. **Validate always** - Run `./tooling/scripts/weave-validate.sh` before completing
+3. **Validate always** - Validation runs in `.github/workflows/ci.yml` (JSON syntax, plugin.json/marketplace.json fields, SKILL.md frontmatter, shellcheck, markdownlint, actionlint)
 4. **Document changes** - Update CHANGELOG.md for any non-trivial change
 
 ---
@@ -55,47 +55,30 @@ This repo follows this structure:
 ancplua-claude-plugins/
 ├── README.md
 ├── CLAUDE.md                    # Claude operational spec
-├── .claude/rules/               # Auto-loaded modular rules
 ├── CHANGELOG.md
 ├── .gitignore
+├── .markdownlint.jsonc          # Markdown lint rules
+│
+├── .claude/
+│   └── rules/                   # Holds the Opus 4.8 System Card PDF
 │
 ├── .claude-plugin/
 │   └── marketplace.json         # Declares all plugins
 │
 ├── .github/
 │   ├── copilot-instructions.md  # This file
+│   ├── dependabot.yml           # Dependency update config
 │   └── workflows/
-│       ├── ci.yml               # Main CI pipeline
-│       └── dependabot.yml
+│       ├── ci.yml               # Main CI (JSON/plugin/marketplace/SKILL validation, shellcheck, markdownlint, actionlint)
+│       ├── auto-merge.yml       # Native auto-merge for codex/ + copilot/ branches and Codex-approved PRs
+│       └── claude.yml           # Claude Code action — runs on @claude mentions
 │
-├── plugins/
-│   ├── metacognitive-guard/     # Cognitive amplification + commit integrity + CI verification
-│   │   ├── .claude-plugin/plugin.json
-│   │   ├── README.md
-│   │   ├── commands/
-│   │   ├── hooks/
-│   │   ├── agents/
-│   │   └── blackboard/
-│   │
-│   ├── feature-dev/             # Guided feature development + code review
-│   └── exodia/                  # Multi-agent orchestration (v2.0.0)
+├── plugins/                     # 13 plugins — see .claude-plugin/marketplace.json
 │
-├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── PLUGINS.md
-│   ├── specs/
-│   │   ├── spec-template.md
-│   │   └── spec-XXXX-*.md
-│   ├── decisions/
-│   │   ├── adr-template.md
-│   │   └── ADR-XXXX-*.md
-│
-└── tooling/
-    ├── scripts/
-    │   ├── weave-validate.sh    # Single validation entrypoint
-    │   └── sync-marketplace.sh
-    └── templates/
-        └── plugin-template/
+└── docs/
+    ├── ARCHITECTURE.md
+    ├── specs/                   # Feature specs (spec-XXXX-*.md)
+    └── decisions/               # ADRs (ADR-XXXX-*.md)
 ```
 
 When suggesting changes, maintain this structure.
@@ -204,15 +187,12 @@ CI configuration lives under `.github/workflows/ci.yml`.
 
 Expected checks include:
 
-- `claude plugin validate .` on marketplace and individual plugins
-- `shellcheck` on all `.sh` files
-- `markdownlint` on all `*.md` files
-- `actionlint` on workflow files
+- **Plugin & JSON validation** (inline `jq`): every `*.json` parses; each `.claude-plugin/plugin.json` has the required `name`/`version`/`description` fields; `marketplace.json` has `name` + `plugins`, and every plugin entry has `name`/`source`/`description` with an existing source directory; every `SKILL.md` has YAML frontmatter with `name` + `description`
+- `shellcheck` on all `.sh` files (severity: warning)
+- `markdownlint` (markdownlint-cli2) on all `*.md` files — non-blocking, warnings only
+- `actionlint` on workflow files (fails on error)
 
-Before committing:
-
-- Run the same steps as CI
-- Use the dedicated script: `./tooling/scripts/weave-validate.sh`
+There is no local validation wrapper script; run the gate tools directly, or rely on CI.
 
 If tests or builds fail:
 
@@ -256,13 +236,11 @@ If tests or builds fail:
 
 When adding a new plugin:
 
-1. Copy from `tooling/templates/plugin-template/`
-2. Update `plugin.json` with plugin details
-3. Create skills in `skills/<skill-name>/SKILL.md`
-4. Add commands in `commands/` if needed
-5. Update `.claude-plugin/marketplace.json`
-6. Run `./tooling/scripts/weave-validate.sh`
-7. Update `CHANGELOG.md`
+1. Create `plugins/<name>/.claude-plugin/plugin.json` (`name`/`version`/`description`/`author`) and a `README.md`
+2. Create skills in `skills/<skill-name>/SKILL.md`
+3. Add commands in `commands/` if needed
+4. Register the plugin in `.claude-plugin/marketplace.json`
+5. Update `CHANGELOG.md`
 
 When adding a new skill:
 
@@ -353,7 +331,7 @@ You are one of **three AI agents** on this repository. All agents can now create
 **Claude:**
 
 - Use Claude Code CLI with `gh pr create` for fix PRs
-- Workflow: `claude-code-review.yml` triggers on PR events
+- Workflow: `claude.yml` triggers on `@claude` mentions in issues, PR reviews, and comments
 - Can push to branches when bypass rules are configured
 
 ### 9.5 AI Coordination
