@@ -60,6 +60,13 @@ case "$FILE_PATH" in
     */assertions.yaml|*/assertions.yml) exit 0 ;;
 esac
 
+# Skip ALL checks for this plugin's own guard scripts — they legitimately CONTAIN the
+# banned patterns they detect, so scanning them would block the guard's own maintenance
+# (the same self-exemption integrity-check.sh makes for bin/ + scripts).
+case "$FILE_PATH" in
+    */metacognitive-guard/bin/*) exit 0 ;;
+esac
+
 # Skip banned-API checks for documentation files (.md, .yaml, .yml, .json)
 # These files legitimately reference banned patterns in tables/examples
 IS_DOCS=false
@@ -129,6 +136,22 @@ if echo "$CONTENT" | grep -qE 'Newtonsoft\.Json|JsonConvert\.'; then
   }
 }
 EOF
+    exit 0
+fi
+
+# Task.Delay with a literal millisecond count (banned pattern — enforces assertions.yaml task_delay).
+# Requires a leading literal digit: Task.Delay(1000). Does NOT match the recommended
+# Task.Delay(TimeSpan.From..., TimeProvider.System) or timeProvider.Delay(...) forms.
+if echo "$CONTENT" | grep -qE 'Task\.Delay\(\s*[0-9]'; then
+    cat << 'DELAY_EOF'
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "EPISTEMIC GUARD: Banned pattern - Task.Delay(<literal ms>). Pass a TimeProvider so delays are virtualizable and testable: await Task.Delay(TimeSpan.FromMilliseconds(...), TimeProvider.System) or timeProvider.Delay(...). (.NET 8+)"
+  }
+}
+DELAY_EOF
     exit 0
 fi
 
