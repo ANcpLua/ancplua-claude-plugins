@@ -39,7 +39,7 @@ ancplua-claude-plugins/
 │   ├── cc-plugin-eval/           # Claude-Code-native plugin/skill evaluator (token budget, scoring, validators)
 │   ├── council/                  # Five-agent council via Teams API: Opus captain, researcher, clarity, synth, janitor
 │   ├── elegance-pipeline/        # Multi-agent code-elegance workflow: scouts → judges → planner → verifier → implementer
-│   ├── exodia/                   # Multi-agent orchestration (9 commands + 2 skills: eight-gates, hades)
+│   ├── exodia/                   # Multi-agent orchestration (7 commands + 2 skills: eight-gates, hades)
 │   ├── feature-dev/              # Guided feature development with explorer/architect/reviewer agents
 │   ├── html-effectiveness/       # Produce self-contained .html artifacts (dashboards, reports, diagrams) over markdown
 │   ├── metacognitive-guard/      # Cognitive amplification + epistemic hooks + competitive review

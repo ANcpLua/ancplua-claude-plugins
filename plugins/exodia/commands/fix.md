@@ -1,5 +1,5 @@
 ---
-description: "IF a bug needs fixing THEN use this — the one exodia fix command. 4 gated phases (analyze → design → implement → verify). Args: severity P0|P1|P2|P3 and parallelism standard|maximum (use maximum for P0 emergencies). Auto-inherits audit findings.json from a prior mega-swarm / eight-gates run when present."
+description: "IF a bug needs fixing THEN use this — the one exodia fix command. 4 gated phases (analyze → design → implement → verify). Args: severity P0|P1|P2|P3 and parallelism standard|maximum (for a P0 emergency pass `P0 maximum`). Auto-inherits audit findings.json from a prior mega-swarm run when present."
 allowed-tools: Task, Bash, TodoWrite
 effort: high
 ---
