@@ -163,6 +163,42 @@ test("parseFrontmatter handles literal YAML block scalars", () => {
   assert.equal(literal.data.description, "First line.\nSecond line.");
 });
 
+test("parseFrontmatter handles multi-line double-quoted scalars with escaped breaks", () => {
+  // The exact shape the Codex marketplace migration generator emits: a double-quoted
+  // scalar continued across physical lines via backslash-escaped breaks, with \uXXXX
+  // and escaped-space sequences. Valid YAML 1.2 — must not throw "Unexpected indentation".
+  const generated = parseFrontmatter(
+    "---\n" +
+      "name: source-command-demo\n" +
+      "description: \"Ferry PR(s) to merge \\u2014 fixes CI,\\\n" +
+      "  \\ repairs conflicts, and never says just wait.\\\n" +
+      "  \\ 'cancel' stops it.\"\n" +
+      "---\n",
+  );
+  assert.deepEqual(generated.errors, []);
+  assert.equal(generated.data.name, "source-command-demo");
+  assert.equal(
+    generated.data.description,
+    "Ferry PR(s) to merge — fixes CI, repairs conflicts, and never says just wait. 'cancel' stops it.",
+  );
+});
+
+test("parseFrontmatter handles multi-line quoted scalars folded without escapes", () => {
+  const folded = parseFrontmatter(
+    "---\nname: temp-skill\ndescription: \"Use when the task\n  spans two folded lines.\"\n---\n",
+  );
+  assert.deepEqual(folded.errors, []);
+  assert.equal(folded.data.description, "Use when the task spans two folded lines.");
+});
+
+test("parseFrontmatter unescapes single-line double-quoted scalars", () => {
+  const single = parseFrontmatter(
+    "---\nname: temp-skill\ndescription: \"A dash \\u2014 and a \\\"quote\\\".\"\n---\n",
+  );
+  assert.deepEqual(single.errors, []);
+  assert.equal(single.data.description, "A dash — and a \"quote\".");
+});
+
 // =====================================================================
 // 3. Skill structure rules
 // =====================================================================

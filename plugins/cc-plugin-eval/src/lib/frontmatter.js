@@ -4,16 +4,138 @@ function countIndent(line) {
   return line.length - line.trimStart().length;
 }
 
+// Index of the unescaped closing quote in `text`, scanning from `startIndex`,
+// or -1 when the quoted scalar continues on the next line. In double-quoted
+// scalars a backslash escapes the following character; in single-quoted
+// scalars `''` is the only escape.
+function findClosingQuote(text, quote, startIndex) {
+  for (let index = startIndex; index < text.length; index += 1) {
+    const char = text[index];
+    if (quote === "\"" && char === "\\") {
+      index += 1;
+      continue;
+    }
+    if (char === quote) {
+      if (quote === "'" && text[index + 1] === "'") {
+        index += 1;
+        continue;
+      }
+      return index;
+    }
+  }
+  return -1;
+}
+
+// YAML 1.2 double-quoted escape processing (ns-esc-char subset that occurs in
+// real frontmatter: \\ \" \/ \n \t \r \0, the escaped space, and \uXXXX).
+function unescapeDoubleQuoted(content) {
+  let result = "";
+  for (let index = 0; index < content.length; index += 1) {
+    const char = content[index];
+    if (char !== "\\") {
+      result += char;
+      continue;
+    }
+    const next = content[index + 1];
+    index += 1;
+    switch (next) {
+      case "n":
+        result += "\n";
+        break;
+      case "t":
+        result += "\t";
+        break;
+      case "r":
+        result += "\r";
+        break;
+      case "0":
+        result += "\0";
+        break;
+      case "\\":
+      case "\"":
+      case "/":
+      case " ":
+        result += next;
+        break;
+      case "u": {
+        const hex = content.slice(index + 1, index + 5);
+        if (/^[0-9a-fA-F]{4}$/.test(hex)) {
+          result += String.fromCharCode(parseInt(hex, 16));
+          index += 4;
+        } else {
+          result += "u";
+        }
+        break;
+      }
+      default:
+        result += next === undefined ? "\\" : next;
+    }
+  }
+  return result;
+}
+
+function endsWithEscapedBreak(content) {
+  let backslashes = 0;
+  for (let index = content.length - 1; index >= 0 && content[index] === "\\"; index -= 1) {
+    backslashes += 1;
+  }
+  return backslashes % 2 === 1;
+}
+
+// A quoted scalar whose closing quote is not on the key's line spans multiple
+// physical lines (YAML flow folding). Continuation lines are stripped of their
+// indentation; an unescaped line break folds to a space, a backslash-escaped
+// line break (double-quoted only) joins directly, and an empty line folds to a
+// newline.
+function parseMultilineQuoted(lines, startIndex, firstRemainder) {
+  const quote = firstRemainder[0];
+  let content = firstRemainder.slice(1);
+  let index = startIndex;
+
+  while (true) {
+    if (quote === "\"" && endsWithEscapedBreak(content)) {
+      content = content.slice(0, -1);
+    } else if (index < lines.length && lines[index].trim() === "") {
+      content += "\n";
+    } else {
+      content += " ";
+    }
+
+    if (index >= lines.length) {
+      throw new Error("Unterminated quoted scalar in frontmatter");
+    }
+
+    const line = lines[index].trim();
+    index += 1;
+    if (line === "" ) {
+      continue;
+    }
+
+    const closing = findClosingQuote(line, quote, 0);
+    if (closing === -1) {
+      content += line;
+      continue;
+    }
+
+    content += line.slice(0, closing);
+    break;
+  }
+
+  const value =
+    quote === "\"" ? unescapeDoubleQuoted(content) : content.replace(/''/g, "'");
+  return { value, nextIndex: index };
+}
+
 function parseScalar(rawValue) {
   const value = rawValue.trim();
   if (!value) {
     return "";
   }
-  if (
-    (value.startsWith("\"") && value.endsWith("\"")) ||
-    (value.startsWith("'") && value.endsWith("'"))
-  ) {
-    return value.slice(1, -1);
+  if (value.startsWith("\"") && findClosingQuote(value, "\"", 1) === value.length - 1) {
+    return unescapeDoubleQuoted(value.slice(1, -1));
+  }
+  if (value.startsWith("'") && findClosingQuote(value, "'", 1) === value.length - 1) {
+    return value.slice(1, -1).replace(/''/g, "'");
   }
   if (value === "true") {
     return true;
@@ -208,7 +330,19 @@ function parseBlock(lines, startIndex, indent) {
         continue;
       }
 
-      container[key] = parseScalar(remainder.trim());
+      const trimmedValue = remainder.trim();
+      if (
+        (trimmedValue.startsWith("\"") || trimmedValue.startsWith("'")) &&
+        findClosingQuote(trimmedValue, trimmedValue[0], 1) === -1
+      ) {
+        // Quoted scalar that continues on the following physical lines.
+        const parsed = parseMultilineQuoted(lines, index + 1, trimmedValue);
+        container[key] = parsed.value;
+        index = parsed.nextIndex;
+        continue;
+      }
+
+      container[key] = parseScalar(trimmedValue);
       index += 1;
       continue;
     }
