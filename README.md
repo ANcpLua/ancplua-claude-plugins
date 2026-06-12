@@ -15,7 +15,7 @@ only advances when the gate passes. No manual babysitting.
 
 ## Plugins
 
-13 plugins, 24 commands, 24 skills, 30 agents:
+13 plugins, 24 commands, 23 skills, 30 agents:
 
 | Plugin                      | What it does in plain language                                                                                                                                              |
 |-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -70,7 +70,7 @@ Add the marketplace, then install plugins individually:
 
 ## Technical details
 
-Claude package counts: 13 plugins, 24 commands, 24 skills, 30 agents.
+Claude package counts: 13 plugins, 24 commands, 23 skills, 30 agents.
 Codex migration adds 13 Codex plugin manifests, a repo-local Codex marketplace,
 24 command-derived Codex skills, and 30 repo-local Codex custom agents.
 

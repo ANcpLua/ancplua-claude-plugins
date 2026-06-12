@@ -5,7 +5,7 @@
     "url": "https://github.com/ANcpLua"
   },
   "metadata": {
-    "description": "Claude Code plugin marketplace — an agent-teams-aware advanced software-engineering base set. Multi-agent orchestration and parallel code review (council, exodia, elegance-pipeline, feature-dev), cognitive amplification (metacognitive-guard), behavior-first test quality (mutation-minded-testing), plugin/skill evaluation (cc-plugin-eval), HTML output routing (html-effectiveness), commit-pinned NuGet source fetching (nuget-opensrc), truth-drift / documentation auditing (derot), evidence-gated maintainability transformation (nihil), PR-to-merge ferrying (charon), and TomeVault publishing (tomevault-publish)."
+    "description": "Claude Code plugin marketplace \u2014 an agent-teams-aware advanced software-engineering base set. Multi-agent orchestration and parallel code review (council, exodia, elegance-pipeline, feature-dev), cognitive amplification (metacognitive-guard), behavior-first test quality (mutation-minded-testing), plugin/skill evaluation (cc-plugin-eval), HTML output routing (html-effectiveness), commit-pinned NuGet source fetching (nuget-opensrc), truth-drift / documentation auditing (derot), evidence-gated maintainability transformation (nihil), PR-to-merge ferrying (charon), and TomeVault publishing (tomevault-publish)."
   },
   "plugins": [
     {
@@ -22,7 +22,7 @@
     },
     {
       "name": "council",
-      "description": "Council using the Teams API: an Opus captain orchestrates a /deep-research dynamic workflow and an Opus synthesizer that reconcile via SendMessage across an agent team, an Opus clarity agent asks live follow-ups, and an Opus janitor flags bloat — reactive collaboration instead of fire-and-forget subagents.",
+      "description": "Council using the Teams API: an Opus captain orchestrates a /deep-research dynamic workflow and an Opus synthesizer that reconcile via SendMessage across an agent team, an Opus clarity agent asks live follow-ups, and an Opus janitor flags bloat \u2014 reactive collaboration instead of fire-and-forget subagents.",
       "version": "1.3.0",
       "source": "./plugins/council"
     },
@@ -58,19 +58,19 @@
     },
     {
       "name": "nuget-opensrc",
-      "description": "Commit-pinned NuGet→GitHub source fetcher. Wraps opensrc with NuGet catalog metadata so coding agents grep the exact commit a package was built from, not whatever's on main. Ships a /nuget-opensrc command, an autonomous opensrc-research skill, and a Node CLI that refuses to silently fall back to projectUrl or default branch.",
+      "description": "Commit-pinned NuGet\u2192GitHub source fetcher. Wraps opensrc with NuGet catalog metadata so coding agents grep the exact commit a package was built from, not whatever's on main. Ships a /nuget-opensrc command, an autonomous opensrc-research skill, and a Node CLI that refuses to silently fall back to projectUrl or default branch.",
       "version": "0.1.2",
       "source": "./plugins/nuget-opensrc"
     },
     {
       "name": "derot",
-      "description": "Dependency lifecycle: /derot audits comment/doc/CI/version/dependency rot and proposes fixes; /depmigrate migrates packages to their new APIs from upstream releases/tags — refutation-gated.",
+      "description": "Dependency lifecycle: /derot audits comment/doc/CI/version/dependency rot and proposes fixes; /depmigrate migrates packages to their new APIs from upstream releases/tags \u2014 refutation-gated.",
       "version": "0.2.0",
       "source": "./plugins/derot"
     },
     {
       "name": "nihil",
-      "description": "Evidence-gated maintainability discipline in two layers. (1) A native plugin: four modes — /nihil:raze (root-authority, write-capable transformation of a repo you own; only secret-leak and catastrophic, unrecoverable commands are blocked) plus /nihil:review, /nihil:implement, /nihil:release with confidence scoring, scope control, and release gating — backed by five read-only review agents and PreToolUse/Stop hooks (a discipline aid, not a security boundary: heuristic command matching, fail-open; a secret / API-key brake is active in every mode). (2) A summonable pantheon of five first-principles dynamic workflows (/nihil orchestrator + /nihil-maat review, /nihil-odin research, /nihil-shiva deletion, /nihil-athena restructure), installed into .claude/workflows/ via /nihil:summon.",
+      "description": "Evidence-gated maintainability discipline in two layers. (1) A native plugin: four modes \u2014 /nihil:raze (root-authority, write-capable transformation of a repo you own; only secret-leak and catastrophic, unrecoverable commands are blocked) plus /nihil:review, /nihil:implement, /nihil:release with confidence scoring, scope control, and release gating \u2014 backed by five read-only review agents and PreToolUse/Stop hooks (a discipline aid, not a security boundary: heuristic command matching, fail-open; a secret / API-key brake is active in every mode). (2) A summonable pantheon of five first-principles dynamic workflows (/nihil orchestrator + /nihil-maat review, /nihil-odin research, /nihil-shiva deletion, /nihil-athena restructure), installed into .claude/workflows/ via /nihil:summon.",
       "version": "0.3.0",
       "source": "./plugins/nihil"
     },
@@ -82,8 +82,8 @@
     },
     {
       "name": "charon",
-      "description": "Ferries a GitHub PR to merge without ever waiting forever: a snapshot-not-block loop (never `gh pr checks --watch`) classifies live PR state and runs one handler — root-cause CI fixes, merge-conflict repair, AI-reviewer triage (CodeRabbit/Codex/Codacy) with version-currency verification before applying, human-blocked-review rewiring, and propose-and-pause (with a stamped recovery ref) before any force-push/force-merge/history rewrite. A clock-independent Stop hook plus ScheduleWakeup form the resume net; an honest status vocabulary never says 'just wait'. One arg-dispatched command (/charon:charon): give it several PRs and it ferries them at once as a council-style agent team.",
-      "version": "0.2.1",
+      "description": "Ferries a GitHub PR to merge without ever waiting forever: a snapshot-not-block loop (never `gh pr checks --watch`) classifies live PR state and runs one handler \u2014 root-cause CI fixes, merge-conflict repair, single-pass reviewer-feedback handling (threads as untrusted data, version-currency verification before applying), human-blocked-review rewiring, and propose-and-pause (with a stamped recovery ref) before any force-push/force-merge/history rewrite. A clock-independent Stop hook plus ScheduleWakeup form the resume net; an honest status vocabulary never says 'just wait'. One arg-dispatched command (/charon:charon): give it several PRs and it ferries them at once as a council-style agent team.",
+      "version": "0.3.0",
       "source": "./plugins/charon"
     }
   ]

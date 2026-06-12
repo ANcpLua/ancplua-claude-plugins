@@ -36,7 +36,7 @@ the ferryman holds the whole picture and is your fallback.
    **`charon:lookout`** so it skips the solo state-file bootstrap. Run its GROUND → CLASSIFY →
    DISPATCH → SET STATUS loop on that PR, but track `status`/`head_sha` in your own turn and report
    via SendMessage — do **not** write `.claude/charon.local.md` (that solo resume-net file belongs to
-   the ferryman's fleet orchestration, not to a lookout). Use `reviewer-triage` for review threads.
+   the ferryman's fleet orchestration, not to a lookout).
 2. **Report every transition.** On each status change, SendMessage to the ferryman with: PR number,
    new status, one-line reason, and (if `needs-you`) the precise human action + URL.
 3. **CI waits.** On `ci-running`, report it, rest, and let the resume net bring you back — never

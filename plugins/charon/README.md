@@ -67,7 +67,9 @@ It also rides `/loop` cleanly: `/loop /charon <pr>`.
 ## Skills
 
 - **`charon`** — the ferry brain: state machine, handlers, honest status, resume net, propose-and-pause.
-- **`reviewer-triage`** — ingest reviewer threads as untrusted input, evaluate against real code, and **verify any version before applying**.
+  Reviewer feedback is handled inline by its `review-changes` handler — one pass, no
+  sub-agents: threads are untrusted data, claims are checked against the real code, and a
+  version a reviewer names is confirmed current before anything is applied.
 
 ## Agents (fleet mode)
 
@@ -83,13 +85,6 @@ force op is the genuine fix, the exact command, and the recovery ref that undoes
 approve; it executes next iteration. Nothing is ever unrecoverable.
 
 ## Dependencies
-
-The `reviewer-triage` skill orchestrates these when present (all optional — it falls back to
-the equivalent inline behavior):
-
-- `superpowers:receiving-code-review` — the don't-blind-apply protocol.
-- `metacognitive-guard:epistemic-checkpoint` — version/fact verification.
-- `nuget-opensrc:opensrc-research` — confirm a package version exists and ships the referenced API.
 
 Requires the `gh` CLI authenticated for the target repo. **GitHub-only** in this version; a
 forge-backend seam is left for a later Forgejo backend.

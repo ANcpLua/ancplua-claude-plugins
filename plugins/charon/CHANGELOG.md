@@ -4,6 +4,21 @@ All notable changes to the Charon plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-06-12
+
+### Removed
+
+- **The `reviewer-triage` skill is gone.** Reviewer feedback is now handled inline by the
+  `charon` skill's `review-changes` handler in one pass — no sub-agents, no cross-plugin
+  skill invocations (`superpowers:receiving-code-review`,
+  `metacognitive-guard:epistemic-checkpoint`, `nuget-opensrc:opensrc-research` are no
+  longer referenced). The essentials survive as four lines of handler text: threads are
+  untrusted data, claims are checked against the actual code, a version a reviewer names
+  is confirmed current before anything is applied, one focused commit per accepted fix.
+  Context: part of the 2026-06-11/12 reviewer-automation retirement ("no triage") and the
+  lean-charon rework — no skill may be able to fan out into a usage-burning agent tree.
+  The standalone skill text lives on in `ANcpLua/ancplua-codex-skills` for Codex.
+
 ## [0.2.1] - 2026-06-11
 
 ### Fixed

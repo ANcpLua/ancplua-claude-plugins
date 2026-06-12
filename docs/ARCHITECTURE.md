@@ -35,7 +35,7 @@ ancplua-claude-plugins/
 │       ├── ci.yml               # Main CI (JSON/plugin/marketplace/SKILL validation, shellcheck, markdownlint, actionlint)
 │       └── claude.yml           # Claude Code action — runs on @claude mentions in issues, PR reviews, comments
 │
-├── plugins/                     # 13 plugins (24 commands, 24 skills, 30 agents)
+├── plugins/                     # 13 plugins (24 commands, 23 skills, 30 agents)
 │   ├── cc-plugin-eval/           # Claude-Code-native plugin/skill evaluator (token budget, scoring, validators)
 │   ├── charon/                   # PR-to-merge ferry — fixes CI, repairs conflicts, never just waits
 │   ├── council/                  # Five-agent council via Teams API: Opus captain, researcher, clarity, synth, janitor
