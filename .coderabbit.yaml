@@ -55,23 +55,26 @@ reviews:
         presenting as protection, and any detection / regex that cannot match what it claims to
         catch. Hooks must fail SAFE (allow the stop, never silently abort) and branch exhaustively
         on their inputs.
-    - path: "plugins/*/scripts/**"
+    - path: "plugins/nihil/scripts/nihil-*.py"
       instructions: |
-        Hook implementation scripts and plugin helper scripts. When a hooks.json file invokes a
-        script from this tree, review it with the same guard quality bar as files under hooks/:
-        no fail-open validators, no always-pass protection, and no detection / regex that cannot
-        match what it claims to catch.
+        Nihil hook implementation scripts wired from plugins/nihil/hooks/hooks.json. Review these
+        with the same guard quality bar as files under hooks/: no fail-open validators, no
+        always-pass protection, and no detection / regex that cannot match what it claims to catch.
+        Do not apply this hook-specific bar to unrelated helper scripts just because they live under
+        a scripts/ directory.
     - path: "plugins/*/bin/**"
       instructions: |
-        Executable plugin entrypoints, including extensionless shell scripts. If the file has a
-        shell shebang, apply shell-script review guidance even when it does not end in .sh or .bash.
-        For guard scripts, also check fail-open behavior and unmatchable detection / regex claims.
+        Executable plugin entrypoints, including extensionless shell scripts. If hooks.json invokes
+        the bin file as a hook, also check fail-open behavior and unmatchable detection / regex
+        claims. If it is a plain CLI/helper entrypoint, do not invent hook-specific requirements.
+        For shell shebangs, apply shell guidance even when the file does not end in .sh or .bash.
     - path: "**/*.{sh,bash}"
       instructions: |
         Shell scripts. First read the active strict mode (`set -e`, `set -u`, and/or `pipefail`);
         only apply abort-risk findings that follow from the actual mode. For strict scripts, flag
         command substitutions that can abort on a non-match (e.g. unguarded `grep` in `$(...)`),
-        unquoted expansions, and missing `|| true` / default-value guards.
+        unquoted expansions, and missing `|| true` / default-value guards. For non-strict scripts,
+        do not request strict-mode-only guards unless you also recommend adopting strict mode.
     - path: "**/.claude-plugin/plugin.json"
       instructions: |
         Plugin manifest. Verify `name` is kebab-case and `version` is valid SemVer, and that the
