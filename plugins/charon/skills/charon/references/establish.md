@@ -6,7 +6,13 @@ Read this **once**, on first entry — e.g. you were summoned in plain English (
 start; this is how. On every later iteration for the *same* PR the state file already exists, so you
 never load this again.
 
-`PR_HINT` below is the PR number / URL the user named (empty ⇒ resolve from the current branch).
+`PR_HINT` below is the PR number / URL the user named. Empty means **no explicit PR yet**; do not
+resolve from the current branch until after the existing state-file check has failed.
+
+A self-generated resume/wakeup prompt is not an explicit user redirect, even if its text names a PR.
+If the prompt body says "Continue ferrying PR #A" but `.claude/charon.local.md` now records PR #B,
+the state file wins and the stale prompt is ignored. Only a fresh user request in the current turn can
+redirect an existing ferry.
 
 ## Fleet lookout? Skip the solo state file entirely
 

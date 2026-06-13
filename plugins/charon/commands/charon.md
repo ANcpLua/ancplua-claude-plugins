@@ -57,12 +57,15 @@ whole-fleet picture, one **lookout** per PR, and a SendMessage bus between them.
 fallback that re-spawns a stalled lookout or ferries its PR directly.
 
 1. **Resolve** each PR; drop any already merged/closed (say so). If none remain, stop.
-2. **TeamCreate** — `team_name="charon-fleet"`, description "Charon fleet: PRs #a, #b, #c".
-3. **Spawn the ferryman** — `Task: team_name="charon-fleet", name="ferryman", subagent_type="charon:ferryman"`; hand it the full PR set. It owns dispatch, the honest fleet board, and the fallback duty.
-4. **Spawn one lookout per PR** — `Task: team_name="charon-fleet", name="lookout-<pr>", subagent_type="charon:lookout"`. Each runs the single-PR ferry on its one PR and posts every state transition to the team via **SendMessage**. A lookout works its PR directly and does **not** write the solo `.claude/charon.local.md` — fleet state lives with the ferryman, so the solo resume-net file never collides with the live orchestration.
-5. **React, don't poll.** The ferryman reads lookout messages as they arrive, keeps an honest board (`working` / `ci-running` / `needs-you` / `conflict` / `review-changes` / `merged` / `closed`), aggregates `needs-you` without stalling the fleet, retires terminal PRs, and re-spawns or takes over a silent lookout.
-6. **Force ops never hide.** Any proposed force-push / force-merge / history rewrite is surfaced through the ferryman to the human with its stamped recovery ref — parallelism must not bury an irreversible action.
-7. **TeamDelete** once every PR is terminal. Report the final board.
+2. **Disarm solo resume state.** If `.claude/charon.local.md` exists, delete it before spawning the
+   team. Fleet mode does not use the solo Stop-hook/state-file net; leaving a stale solo file in place
+   lets the project Stop hook hijack ferryman/lookout sessions back to the old PR.
+3. **TeamCreate** — `team_name="charon-fleet"`, description "Charon fleet: PRs #a, #b, #c".
+4. **Spawn the ferryman** — `Task: team_name="charon-fleet", name="ferryman", subagent_type="charon:ferryman"`; hand it the full PR set. It owns dispatch, the honest fleet board, and the fallback duty.
+5. **Spawn one lookout per PR** — `Task: team_name="charon-fleet", name="lookout-<pr>", subagent_type="charon:lookout"`. Each runs the single-PR ferry on its one PR and posts every state transition to the team via **SendMessage**. A lookout works its PR directly and does **not** write the solo `.claude/charon.local.md` — fleet state lives with the ferryman, so the solo resume-net file never collides with the live orchestration.
+6. **React, don't poll.** The ferryman reads lookout messages as they arrive, keeps an honest board (`working` / `ci-running` / `needs-you` / `conflict` / `review-changes` / `merged` / `closed`), aggregates `needs-you` without stalling the fleet, retires terminal PRs, and re-spawns or takes over a silent lookout.
+7. **Force ops never hide.** Any proposed force-push / force-merge / history rewrite is surfaced through the ferryman to the human with its stamped recovery ref — parallelism must not bury an irreversible action.
+8. **TeamDelete** once every PR is terminal. Report the final board.
 
 Fleet mode is a **live** orchestration; it does not use the solo Stop-hook/state-file resume net. To
 babysit one PR across session stops with the full resume net, run a solo ferry instead.

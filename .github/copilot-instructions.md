@@ -23,7 +23,9 @@ This repo is a **Claude Code plugin marketplace** — plugins, skills, hooks, an
 
 1. **Act decisively** - Don't ask for permission on routine tasks
 2. **Fix forward** - When you find issues, fix them immediately
-3. **Validate always** - Validation runs in `.github/workflows/ci.yml` (JSON syntax, plugin.json/marketplace.json fields, SKILL.md frontmatter, shellcheck, markdownlint, actionlint)
+3. **Validate always** - Validation runs in `.github/workflows/ci.yml`:
+   JSON syntax, plugin.json/marketplace.json fields, SKILL.md frontmatter,
+   shellcheck, markdownlint, actionlint
 4. **Document changes** - Update CHANGELOG.md for any non-trivial change
 
 ---
@@ -60,7 +62,8 @@ ancplua-claude-plugins/
 ├── .markdownlint.jsonc          # Markdown lint rules
 │
 ├── .claude/
-│   └── rules/                   # Holds the Opus 4.8 System Card PDF
+│   ├── rules/                   # Holds the Opus 4.8 System Card PDF
+│   └── workflows/               # Repo-local dynamic workflows
 │
 ├── .claude-plugin/
 │   └── marketplace.json         # Declares all plugins
@@ -69,7 +72,7 @@ ancplua-claude-plugins/
 │   ├── copilot-instructions.md  # This file
 │   ├── dependabot.yml           # Dependency update config
 │   └── workflows/
-│       ├── ci.yml               # Main CI (JSON/plugin/marketplace/SKILL validation, shellcheck, markdownlint, actionlint)
+│       ├── ci.yml               # Main CI
 │       ├── auto-merge.yml       # Native auto-merge for codex/ + copilot/ branches and Codex-approved PRs
 │       └── claude.yml           # Claude Code action — runs on @claude mentions
 │
@@ -187,7 +190,12 @@ CI configuration lives under `.github/workflows/ci.yml`.
 
 Expected checks include:
 
-- **Plugin & JSON validation** (inline `jq`): every `*.json` parses; each `.claude-plugin/plugin.json` has the required `name`/`version`/`description` fields; `marketplace.json` has `name` + `plugins`, and every plugin entry has `name`/`source`/`description` with an existing source directory; every `SKILL.md` has YAML frontmatter with `name` + `description`
+- **Plugin & JSON validation** (inline `jq`):
+  - Every `*.json` parses
+  - Each `.claude-plugin/plugin.json` has required `name`/`version`/`description` fields
+  - `marketplace.json` has `name` + `plugins`
+  - Every plugin entry has `name`/`source`/`description` with an existing source directory
+  - Every `SKILL.md` has YAML frontmatter with `name` + `description`
 - `shellcheck` on all `.sh` files (severity: warning)
 - `markdownlint` (markdownlint-cli2) on all `*.md` files — non-blocking, warnings only
 - `actionlint` on workflow files (fails on error)

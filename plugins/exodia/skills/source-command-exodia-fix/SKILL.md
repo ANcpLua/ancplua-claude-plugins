@@ -3,7 +3,7 @@ name: source-command-exodia-fix
 description: "IF a bug needs fixing THEN use this \u2014 the one exodia fix command. 4 gated phases\
   \ (analyze \u2192 design \u2192 implement \u2192 verify). Args: severity P0|P1|P2|P3\
   \ and parallelism standard|maximum (for a P0 emergency pass `P0 maximum`). Auto-inherits\
-  \ audit findings.json from a prior mega-swarm run when present."
+  \ `.eight-gates/artifacts/findings.json` from a prior mega-swarm run when present."
 ---
 
 # source-command-exodia-fix

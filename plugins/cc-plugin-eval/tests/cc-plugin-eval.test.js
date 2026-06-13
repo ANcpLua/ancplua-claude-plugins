@@ -797,6 +797,35 @@ test("evaluateMarketplace emits CC807 for duplicate entries", async () => {
   assert.ok(findingCodes(fragment).has("CC807"));
 });
 
+test("evaluateMarketplace does not scan symlinked markdown outside the plugin", async () => {
+  const tempDir = await makeTempDir("ccplug-mkt-symlink-md");
+  const marketplacePath = path.join(tempDir, "marketplace.json");
+  const pluginDir = path.join(tempDir, "plugins", "p");
+  const outside = path.join(tempDir, "outside.md");
+  const symlink = path.join(pluginDir, "linked.md");
+  await fs.mkdir(pluginDir, { recursive: true });
+  await fs.writeFile(
+    marketplacePath,
+    JSON.stringify({
+      name: "store",
+      plugins: [{ name: "p", source: "./plugins/p" }],
+    }),
+    "utf8",
+  );
+  await fs.writeFile(outside, "> subagent: missing-external\n", "utf8");
+  try {
+    await fs.symlink(outside, symlink);
+  } catch (error) {
+    if (error?.code === "EPERM" || error?.code === "EACCES" || error?.code === "ENOSYS") {
+      return;
+    }
+    throw error;
+  }
+
+  const fragment = await evaluateMarketplace(marketplacePath, "p");
+  assert.ok(!findingCodes(fragment).has("CC710"));
+});
+
 // =====================================================================
 // 11. UserConfig evaluator (CC9xx safety subrange)
 // =====================================================================

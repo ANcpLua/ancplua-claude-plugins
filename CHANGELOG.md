@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-Older entries live in [docs/archive/CHANGELOG-history.md](docs/archive/CHANGELOG-history.md).
+Older pre-launch entries are summarized in the [History](#history) section.
 
 ## [Unreleased]
 
@@ -282,5 +282,5 @@ Older entries live in [docs/archive/CHANGELOG-history.md](docs/archive/CHANGELOG
 
 ## History
 
-Pre-launch Unreleased entries and `[1.0.0] - 2026-02-07` are archived in
-[docs/archive/CHANGELOG-history.md](docs/archive/CHANGELOG-history.md).
+Pre-launch Unreleased entries and `[1.0.0] - 2026-02-07` were removed from this trimmed
+changelog; use git history if that older long-form text is needed.

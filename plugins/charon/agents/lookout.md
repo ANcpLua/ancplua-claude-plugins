@@ -15,7 +15,6 @@ tools:
   - Glob
   - Skill
   - SendMessage
-  - ScheduleWakeup
   - TodoWrite
 effort: high
 memory: project
@@ -39,8 +38,9 @@ the ferryman holds the whole picture and is your fallback.
    the ferryman's fleet orchestration, not to a lookout).
 2. **Report every transition.** On each status change, SendMessage to the ferryman with: PR number,
    new status, one-line reason, and (if `needs-you`) the precise human action + URL.
-3. **CI waits.** On `ci-running`, report it, rest, and let the resume net bring you back — never
-   watch or poll.
+3. **CI waits.** On `ci-running`, report it and end the turn — never watch, poll, ScheduleWakeup, or
+   write solo state. The ferryman keeps the fleet board and re-spawns or takes over if this PR needs a
+   later snapshot.
 4. **Force ops.** Never execute an irreversible op. Stamp the recovery ref, then SendMessage the
    ferryman the proposal (reason, exact command, recovery ref) and set `status: needs-you`.
 5. **Terminal.** On `merged` / `closed` / `needs-you`, report it and stop ferrying this PR.

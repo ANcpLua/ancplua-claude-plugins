@@ -13,6 +13,7 @@ set -euo pipefail
 # Plugin root provided by Claude Code
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"
 [[ -z "$PLUGIN_ROOT" ]] && exit 0
+PLUGIN_ROOT_ABS=$(cd "$PLUGIN_ROOT" 2>/dev/null && pwd -P || printf '%s\n' "$PLUGIN_ROOT")
 
 # Hades god mode — active permit bypasses all checks
 if [ -f ".smart/delete-permit.json" ]; then
@@ -61,10 +62,18 @@ case "$FILE_PATH" in
 esac
 
 # Skip ALL checks for this plugin's own guard scripts — they legitimately CONTAIN the
-# banned patterns they detect, so scanning them would block the guard's own maintenance
-# (the same self-exemption integrity-check.sh makes for bin/ + scripts).
+# banned patterns they detect, so scanning them would block the guard's own maintenance.
+# Keep this anchored to the installed plugin root; target repos may contain unrelated
+# paths named metacognitive-guard/bin that still need epistemic checks.
 case "$FILE_PATH" in
-    */metacognitive-guard/bin/*) exit 0 ;;
+    /*) TARGET_PATH="$FILE_PATH" ;;
+    *) TARGET_PATH="$(pwd -P)/$FILE_PATH" ;;
+esac
+TARGET_DIR=$(dirname "$TARGET_PATH")
+TARGET_BASE=$(basename "$TARGET_PATH")
+TARGET_DIR_ABS=$(cd "$TARGET_DIR" 2>/dev/null && pwd -P || printf '%s\n' "$TARGET_DIR")
+case "$TARGET_DIR_ABS/$TARGET_BASE" in
+    "$PLUGIN_ROOT_ABS"/bin/*) exit 0 ;;
 esac
 
 # Skip banned-API checks for documentation files (.md, .yaml, .yml, .json)
@@ -140,9 +149,10 @@ EOF
 fi
 
 # Task.Delay with a literal millisecond count (banned pattern — enforces assertions.yaml task_delay).
-# Requires a leading literal digit: Task.Delay(1000). Does NOT match the recommended
+# Matches positional literals and named literal millisecondsDelay arguments:
+# Task.Delay(1000) / Task.Delay(millisecondsDelay: 1000). Does NOT match the recommended
 # Task.Delay(TimeSpan.From..., TimeProvider.System) or timeProvider.Delay(...) forms.
-if echo "$CONTENT" | grep -qE 'Task\.Delay\(\s*[0-9]'; then
+if echo "$CONTENT" | grep -qE 'Task\.Delay\(\s*([0-9]|millisecondsDelay\s*:\s*[0-9])'; then
     cat << 'DELAY_EOF'
 {
   "hookSpecificOutput": {

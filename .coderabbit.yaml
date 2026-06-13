@@ -45,24 +45,44 @@ reviews:
       instructions: |
         Skill definitions. The `description` frontmatter is the ONLY trigger mechanism — check it
         encodes WHEN to use the skill (concrete "use when" phrasing), stays under the ~1024-char
-        cap, and has no colon-space that would break the YAML frontmatter. Flag task-style skills
-        (long imperative numbered lists, no trigger) that should set disable-model-invocation.
+        cap, and has no unquoted plain-scalar colon-space that would break YAML frontmatter.
+        Quoted descriptions may contain colon-space and must not be flagged for that alone. Flag
+        task-style skills (long imperative numbered lists, no trigger) that should set
+        disable-model-invocation.
     - path: "plugins/*/hooks/**"
       instructions: |
         PreToolUse / Stop hooks. Flag any guard or validator that FAIL-OPENS or always-passes while
         presenting as protection, and any detection / regex that cannot match what it claims to
         catch. Hooks must fail SAFE (allow the stop, never silently abort) and branch exhaustively
         on their inputs.
+    - path: "plugins/*/scripts/**"
+      instructions: |
+        Hook implementation scripts and plugin helper scripts. When a hooks.json file invokes a
+        script from this tree, review it with the same guard quality bar as files under hooks/:
+        no fail-open validators, no always-pass protection, and no detection / regex that cannot
+        match what it claims to catch.
+    - path: "plugins/*/bin/**"
+      instructions: |
+        Executable plugin entrypoints, including extensionless shell scripts. If the file has a
+        shell shebang, apply shell-script review guidance even when it does not end in .sh or .bash.
+        For guard scripts, also check fail-open behavior and unmatchable detection / regex claims.
     - path: "**/*.{sh,bash}"
       instructions: |
-        Shell scripts that run under `set -euo pipefail`. Flag command substitutions that can abort
-        the script on a non-match (e.g. an unguarded `grep` in `$(...)`), unquoted expansions, and
-        missing `|| true` / default-value guards.
+        Shell scripts. First read the active strict mode (`set -e`, `set -u`, and/or `pipefail`);
+        only apply abort-risk findings that follow from the actual mode. For strict scripts, flag
+        command substitutions that can abort on a non-match (e.g. unguarded `grep` in `$(...)`),
+        unquoted expansions, and missing `|| true` / default-value guards.
     - path: "**/.claude-plugin/plugin.json"
       instructions: |
         Plugin manifest. Verify `name` is kebab-case and `version` is valid SemVer, and that the
         version matches this plugin's entry in /.claude-plugin/marketplace.json — the two must stay
         in sync.
+    - path: ".claude-plugin/marketplace.json"
+      instructions: |
+        Marketplace manifest. For every edited plugin entry, verify its `version` matches the
+        corresponding `plugins/<name>/.claude-plugin/plugin.json` version and its `source` points at
+        an existing plugin directory. Marketplace-only version edits can desynchronize releases, so
+        check them even when no plugin.json is in the diff.
 
 chat:
   auto_reply: true

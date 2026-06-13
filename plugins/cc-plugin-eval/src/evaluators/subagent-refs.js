@@ -47,11 +47,20 @@ async function listMarkdownFiles(dir) {
   }
   const files = [];
   for (const rel of entries) {
-    if (rel.endsWith(".md")) {
-      files.push(path.join(dir, rel));
+    if (!rel.endsWith(".md")) {
+      continue;
+    }
+    const file = path.join(dir, rel);
+    try {
+      const stat = await fs.lstat(file);
+      if (stat.isFile()) {
+        files.push(file);
+      }
+    } catch {
+      // Ignore entries deleted between readdir and lstat, or unreadable paths.
     }
   }
-  return files;
+  return files.sort();
 }
 
 function pluginDir(repoRoot, entry) {

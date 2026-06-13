@@ -18,10 +18,8 @@ ancplua-claude-plugins/
 ├── .markdownlintignore          # Lint exclusions
 │
 ├── .claude/
-│   ├── commands/                # Repo-local slash commands
 │   ├── rules/                   # Holds the Opus 4.8 System Card PDF
-│   ├── workflows/               # Repo-local dynamic workflows
-│   └── worktrees/               # Isolated agent worktrees
+│   └── workflows/               # Repo-local dynamic workflows
 │
 ├── .claude-plugin/
 │   └── marketplace.json         # Plugin registry (source of truth)

@@ -190,11 +190,12 @@ AUDIT GATE:
 
 ### P0 Issues (Fix Immediately)
 
-| # | Category | Issue | Location |
-|---|----------|-------|----------|
+| ID | # | Category | Issue | Location |
+|----|---|----------|-------|----------|
 
-**Next:** `/exodia:fix "<finding-id>" P0` — fix's STEP -1 filters `findings.json` by `finding.id`
-matching `$0`, so pass the finding id (not prose) and `P0` severity to auto-inherit that finding.
+**Next:** `/exodia:fix "<finding-id>" P0 maximum` — fix's STEP -1 filters
+`.eight-gates/artifacts/findings.json` by `finding.id` matching `$0`, so pass the visible finding id
+(not prose), `P0` severity, and maximum parallelism to auto-inherit that finding.
 
 ## MANUAL MIGRATION REQUIRED
 
