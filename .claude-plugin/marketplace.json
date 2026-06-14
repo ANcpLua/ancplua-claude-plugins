@@ -47,7 +47,7 @@
     {
       "name": "cc-plugin-eval",
       "description": "Claude-Code-native plugin and skill evaluator. Static analysis + token budgeting + benchmarking across the full Claude component surface (manifest, hooks, MCP, LSP, monitors, agents, marketplace, userConfig). Forked from openai/plugins plugin-eval (MIT) and rewritten for Claude Code conventions; complements skill-creator's per-skill LLM grading with whole-plugin scoring.",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "source": "./plugins/cc-plugin-eval"
     },
     {
@@ -91,6 +91,12 @@
       "description": "Two deterministic Stop-event safety nets (no LLM) that keep a session honest: overclaim-net blocks a 'done/fixed/verified' claim made without a verifying command this turn; slnx-sync blocks unregistered .csproj in a .slnx, auto-skipping VMR-synced upstream forks (dotnet/dotnet codeflow / dotnet upstream remote) and honoring a .slnx-sync-ignore opt-out.",
       "version": "0.1.0",
       "source": "./plugins/safety-nets"
+    },
+    {
+      "name": "dotnet-dnceng",
+      "description": "Vendored (MIT) from dotnet/arcade-skills: .NET engineering-infrastructure CI/CD investigation. A ci-investigator orchestrator agent routes across 10 skills (Helix log analysis, Azure DevOps pipeline triage, binlog/crash-dump inspection, codeflow + dependency tracing, Maestro, known-issue history) and 4 MCP servers. Forked only to fix the manifest agents path for Claude Code's ./-prefixed component-path schema; upstream is unchanged otherwise.",
+      "version": "0.1.0",
+      "source": "./plugins/dotnet-dnceng"
     }
   ]
 }
