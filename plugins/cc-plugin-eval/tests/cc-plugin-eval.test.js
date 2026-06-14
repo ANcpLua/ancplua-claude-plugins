@@ -262,6 +262,20 @@ test("broken relative link emits CC211", async () => {
   assert.ok(ids.has("CC211"));
 });
 
+test("anchored link to an existing file and a bare placeholder do not emit CC211", async () => {
+  const tempDir = await makeTempDir("ccplug-anchor-link");
+  await fs.mkdir(path.join(tempDir, "references"), { recursive: true });
+  await fs.writeFile(path.join(tempDir, "references", "guide.md"), "# Guide\n\n## Section\n", "utf8");
+  await fs.writeFile(
+    path.join(tempDir, "SKILL.md"),
+    `---\nname: temp-skill\ndescription: Use when checking anchored links.\n---\n\n# Temp\n\nSee [the guide](references/guide.md#section) and [an example](<permalink>).\n`,
+    "utf8",
+  );
+  const result = await analyzePath(tempDir);
+  const ids = new Set(result.checks.map((check) => check.id));
+  assert.ok(!ids.has("CC211"), "fragment-stripped link resolves and a bare placeholder is not a file link");
+});
+
 test("comma-form allowed-tools emits CC215", async () => {
   const tempDir = await makeTempDir("ccplug-tools");
   await fs.writeFile(
@@ -429,6 +443,28 @@ test("evaluateMcp emits CC402 when server is missing command", async () => {
   );
   const fragment = await evaluateMcp(tempDir, {});
   assert.ok(findingCodes(fragment).has("CC402"));
+});
+
+test("evaluateMcp accepts a remote (type http) server without command", async () => {
+  const tempDir = await makeTempDir("ccplug-mcp-remote");
+  await fs.writeFile(
+    path.join(tempDir, ".mcp.json"),
+    JSON.stringify({ mcpServers: { "remote-http": { type: "http", url: "https://example.com/mcp" } } }),
+    "utf8",
+  );
+  const codes = findingCodes(await evaluateMcp(tempDir, {}));
+  assert.ok(!codes.has("CC402"), "a remote server must not be required to have `command`");
+  assert.ok(!codes.has("CC410"), "a valid url must not be flagged");
+});
+
+test("evaluateMcp emits CC410 for a remote server missing url", async () => {
+  const tempDir = await makeTempDir("ccplug-mcp-remote-nourl");
+  await fs.writeFile(
+    path.join(tempDir, ".mcp.json"),
+    JSON.stringify({ mcpServers: { "remote-bad": { type: "sse" } } }),
+    "utf8",
+  );
+  assert.ok(findingCodes(await evaluateMcp(tempDir, {})).has("CC410"));
 });
 
 test("evaluateMcp emits CC403 for missing referenced script", async () => {

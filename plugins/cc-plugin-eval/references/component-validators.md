@@ -75,7 +75,7 @@
 | Code  | Severity | Summary                                                                                | Fix                                                                                                  |
 | ----- | -------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | CC401 | error    | `.mcp.json` does not parse, or `manifest.mcpServers` is not an object.                 | Fix the structure to match the Claude MCP server schema.                                             |
-| CC402 | error    | A server entry is missing `command`.                                                   | Add a `command` value.                                                                               |
+| CC402 | error    | A local (stdio) server entry is missing `command`.                                     | Add a `command` value, or make it a remote server with `type` + `url`.                               |
 | CC403 | warn     | `command` references a `${CLAUDE_PLUGIN_ROOT}/...` script that does not exist.         | Ship the referenced binary or fix the path.                                                          |
 | CC404 | warn     | `command` is a relative path without `${CLAUDE_PLUGIN_ROOT}`.                          | Prefix with `${CLAUDE_PLUGIN_ROOT}`.                                                                 |
 | CC405 | warn     | `args` is set but is not an array of strings.                                          | Use a string array.                                                                                  |
@@ -83,6 +83,8 @@
 | CC407 | info     | `cwd` is hard-coded to an absolute path other than `${CLAUDE_PLUGIN_ROOT}`.            | Use `${CLAUDE_PLUGIN_ROOT}` for portability.                                                         |
 | CC408 | warn     | Server name does not match `[a-z0-9][a-z0-9-]*` (kebab-case).                          | Rename the server.                                                                                   |
 | CC409 | info     | `env` value looks like a literal secret.                                               | Move secrets to `userConfig` with `sensitive: true` and reference via `${user_config.KEY}`.          |
+| CC410 | error    | A remote server (`type` http/sse) is missing `url`.                                    | Add a `url` string (e.g. `https://example.com/mcp`).                                                 |
+| CC411 | warn     | A remote server `url` is not an `http(s)` URL.                                          | Use an `http://` or `https://` URL.                                                                  |
 
 ## LSP (`CC5xx`)
 

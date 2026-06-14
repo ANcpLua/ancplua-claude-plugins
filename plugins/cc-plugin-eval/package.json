@@ -1,6 +1,6 @@
 {
   "name": "cc-plugin-eval",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "type": "module",
   "description": "Claude-Code-native plugin/skill evaluator. Token-budget analysis, scoring, manifest/hooks/mcp/lsp/monitors/agents linting, benchmarking, comparison, and improvement briefs.",

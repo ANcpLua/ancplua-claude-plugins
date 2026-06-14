@@ -18,4 +18,7 @@ tooling/tests/
 # Blog post content
 Claude Code Agent Teams*.md
 
+# Vendored upstream content (dotnet/arcade-skills, MIT) — kept byte-identical to upstream
+plugins/dotnet-dnceng/skills/**/*.md
+
 node_modules/

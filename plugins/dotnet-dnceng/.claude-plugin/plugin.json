@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "dotnet-dnceng",
+  "version": "0.1.0",
+  "description": "Skills for .NET engineering infrastructure: CI/CD analysis, build pipeline workflows.",
+  "author": {
+    "name": ".NET Team at Microsoft",
+    "url": "https://github.com/dotnet/arcade-skills"
+  },
+  "homepage": "https://github.com/ANcpLua/ancplua-claude-plugins/tree/main/plugins/dotnet-dnceng",
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "dotnet",
+    "dnceng",
+    "ci",
+    "helix",
+    "azure-devops"
+  ],
+  "skills": "./skills",
+  "agents": [
+    "./agents/ci-investigator.agent.md"
+  ],
+  "mcpServers": {
+    "hlx": {
+      "command": "dotnet",
+      "args": [
+        "dnx",
+        "--yes",
+        "lewing.helix.mcp"
+      ]
+    },
+    "binlog": {
+      "command": "dotnet",
+      "args": [
+        "dnx",
+        "--yes",
+        "--prerelease",
+        "Microsoft.AITools.BinlogMcp",
+        "--add-source",
+        "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json"
+      ]
+    },
+    "mihubot": {
+      "type": "http",
+      "url": "https://mihubot.xyz/mcp"
+    },
+    "maestro": {
+      "command": "dotnet",
+      "args": [
+        "dnx",
+        "--yes",
+        "lewing.maestro.mcp"
+      ]
+    }
+  }
+}
