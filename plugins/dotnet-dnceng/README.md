@@ -44,8 +44,13 @@ their tools via `dotnet dnx` and the dnceng public NuGet feed on first use.
 /plugin   # enable dotnet-dnceng@ancplua-claude-plugins
 ```
 
-## Upstreaming
+## Upstreaming — track this
 
-This is a fork of an actively-maintained Microsoft repo. The clean long-term fix is
-a one-line PR to `dotnet/arcade-skills` adding the `./` prefix; if/when that merges,
-this vendored copy can be dropped in favor of installing their marketplace directly.
+This is a fork of an actively-maintained Microsoft repo. The `./`-prefix root fix is
+filed upstream as **[dotnet/arcade-skills#42](https://github.com/dotnet/arcade-skills/pull/42)**.
+
+**When #42 merges, drop this vendored copy** and install `dotnet-dnceng` from
+`dotnet/arcade-skills` directly: delete `plugins/dotnet-dnceng/`, remove its entry
+from `.claude-plugin/marketplace.json`, and drop the `plugins/dotnet-dnceng/**`
+line from `.markdownlintignore`. Until then, this copy is the only one that installs
+under the current Claude Code manifest schema.
