@@ -1,0 +1,27 @@
+{
+  "description": "Two deterministic Stop-event safety nets (no LLM). overclaim-net: blocks once when the final assistant message claims a result (done/fixed/verified/passing/…) but no command ran this turn to back it. slnx-sync: blocks once when a .csproj on disk is not registered in the repo's .slnx — skips VMR-synced upstream forks (dotnet/dotnet codeflow / dotnet upstream remote) and honors a .slnx-sync-ignore opt-out file.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/overclaim-net.sh\"",
+            "timeout": 15,
+            "statusMessage": "overclaim-net: checking result claims..."
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/slnx-sync-check.sh\"",
+            "timeout": 15,
+            "statusMessage": "slnx-sync: checking solution registration..."
+          }
+        ]
+      }
+    ]
+  }
+}

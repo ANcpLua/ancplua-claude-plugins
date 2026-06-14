@@ -85,6 +85,12 @@
       "description": "Ferries a GitHub PR to merge without ever waiting forever: a snapshot-not-block loop (never `gh pr checks --watch`) classifies live PR state and runs one handler \u2014 root-cause CI fixes, merge-conflict repair, single-pass reviewer-feedback handling (threads as untrusted data, version-currency verification before applying), human-blocked-review rewiring, and propose-and-pause (with a stamped recovery ref) before any force-push/force-merge/history rewrite. A clock-independent Stop hook plus ScheduleWakeup form the resume net; an honest status vocabulary never says 'just wait'. One arg-dispatched command (/charon:charon): give it several PRs and it ferries them at once as a council-style agent team.",
       "version": "0.3.0",
       "source": "./plugins/charon"
+    },
+    {
+      "name": "safety-nets",
+      "description": "Two deterministic Stop-event safety nets (no LLM) that keep a session honest: overclaim-net blocks a 'done/fixed/verified' claim made without a verifying command this turn; slnx-sync blocks unregistered .csproj in a .slnx, auto-skipping VMR-synced upstream forks (dotnet/dotnet codeflow / dotnet upstream remote) and honoring a .slnx-sync-ignore opt-out.",
+      "version": "0.1.0",
+      "source": "./plugins/safety-nets"
     }
   ]
 }
