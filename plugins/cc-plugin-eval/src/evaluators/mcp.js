@@ -190,14 +190,41 @@ export async function evaluateMcp(pluginRoot, manifest) {
       );
     }
 
-    if (typeof server.command !== "string" || server.command.trim() === "") {
+    const isRemoteServer =
+      server.type === "http" || server.type === "sse" || typeof server.url === "string";
+
+    if (isRemoteServer) {
+      // Remote MCP servers (Streamable HTTP / SSE) are addressed by `url`, not
+      // `command`; the command-path checks below do not apply to them.
+      if (typeof server.url !== "string" || server.url.trim() === "") {
+        findings.push(
+          createFinding({
+            severity: "error",
+            code: "CC410",
+            message: `Remote MCP server "${serverName}" (type "${server.type ?? "http"}") is missing required \`url\`.`,
+            location: { file: sourceFile },
+            fix: "Add a `url` string (e.g. https://example.com/mcp).",
+          }),
+        );
+      } else if (!/^https?:\/\//.test(server.url.trim())) {
+        findings.push(
+          createFinding({
+            severity: "warn",
+            code: "CC411",
+            message: `Remote MCP server "${serverName}" \`url\` "${server.url}" is not an http(s) URL.`,
+            location: { file: sourceFile },
+            fix: "Use an http:// or https:// URL.",
+          }),
+        );
+      }
+    } else if (typeof server.command !== "string" || server.command.trim() === "") {
       findings.push(
         createFinding({
           severity: "error",
           code: "CC402",
           message: `MCP server "${serverName}" is missing required \`command\`.`,
           location: { file: sourceFile },
-          fix: "Add a `command` string (script path or system binary).",
+          fix: "Add a `command` string (script path or system binary), or a `url` for a remote (type http/sse) server.",
         }),
       );
     } else {

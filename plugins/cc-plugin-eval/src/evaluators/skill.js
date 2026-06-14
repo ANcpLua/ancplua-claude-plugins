@@ -57,9 +57,18 @@ function countCodeFences(markdown) {
 
 function findRelativeLinks(markdown) {
   return [...markdown.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)]
-    .map((match) => match[1])
+    .map((match) => match[1].trim())
+    // Markdown permits the destination to be wrapped in <angle brackets>.
+    .map((target) => (target.startsWith("<") && target.endsWith(">") ? target.slice(1, -1).trim() : target))
+    // A #fragment or ?query targets a section/param, not a file on disk — drop it
+    // before resolving so links like `references/foo.md#section` resolve to foo.md.
+    .map((target) => target.replace(/[#?].*$/, "").trim())
     .filter(
       (target) =>
+        target !== "" &&
+        // Only resolve targets that look like a relative *file* path (a separator or
+        // an extension). Bare inline placeholders such as <permalink> are not links.
+        /[/.]/.test(target) &&
         !target.startsWith("http://") &&
         !target.startsWith("https://") &&
         !target.startsWith("app://") &&
