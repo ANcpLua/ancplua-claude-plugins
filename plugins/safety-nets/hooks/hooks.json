@@ -1,5 +1,5 @@
 {
-  "description": "Two deterministic Stop-event safety nets (no LLM). overclaim-net: blocks once when the final assistant message claims a result (done/fixed/verified/passing/…) but no command ran this turn to back it. slnx-sync: blocks once when a .csproj on disk is not registered in the repo's .slnx — skips VMR-synced upstream forks (dotnet/dotnet codeflow / dotnet upstream remote) and honors a .slnx-sync-ignore opt-out file.",
+  "description": "Two deterministic Stop-event safety nets (no LLM). overclaim-net: blocks once when the final assistant message claims a result (done/fixed/verified/passing/…) but no evidence-producing tool ran this turn to back it (Bash/BashOutput, a subagent Task/Agent, a Workflow, or any mcp__* tool; a static Read or unverified Edit does not count). The turn window starts at the last genuine human message, excluding tool-result rows (which are also type:user). slnx-sync: blocks once when a .csproj on disk is not registered in the repo's .slnx — skips VMR-synced upstream forks (dotnet/dotnet codeflow / dotnet upstream remote) and honors a .slnx-sync-ignore opt-out file.",
   "hooks": {
     "Stop": [
       {

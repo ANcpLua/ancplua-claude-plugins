@@ -5,7 +5,9 @@ Two deterministic **Stop-event** safety nets (no LLM) that keep a session honest
 ## Hooks
 
 ### `overclaim-net` (`hooks/overclaim-net.sh`)
-Blocks once when the final assistant message asserts a **result** — `done` / `fertig` / `ready` / `fixed` / `works` / `passing` / `complete` / `verified` (and German equivalents) — but **no command ran this turn** to back it. Forces you to either show the verification output or downgrade the wording to "done, but not verified." Deliberately omits ambiguous words like *test*.
+Blocks once when the final assistant message asserts a **result** — `done` / `fertig` / `ready` / `fixed` / `works` / `passing` / `complete` / `verified` (and German equivalents) — but **no evidence-producing tool ran this turn** to back it. Evidence = something that ran or observed behavior: `Bash` / `BashOutput`, a subagent (`Task` / `Agent`), a `Workflow`, or any MCP tool (`mcp__*`) — a static `Read` or an unverified `Edit` does **not** count. Forces you to either show the verification output or downgrade the wording to "done, but not verified." Deliberately omits ambiguous words like *test*.
+
+The turn boundary is the last **genuine human** message. Tool results are themselves recorded as `type:"user"` rows (they carry a `toolUseResult` payload), so they are excluded — otherwise the turn window would start *after* the last command and the hook would never see the `tool_use` that backs the claim, firing on nearly every honest "ran a command, then reported the result" turn.
 
 ### `slnx-sync` (`hooks/slnx-sync-check.sh`)
 Blocks once when a `.csproj` on disk (excluding `bin`/`obj` and `dotnet new` template content) is **not registered** in the repo's nearest `.slnx`. Enforces "register your new projects in the solution yourself."
