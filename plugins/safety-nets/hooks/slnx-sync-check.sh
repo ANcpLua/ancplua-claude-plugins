@@ -31,7 +31,7 @@ git -C "$root" remote get-url upstream 2>/dev/null \
   | grep -qiE 'github\.com[:/]+dotnet/' && exit 0     # dotnet/* upstream remote
 
 python3 - "$root" <<'PY'
-import sys, os, glob, re, json
+import sys, os, glob, re, json, subprocess
 
 root = sys.argv[1]
 
@@ -52,12 +52,43 @@ except Exception:
 
 registered = {m.replace("\\", "/") for m in re.findall(r'Path="([^"]+)"', text)}
 
+# Git-ignored directories (vendored sample repos, scratch trees, etc.) are not
+# "our" projects to register. Resolve the set of wholly-ignored dirs once, up
+# front (`--directory` collapses each to its top dir so we never descend). Empty
+# set if soln_dir isn't a git repo — the nested-solution guard below still applies.
+ignored_dirs = set()
+try:
+    out = subprocess.run(
+        ["git", "-C", soln_dir, "ls-files", "-oi", "--exclude-standard", "--directory"],
+        capture_output=True, text=True, timeout=10,
+    ).stdout
+    ignored_dirs = {
+        os.path.normpath(os.path.join(soln_dir, p)) for p in out.split("\n") if p.strip()
+    }
+except (OSError, subprocess.SubprocessError):
+    # Only tolerate the expected best-effort failures: git absent / not on PATH
+    # (OSError/FileNotFoundError) or the 10s timeout firing (TimeoutExpired).
+    # Anything else (e.g. a bug in this block) propagates loudly. The nested-
+    # solution guard below still covers vendored repos & fixtures without git.
+    pass
+
 missing = []
 for dirpath, dirnames, filenames in os.walk(soln_dir):
-    dirnames[:] = [d for d in dirnames if d not in ("bin", "obj")]
+    dirnames[:] = [
+        d for d in dirnames
+        if d not in ("bin", "obj")
+        and os.path.normpath(os.path.join(dirpath, d)) not in ignored_dirs
+    ]
     # Skip `dotnet new` template content: a dir holding a .template.config is a
     # template root whose placeholder-named .csproj must NOT be in the solution.
     if ".template.config" in dirnames:
+        dirnames[:] = []
+        continue
+    # Skip nested independent solutions: any dir BELOW the solution dir that holds
+    # its own .sln/.slnx is a separate solution root — a vendored sample repo or an
+    # isolated test fixture (e.g. DependencyInspector TestAssets, including a
+    # deliberately-circular one). Its .csproj belong to THAT solution, not this one.
+    if dirpath != soln_dir and any(fn.endswith((".sln", ".slnx")) for fn in filenames):
         dirnames[:] = []
         continue
     for f in filenames:
