@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "safety-nets",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Two deterministic Stop-event safety nets that keep a session honest: overclaim-net blocks a 'done/fixed/verified' claim made without a verifying command this turn; slnx-sync blocks unregistered .csproj in a .slnx (auto-skips VMR-synced upstream forks, honors a .slnx-sync-ignore opt-out).",
   "author": {
     "name": "ANcpLua",
