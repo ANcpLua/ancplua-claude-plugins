@@ -18,7 +18,6 @@ ancplua-claude-plugins/
 ├── .markdownlintignore          # Lint exclusions
 │
 ├── .claude/
-│   ├── rules/                   # Holds the Opus 4.8 System Card PDF
 │   └── workflows/               # Repo-local dynamic workflows
 │
 ├── .claude-plugin/
