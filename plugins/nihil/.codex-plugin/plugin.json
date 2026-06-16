@@ -1,6 +1,6 @@
 {
   "name": "nihil",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Evidence-gated maintainability discipline in two layers: a native hook-enforced mode plugin \u2014 /nihil:raze (root-authority, write-capable transformation of a repo you own) plus the disciplined /nihil:review \u2192 /nihil:implement \u2192 /nihil:release path, with a secret / API-key brake active in every mode (a discipline aid, not a security boundary) \u2014 plus a summonable pantheon of five first-principles dynamic workflows (/nihil, /nihil-maat, /nihil-odin, /nihil-shiva, /nihil-athena) installed via /nihil:summon.",
   "author": {
     "name": "ANcpLua",

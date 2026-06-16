@@ -71,7 +71,7 @@
     {
       "name": "nihil",
       "description": "Evidence-gated maintainability discipline in two layers. (1) A native plugin: four modes \u2014 /nihil:raze (root-authority, write-capable transformation of a repo you own; only secret-leak and catastrophic, unrecoverable commands are blocked) plus /nihil:review, /nihil:implement, /nihil:release with confidence scoring, scope control, and release gating \u2014 backed by five read-only review agents and PreToolUse/Stop hooks (a discipline aid, not a security boundary: heuristic command matching, fail-open; a secret / API-key brake is active in every mode). (2) A summonable pantheon of five first-principles dynamic workflows (/nihil orchestrator + /nihil-maat review, /nihil-odin research, /nihil-shiva deletion, /nihil-athena restructure), installed into .claude/workflows/ via /nihil:summon.",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "source": "./plugins/nihil"
     },
     {
@@ -89,7 +89,7 @@
     {
       "name": "safety-nets",
       "description": "Two deterministic Stop-event safety nets (no LLM) that keep a session honest: overclaim-net blocks a 'done/fixed/verified' claim made without a verifying command this turn; slnx-sync blocks unregistered .csproj in a .slnx, auto-skipping VMR-synced upstream forks (dotnet/dotnet codeflow / dotnet upstream remote) and honoring a .slnx-sync-ignore opt-out.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "source": "./plugins/safety-nets"
     },
     {

@@ -24,6 +24,7 @@ reviews:
   changed_files_summary: true
   sequence_diagrams: false
   poem: false
+  enable_prompt_for_ai_agents: true
   auto_review:
     enabled: true
     drafts: false
@@ -41,6 +42,15 @@ reviews:
     - "!**/*.min.css"
     - "!plugins/cc-plugin-eval/fixtures/**"   # test scaffolding, not shipped
   path_instructions:
+    - path: "**"
+      instructions: |
+        AI reviewer coordination. Comments from Codex, Claude, Copilot, or CodeRabbit are all valid
+        implementation leads. If a review point is outside the GitHub diff range, do not discard it:
+        translate it into a concrete task against the current source tree by naming the best target
+        path plus line, symbol, or search phrase. If no exact anchor exists, name the files that must
+        be inspected and the behavior to change. Multiple agents may work the same reviewer point in
+        parallel; overlapping findings are signal, not duplication. Do not transcribe reviewer text
+        into repo files as the fix: forward the finding to the source and change the root cause.
     - path: "plugins/*/skills/**/SKILL.md"
       instructions: |
         Skill definitions. The `description` frontmatter is the ONLY trigger mechanism — check it

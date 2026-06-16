@@ -1,205 +1,107 @@
 ---
-description: ancplua-claude-plugins agent operating guide (hand-maintained copy of CLAUDE.md)
+description: ancplua-claude-plugins contributor/dev guide (hand-maintained copy of CLAUDE.md)
 globs:
   - "**/*"
 alwaysApply: true
 ---
 
 <!--
-  Canonical source is CLAUDE.md at the repo root; this file is a hand-maintained
-  copy of it. .github/copilot-instructions.md is a separate hand-maintained doc.
-  (The former AGENTS.md single-source / render model was retired in #289.)
+  Hand-maintained COPY of CLAUDE.md (the canonical guide at the repo root).
+  Keep the body in sync by hand when CLAUDE.md changes.
+  .github/copilot-instructions.md is a SEPARATE hand-maintained doc, not a copy.
 -->
 
-> [!IMPORTANT]
-> **Hand-maintained copy.** The canonical agent operating guide is **`CLAUDE.md`**
-> at the repo root; this file is a hand-maintained copy of it — keep it in sync by
-> hand when CLAUDE.md changes. `.github/copilot-instructions.md` is a separate
-> hand-maintained document.
+# ancplua-claude-plugins
 
----
+A Claude Code **plugin marketplace** — a git repo that distributes plugins
+(commands, agents, skills, hooks, MCP servers) through a `marketplace.json`
+manifest, mirrored for Codex CLI. The plugin inventory and install steps live in
+[`README.md`](README.md); this file is the **contributor / dev guide**.
 
-# Agent Operating Guide — ancplua-claude-plugins
-
-> Sources: Boris Cherny (@bcherny) + Thariq (@trq212), 2026-04-16; Claude Opus 4.7 System Card (Anthropic, 2026-04-16,
-> 232 pp.) — the most recent published card. Opus 4.8 builds directly on 4.7, so its safety and behavior findings still apply.  
-> All System Card citations are to the April 16 2026 (4.7) edition; page numbers are stable. No 4.8 System Card has been published.
-
----
-
-## Model & standard configuration
-
-| Setting                                    | Value               | Why                                                                              |
-|--------------------------------------------|---------------------|----------------------------------------------------------------------------------|
-| Model                                      | Claude Opus 4.8     | —                                                                                |
-| `effortLevel` / `CLAUDE_CODE_EFFORT_LEVEL` | `max`               | System Card p.192: "standard configuration: **adaptive thinking at max effort**" |
-| `defaultMode`                              | `bypassPermissions` | Standing-authority repos; see Permission model below                             |
-| `autoCompactEnabled`                       | `false`             | Every `/compact` is intentional — never silent                                   |
-| `alwaysThinkingEnabled`                    | `true`              | Security property, not just quality (see Prompt injection below)                 |
-| `agentPushNotifEnabled` + `voiceEnabled`   | `true`              | Leave long tasks running; recaps tell you what shipped and what's next           |
-
-**Adaptive thinking** means the model determines per-query reasoning depth dynamically.  
-`max` sets the ceiling; the model may use much less on a trivial query.
-> System Card p.53: "the level of effort is **dynamically determined for each query by the model**"
-
-**When to drop effort**: only for latency-constrained evals with wall-clock timeouts (the card ran Terminal-Bench 2.0
-with thinking disabled for this reason, p.193). Interactive Claude Code sessions are not latency-constrained. Drop to
-`high` for genuinely trivial, well-bounded edits (rename, format, single-file fix).
-
----
-
-## Multi-agent architecture
+## Repo structure
 
 ```
-Lead (this session)
-  ├── continue            — same task; every token in window still load-bearing
-  ├── rewind (esc-esc)    — wrong path; keep file reads, drop failed attempt
-  ├── /compact <hint>     — mid-task bloat; steer the summary toward next direction
-  ├── /clear + brief      — new task; hand-written context only, zero rot
-  └── spawn subagent ────→ Task tool: own fresh window, returns conclusion only
+.claude-plugin/marketplace.json   # Claude Code marketplace manifest (lists every plugin)
+.agents/plugins/marketplace.json  # Codex CLI marketplace manifest (mirror)
+plugins/<name>/                   # one directory per plugin (15 today)
+.github/workflows/ci.yml          # JSON + manifest validation — the only gate
+automation/                       # cron cleanup runner — IGNORE for dev (see automation/policy.md)
+README.md                         # user-facing: what each plugin does + how to install
 ```
 
-**Spawn a subagent when** the next chunk will produce intermediate noise (file reads, greps,
-dead ends) that the Lead will never need again. Only the report returns; exploration noise
-is garbage-collected when the subagent exits.
+## Plugin layout
 
-**Don't spawn when** the intermediate output must be woven into ongoing reasoning —
-use `/compact` or continue instead.
+Each plugin under `plugins/<name>/`:
 
-Mental test: *Will I need this tool output again, or just the conclusion?*
+```
+.claude-plugin/plugin.json   # required: name, version, description
+commands/  agents/  skills/  hooks/   # all optional
+README.md                    # per-plugin docs
+```
 
-### Subagent patterns for this repo
+**Manifest path rule:** component/source paths in `plugin.json` and
+`marketplace.json` must start with `./` (agent paths also end in `.md`). A bare
+path fails recent CLIs with `<field>: Invalid input`.
 
-| Task                                                 | Agent type            |
-|------------------------------------------------------|-----------------------|
-| Exploring a plugin's codebase for structure/patterns | Explore               |
-| Verifying output against a spec or test suite        | general-purpose       |
-| Writing docs from a git diff                         | general-purpose       |
-| Reviewing upstream dependency changes                | general-purpose       |
-| Security review of pending changes                   | security-review skill |
+## Adding or changing a plugin
 
-Context rot threshold for the 1M window: **~300–400k tokens** — task-dependent, not a
-hard rule. File reads are the heavy hitter. Compact proactively, before the cliff edge.
+1. Create/edit `plugins/<name>/` with a valid `.claude-plugin/plugin.json`.
+2. Register it in **both** manifests — `.claude-plugin/marketplace.json` (Claude)
+   and `.agents/plugins/marketplace.json` (Codex). Each entry needs `name`,
+   `source` (`./plugins/<name>`), `description`.
+3. **Bump the plugin's `version`** on any behavioral change (see next section).
+4. Validate, commit, open a PR.
 
----
+## Version bumps reach the cache; edits don't
 
-## Known failure modes (System Card §6.2.1, p.95)
+Installed plugins run from `~/.claude/plugins/cache/<marketplace>/<plugin>/<version>/`,
+pinned to the installed commit — **not** from this working tree. `/plugin update`
+re-syncs the cache **only when the version string changes**; on an equal version it
+reports *"already at the latest"* and keeps running the old code. A fix committed
+**without a version bump never reaches the running plugin.**
 
-These are documented pilot-use findings for Opus 4.7 (which 4.8 builds on) in Claude Code and similar scaffolds.
-They are not hypothetical — account for them before claiming a task complete.
+| Rule | Why |
+|------|-----|
+| Bump `plugin.json` `version` (+ matching `marketplace.json` entries) on any change under `hooks/ scripts/ agents/ commands/ skills/` | The version string is the sole update signal. |
+| After it lands: `commit → push → /plugin update → restart Claude Code` | Hooks load only at session start. |
+| To see what actually runs: `diff -rq` / `md5` the cache install vs the source | Editing the repo proves nothing about the executing copy. |
+| Don't hand-patch the cache as the fix | It's a managed artifact the next reinstall clobbers. Durable = bump + publish. |
 
-| Failure mode                                                                            | Mitigation                                                                              |
-|-----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
-| Claims to have succeeded at a task it did not fully complete                            | Run the thing; don't accept a diff as evidence of working behavior                      |
-| Misreports that test failures it *caused* were preexisting                              | Baseline tests before touching code; compare results against that baseline              |
-| Overconfident initial root-cause assessment                                             | Engineering principle #10: understand the "why" before moving on; don't trial-and-error |
-| Unnecessary follow-up questions on an already-clear request                             | Scope explicitly; use a bounded `/go`-style skill to eliminate ambiguity                |
-| Unexpected file deletion when starting a new technical effort (especially in temp dirs) | Avoid unstructured temp-dir workflows; stage deletions explicitly                       |
+**Hook-symptom triage:** `Not logged in · Please run /login` is **session auth**
+(run `/login`), never a hook. "haiku" errors come only from `type: prompt` hooks or
+the background model — a `type: command` hook (plain bash/python, no model call)
+cannot produce one.
 
-**Positive calibration** (System Card p.91, p.120):  
-Opus 4.7 takes destructive actions at a "much lower rate than Opus or Sonnet 4.6." Internal pilot reports describe it
-as "significantly more conservative." Undisclosed destructive actions: **3 cases** for Opus 4.7 vs. **24 for Opus 4.6**.
-Better, not zero — verification catches the residual.
+## Validate
 
----
+CI (`.github/workflows/ci.yml`) is the gate; run the same checks locally:
 
-## Prompt injection posture
+```bash
+# every JSON parses
+find . -name '*.json' -not -path '*/.git/*' -print0 | xargs -0 -I{} jq . {} >/dev/null
+# every plugin.json has name/version/description
+find . -path '*/.claude-plugin/plugin.json' -print0 \
+  | xargs -0 -I{} jq -e '.name and .version and .description' {} >/dev/null
+```
 
-`alwaysThinkingEnabled: true` is a **security property** in agentic contexts that read
-untrusted content (file reads, web fetches, MCP tool output from external services).
+PRs are reviewed by three independent bots: Claude, Copilot, CodeRabbit. Any of
+them may produce or implement fixes. If a review comment cannot be posted inline
+because it is outside the PR diff, translate it into a concrete source task:
+target file, line or symbol when possible, plus the behavior to change. Do not
+copy reviewer prose into the repo as the fix; apply the root change in source.
+Parallel agents may work the same review point. Treat overlapping findings as a
+strong signal and converge on the common root cause.
 
-From System Card §5.2.2 (adaptive Shade attacker):
+## Conventions
 
-| Surface                         | Thinking      | 1-attempt ASR | 200-attempt ASR |
-|---------------------------------|---------------|---------------|-----------------|
-| Coding (p.85)                   | on (adaptive) | **2.34%**     | 60.0%           |
-| Coding (p.85)                   | off           | 10.43%        | 92.5%           |
-| Browser use + safeguards (p.88) | on (adaptive) | **0.00%**     | 0.00%           |
-| Browser use + safeguards (p.88) | off           | 0.00%         | 0.00%           |
+- Less code is better; remove unused now. Prefer boring over clever.
+- Fix the root cause, not one instance — understand *why* before changing.
+- Fail loudly; silent failures are debugging nightmares.
+- Document non-obvious decisions in the PR description, not just the commit.
 
-At k=100 on the ART benchmark (p.83): 4.8% with adaptive thinking vs. 6.0% without.
+## Keep the mirrors in sync
 
-Disabling thinking (e.g. for speed) materially increases injection risk when processing
-external content. Don't disable it in agentic sessions touching files or the web.
-
----
-
-## Permission model
-
-`bypassPermissions` applies to standing-authority repos only:
-
-- `/Users/ancplua/framework/` — ANcpLua.Agents, ANcpLua.Analyzers, ANcpLua.NET.Sdk, ANcpLua.Roslyn.Utilities, renovate-config
-- `/Users/ancplua/qyl/`
-- `/Users/ancplua/marketplaces/ancplua-claude-plugins/`
-
-Outside these trees: ask before push, tag, or destructive git operations.
-
-**Explicit `deny` overrides survive bypass**: `Git stash pop`, `Git stash` — these still prompt regardless of mode.
-
-**`/fewer-permission-prompts`** — after any tool-heavy session, run this skill to harvest
-bash + MCP commands for the allowlist. The allow list is currently empty; each harvested
-entry reduces friction without compromising the deny overrides.
-
----
-
-## Verification contract
-
-> "4.7 is 2-3× more capable than 4.6 — verification is what keeps that velocity from compounding into invisible
-> regressions."  
-> — Boris Cherny, 2026-04-16
-
-| Task type           | Verify via                                                                        |
-|---------------------|-----------------------------------------------------------------------------------|
-| Plugin / CLI / .NET | Run the test suite; `dotnet run` and hit endpoints; check output against baseline |
-| Frontend            | `mcp__claude-in-chrome__*`: navigate, screenshot, read console + network          |
-| Desktop app         | `mcp__computer-use__*`: screenshot and interact within tier rules                 |
-
-Pattern: `<task> /go` — a per-project skill that tests end-to-end, runs `/simplify`, opens a PR.  
-Without a `/go` skill: explicitly state "cannot verify" rather than claiming the task works.
-
----
-
-## Engineering principles
-
-Operative rules of thumb when reasoning about code changes in this repo:
-
-| Situation                       | Principle                                                                |
-|---------------------------------|--------------------------------------------------------------------------|
-| Starting a new feature          | Solve the problem, not necessarily with code. Work backward from outcome. |
-| Evaluating approaches           | No "best" — only trade-offs. Document what you're optimizing for.        |
-| Adding code                     | Less code is better code. Justify every line. Remove unused now.         |
-| Adding abstraction              | Prefer boring. Abstraction should hide complexity, not create it.        |
-| Encountering a bug              | Fix the root cause. Understand the class of bug, not one instance.       |
-| Something unexpected            | Don't trial-and-error to green. What assumption was wrong?               |
-| Making a non-obvious decision   | Document the *why*. ADR / RFC / design doc, not a commit message.        |
-| An error occurs                 | Fail loudly. Silent failures are debugging nightmares.                   |
-| Debugging / optimizing          | Change one thing at a time. Measure → change → measure again.            |
-| Designing an API                | Easy to use correctly, hard to misuse. Invalid states unrepresentable.   |
-
----
-
-## Focus vs. verbose
-
-| Mode                  | What's visible                     | Use for                                            |
-|-----------------------|------------------------------------|----------------------------------------------------|
-| **Verbose** (current) | Every tool call + thinking summary | Architecture, security-adjacent, anything drifting |
-| `/focus`              | Final result only                  | Trusted task types: refactors, lint, doc rewrites  |
-
-`verbose: true` + `showThinkingSummaries: true` catches drift early but costs cognitive load.  
-A/B `/focus` on tasks where you trust the agent; stay verbose where you don't.
-
----
-
-## Automation runner — `automation/`
-
-The `automation/` directory contains the cron-triggered runner that keeps
-Alexander's working repos clean (the 5 listed in `automation/policy.md`).
-
-**Rule for dev work:** ignore `automation/` entirely. The cron output
-artifact `automation/RUN-LOG.md` is auto-managed (FIFO cap 10, written by
-`automation/scripts/log-entry.sh`) — never hand-edit it. The 8 templates in
-`automation/templates/` are pasted into the schedule UI, not invoked from
-interactive sessions.
-
-For policy details, see [`automation/policy.md`](automation/policy.md).  
-For the runner overview, see [`automation/README.md`](automation/README.md).
+This file is a copy. The canonical guide is `CLAUDE.md` at the repo root; its
+twin copy is `.windsurf/rules/project-config.md`. Edit all three bodies together
+(each keeps its own frontmatter). `.github/copilot-instructions.md` is separate —
+update it only if the change is relevant there.

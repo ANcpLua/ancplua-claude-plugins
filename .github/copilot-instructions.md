@@ -352,6 +352,13 @@ AIs coordinate through **shared files**, not real-time communication:
 
 Each AI does its own complete review. Overlapping findings indicate high confidence issues.
 
+Outside-diff review comments are still valid work. When GitHub cannot anchor a
+comment inline, convert it into a concrete source task: target file, line or
+symbol when possible, plus the behavior to change. Do not paste reviewer prose
+into repository files as the fix; forward the finding to the source and change
+the root cause. Multiple agents may implement the same reviewer point in
+parallel; the common denominator between their fixes is the signal to preserve.
+
 ### 9.6 Plugin Review Scope
 
 All AIs review the same things in this repo:
