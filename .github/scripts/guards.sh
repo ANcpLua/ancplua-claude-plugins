@@ -14,7 +14,7 @@
 #   BASE_REF (e.g. origin/main) is only needed for guard 3; omit it for a local
 #   run of guards 1 and 2.
 set -uo pipefail
-cd "$(git rev-parse --show-toplevel)"
+cd "$(git rev-parse --show-toplevel)" || exit 1
 
 MKT=".claude-plugin/marketplace.json"
 rc=0
