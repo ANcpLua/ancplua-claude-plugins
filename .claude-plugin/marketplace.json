@@ -88,8 +88,8 @@
     },
     {
       "name": "safety-nets",
-      "description": "Two deterministic Stop-event safety nets (no LLM) that keep a session honest: overclaim-net blocks a 'done/fixed/verified' claim made without a verifying command this turn; slnx-sync blocks unregistered .csproj in a .slnx, auto-skipping VMR-synced upstream forks (dotnet/dotnet codeflow / dotnet upstream remote) and honoring a .slnx-sync-ignore opt-out.",
-      "version": "0.1.2",
+      "description": "One deterministic Stop-event safety net (no LLM) that keeps a session honest: overclaim-net blocks a 'done/fixed/verified' claim made without a verifying command this turn.",
+      "version": "0.2.0",
       "source": "./plugins/safety-nets"
     },
     {

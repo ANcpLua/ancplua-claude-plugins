@@ -22,6 +22,7 @@ Older pre-launch entries are summarized in the [History](#history) section.
 
 ### Removed
 
+- **`safety-nets` plugin (0.1.2 → 0.2.0)**: Removed the `slnx-sync` Stop hook — the deterministic check that blocked unregistered `.csproj` in a repo's `.slnx`. It false-blocked on intentionally out-of-solution projects (e.g. `experiment/`-tier scaffolding deliberately kept outside the production `.slnx`), where the correct action is *not* to register them. `overclaim-net` remains the sole net; `slnx-sync-check.sh` is deleted and the plugin `keywords`, `README`, and both `plugin.json` / `marketplace.json` descriptions are trimmed to match.
 - **AGENTS.md + GEMINI.md single-source / render model (#289, #299)**: The admin-authorized root cleanup (#289) deleted `AGENTS.md` and `GEMINI.md` (the agent-config single source plus its one generated copy) along with the entire `tooling/` tree (`weave-validate.sh`, `sync-marketplace.sh`, the plugin template) and several stale `docs/` guides — all unused for ~2 weeks. #299 then retired the now-dead "Edit AGENTS.md only; regenerate via TomeVault" contract that ~6 carriers still pointed at: **CLAUDE.md is now canonical** (the only config carrier present at HEAD, auto-loaded by Claude Code), with `.cursor/` and `.windsurf/` copies hand-maintained. `.github/copilot-instructions.md` remains a separate hand-maintained document.
 
 ### Fixed
