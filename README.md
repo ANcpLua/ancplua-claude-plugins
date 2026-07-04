@@ -1,10 +1,10 @@
 # ancplua-claude-plugins
 
 Claude Code plugin marketplace — an agent-teams-aware advanced software-engineering
-base set. 13 plugins for parallel agent orchestration, PR-to-merge ferrying,
+base set. 14 plugins for parallel agent orchestration, PR-to-merge ferrying,
 dependency migration, first-principles repo transformation, parallel code review,
-cognitive guardrails, behavior-first test quality, plugin/skill evaluation, and
-code-elegance work.
+cognitive guardrails, behavior-first test quality, plugin/skill evaluation,
+X/Twitter data workflow planning, and code-elegance work.
 
 ## What this does
 
@@ -15,7 +15,7 @@ only advances when the gate passes. No manual babysitting.
 
 ## Plugins
 
-13 plugins, 24 commands, 23 skills, 30 agents:
+14 plugins, 24 commands, 24 skills, 30 agents:
 
 | Plugin                      | What it does in plain language                                                                                                                                              |
 |-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -32,6 +32,7 @@ only advances when the gate passes. No manual babysitting.
 | **derot**                   | Hunts truth-drift — stale comments, dead docs, wrong versions, dependency rot — and proposes fixes; `/depmigrate` migrates a package to its newer API and deletes the old code, gated by an adversarial refutation check |
 | **nihil**                   | The last-resort cleanup judge: decides whether each artifact still earns its existence and plans the smallest transformation that deserves to exist — nothing is sacred, and every deletion must survive a "prove it's not safe to remove" check |
 | **tomevault-publish**       | Publishes a skill, config, or plugin to TomeVault as a high-grade Tome, and explains the Skill / Tome / AGENTS.md model and grading rubric behind it |
+| **x-twitter-scraper**       | Plans Xquik REST API, MCP, SDK, webhook, export, monitor, and confirmation-gated workflows for X/Twitter data |
 
 ### How does this work without failing?
 
@@ -66,13 +67,14 @@ Add the marketplace, then install plugins individually:
 /plugin install metacognitive-guard@ancplua-claude-plugins
 /plugin install elegance-pipeline@ancplua-claude-plugins
 /plugin install cc-plugin-eval@ancplua-claude-plugins
+/plugin install x-twitter-scraper@ancplua-claude-plugins
 ```
 
 ## Technical details
 
-Claude package counts: 13 plugins, 24 commands, 23 skills, 30 agents.
-Codex migration adds 13 Codex plugin manifests, a repo-local Codex marketplace,
-24 command-derived Codex skills, and 30 repo-local Codex custom agents.
+Claude package counts: 14 plugins, 24 commands, 24 skills, 30 agents.
+Codex migration adds 14 Codex plugin manifests, a repo-local Codex marketplace,
+25 command-derived and plugin Codex skills, and 30 repo-local Codex custom agents.
 
 (Counts cover shipped marketplace plugins; cc-plugin-eval's `fixtures/` test corpus is excluded.)
 
@@ -104,7 +106,8 @@ plugins/
 ├── charon/                  # ferries a GitHub PR to merge — never waits forever
 ├── derot/                   # truth-drift hunt + dependency migration (/depmigrate)
 ├── nihil/                   # evidence-gated first-principles repo transformation
-└── tomevault-publish/       # publish skills / configs / plugins to TomeVault as Tomes
+├── tomevault-publish/       # publish skills / configs / plugins to TomeVault as Tomes
+└── x-twitter-scraper/       # Xquik X/Twitter data workflow planning
 ```
 
 ## Links

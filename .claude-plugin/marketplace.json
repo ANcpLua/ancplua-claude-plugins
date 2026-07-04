@@ -97,6 +97,12 @@
       "description": "Vendored (MIT) from dotnet/arcade-skills: .NET engineering-infrastructure CI/CD investigation. A ci-investigator orchestrator agent routes across 10 skills (Helix log analysis, Azure DevOps pipeline triage, binlog/crash-dump inspection, codeflow + dependency tracing, Maestro, known-issue history) and 4 MCP servers. Forked only to fix the manifest agents path for Claude Code's ./-prefixed component-path schema; upstream is unchanged otherwise.",
       "version": "0.1.0",
       "source": "./plugins/dotnet-dnceng"
+    },
+    {
+      "name": "x-twitter-scraper",
+      "description": "Plan Xquik X/Twitter data workflows with REST API routing, MCP setup, SDKs, webhooks, exports, monitoring, and confirmation-gated actions.",
+      "version": "0.1.0",
+      "source": "./plugins/x-twitter-scraper"
     }
   ]
 }
