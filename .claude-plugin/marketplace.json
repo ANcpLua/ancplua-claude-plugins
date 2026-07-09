@@ -106,8 +106,8 @@
     },
     {
       "name": "heimdall",
-      "description": "Watchman of the model-routing Bifröst. /heimdall reports which model actually served each turn (ground truth from the transcript's message.model), flags silent Opus↔Fable fallback swaps, and shows provider/region/auth routing context. A passive model-drift-net Stop hook notices once when the served model changes mid-session. Deterministic, no-LLM, no secrets.",
-      "version": "0.1.0",
+      "description": "Watchman of the model-routing Bifröst. /heimdall reports which model actually served each turn (ground truth from the transcript's message.model), flags silent Opus↔Fable fallback swaps, and shows provider/region/auth routing context. session-inspect adds the extended read — advisorModel, service_tier, speed, inference_geo, cache hit rate, and cache-miss reasons with re-charged token counts. A passive model-drift-net Stop hook notices once when the served model changes mid-session. Deterministic, no-LLM, no secrets.",
+      "version": "0.2.0",
       "source": "./plugins/heimdall"
     }
   ]

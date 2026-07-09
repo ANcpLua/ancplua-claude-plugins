@@ -23,6 +23,17 @@ Do this:
    path, and the nearest CDN edge. Make clear this locates the *user*, not the
    model — the edge airport code says nothing about which model answered.
 
+   If the user asks for more than "which model" — token/cache/cost detail, tier,
+   advisor model, or why a cache miss happened — run the extended read:
+   ```bash
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/session-inspect.sh"
+   ```
+   It surfaces `advisorModel`, `service_tier`, `speed`, `inference_geo`, token
+   totals, cache hit rate, and cache-miss reasons with re-charged token counts.
+   Call out actionable findings — e.g. a large `tools_changed` / `messages_changed`
+   miss means mid-session tool/MCP toggles or history edits busted the prompt
+   cache; fewer of those → higher cache hit → lower cost.
+
 3. **Report.** Lead with the answer: **the current served model**, and whether
    it changed this session. If a swap happened, explain the mechanism honestly:
    each model has its own usage bucket; when the primary (per `model` in
