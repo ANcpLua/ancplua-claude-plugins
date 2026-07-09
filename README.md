@@ -33,6 +33,7 @@ only advances when the gate passes. No manual babysitting.
 | **nihil**                   | The last-resort cleanup judge: decides whether each artifact still earns its existence and plans the smallest transformation that deserves to exist — nothing is sacred, and every deletion must survive a "prove it's not safe to remove" check |
 | **tomevault-publish**       | Publishes a skill, config, or plugin to TomeVault as a high-grade Tome, and explains the Skill / Tome / AGENTS.md model and grading rubric behind it |
 | **x-twitter-scraper**       | Plans Xquik REST API, MCP, SDK, webhook, export, monitor, and confirmation-gated workflows for X/Twitter data |
+| **heimdall**                | Tells you which model *actually* served each turn — read from the session transcript, not guessed — and shouts when Claude Code silently falls back from Opus to Fable. Answers "am I still on Opus?" with evidence, plus provider/region/auth routing context |
 
 ### How does this work without failing?
 

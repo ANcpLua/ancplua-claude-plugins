@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "heimdall",
+  "version": "0.1.0",
+  "description": "Watchman of the model-routing Bifröst. /heimdall reports which model actually served each turn (ground truth from the session transcript's message.model), flags silent Opus↔Fable fallback swaps, and shows provider/region/auth routing context. A passive Stop hook (model-drift-net) notices once when the served model changes mid-session. Answers 'am I still on Opus?' with evidence, not a guess.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "repository": "https://github.com/ANcpLua/ancplua-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "model-routing",
+    "fallback-model",
+    "opus",
+    "fable",
+    "model-identity",
+    "which-model",
+    "transcript",
+    "served-model",
+    "model-drift",
+    "silent-swap",
+    "observability",
+    "provider-routing",
+    "bedrock",
+    "vertex",
+    "deterministic",
+    "no-llm"
+  ]
+}

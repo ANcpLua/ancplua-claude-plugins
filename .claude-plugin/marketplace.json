@@ -103,6 +103,12 @@
       "description": "Plan Xquik X/Twitter data workflows with REST API routing, MCP setup, SDKs, webhooks, exports, monitoring, and confirmation-gated actions.",
       "version": "0.1.0",
       "source": "./plugins/x-twitter-scraper"
+    },
+    {
+      "name": "heimdall",
+      "description": "Watchman of the model-routing Bifröst. /heimdall reports which model actually served each turn (ground truth from the transcript's message.model), flags silent Opus↔Fable fallback swaps, and shows provider/region/auth routing context. A passive model-drift-net Stop hook notices once when the served model changes mid-session. Deterministic, no-LLM, no secrets.",
+      "version": "0.1.0",
+      "source": "./plugins/heimdall"
     }
   ]
 }

@@ -1,0 +1,17 @@
+{
+  "description": "model-drift-net: a passive, non-blocking Stop hook. At the end of each turn it compares the two most recent distinct served models (message.model) in the transcript and, only when they differ, surfaces a one-line notice that a fallback swap (e.g. Opus→Fable) happened this turn. Never blocks; silent while the model is steady; no LLM, no network.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/model-drift-net.sh\"",
+            "timeout": 10,
+            "statusMessage": "heimdall: checking for model drift..."
+          }
+        ]
+      }
+    ]
+  }
+}
