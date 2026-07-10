@@ -13,7 +13,7 @@ Everything needed to take an instruction file from a repo to a published, high-g
 ### Instruction files
 An "instruction file" is any Markdown file beside your code that tells an AI tool something true. Two loading patterns:
 
-- **Always-on config** — loads every turn. `AGENTS.md` (repo root, cross-tool) is the 2026 default; `CLAUDE.md` (Claude-only), `.cursorrules`, `.windsurfrules`, `.github/copilot-instructions.md`, and `GEMINI.md` are tool-specific equivalents. Keep it terse — it costs context on every task. Read by Claude Code, Cursor, Codex CLI, Copilot CLI, and Gemini CLI.
+- **Always-on config** — loads every turn. `AGENTS.md` (repo root, cross-tool) is the 2026 default; `CLAUDE.md` (Claude-only), `.cursorrules`, `.windsurfrules`, `.github/copilot-instructions.md`, and `GEMINI.md` are tool-specific equivalents. Keep it terse — it costs context on every task. Read by Claude Code and other agent CLIs.
 - **On-demand skill** — `SKILL.md` loads only when a task matches its description. It costs nothing until it triggers.
 
 The test for "config vs skill": *does this apply to almost every task in the repo?* Yes means AGENTS.md; only sometimes means a Skill.

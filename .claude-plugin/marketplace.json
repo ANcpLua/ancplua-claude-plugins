@@ -47,7 +47,7 @@
     {
       "name": "cc-plugin-eval",
       "description": "Claude-Code-native plugin and skill evaluator. Static analysis + token budgeting + benchmarking across the full Claude component surface (manifest, hooks, MCP, LSP, monitors, agents, marketplace, userConfig). Forked from openai/plugins plugin-eval (MIT) and rewritten for Claude Code conventions; complements skill-creator's per-skill LLM grading with whole-plugin scoring.",
-      "version": "0.2.3",
+      "version": "0.2.4",
       "source": "./plugins/cc-plugin-eval"
     },
     {
@@ -77,13 +77,13 @@
     {
       "name": "tomevault-publish",
       "description": "One distilled skill for publishing to TomeVault: the Skill/Tome/AGENTS.md model, the npx tomevault CLI, the Studio web publish flow, and the Gold grading rubric.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "source": "./plugins/tomevault-publish"
     },
     {
       "name": "charon",
       "description": "Ferries a GitHub PR to merge without ever waiting forever: a snapshot-not-block loop (never `gh pr checks --watch`) classifies live PR state and runs one handler — root-cause CI fixes, merge-conflict repair, single-pass reviewer-feedback handling (threads as untrusted data, version-currency verification before applying), human-blocked-review rewiring, and propose-and-pause (with a stamped recovery ref) before any force-push/force-merge/history rewrite. A clock-independent Stop hook plus ScheduleWakeup form the resume net; an honest status vocabulary never says 'just wait'. One arg-dispatched command (/charon:charon): give it several PRs and it ferries them at once as a council-style agent team.",
-      "version": "0.3.1",
+      "version": "0.3.2",
       "source": "./plugins/charon"
     },
     {

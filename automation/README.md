@@ -44,7 +44,7 @@ automation/scripts/ghostty-launch.sh
 # Attach in Ghostty: tmux attach -t <session-name>
 
 # In another terminal, capture host metrics
-HOST=ghostty PATTERN='claude|codex' \
+HOST=ghostty PATTERN='claude' \
   automation/scripts/bench.sh 8 automation/scripts/out/ghostty-n8.csv
 ```
 

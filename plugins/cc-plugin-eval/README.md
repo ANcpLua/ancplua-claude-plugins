@@ -20,16 +20,14 @@ It helps engineers evaluate a local Claude Code plugin or skill, understand why 
 
 The plugin is designed to feel chat-first in Claude Code, while still routing to explicit local commands you can run yourself.
 
-## Differences vs OpenAI plugin-eval
+## Attribution
 
-cc-plugin-eval is forked from [`openai/plugins` `plugin-eval`](https://github.com/openai/plugins/tree/main/plugins/plugin-eval) (MIT). It targets Claude Code instead of OpenAI Codex. Specifically:
+cc-plugin-eval is forked from [`openai/plugins` `plugin-eval`](https://github.com/openai/plugins/tree/main/plugins/plugin-eval) (MIT) and fully rewritten for Claude Code conventions:
 
-- Detects `.claude-plugin/plugin.json` instead of `.codex-plugin/plugin.json`.
-- Drops Codex-specific manifest fields (`interface{}`, `defaultPrompt`, `composerIcon`, `brandColor`, `developerName`, `category`, `capabilities`).
-- Adds eight Claude-native evaluators: `manifest`, `hooks`, `mcp`, `lsp`, `monitors`, `agents`, `marketplace`, `userconfig`.
-- Adds new CLI subcommands: `validate`, `inspect`, `evaluate-skill`, `improve`.
-- Uses `~/.claude/plugins/cache/` for the baseline corpus instead of `~/.codex/`.
-- Uses `claude` (instead of `codex exec`) for benchmark runs.
+- Detects `.claude-plugin/plugin.json`.
+- Eight Claude-native evaluators: `manifest`, `hooks`, `mcp`, `lsp`, `monitors`, `agents`, `marketplace`, `userconfig`.
+- CLI subcommands: `validate`, `inspect`, `evaluate-skill`, `improve`.
+- Uses `~/.claude/plugins/cache/` for the baseline corpus and `claude` for benchmark runs.
 - Hands off skill rewrites to the `skill-creator` skill (Anthropic's `skill-creator@claude-plugins-official`) instead of duplicating that workflow.
 
 See `THIRD_PARTY_NOTICES.md` for full attribution and the per-file porting status.

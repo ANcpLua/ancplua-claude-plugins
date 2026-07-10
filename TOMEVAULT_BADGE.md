@@ -3,7 +3,7 @@
 > Source: https://github.com/ANcpLua/ancplua-claude-plugins — distributed by [TomeVault](https://tomevault.io).
 
 This repository's AI instruction file is indexed and distributed by TomeVault
-to Claude Code, Cursor, Copilot, Gemini CLI, Codex, and Windsurf.
+to Claude Code and other agent CLIs.
 
 - Source repo: https://github.com/ANcpLua/ancplua-claude-plugins
 - Profile on TomeVault: https://tomevault.io/u/ANcpLua

@@ -12,7 +12,7 @@ frustrating today:
 | "I'll wake in 5 min" — and never does; the tool waits forever | A **clock-independent** resume net. Control flow branches only on PR status, never on time. A missed wakeup degrades to a one-command resume, never a silent forever-wait. |
 | `gh pr checks --watch` blocks the session indefinitely | **Never watches.** One snapshot per iteration, then rests and resumes. |
 | "Just wait" with no real reason | An **honest status vocabulary**. Either it's doing something, or it names the one precise action only you can do. |
-| AI reviewers (CodeRabbit / Codex / Codacy) suggest **outdated versions** | A **version-currency gate**: every version a reviewer names is verified against real source before any file changes. |
+| AI reviewers (CodeRabbit / Copilot / Codacy) suggest **outdated versions** | A **version-currency gate**: every version a reviewer names is verified against real source before any file changes. |
 | Confused by multiple options / half-finished PRs / stale labels | **Grounding doctrine**: every decision rebuilt from a fresh live snapshot; cached labels and old summaries are never authority. |
 | Merge conflicts / "must be force-merged" / broken linear history | Reversible repair done autonomously; irreversible ops use **propose-and-pause** with a **stamped recovery ref** so nothing is ever truly lost. |
 | Blocked on a human reviewer | **Rewires** what you have authority over (post an agent review, retarget, fix the cause); honestly surfaces what only a human can approve. |

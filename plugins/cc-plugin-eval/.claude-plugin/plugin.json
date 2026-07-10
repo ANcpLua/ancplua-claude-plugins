@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "cc-plugin-eval",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Local-first CLI to evaluate Claude Code plugins and skills: token-budget analysis, manifest/hook/MCP/agent linting, scoring, comparison, improvement briefs, and real claude benchmarking.",
   "author": {
     "name": "ANcpLua",
