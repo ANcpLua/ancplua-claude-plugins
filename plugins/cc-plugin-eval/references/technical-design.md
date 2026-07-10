@@ -189,7 +189,7 @@ That means:
 
 ## Token Estimation
 
-cc-plugin-eval uses static estimation (`estimated-static`) by counting characters and dividing by 4 (per `src/lib/tokens.js`). The `--observed-usage` flag accepts a JSONL shape that overlaps with both Claude Messages API and OpenAI Responses API payloads (`input_tokens`, `output_tokens`, `total_tokens`, optional `cached_tokens` and `reasoning_tokens`) so measured usage can layer onto static estimates without locking the parser to one provider.
+cc-plugin-eval uses static estimation (`estimated-static`) by counting characters and dividing by 4 (per `src/lib/tokens.js`). The `--observed-usage` flag accepts a JSONL shape modeled on the Claude Messages API usage payload but kept provider-neutral (`input_tokens`, `output_tokens`, `total_tokens`, optional `cached_tokens` and `reasoning_tokens`) so measured usage can layer onto static estimates without locking the parser to one provider.
 
 Observed usage adds:
 

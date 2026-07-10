@@ -44,7 +44,7 @@ reviews:
   path_instructions:
     - path: "**"
       instructions: |
-        AI reviewer coordination. Comments from Codex, Claude, Copilot, or CodeRabbit are all valid
+        AI reviewer coordination. Comments from Claude, Copilot, or CodeRabbit are all valid
         implementation leads. If a review point is outside the GitHub diff range, do not discard it:
         translate it into a concrete task against the current source tree by naming the best target
         path plus line, symbol, or search phrase. If no exact anchor exists, name the files that must

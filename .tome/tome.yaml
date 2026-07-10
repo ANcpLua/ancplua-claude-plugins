@@ -2,7 +2,7 @@
 #
 # CLAUDE.md is the canonical, hand-maintained agent operating guide for this repo.
 # The former AGENTS.md render-source model was retired in #289 (root-authority
-# cleanup) — AGENTS.md and GEMINI.md were deleted, and no TomeVault renderer is
+# cleanup) — AGENTS.md and its generated copy were deleted, and no TomeVault renderer is
 # installed — so every agent-config file below is hand-maintained and shipped
 # verbatim (no rendering). .github/copilot-instructions.md is a separate manual.
 manifest:

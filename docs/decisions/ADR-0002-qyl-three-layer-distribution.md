@@ -11,7 +11,7 @@ informed: "Plugin consumers, qyl contributors"
 
 ## Context and Problem Statement
 
-qyl has 10 agents, 2 commands, hooks, and an MCP server with 100+ tools — but zero SKILL.md files. All architectural knowledge is locked inside Claude Code plugins and can't reach Cursor, Copilot, Codex, Gemini CLI, or any other AI agent.
+qyl has 10 agents, 2 commands, hooks, and an MCP server with 100+ tools — but zero SKILL.md files. All architectural knowledge is locked inside Claude Code plugins and can't reach Cursor, Copilot, or any other AI agent.
 
 qyl is not an observability dashboard — it is a compile-time OS for agent workflows. The Loom compiler, the seven-plane architecture, the MAF execution model, and the architectural invariants need to be accessible to any AI agent on any platform.
 

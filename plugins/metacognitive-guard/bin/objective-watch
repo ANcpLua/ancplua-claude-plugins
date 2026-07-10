@@ -80,7 +80,7 @@ SHIP_RE = re.compile(
 )
 
 TOKEN_STOPWORDS = {
-    "about", "after", "agent", "anchor", "change", "codex", "continue",
+    "about", "after", "agent", "anchor", "change", "continue",
     "current", "drift", "finish", "focus", "implement", "issue", "move",
     "next", "objective", "path", "plan", "please", "primary", "review",
     "session", "spec", "switch", "task", "this", "update", "work",

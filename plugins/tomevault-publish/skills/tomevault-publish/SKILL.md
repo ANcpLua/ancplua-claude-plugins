@@ -13,7 +13,7 @@ Everything needed to take an instruction file from a repo to a published, high-g
 ### Instruction files
 An "instruction file" is any Markdown file beside your code that tells an AI tool something true. Two loading patterns:
 
-- **Always-on config** — loads every turn. `AGENTS.md` (repo root, cross-tool) is the 2026 default; `CLAUDE.md` (Claude-only), `.cursorrules`, `.windsurfrules`, `.github/copilot-instructions.md`, and `GEMINI.md` are tool-specific equivalents. Keep it terse — it costs context on every task. Read by Claude Code and other agent CLIs.
+- **Always-on config** — loads every turn. `AGENTS.md` (repo root, cross-tool) is the 2026 default; `CLAUDE.md` (Claude-only), `.cursorrules`, `.windsurfrules`, and `.github/copilot-instructions.md` are tool-specific equivalents. Keep it terse — it costs context on every task. Read by Claude Code and other agent CLIs.
 - **On-demand skill** — `SKILL.md` loads only when a task matches its description. It costs nothing until it triggers.
 
 The test for "config vs skill": *does this apply to almost every task in the repo?* Yes means AGENTS.md; only sometimes means a Skill.
@@ -97,7 +97,7 @@ Publishing is a signed-in web action; the CLI cannot do it.
 2. **New Tome**, then set **name**, **description** (one sentence), and **slug**.
 3. **New file**, toggle **Skill** or **Config**, set the filename (`SKILL.md` or `AGENTS.md`), and paste the content. The right panel scores Quality and Security live as you type.
 4. When the Tome reads **Gold** (see section 4), click **Publish**, then the confirm panel's **Publish**, until it shows "Tome queued".
-5. Verify under `/account/repos`, in the **Published Tomes** list. Distribution to Claude, Cursor, Gemini, Copilot, and Windsurf lands within about ten minutes.
+5. Verify under `/account/repos`, in the **Published Tomes** list. Distribution to Claude Code and the other supported tools lands within about ten minutes.
 6. Anyone installs your work with `npx tomevault install ANcpLua/ancplua-claude-plugins` — install targets are `owner/repo`, not a bare handle (the CLI rejects `install ANcpLua` with "Invalid target. Use owner/repo format.").
 
 To index a whole **repo** instead, submit its GitHub URL at `https://tomevault.io/convert` while signed in (owner-only; the CLI just points there).

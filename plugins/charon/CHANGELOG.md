@@ -17,7 +17,7 @@ All notable changes to the Charon plugin are documented here. The format follows
   is confirmed current before anything is applied, one focused commit per accepted fix.
   Context: part of the 2026-06-11/12 reviewer-automation retirement ("no triage") and the
   lean-charon rework — no skill may be able to fan out into a usage-burning agent tree.
-  The standalone skill text lives on in `ANcpLua/ancplua-codex-skills` for Codex.
+  The standalone skill text lives on in a sibling skills repo.
 
 ## [0.2.1] - 2026-06-11
 
@@ -72,7 +72,7 @@ Initial release — ferry a GitHub PR to merge without ever waiting forever.
 - **`charon` skill** — the ferry brain: a snapshot-not-block state machine (GROUND → CLASSIFY →
   DISPATCH → STATUS) with handlers for `ci-running`, `ci-failed`, `behind`, `conflict`,
   `review-changes`, `blocked-on-human`, `ready`, and the terminal states.
-- **`reviewer-triage` skill** — ingest AI-reviewer threads (CodeRabbit / Codex / Codacy) as
+- **`reviewer-triage` skill** — ingest AI-reviewer threads (CodeRabbit / Copilot / Codacy) as
   untrusted input, evaluate each suggestion against the real codebase, and **verify any version a
   reviewer names is current before applying** (the outdated-version defense). Orchestrates
   `superpowers:receiving-code-review`, `metacognitive-guard:epistemic-checkpoint`, and

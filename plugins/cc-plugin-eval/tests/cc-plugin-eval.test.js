@@ -164,7 +164,7 @@ test("parseFrontmatter handles literal YAML block scalars", () => {
 });
 
 test("parseFrontmatter handles multi-line double-quoted scalars with escaped breaks", () => {
-  // The exact shape the Codex marketplace migration generator emits: a double-quoted
+  // The exact shape the retired cross-CLI marketplace migration generator emitted: a double-quoted
   // scalar continued across physical lines via backslash-escaped breaks, with \uXXXX
   // and escaped-space sequences. Valid YAML 1.2 — must not throw "Unexpected indentation".
   const generated = parseFrontmatter(

@@ -3,11 +3,11 @@
 # Run alongside the launch. One invocation per host (one CSV per host+N).
 #
 # Usage:
-#   HOST=ghostty PATTERN='claude|codex' ./bench.sh 8 out/ghostty-n8.csv
+#   HOST=ghostty PATTERN='claude' ./bench.sh 8 out/ghostty-n8.csv
 #
 # Env:
 #   HOST       label written into the CSV (e.g. ghostty, warp, terminal, iterm2, cursor, rider, webstorm, tmux)
-#   PATTERN    regex matching agent processes (default: 'claude|codex|aider')
+#   PATTERN    regex matching agent processes (default: 'claude')
 #   HOST_PID   pid of the host app for overhead measurement (default: pgrep -n -i $HOST)
 #   INTERVAL   sample interval seconds (default 2)
 #   TIMEOUT_S  hard cap seconds (default 7200 = 2h)
@@ -17,7 +17,7 @@ set -u
 N="${1:?usage: bench.sh <N> <out.csv>}"
 OUT="${2:?usage: bench.sh <N> <out.csv>}"
 INTERVAL="${INTERVAL:-2}"
-PATTERN="${PATTERN:-claude|codex|aider}"
+PATTERN="${PATTERN:-claude}"
 HOST="${HOST:-unknown}"
 HOST_PID="${HOST_PID:-$(pgrep -n -i "$HOST" 2>/dev/null || echo 0)}"
 TIMEOUT_S="${TIMEOUT_S:-7200}"

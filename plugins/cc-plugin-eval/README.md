@@ -22,7 +22,7 @@ The plugin is designed to feel chat-first in Claude Code, while still routing to
 
 ## Attribution
 
-cc-plugin-eval is forked from [`openai/plugins` `plugin-eval`](https://github.com/openai/plugins/tree/main/plugins/plugin-eval) (MIT) and fully rewritten for Claude Code conventions:
+cc-plugin-eval is forked from an MIT-licensed upstream evaluator (see `THIRD_PARTY_NOTICES.md`) and fully rewritten for Claude Code conventions:
 
 - Detects `.claude-plugin/plugin.json`.
 - Eight Claude-native evaluators: `manifest`, `hooks`, `mcp`, `lsp`, `monitors`, `agents`, `marketplace`, `userconfig`.
@@ -34,7 +34,7 @@ See `THIRD_PARTY_NOTICES.md` for full attribution and the per-file porting statu
 
 ## Source
 
-Forked from `openai/plugins` (`plugins/plugin-eval`, MIT). See `THIRD_PARTY_NOTICES.md`.
+Forked from an MIT-licensed upstream evaluator. See `THIRD_PARTY_NOTICES.md`.
 
 ## Quick Start
 
@@ -262,7 +262,7 @@ Use `cc-plugin-eval` when you want to:
 
 ## License & Attribution
 
-MIT, copyright (c) 2026 AncpLua. The repo-level `LICENSE` covers this plugin. See `THIRD_PARTY_NOTICES.md` for the upstream OpenAI MIT attribution and the per-file porting status.
+MIT, copyright (c) 2026 AncpLua. The repo-level `LICENSE` covers this plugin. See `THIRD_PARTY_NOTICES.md` for the upstream MIT attribution and the per-file porting status.
 
 ## References
 

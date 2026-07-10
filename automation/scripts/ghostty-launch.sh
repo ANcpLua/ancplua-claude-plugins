@@ -63,7 +63,7 @@ session ready: $SESSION
 1. Open Ghostty (Cmd+Space → 'Ghostty', or:  open -a Ghostty).
 2. Attach the session:    tmux attach -t $SESSION
 3. (Other terminal) measure:
-     HOST=ghostty PATTERN='claude|codex' \\
+     HOST=ghostty PATTERN='claude' \\
        $DIR/scripts/bench.sh ${#TEMPLATES[@]} $DIR/scripts/out/ghostty-n${#TEMPLATES[@]}.csv
 4. Tear down when done:    tmux kill-session -t $SESSION
 EOF

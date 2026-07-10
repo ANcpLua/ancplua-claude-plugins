@@ -543,7 +543,7 @@ async function runVerifierCommands({ commands, cwd, processRunner, basePath, tim
     const stderrPath = path.join(basePath, `verifier-${index + 1}.stderr.log`);
     // Use $SHELL when set (mac/dev workstations) or fall back to /bin/sh, which
     // is guaranteed POSIX. Drop the -l flag so we don't source ~/.zshrc inside
-    // an isolated benchmark home (per F-codex-001).
+    // an isolated benchmark home.
     const outcome = await processRunner({
       kind: "verifier",
       command: verifierEnv.SHELL || "/bin/sh",
