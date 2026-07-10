@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "heimdall",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Watchman of the model-routing Bifröst. /heimdall reports which model actually served each turn (ground truth from the session transcript's message.model), flags silent Opus↔Fable fallback swaps, and shows provider/region/auth routing context. session-inspect.sh adds the extended read: advisorModel, service_tier, speed, inference_geo, cache hit rate, and cache-miss reasons with re-charged token counts. A passive Stop hook (model-drift-net) notices once when the served model changes mid-session. Answers 'am I still on Opus?' — and 'why did I pay for that cache miss?' — with evidence, not a guess.",
   "author": {
     "name": "ANcpLua",

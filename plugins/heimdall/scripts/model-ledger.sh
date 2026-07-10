@@ -17,17 +17,19 @@ set -euo pipefail
 
 PROJ_ROOT="$HOME/.claude/projects"
 
+# "|| true": under pipefail, head(1) exiting after one line SIGPIPEs ls once
+# the listing exceeds the pipe buffer, killing the whole script (exit 141).
 pick_transcript() {
   if [ "${1:-}" = "--all" ]; then
-    ls -t "$PROJ_ROOT"/*/*.jsonl 2>/dev/null | head -1; return
+    ls -t "$PROJ_ROOT"/*/*.jsonl 2>/dev/null | head -1 || true; return
   fi
   if [ -n "${1:-}" ] && [ -f "$1" ]; then printf '%s' "$1"; return; fi
   # Claude Code mangles the cwd into the project dir name: / and . -> -
   local mangled; mangled="$(printf '%s' "$PWD" | sed 's/[/.]/-/g')"
   local dir="$PROJ_ROOT/$mangled"
-  if [ -d "$dir" ]; then ls -t "$dir"/*.jsonl 2>/dev/null | head -1; return; fi
+  if [ -d "$dir" ]; then ls -t "$dir"/*.jsonl 2>/dev/null | head -1 || true; return; fi
   # fallback: newest transcript that actually contains a served model
-  ls -t "$PROJ_ROOT"/*/*.jsonl 2>/dev/null | head -1
+  ls -t "$PROJ_ROOT"/*/*.jsonl 2>/dev/null | head -1 || true
 }
 
 T="$(pick_transcript "${1:-}")"
