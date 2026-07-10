@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "tomevault-publish",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "One distilled skill for publishing to TomeVault: the Skill/Tome/AGENTS.md model, the npx tomevault CLI, the Studio web publish flow, and the Gold grading rubric.",
   "author": {
     "name": "ANcpLua",

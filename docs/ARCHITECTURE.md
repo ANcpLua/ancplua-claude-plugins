@@ -28,7 +28,7 @@ ancplua-claude-plugins/
 │   ├── copilot-instructions.md  # Copilot Coding Agent instructions
 │   ├── dependabot.yml           # Dependency update config
 │   └── workflows/
-│       ├── auto-merge.yml       # Native GitHub auto-merge for codex/ + copilot/ branches and Codex-approved PRs
+│       ├── auto-merge.yml       # Native GitHub auto-merge for claude/ branches
 │       ├── ci.yml               # Main CI (JSON/plugin/marketplace/SKILL validation, shellcheck, markdownlint, actionlint)
 │       └── claude.yml           # Claude Code action — runs on @claude mentions in issues, PR reviews, comments
 │

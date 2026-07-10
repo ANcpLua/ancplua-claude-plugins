@@ -15,15 +15,15 @@ alwaysApply: true
 
 A Claude Code **plugin marketplace** — a git repo that distributes plugins
 (commands, agents, skills, hooks, MCP servers) through a `marketplace.json`
-manifest, mirrored for Codex CLI. The plugin inventory and install steps live in
-[`README.md`](README.md); this file is the **contributor / dev guide**.
+manifest. Claude Code only — no other CLI mirrors, no non-Claude models. The
+plugin inventory and install steps live in [`README.md`](README.md); this file
+is the **contributor / dev guide**.
 
 ## Repo structure
 
 ```
 .claude-plugin/marketplace.json   # Claude Code marketplace manifest (lists every plugin)
-.agents/plugins/marketplace.json  # Codex CLI marketplace manifest (mirror)
-plugins/<name>/                   # one directory per plugin (15 today)
+plugins/<name>/                   # one directory per plugin (17 today)
 .github/workflows/ci.yml          # JSON + manifest validation — the only gate
 automation/                       # cron cleanup runner — IGNORE for dev (see automation/policy.md)
 README.md                         # user-facing: what each plugin does + how to install
@@ -46,8 +46,7 @@ path fails recent CLIs with `<field>: Invalid input`.
 ## Adding or changing a plugin
 
 1. Create/edit `plugins/<name>/` with a valid `.claude-plugin/plugin.json`.
-2. Register it in **both** manifests — `.claude-plugin/marketplace.json` (Claude)
-   and `.agents/plugins/marketplace.json` (Codex). Each entry needs `name`,
+2. Register it in `.claude-plugin/marketplace.json`. Each entry needs `name`,
    `source` (`./plugins/<name>`), `description`.
 3. **Bump the plugin's `version`** on any behavioral change (see next section).
 4. Validate, commit, open a PR.
@@ -101,7 +100,7 @@ strong signal and converge on the common root cause.
 
 ## Keep the mirrors in sync
 
-This file is a copy. The canonical guide is `CLAUDE.md` at the repo root; its
-twin copy is `.windsurf/rules/project-config.md`. Edit all three bodies together
-(each keeps its own frontmatter). `.github/copilot-instructions.md` is separate —
-update it only if the change is relevant there.
+Edited this file? Hand-update `.cursor/rules/project-config.mdc` and
+`.windsurf/rules/project-config.md` (verbatim body copies, each with its own
+frontmatter). Touch `.github/copilot-instructions.md` only if the change is
+relevant there.

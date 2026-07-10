@@ -3,8 +3,7 @@
 Council for complex tasks. An Opus captain plus the `/deep-research` dynamic workflow and three Opus
 teammates at differentiated effort.
 
-Inspired by Grok 4.20's multi-agent architecture — same mechanism, adapted for Claude: each agent's
-full behavioral identity is written inline in its `agents/*.md` file. When the captain spawns that
+Each agent's full behavioral identity is written inline in its `agents/*.md` file. When the captain spawns that
 agent with the Task tool, the file becomes the subagent's system prompt in its own fresh context
 window — a distinct Opus invocation with its own cost (see the Cost profile in `commands/council.md`).
 The agent *is* its definition.
@@ -31,8 +30,8 @@ Each agent file contains its full behavioral identity inline — values, protoco
 what it never does. When the captain Task-spawns an agent, that file is loaded as the subagent's
 system prompt in a fresh context window of its own, so each spawn is a distinct Opus invocation.
 
-Compare to Grok 4.20: same base model, several times, different system prompts. This is the same
-thing — same Opus base, different agent definitions, plus the `/deep-research` workflow for evidence.
+Same Opus base spawned several times with different system prompts — different agent definitions,
+plus the `/deep-research` workflow for evidence.
 
 ## Structure
 

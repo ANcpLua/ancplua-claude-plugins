@@ -72,7 +72,7 @@ ancplua-claude-plugins/
 │   ├── dependabot.yml           # Dependency update config
 │   └── workflows/
 │       ├── ci.yml               # Main CI
-│       ├── auto-merge.yml       # Native auto-merge for codex/ + copilot/ branches and Codex-approved PRs
+│       ├── auto-merge.yml       # Native auto-merge for claude/ branches
 │       └── claude.yml           # Claude Code action — runs on @claude mentions
 │
 ├── plugins/                     # 13 plugins — see .claude-plugin/marketplace.json

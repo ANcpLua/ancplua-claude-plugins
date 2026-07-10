@@ -43,19 +43,6 @@ anything else continues. No hoping. No skipping. No "it probably works."
 
 ## Install
 
-### Codex
-
-This repo also ships a Codex marketplace at `.agents/plugins/marketplace.json`.
-For local development, register this checkout as a Codex marketplace:
-
-```bash
-codex plugin marketplace add /Users/ancplua/RiderProjects/ancplua-claude-plugins
-```
-
-Then install plugins from the `ancplua-claude-plugins` marketplace in Codex.
-
-### Claude Code
-
 Add the marketplace, then install plugins individually:
 
 ```bash
@@ -73,9 +60,8 @@ Add the marketplace, then install plugins individually:
 
 ## Technical details
 
-Claude package counts: 14 plugins, 24 commands, 24 skills, 30 agents.
-Codex migration adds 14 Codex plugin manifests, a repo-local Codex marketplace,
-25 command-derived and plugin Codex skills, and 30 repo-local Codex custom agents.
+Claude package counts: 17 plugins, 25 commands, 34 skills, 31 agents.
+Claude Code only — no other CLI mirrors, no non-Claude models.
 
 (Counts cover shipped marketplace plugins; cc-plugin-eval's `fixtures/` test corpus is excluded.)
 
@@ -86,12 +72,10 @@ Tri-AI review system: Claude, Copilot, and CodeRabbit review PRs independently.
 Two workflows drive PR automation:
 
 - **`.github/workflows/auto-merge.yml`** — enables native GitHub auto-merge (squash) for
-  Codex-authored PRs (`codex/` branches) and Copilot-authored PRs (`copilot/` branches),
-  plus any manual PR approved by `chatgpt-codex-connector[bot]`. Renovate enables its own
+  Claude-authored PRs (`claude/` branches) from this repo. Renovate enables its own
   native auto-merge, so it needs no entry here.
 - **`.github/workflows/claude.yml`** — runs the Claude Code action on `@claude` mentions in
-  issues, pull-request reviews, and comments. The Codex review prompt and output schema live
-  in `.github/codex/` (`prompts/review.md`, `schemas/review-output.schema.json`).
+  issues, pull-request reviews, and comments.
 
 ```text
 plugins/

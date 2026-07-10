@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "nuget-opensrc",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Commit-pinned NuGet to GitHub source fetcher: wraps opensrc with catalog metadata so agents grep the exact commit a package shipped from. Ships a command, a research skill, and a Node CLI.",
   "author": {
     "name": "ANcpLua",

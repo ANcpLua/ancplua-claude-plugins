@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "mutation-minded-testing",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Mutation-minded, behavior-first test quality: 4 agents (architecture reviewer, tester judge, verifier improver, coverage implementer) plus 4 skills. Coverage is a floor; kill power is the signal.",
   "author": {
     "name": "ANcpLua",
