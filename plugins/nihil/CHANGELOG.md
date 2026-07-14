@@ -4,6 +4,26 @@ All notable changes to the Nihil plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this plugin uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2026-07-14
+
+Token-diet and a hard operational lesson from the first 0.4.0 field runs.
+
+### Changed
+
+- **Shiva runs lean by default** (`workflows/shiva.js`): the sweep caps at
+  `args.maxRounds` (default **2**, was 4) and exits after the first dry round
+  (was 2); Prove agents run at `effort: 'medium'`, the manifest writer at
+  `'low'`. A 38-agent run had burned ~1.25M subagent tokens; the sweep's later
+  rounds and max-effort proving were the bulk of it. Pass `maxRounds` to widen.
+
+### Fixed
+
+- **Documented the cwd trap**: workflow subagents inherit the *session's*
+  working directory, and no amount of scope prose retargets them — two field
+  runs pointed at another repo via `args.scope` both audited the session repo
+  instead. `whenToUse` now states: run `/nihil-shiva` from a session whose cwd
+  IS the repo to audit; `args.scope` selects paths *inside* that repo only.
+
 ## [0.4.0] - 2026-07-14
 
 Rebuilds Shiva's Prove phase from blind per-candidate refutation into a per-file

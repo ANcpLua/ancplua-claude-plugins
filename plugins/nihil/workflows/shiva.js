@@ -3,7 +3,7 @@ export const meta = {
   description:
     'Nihil / Shiva — deletion and public-API evaporation. Backward compatibility is not sacred. Loop-until-dry sweep for dead code, duplication, unjustified abstractions, upstream reimplementations, and over-broad public surface; every candidate must survive a per-file usage census (call sites, parameter audit, dependency supersession, cohesion) before it reaches the evidenced break/deletion manifest. Read-only by default.',
   whenToUse:
-    'When artifacts may no longer earn their existence and you want an evidenced deletion + public-break manifest. Pass args.scope (path/glob, default whole repo) and args.execute=true ONLY to apply removals after review. Deletion is permitted, never assumed.',
+    'When artifacts may no longer earn their existence and you want an evidenced deletion + public-break manifest. Run it from a session whose working directory IS the repo to audit — workflow agents inherit the session cwd, and a scope pointing at a different repo will NOT retarget them. Pass args.scope (path/glob inside this repo, default whole repo), args.maxRounds (default 2) to widen the sweep, and args.execute=true ONLY to apply removals after review. Deletion is permitted, never assumed.',
   phases: [
     { title: 'Sweep', detail: 'multi-modal hunt for removal candidates, loop until dry' },
     { title: 'Prove', detail: 'usage census per file: call sites, parameter audit, supersession, cohesion' },
@@ -14,6 +14,7 @@ export const meta = {
 
 const scope = (args && args.scope) || 'the whole repository'
 const execute = !!(args && args.execute)
+const maxRounds = (args && args.maxRounds) || 2
 
 const DOCTRINE = `You serve Nihil / Shiva, destroyer of what no longer earns its keep. Deletion is permitted, never assumed. Nothing is removed merely because removal is dramatic. Every removal needs evidence (no references, dead path, superseded API, duplicate of a canonical helper). Public APIs may be broken when preserving them keeps a worse contract alive — but no public break ships silently. Cite file:line and the evidence for every candidate.
 
@@ -85,7 +86,7 @@ let dry = 0
 let round = 0
 const key = (c) => `${c.kind}::${c.location}`
 
-while (dry < 2 && round < 4 && (!budget.total || budget.remaining() > 60000)) {
+while (dry < 1 && round < maxRounds && (!budget.total || budget.remaining() > 60000)) {
   round++
   const found = (
     await parallel(
@@ -143,7 +144,7 @@ removable=true only when the census proves the action safe OR (public items) the
 
 Candidates:
 ${JSON.stringify(cs.map((c) => ({ id: c.id, kind: c.kind, location: c.location, claimedEvidence: c.evidence, public: c.public })), null, 2)}`,
-      { label: `prove:${file}`, phase: 'Prove', schema: VERDICTS_SCHEMA }
+      { label: `prove:${file}`, phase: 'Prove', schema: VERDICTS_SCHEMA, effort: 'medium' }
     )
   )
 )
@@ -198,7 +199,7 @@ Public breaks (each REQUIRES all fields):
 <broken contract | reason preservation is worse | replacement contract | migration path | semver impact | user impact>
 
 If nothing was proven removable, the decision is no-op and you say the code earns its existence. Never pad the manifest.`,
-  { label: 'shiva:manifest', phase: 'Manifest' }
+  { label: 'shiva:manifest', phase: 'Manifest', effort: 'low' }
 )
 
 // ---- Execute (gated) --------------------------------------------------------
