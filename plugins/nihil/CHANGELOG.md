@@ -4,6 +4,23 @@ All notable changes to the Nihil plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this plugin uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-07-14
+
+The remake: the cwd trap is now enforced in code, not just documented.
+
+### Added
+
+- **Scope preflight guard** in `/nihil-shiva`, `/nihil`, `/nihil-maat`, and
+  `/nihil-athena`: when the scope/target contains an absolute path, one cheap
+  (`effort: 'low'`) agent resolves the session's repo root first and the run
+  ABORTS with a clear message if the scope lies outside it — instead of the
+  entire sweep silently auditing the session repo (which twice burned ~1M
+  tokens each on the wrong codebase). Relative scopes skip the check entirely.
+- Sweep candidates now carry a dedicated `file` field (single primary
+  repo-relative file); the Prove phase groups by it instead of parsing
+  `location` strings, which broke on multi-file locations like
+  `"A.cs:5 and B.cs:9"` and scattered same-file candidates across provers.
+
 ## [0.4.1] - 2026-07-14
 
 Token-diet and a hard operational lesson from the first 0.4.0 field runs.

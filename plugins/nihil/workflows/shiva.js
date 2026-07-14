@@ -5,6 +5,7 @@ export const meta = {
   whenToUse:
     'When artifacts may no longer earn their existence and you want an evidenced deletion + public-break manifest. Run it from a session whose working directory IS the repo to audit — workflow agents inherit the session cwd, and a scope pointing at a different repo will NOT retarget them. Pass args.scope (path/glob inside this repo, default whole repo), args.maxRounds (default 2) to widen the sweep, and args.execute=true ONLY to apply removals after review. Deletion is permitted, never assumed.',
   phases: [
+    { title: 'Scope', detail: 'preflight: abort if the scope is outside this session’s repo' },
     { title: 'Sweep', detail: 'multi-modal hunt for removal candidates, loop until dry' },
     { title: 'Prove', detail: 'usage census per file: call sites, parameter audit, supersession, cohesion' },
     { title: 'Manifest', detail: 'evidenced break/deletion manifest' },
@@ -40,10 +41,11 @@ const CANDIDATES_SCHEMA = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['id', 'kind', 'location', 'evidence', 'public'],
+        required: ['id', 'kind', 'file', 'location', 'evidence', 'public'],
         properties: {
           id: { type: 'string', description: 'stable key: kind + location' },
           kind: { type: 'string' },
+          file: { type: 'string', description: 'the ONE repo-relative file the candidate primarily lives in (secondary files go in location/evidence)' },
           location: { type: 'string', description: 'file:line or file' },
           evidence: { type: 'string', description: 'why it appears removable (reference counts, search results, supersession)' },
           public: { type: 'boolean', description: 'true if this touches a public/exported contract' },
@@ -78,7 +80,37 @@ const VERDICTS_SCHEMA = {
   },
 }
 
-// ---- Sweep: loop until two consecutive dry rounds ---------------------------
+// ---- Scope preflight: agents inherit the session cwd; a scope pointing at ----
+// another repo silently audits the WRONG code. Abort cheaply instead.
+if (/(^|\s)\//.test(scope)) {
+  phase('Scope')
+  const preflight = await agent(
+    `Run \`git rev-parse --show-toplevel\` (fall back to \`pwd\` outside a git repo) and report that root. The requested audit scope is:
+${scope}
+
+Decide whether every absolute path in that scope lies INSIDE the root you found. A scope naming a path outside it (a different repository or directory tree) is out of reach: workflow agents cannot be retargeted. Do not start any audit work.`,
+    {
+      label: 'scope:preflight',
+      phase: 'Scope',
+      effort: 'low',
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['inside', 'root'],
+        properties: {
+          inside: { type: 'boolean', description: 'true only if the whole scope resolves inside this session’s repo root' },
+          root: { type: 'string', description: 'the repo root / working directory found' },
+          reason: { type: 'string' },
+        },
+      },
+    }
+  )
+  if (!preflight || !preflight.inside) {
+    return `ABORTED before the sweep: the requested scope does not resolve inside this session's repository${preflight ? ` (${preflight.root})` : ''}. Workflow agents inherit the session working directory and cannot be retargeted by scope prose — start a Claude Code session in the target repo and re-run /nihil-shiva there.${preflight && preflight.reason ? ` Detail: ${preflight.reason}` : ''}`
+  }
+}
+
+// ---- Sweep: loop until dry ----------------------------------------------------
 phase('Sweep')
 const seen = new Set()
 const fresh = []
@@ -123,7 +155,7 @@ Use Grep/Glob/Read and reference-counting (search for every usage before declari
 phase('Prove')
 const byFile = new Map()
 for (const c of fresh) {
-  const file = c.location.split(':')[0]
+  const file = c.file || c.location.split(':')[0]
   if (!byFile.has(file)) byFile.set(file, [])
   byFile.get(file).push(c)
 }
