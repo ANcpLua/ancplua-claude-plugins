@@ -4,6 +4,42 @@ All notable changes to the Nihil plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this plugin uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-07-14
+
+Rebuilds Shiva's Prove phase from blind per-candidate refutation into a per-file
+**usage census**, and teaches the sweep to hunt reimplementations of upstream APIs.
+
+### Changed
+
+- **Prove phase = usage census** (`workflows/shiva.js`). Candidates are grouped by
+  file — one prover shares the Read/Grep context for everything in that file instead
+  of N agents re-reading the same code — and each prover runs a fixed procedure:
+  (1) usage census with inbound call-site counts (zero references is evidence;
+  "I searched" is not), (2) **parameter audit** — a parameter unused in the body or
+  passed the same value at every call site is independently removable
+  (`narrow-params`) even when the callable stays, (3) **supersession** — read the
+  referenced dependency's actual API before concluding it doesn't already ship this
+  (`replace-with-upstream`), (4) **cohesion** — collapse similar-style twins, relocate
+  single-caller helpers (`relocate`).
+- **Verdicts carry an action** (`delete` | `narrow-params` | `replace-with-upstream` |
+  `relocate` | `keep`) plus call-site counts and unused-parameter lists; the manifest
+  gains sections for narrowings, upstream replacements, and relocations.
+- **Execute applies `delete` and `narrow-params` only** (private, worktree-isolated).
+  Upstream replacements and relocations join public breaks as human-sign-off items.
+- **Doctrine**: survivors must be maximally cohesive, loosely coupled, expressive;
+  never preserve a homegrown copy of what a dependency already ships; never create
+  or tolerate near-identical names for different things (confusable names cause
+  edits to land in the wrong artifact).
+
+### Added
+
+- **`upstream-reimplementation` finder**: homegrown helpers/targets/pipelines that
+  duplicate a facility a referenced dependency or the platform already ships, and
+  glue made obsolete by newer platform capabilities (e.g. credential-push plumbing
+  superseded by trusted publishing).
+- Parameter-level dead code (unused / never-varied parameters) added to the
+  `dead-code` finder's hunt.
+
 ## [0.3.0] - 2026-06-06
 
 Adds `/nihil:raze` — a fourth, write-capable mode for repositories you own — and a

@@ -63,13 +63,15 @@ After summoning (and a session restart if needed) the gods run as `/<name>` comm
 | `/nihil`        | Zeus orchestrates    | inspect → council → verdict + plan         | never (plan-only)                      |
 | `/nihil-maat`   | Ma'at reviews        | dimensions → adversarial refute → judge    | never                                  |
 | `/nihil-odin`   | Odin researches      | angles → gather → cross-check → cite        | never                                  |
-| `/nihil-shiva`  | Shiva deletes        | loop-until-dry → prove → gated execute      | gated (`execute=true`, private only)   |
+| `/nihil-shiva`  | Shiva deletes        | loop-until-dry → usage census → gated execute | gated (`execute=true`, private only) |
 | `/nihil-athena` | Athena restructures  | N drafts → score → synthesize              | never                                  |
 
 The four specialists are namespaced `nihil-*` (not bare `/maat`, `/odin`, …) so they do
 not collide with other workflows in a shared project. Only `/nihil-shiva` writes, and
-only with `execute=true`, applying just the *private* removals that survived adversarial
-proof; public breaks and rewrites always require human sign-off. The master `/nihil`
+only with `execute=true`, applying just the *private* deletions and parameter
+narrowings that survived the usage census (call-site counts, parameter audit,
+dependency-supersession check, cohesion); upstream replacements, relocations, public
+breaks, and rewrites always require human sign-off. The master `/nihil`
 plans and delegates execution to `/nihil-shiva` — the orchestrator never writes, which
 also avoids a write-while-reading race in its parallel council.
 
