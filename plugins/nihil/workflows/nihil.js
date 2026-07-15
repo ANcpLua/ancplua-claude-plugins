@@ -15,6 +15,36 @@ export const meta = {
 const scope = (args && args.scope) || 'diff'
 const research = args && args.research
 
+// ---- Scope preflight: workflow agents inherit the session cwd; an absolute ----
+// scope outside this repo cannot be audited from here. Abort cheaply instead.
+if (/(^|\s)\//.test(scope)) {
+  const preflight = await agent(
+    `Run \`git rev-parse --show-toplevel\` (fall back to \`pwd\` outside a git repo) and report that root. The requested scope/target is:
+${scope}
+
+Decide whether every absolute path in it lies INSIDE the root you found. A path outside it (a different repository or directory tree) is out of reach: workflow agents cannot be retargeted. Do not start any other work.`,
+    {
+      label: 'scope:preflight',
+      phase: 'Authority',
+      effort: 'low',
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['inside', 'root'],
+        properties: {
+          inside: { type: 'boolean', description: 'true only if the whole scope resolves inside this session\u2019s repo root' },
+          root: { type: 'string', description: 'the repo root / working directory found' },
+          reason: { type: 'string' },
+        },
+      },
+    }
+  )
+  if (!preflight || !preflight.inside) {
+    return `ABORTED: the requested scope does not resolve inside this session's repository${preflight ? ` (${preflight.root})` : ''}. Workflow agents inherit the session working directory and cannot be retargeted by scope prose \u2014 start a Claude Code session in the target repo and re-run /nihil there.${preflight && preflight.reason ? ` Detail: ${preflight.reason}` : ''}`
+  }
+}
+
+
 const DOCTRINE = `You serve Nihil. Doctrine: nothing is sacred, nothing is worthless by default, everything must justify its existence by evidence. Preservation, change, deletion, compatibility breakage, and rebuilds all require justification. No artifact survives by sentiment, age, popularity, ownership, or sunk cost. No public break ships silently. Select the SMALLEST coherent transformation that reaches a coherent end state. Never leave a degraded intermediate state.`
 
 // ---- Phase 0: Establish Authority ------------------------------------------

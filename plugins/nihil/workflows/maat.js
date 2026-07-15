@@ -14,6 +14,36 @@ export const meta = {
 
 // ---- inputs -----------------------------------------------------------------
 const scope = (args && args.scope) || 'diff'
+
+// ---- Scope preflight: workflow agents inherit the session cwd; an absolute ----
+// scope outside this repo cannot be audited from here. Abort cheaply instead.
+if (/(^|\s)\//.test(scope)) {
+  const preflight = await agent(
+    `Run \`git rev-parse --show-toplevel\` (fall back to \`pwd\` outside a git repo) and report that root. The requested scope/target is:
+${scope}
+
+Decide whether every absolute path in it lies INSIDE the root you found. A path outside it (a different repository or directory tree) is out of reach: workflow agents cannot be retargeted. Do not start any other work.`,
+    {
+      label: 'scope:preflight',
+      phase: 'Scope',
+      effort: 'low',
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['inside', 'root'],
+        properties: {
+          inside: { type: 'boolean', description: 'true only if the whole scope resolves inside this session\u2019s repo root' },
+          root: { type: 'string', description: 'the repo root / working directory found' },
+          reason: { type: 'string' },
+        },
+      },
+    }
+  )
+  if (!preflight || !preflight.inside) {
+    return `ABORTED: the requested scope does not resolve inside this session's repository${preflight ? ` (${preflight.root})` : ''}. Workflow agents inherit the session working directory and cannot be retargeted by scope prose \u2014 start a Claude Code session in the target repo and re-run /nihil-maat there.${preflight && preflight.reason ? ` Detail: ${preflight.reason}` : ''}`
+  }
+}
+
 const target =
   scope === 'diff'
     ? "the current branch's uncommitted and unpushed changes (inspect with `git status --short`, `git diff`, and `git diff --staged`)"
