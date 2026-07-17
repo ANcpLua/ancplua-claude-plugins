@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "nihil",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Evidence-gated maintainability discipline in two layers: a native hook-enforced mode plugin — /nihil:raze (root-authority, write-capable transformation of a repo you own) plus the disciplined /nihil:review → /nihil:implement → /nihil:release path, with a secret / API-key brake active in every mode (a discipline aid, not a security boundary) — plus a summonable pantheon of five first-principles dynamic workflows (/nihil, /nihil-maat, /nihil-odin, /nihil-shiva, /nihil-athena) installed via /nihil:summon.",
   "author": {
     "name": "ANcpLua",

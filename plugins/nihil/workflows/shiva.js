@@ -13,9 +13,21 @@ export const meta = {
   ],
 }
 
-const scope = (args && args.scope) || 'the whole repository'
-const execute = !!(args && args.execute)
-const maxRounds = (args && args.maxRounds) || 2
+// The harness may deliver args as a JSON-encoded string; tolerate both shapes so
+// `execute` cannot silently stay false on a resume that passed stringified args.
+const parsedArgs =
+  typeof args === 'string'
+    ? (() => {
+        try {
+          return JSON.parse(args)
+        } catch {
+          return {}
+        }
+      })()
+    : args || {}
+const scope = parsedArgs.scope || 'the whole repository'
+const execute = parsedArgs.execute === true || parsedArgs.execute === 'true'
+const maxRounds = parsedArgs.maxRounds || 2
 
 const DOCTRINE = `You serve Nihil / Shiva, destroyer of what no longer earns its keep. Deletion is permitted, never assumed. Nothing is removed merely because removal is dramatic. Every removal needs evidence (no references, dead path, superseded API, duplicate of a canonical helper). Public APIs may be broken when preserving them keeps a worse contract alive — but no public break ships silently. Cite file:line and the evidence for every candidate.
 
@@ -243,29 +255,49 @@ EXECUTION: skipped (read-only). Re-run with args.execute=true to apply the priva
 }
 
 phase('Execute')
-const applied = await parallel(
-  proven
-    .filter((c) => !c.public && (c.verdict.action === 'delete' || c.verdict.action === 'narrow-params'))
-    .map((c) => () =>
-      agent(
-        `${DOCTRINE}
+// Edits land in the MAIN working tree: worktree isolation is wrong here because
+// nothing merges a worktree back — only the agent's return text comes home, so
+// isolated edits would be silently thrown away. Application agents run
+// SEQUENTIALLY: a deletion's call-site cleanup can touch files outside the
+// candidate's own file, so even file-grouped parallel writers could collide.
+const executable = proven.filter(
+  (c) => !c.public && (c.verdict.action === 'delete' || c.verdict.action === 'narrow-params')
+)
 
-WRITE-ENABLED. Apply this proven verdict with the smallest coherent edit, update imports/exports and every call site, and leave the build consistent. Do NOT touch public/exported contracts, and do NOT introduce names confusable with existing ones.
+// One agent per file so candidates sharing a declaration file are applied as a
+// single coherent edit instead of stacked partial rewrites.
+const byFile = new Map()
+for (const c of executable) {
+  const file = c.file || c.location.split(':')[0]
+  if (!byFile.has(file)) byFile.set(file, [])
+  byFile.get(file).push(c)
+}
 
-Target: ${c.kind} at ${c.location}
-Action: ${c.verdict.action}${c.verdict.unusedParameters && c.verdict.unusedParameters.length ? `\nParameters to drop: ${c.verdict.unusedParameters.join(', ')}` : ''}
-Reason: ${c.verdict.reason}
+const applied = []
+for (const [file, group] of byFile) {
+  log(`applying ${group.length} verdict(s) in ${file}`)
+  const result = await agent(
+    `${DOCTRINE}
+
+WRITE-ENABLED. Apply the following proven verdict(s) directly in the repository working tree with the smallest coherent edits, update imports/exports and every call site, and leave the build consistent. Do NOT touch public/exported contracts, and do NOT introduce names confusable with existing ones.
+
+${group
+  .map(
+    (c) =>
+      `Target: ${c.kind} at ${c.location}\nAction: ${c.verdict.action}${c.verdict.unusedParameters && c.verdict.unusedParameters.length ? `\nParameters to drop: ${c.verdict.unusedParameters.join(', ')}` : ''}\nReason: ${c.verdict.reason}`
+  )
+  .join('\n\n')}
 
 Report exactly what you changed (files + lines).`,
-        { label: `${c.verdict.action}:${c.kind}`, phase: 'Execute', isolation: 'worktree' }
-      )
-    )
-)
+    { label: `apply:${file}`, phase: 'Execute' }
+  )
+  applied.push(result ? `[${file}]\n${result}` : `[${file}] SKIPPED — application agent returned nothing; verify this file manually.`)
+}
 
 return `${manifest}
 
 ---
-EXECUTED ${applied.filter(Boolean).length} private deletion(s)/narrowing(s) in isolated worktrees:
-${applied.filter(Boolean).join('\n\n')}
+EXECUTED ${byFile.size} file-grouped application pass(es) in the working tree (verify with the repository's build/test gates before committing):
+${applied.join('\n\n')}
 
 Upstream replacements, relocations, and public breaks were NOT auto-applied — they require human sign-off.`

@@ -4,6 +4,27 @@ All notable changes to the Nihil plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this plugin uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2026-07-17
+
+Shiva's Execute phase actually executes now.
+
+### Fixed
+
+- **Execute-phase edits no longer vanish into throwaway worktrees.**
+  `isolation: 'worktree'` gave every application agent its own temporary git
+  worktree, but only the agent's return TEXT ever comes back to the
+  orchestrator — nothing merged the worktrees, so "EXECUTED N ... in isolated
+  worktrees" reported work that was never applied to the repo. Application
+  agents now edit the main working tree directly, grouped one-agent-per-file
+  (candidates sharing a declaration file land as one coherent edit) and run
+  sequentially, because a deletion's call-site cleanup can touch files outside
+  the candidate's own file. The result banner now names the honest contract:
+  edits are in the working tree, gate and commit them yourself.
+- **`args.execute` survives stringified args.** The harness can deliver `args`
+  as a JSON-encoded string (observed on a cached resume); `args.execute` on a
+  string is `undefined`, so execute mode silently stayed off. Args are now
+  parsed from either shape, and `execute: 'true'` is accepted alongside `true`.
+
 ## [0.5.0] - 2026-07-14
 
 The remake: the cwd trap is now enforced in code, not just documented.
