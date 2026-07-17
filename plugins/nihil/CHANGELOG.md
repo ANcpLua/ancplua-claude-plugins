@@ -4,6 +4,22 @@ All notable changes to the Nihil plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this plugin uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.2] - 2026-07-17
+
+Only verified work counts.
+
+### Added
+
+- **Post-Execute verification agent.** After the sequential application passes,
+  one verify-only agent discovers and runs the repository's own correctness
+  gates (from CLAUDE.md/AGENTS.md/README/CI) and reports `git status --short`
+  plus per-gate pass/fail. The EXECUTED banner now carries that evidence
+  instead of unverified agent prose — an agent's return text proves nothing
+  about the tree. (The fuller worker-commit → cherry-pick → integrator design
+  was evaluated and rejected as overkill: sequential main-tree application
+  already removes the collision risk, and per-candidate isolated builds
+  mishandle coupled candidates whose edits only compile together.)
+
 ## [0.5.1] - 2026-07-17
 
 Shiva's Execute phase actually executes now.

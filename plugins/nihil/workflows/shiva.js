@@ -294,10 +294,23 @@ Report exactly what you changed (files + lines).`,
   applied.push(result ? `[${file}]\n${result}` : `[${file}] SKIPPED — application agent returned nothing; verify this file manually.`)
 }
 
+// Only verified work counts: agent return text proves nothing about the tree.
+// One verify agent runs the repository's own gates and reports git status, so
+// the EXECUTED banner carries evidence instead of prose.
+const verification = await agent(
+  `VERIFY-ONLY — do not fix anything, do not commit. The Execute phase just applied ${byFile.size} file-grouped edit pass(es) in this repository's working tree. Discover the repository's primary correctness gates (build/test/check commands from CLAUDE.md, AGENTS.md, README, or the CI workflow), run them, and report:
+- \`git status --short\` (non-empty is EXPECTED — the applied edits are intentionally uncommitted; report it so the caller can see what changed)
+- each gate command you ran and its pass/fail outcome, with the failing output excerpt for any failure`,
+  { label: 'shiva:verify-execute', phase: 'Execute' }
+)
+
 return `${manifest}
 
 ---
-EXECUTED ${byFile.size} file-grouped application pass(es) in the working tree (verify with the repository's build/test gates before committing):
+EXECUTED ${byFile.size} file-grouped application pass(es) in the working tree:
 ${applied.join('\n\n')}
 
-Upstream replacements, relocations, and public breaks were NOT auto-applied — they require human sign-off.`
+VERIFICATION (repository gates + git status, run post-apply):
+${verification || 'verify agent returned nothing — run the repository gates yourself before trusting the edits.'}
+
+Review the diff and commit yourself. Upstream replacements, relocations, and public breaks were NOT auto-applied — they require human sign-off.`
