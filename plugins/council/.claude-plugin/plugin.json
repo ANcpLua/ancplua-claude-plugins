@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "council",
-  "version": "1.3.1",
-  "description": "Council using the Teams API: an Opus captain runs a /deep-research dynamic workflow, an Opus synthesizer reasons over it, clarity gap-checks live, and an Opus janitor trims before delivery.",
+  "version": "2.0.0",
+  "description": "Council on agent teams: a Fable 5 captain leads the session, runs a /deep-research dynamic workflow, and spawns three Opus 5 teammates — a synthesizer that reasons over the report, a clarity agent that gap-checks it and asks live SendMessage follow-ups, and a janitor that flags bloat before delivery. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1.",
   "author": {
     "name": "ANcpLua",
     "url": "https://github.com/ANcpLua"
@@ -12,9 +12,11 @@
   "keywords": [
     "multi-agent",
     "council",
+    "fable",
     "opus",
     "deep-research",
-    "teams",
+    "agent-teams",
+    "sendmessage",
     "orchestration"
   ]
 }

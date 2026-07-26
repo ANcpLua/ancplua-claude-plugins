@@ -2,8 +2,8 @@
 name: opus-janitor
 description: >-
   Council janitor. Runs last on captain's draft. Flags bloat, returns BLOAT_FLAG + CUTS list +
-  WORD_COUNT. Never trims itself — captain removes. Uses claude-opus-4-8.
-model: claude-opus-4-8
+  WORD_COUNT. Never trims itself — captain removes. Runs on Opus 5 as a live teammate.
+model: opus
 tools:
   - Read
 effort: xhigh

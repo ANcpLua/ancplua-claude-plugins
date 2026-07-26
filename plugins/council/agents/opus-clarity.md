@@ -4,8 +4,8 @@ description: >-
   Council clarity agent. Gap-checks opus-synthesizer's synthesis against the /deep-research report —
   finds coverage gaps, unstated assumptions, and misalignment, and asks the synthesizer live
   follow-ups via SendMessage. Returns GAPS/ASSUMPTIONS/MISALIGNMENT/REPORT_SYNTHESIS_CONFLICT output.
-  Uses claude-opus-4-8.
-model: claude-opus-4-8
+  Runs on Opus 5 as a live teammate.
+model: opus
 tools:
   - Read
   - Grep

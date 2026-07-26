@@ -22,8 +22,8 @@
     },
     {
       "name": "council",
-      "description": "Council using the Teams API: an Opus captain orchestrates a /deep-research dynamic workflow and an Opus synthesizer that reconcile via SendMessage across an agent team, an Opus clarity agent asks live follow-ups, and an Opus janitor flags bloat — reactive collaboration instead of fire-and-forget subagents.",
-      "version": "1.3.1",
+      "description": "Council on agent teams: a Fable 5 captain leads the session, frames one research question and runs the /deep-research dynamic workflow, then spawns three Opus 5 teammates — a synthesizer that reasons over the cited report, a clarity agent that gap-checks it and asks the synthesizer live SendMessage follow-ups, and a janitor that flags bloat before delivery. Reactive collaboration instead of fire-and-forget subagents. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1.",
+      "version": "2.0.0",
       "source": "./plugins/council"
     },
     {
@@ -71,7 +71,7 @@
     {
       "name": "nihil",
       "description": "Evidence-gated maintainability discipline in two layers. (1) A native plugin: four modes — /nihil:raze (root-authority, write-capable transformation of a repo you own; only secret-leak and catastrophic, unrecoverable commands are blocked) plus /nihil:review, /nihil:implement, /nihil:release with confidence scoring, scope control, and release gating — backed by five read-only review agents and PreToolUse/Stop hooks (a discipline aid, not a security boundary: heuristic command matching, fail-open; a secret / API-key brake is active in every mode). (2) A summonable pantheon of five first-principles dynamic workflows (/nihil orchestrator + /nihil-maat review, /nihil-odin research, /nihil-shiva deletion, /nihil-athena restructure), installed into .claude/workflows/ via /nihil:summon.",
-      "version": "0.5.0",
+      "version": "0.5.2",
       "source": "./plugins/nihil"
     },
     {
