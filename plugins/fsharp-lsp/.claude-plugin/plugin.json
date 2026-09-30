@@ -1,0 +1,11 @@
+{
+  "name": "fsharp-lsp",
+  "version": "1.1.0",
+  "description": "F# language server for Claude Code: fsautocomplete (dotnet tool) over .fs, .fsx and .fsi files, rolled forward to the newest installed runtime.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "license": "MIT",
+  "lspServers": "./.lsp.json"
+}

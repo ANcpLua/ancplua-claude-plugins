@@ -86,12 +86,14 @@ jobs:
               fi
             done
 
-            # Verify source directory exists
-            SOURCE=$(jq -r ".plugins[$i].source" "$MANIFEST")
-            if [ ! -d "$SOURCE" ]; then
-              PNAME=$(jq -r ".plugins[$i].name" "$MANIFEST")
-              echo "::error file=$MANIFEST::Plugin '$PNAME' source directory missing: $SOURCE"
-              exit 1
+            # Verify source directory exists; object sources (url, github) live in their own repositories
+            if [ "$(jq -r ".plugins[$i].source | type" "$MANIFEST")" = "string" ]; then
+              SOURCE=$(jq -r ".plugins[$i].source" "$MANIFEST")
+              if [ ! -d "$SOURCE" ]; then
+                PNAME=$(jq -r ".plugins[$i].name" "$MANIFEST")
+                echo "::error file=$MANIFEST::Plugin '$PNAME' source directory missing: $SOURCE"
+                exit 1
+              fi
             fi
           done
           fi
