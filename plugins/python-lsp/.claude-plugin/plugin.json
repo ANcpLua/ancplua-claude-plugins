@@ -1,0 +1,11 @@
+{
+  "name": "python-lsp",
+  "version": "1.1.0",
+  "description": "Python language server for Claude Code: python-lsp-server (pylsp) over .py files.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "license": "MIT",
+  "lspServers": "./.lsp.json"
+}

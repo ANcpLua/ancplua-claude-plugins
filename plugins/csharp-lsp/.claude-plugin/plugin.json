@@ -1,0 +1,11 @@
+{
+  "name": "csharp-lsp",
+  "version": "1.1.0",
+  "description": "C# language server for Claude Code: csharp-ls (dotnet tool) over .cs files, so LSP tool lookups resolve C# symbols, references and diagnostics.",
+  "author": {
+    "name": "ANcpLua",
+    "url": "https://github.com/ANcpLua"
+  },
+  "license": "MIT",
+  "lspServers": "./.lsp.json"
+}

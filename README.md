@@ -1,7 +1,7 @@
 # ancplua-claude-plugins
 
 Claude Code plugin marketplace — an agent-teams-aware advanced software-engineering
-base set. 14 plugins for parallel agent orchestration, PR-to-merge ferrying,
+base set. 23 plugins for parallel agent orchestration, PR-to-merge ferrying,
 dependency migration, first-principles repo transformation, parallel code review,
 cognitive guardrails, behavior-first test quality, plugin/skill evaluation,
 X/Twitter data workflow planning, and code-elegance work.
@@ -15,7 +15,7 @@ only advances when the gate passes. No manual babysitting.
 
 ## Plugins
 
-14 plugins, 24 commands, 24 skills, 30 agents:
+23 plugins (17 in this repository, 3 language servers, 3 in their own repositories):
 
 | Plugin                      | What it does in plain language                                                                                                                                              |
 |-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -34,6 +34,12 @@ only advances when the gate passes. No manual babysitting.
 | **tomevault-publish**       | Publishes a skill, config, or plugin to TomeVault as a high-grade Tome, and explains the Skill / Tome / AGENTS.md model and grading rubric behind it |
 | **x-twitter-scraper**       | Plans Xquik REST API, MCP, SDK, webhook, export, monitor, and confirmation-gated workflows for X/Twitter data |
 | **heimdall**                | Tells you which model *actually* served each turn — read from the session transcript, not guessed — and shouts when Claude Code silently falls back from Opus to Fable. Answers "am I still on Opus?" with evidence, plus provider/region/auth routing context |
+| **csharp-lsp**              | C# language server (csharp-ls) so the LSP tool resolves C# symbols, references and diagnostics; needs `csharp-ls` on PATH                                              |
+| **fsharp-lsp**              | F# language server (fsautocomplete) for .fs, .fsx and .fsi files; needs `fsautocomplete` on PATH                                                                       |
+| **python-lsp**              | Python language server (pylsp) for .py files; needs `pylsp` on PATH                                                                                                    |
+| **ancplua-lean-verify**     | Proves C#/.NET state machines correct with Lean 4 and turns every counterexample into a reproduced, fixed bug; ships the lean-verify skill and the skeptic agent (own repository) |
+| **maturity-skills**         | Evidence-first maintenance routines: mutation testing, emitter corpora, performance-claim gates, agent-log scans, regression review, maintenance runs (own repository) |
+| **fortigate-toolkit**       | TDD workflow skill for the FortiGate VLAN migration toolkit against the FortiOS REST API (own repository)                                                             |
 
 ### How does this work without failing?
 
@@ -56,6 +62,8 @@ Add the marketplace, then install plugins individually:
 /plugin install elegance-pipeline@ancplua-claude-plugins
 /plugin install cc-plugin-eval@ancplua-claude-plugins
 /plugin install x-twitter-scraper@ancplua-claude-plugins
+/plugin install csharp-lsp@ancplua-claude-plugins
+/plugin install ancplua-lean-verify@ancplua-claude-plugins
 ```
 
 ## Technical details

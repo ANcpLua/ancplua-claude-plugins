@@ -1,0 +1,9 @@
+{
+  "python-lsp": {
+    "command": "pylsp",
+    "args": [],
+    "extensionToLanguage": {
+      ".py": "python"
+    }
+  }
+}

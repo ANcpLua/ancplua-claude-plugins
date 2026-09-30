@@ -109,6 +109,51 @@
       "description": "Watchman of the model-routing Bifröst. /heimdall reports which model actually served each turn (ground truth from the transcript's message.model), flags silent Opus↔Fable fallback swaps, and shows provider/region/auth routing context. session-inspect adds the extended read — advisorModel, service_tier, speed, inference_geo, cache hit rate, and cache-miss reasons with re-charged token counts. A passive model-drift-net Stop hook notices once when the served model changes mid-session. Deterministic, no-LLM, no secrets.",
       "version": "0.2.1",
       "source": "./plugins/heimdall"
+    },
+    {
+      "name": "csharp-lsp",
+      "description": "C# language server for Claude Code: csharp-ls (dotnet tool) over .cs files, so LSP tool lookups resolve C# symbols, references and diagnostics.",
+      "version": "1.1.0",
+      "source": "./plugins/csharp-lsp"
+    },
+    {
+      "name": "fsharp-lsp",
+      "description": "F# language server for Claude Code: fsautocomplete (dotnet tool) over .fs, .fsx and .fsi files, rolled forward to the newest installed runtime.",
+      "version": "1.1.0",
+      "source": "./plugins/fsharp-lsp"
+    },
+    {
+      "name": "python-lsp",
+      "description": "Python language server for Claude Code: python-lsp-server (pylsp) over .py files.",
+      "version": "1.1.0",
+      "source": "./plugins/python-lsp"
+    },
+    {
+      "name": "ancplua-lean-verify",
+      "description": "Prove C#/.NET state machines correct with Lean 4 and turn every counterexample into a reproduced, fixed bug: anchor the model to the code (Roslyn write-site inventory), prove, replay traces, and hand each counterexample to MSTest and a draft PR. Ships the lean-verify skill and the skeptic review agent. Lives in its own repository.",
+      "version": "1.0.1",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/ANcpLua/ancplua-lean-verify.git"
+      }
+    },
+    {
+      "name": "maturity-skills",
+      "description": "Evidence-first maintenance routines: mutation testing, emitter-corpus validation, performance-claim gating, agent-transcript antipattern scanning, regression review of a change-set, and the maintenance-run orchestration with a hard termination rule. Lives in its own repository.",
+      "version": "0.1.0",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/ANcpLua/maturity-skills.git"
+      }
+    },
+    {
+      "name": "fortigate-toolkit",
+      "description": "TDD workflow skill (fortigate-development) for the FortiGate VLAN migration toolkit: Python discovery, migration and verification scripts against the FortiOS REST API. Lives in its own repository.",
+      "version": "1.0.0",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/ANcpLua/fortigate-toolkit.git"
+      }
     }
   ]
 }
