@@ -129,12 +129,12 @@
       "source": "./plugins/python-lsp"
     },
     {
-      "name": "ancplua-lean-verify",
-      "description": "Prove C#/.NET state machines correct with Lean 4 and turn every counterexample into a reproduced, fixed bug: anchor the model to the code (Roslyn write-site inventory), prove, replay traces, and hand each counterexample to MSTest and a draft PR. Ships the lean-verify skill and the skeptic review agent. Lives in its own repository.",
-      "version": "1.0.1",
+      "name": "ancplua-lean-proof",
+      "description": "Prove C#/.NET state machines correct with Lean 4 and turn every counterexample into a reproduced, fixed bug: anchor the model to the code (Roslyn write-site inventory), prove, replay traces, and hand each counterexample to MSTest and a draft PR. Ships the lean-proof skill and the skeptic review agent. Lives in its own repository.",
+      "version": "1.1.0",
       "source": {
         "source": "url",
-        "url": "https://github.com/ANcpLua/ancplua-lean-verify.git"
+        "url": "https://github.com/ANcpLua/ancplua-lean-proof.git"
       }
     },
     {

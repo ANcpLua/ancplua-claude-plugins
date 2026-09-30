@@ -37,7 +37,7 @@ only advances when the gate passes. No manual babysitting.
 | **csharp-lsp**              | C# language server (csharp-ls) so the LSP tool resolves C# symbols, references and diagnostics; needs `csharp-ls` on PATH                                              |
 | **fsharp-lsp**              | F# language server (fsautocomplete) for .fs, .fsx and .fsi files; needs `fsautocomplete` on PATH                                                                       |
 | **python-lsp**              | Python language server (pylsp) for .py files; needs `pylsp` on PATH                                                                                                    |
-| **ancplua-lean-verify**     | Proves C#/.NET state machines correct with Lean 4 and turns every counterexample into a reproduced, fixed bug; ships the lean-verify skill and the skeptic agent (own repository) |
+| **ancplua-lean-proof**      | Proves C#/.NET state machines correct with Lean 4 and turns every counterexample into a reproduced, fixed bug; ships the lean-proof skill and the skeptic agent (own repository) |
 | **maturity-skills**         | Evidence-first maintenance routines: mutation testing, emitter corpora, performance-claim gates, agent-log scans, regression review, maintenance runs (own repository) |
 | **fortigate-toolkit**       | TDD workflow skill for the FortiGate VLAN migration toolkit against the FortiOS REST API (own repository)                                                             |
 
@@ -63,7 +63,7 @@ Add the marketplace, then install plugins individually:
 /plugin install cc-plugin-eval@ancplua-claude-plugins
 /plugin install x-twitter-scraper@ancplua-claude-plugins
 /plugin install csharp-lsp@ancplua-claude-plugins
-/plugin install ancplua-lean-verify@ancplua-claude-plugins
+/plugin install ancplua-lean-proof@ancplua-claude-plugins
 ```
 
 ## Technical details
