@@ -10,6 +10,8 @@ Older pre-launch entries are summarized in the [History](#history) section.
 
 ### Added
 
+- **`make release PLUGIN=<name>`**: bumps the plugin's `plugin.json` and its marketplace entry, commits, pushes, refreshes the marketplace clone and updates the installed copy, so the version bump that makes a change reach Claude Code can no longer be skipped.
+
 - **`csharp-lsp`, `fsharp-lsp`, `python-lsp` plugins (1.1.0)**: the language-server plugins moved in from a local-only marketplace. Each names its tool (`csharp-ls`, `fsautocomplete`, `pylsp`) on `PATH` instead of a machine path, so the catalog stays portable; the README of each says what to install.
 - **`ancplua-lean-proof`, `maturity-skills`, `fortigate-toolkit`**: catalog entries with an HTTPS git URL source (no SSH key needed to install), so the marketplace lists every own plugin while each keeps its own repository as the source of truth.
 

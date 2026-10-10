@@ -62,7 +62,7 @@ reports *"already at the latest"* and keeps running the old code. A fix committe
 | Rule | Why |
 |------|-----|
 | Bump `plugin.json` `version` (+ matching `marketplace.json` entries) on any change under `hooks/ scripts/ agents/ commands/ skills/` | The version string is the sole update signal. |
-| After it lands: `commit → push → /plugin update → restart Claude Code` | Hooks load only at session start. |
+| After it lands: `make release PLUGIN=<name>` does bump, commit, push, marketplace refresh and plugin update in one step; then restart Claude Code | Hooks load only at session start. |
 | To see what actually runs: `diff -rq` / `md5` the cache install vs the source | Editing the repo proves nothing about the executing copy. |
 | Don't hand-patch the cache as the fix | It's a managed artifact the next reinstall clobbers. Durable = bump + publish. |
 
